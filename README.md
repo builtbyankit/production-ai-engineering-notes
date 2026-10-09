@@ -6,13 +6,12 @@ The site uses MkDocs with its standard Read the Docs theme: a sidebar, search, r
 
 ## Read and download
 
+- [Hosted MkDocs site](https://builtbyankit.github.io/production-ai-engineering-notes/)
 - [Markdown course index](notes/Course_Notes_Index.md)
 - [Quick revision](notes/Course_Quick_Revision.md)
 - [Combined Markdown book](notes/Production_AI_Engineering_Complete_Notes.md)
 - [All notes in a ZIP](notes/Production_AI_Engineering_Notes.zip)
 - [Original course](https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128)
-
-The prepared GitHub Pages address is `https://builtbyankit.github.io/production-ai-engineering-notes/`. The repository remains private until public-publication approval is given; the Pages site is not yet activated.
 
 ## Build and preview
 
@@ -29,7 +28,7 @@ mkdocs serve
 
 The canonical Markdown notes live in `notes/`. The preparation step copies them into the ignored `mkdocs_docs/` folder and adds the course overview, revision links, and local rendering assets. MkDocs builds the site into `docs/`.
 
-After changing notes or MkDocs configuration, rebuild and commit `docs/` with the source changes. Once publication is approved, GitHub Pages can publish from the `main` branch and `/docs` directory. The CI workflow checks the strict MkDocs build on pushes and pull requests.
+After changing notes or MkDocs configuration, rebuild and commit `docs/` with the source changes. GitHub Pages publishes from the `main` branch and `/docs` directory. The CI workflow checks the strict MkDocs build on pushes and pull requests.
 
 ## Sources
 
