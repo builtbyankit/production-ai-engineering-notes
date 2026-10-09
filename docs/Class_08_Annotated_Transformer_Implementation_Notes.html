@@ -63,11 +63,11 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">08 · Transformer implementation</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#cross-attention-connect-decoder-queries-to-encoder-memory">🔗 Cross-Attention: Connect Decoder Queries to Encoder Memory</a>
+    <li class="toctree-l2"><a class="reference internal" href="#cross-attention-connect-decoder-queries-to-encoder-memory">Cross-Attention: Connect Decoder Queries to Encoder Memory</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#memory-is-an-encoder-representation-not-a-mask">Memory is an encoder representation, not a mask</a>
     </li>
@@ -75,7 +75,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#padding-masks-and-causal-masks-have-different-jobs">🎭 Padding Masks and Causal Masks Have Different Jobs</a>
+    <li class="toctree-l2"><a class="reference internal" href="#padding-masks-and-causal-masks-have-different-jobs">Padding Masks and Causal Masks Have Different Jobs</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#source-mask">Source mask</a>
     </li>
@@ -87,7 +87,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-encoderdecoder-wrapper-map-the-overall-data-flow">🧭 The EncoderDecoder Wrapper: Map the Overall Data Flow</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-encoderdecoder-wrapper-map-the-overall-data-flow">The EncoderDecoder Wrapper: Map the Overall Data Flow</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-the-decoder-needs-an-input-sequence">Why the decoder needs an input sequence</a>
     </li>
@@ -95,9 +95,9 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#generator-decoder-features-to-vocabulary-scores">🎯 Generator: Decoder Features to Vocabulary Scores</a>
+    <li class="toctree-l2"><a class="reference internal" href="#generator-decoder-features-to-vocabulary-scores">Generator: Decoder Features to Vocabulary Scores</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#cloning-stacks-without-sharing-every-parameter">🧬 Cloning Stacks Without Sharing Every Parameter</a>
+    <li class="toctree-l2"><a class="reference internal" href="#cloning-stacks-without-sharing-every-parameter">Cloning Stacks Without Sharing Every Parameter</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#encoder-stack">Encoder stack</a>
     </li>
@@ -107,7 +107,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#layer-normalization-statistics-scale-and-shift">🧪 Layer Normalization: Statistics, Scale, and Shift</a>
+    <li class="toctree-l2"><a class="reference internal" href="#layer-normalization-statistics-scale-and-shift">Layer Normalization: Statistics, Scale, and Shift</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-each-part-means">What each part means</a>
     </li>
@@ -115,7 +115,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#residual-connections-dropout-and-pre-norm">➕ Residual Connections, Dropout, and Pre-Norm</a>
+    <li class="toctree-l2"><a class="reference internal" href="#residual-connections-dropout-and-pre-norm">Residual Connections, Dropout, and Pre-Norm</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#pre-norm-and-post-norm-are-different-placements">Pre-norm and post-norm are different placements</a>
     </li>
@@ -125,7 +125,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#encoder-and-decoder-layers-read-the-three-attention-inputs">🧱 Encoder and Decoder Layers: Read the Three Attention Inputs</a>
+    <li class="toctree-l2"><a class="reference internal" href="#encoder-and-decoder-layers-read-the-three-attention-inputs">Encoder and Decoder Layers: Read the Three Attention Inputs</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#decoder-three-sublayers">Decoder: three sublayers</a>
     </li>
@@ -133,7 +133,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#build-a-causal-mask-then-apply-it-to-scores">🔺 Build a Causal Mask, Then Apply It to Scores</a>
+    <li class="toctree-l2"><a class="reference internal" href="#build-a-causal-mask-then-apply-it-to-scores">Build a Causal Mask, Then Apply It to Scores</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#mask-polarity-depends-on-the-function">Mask polarity depends on the function</a>
     </li>
@@ -141,7 +141,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#multi-head-attention-project-split-attend-merge">👥 Multi-Head Attention: Project, Split, Attend, Merge</a>
+    <li class="toctree-l2"><a class="reference internal" href="#multi-head-attention-project-split-attend-merge">Multi-Head Attention: Project, Split, Attend, Merge</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#four-linear-modules">Four linear modules</a>
     </li>
@@ -153,9 +153,9 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#position-wise-feed-forward-network">🧮 Position-Wise Feed-Forward Network</a>
+    <li class="toctree-l2"><a class="reference internal" href="#position-wise-feed-forward-network">Position-Wise Feed-Forward Network</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#embeddings-and-sinusoidal-positional-encoding">🔢 Embeddings and Sinusoidal Positional Encoding</a>
+    <li class="toctree-l2"><a class="reference internal" href="#embeddings-and-sinusoidal-positional-encoding">Embeddings and Sinusoidal Positional Encoding</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#positions-are-added-to-token-features">Positions are added to token features</a>
     </li>
@@ -165,13 +165,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-8">✅ Action Items After Class 8</a>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-8">Action Items After Class 8</a>
     </li>
     </ul>
                   </li>
@@ -247,14 +247,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="class-8-annotated-transformer-implementation-designing-the-encoder-and-decoder">Class 8: Annotated Transformer Implementation — Designing the Encoder and Decoder<a class="headerlink" href="#class-8-annotated-transformer-implementation-designing-the-encoder-and-decoder" title="Permanent link">&para;</a></h1>
-<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
 <p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
 <strong>⏱️ Duration:</strong> ~3 hours 44 minutes (3hr 44min 8s) | <strong>📅 Session:</strong> Day 8 (16 August 2026)</p>
 <p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a828b92ec908cbc02f344c8">16 Aug Transformer practical</a><br />
 <strong>Primary transcript:</strong> <code>GMT20260816-143020_Recording.cutfile.20260817041629504.transcript.vtt</code><br />
 <strong>Companions:</strong> <a href="https://colab.research.google.com/drive/1gvIGksp7ujaAT7HvDc7lVWRVboFO9SYa#scrollTo=e1e641e0">instructor’s Annotated Transformer notebook</a> and <code>Annotated TF.pdf</code></p>
 <hr />
-<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The class moved from Transformer theory to <strong>implementing its components</strong>. Paul divided the practical into architecture design first, then model assembly, data, and training.</li>
 <li>The main reference was Harvard NLP’s <strong>The Annotated Transformer</strong>, with a small set of instructor changes for the environment and dependencies.</li>
@@ -265,7 +265,7 @@
 </ul>
 <p>The supplied notebook contains later training code and saved results. Those sections were read for coverage, but they are not presented as demonstrations completed in this class. The PDF also includes target-shifting sketches from the later practical stage; they are used below only as labeled companion clarification of questions raised today.</p>
 <hr />
-<h2 id="cross-attention-connect-decoder-queries-to-encoder-memory">🔗 Cross-Attention: Connect Decoder Queries to Encoder Memory<a class="headerlink" href="#cross-attention-connect-decoder-queries-to-encoder-memory" title="Permanent link">&para;</a></h2>
+<h2 id="cross-attention-connect-decoder-queries-to-encoder-memory">Cross-Attention: Connect Decoder Queries to Encoder Memory<a class="headerlink" href="#cross-attention-connect-decoder-queries-to-encoder-memory" title="Permanent link">&para;</a></h2>
 <p>Paul began by revisiting the relationship between the encoder and decoder in a translation model.</p>
 <p>In <strong>decoder self-attention</strong>, queries, keys, and values originate from decoder-side representations. A causal mask prevents each position from using later target positions.</p>
 <p>In <strong>encoder–decoder cross-attention</strong>:</p>
@@ -314,7 +314,7 @@
 <p>Paul contrasted the translation architecture with an ordinary decoder-only language model. A standard decoder-only model uses causal self-attention and has no encoder–decoder cross-attention block to connect to an encoder.</p>
 <p>That comparison explains why this full encoder–decoder example is a useful foundation: it exposes both self-attention and attention to a separate memory sequence. It should not be generalized into a claim that every possible decoder or multimodal design has the same structure.</p>
 <hr />
-<h2 id="padding-masks-and-causal-masks-have-different-jobs">🎭 Padding Masks and Causal Masks Have Different Jobs<a class="headerlink" href="#padding-masks-and-causal-masks-have-different-jobs" title="Permanent link">&para;</a></h2>
+<h2 id="padding-masks-and-causal-masks-have-different-jobs">Padding Masks and Causal Masks Have Different Jobs<a class="headerlink" href="#padding-masks-and-causal-masks-have-different-jobs" title="Permanent link">&para;</a></h2>
 <p>The source/target masks occupied a large part of the class because they turn the theoretical architecture into a practical batched implementation.</p>
 <p>Paul used a short sequence such as <strong>Hello World</strong> inside a four-position example. Two additional slots contain padding so that the tensor can be stacked with other examples.</p>
 <p>Padding is a data-representation choice, not meaningful language. The attention calculation needs to know which token positions are real.</p>
@@ -370,7 +370,7 @@
 <p>The four-slot illustration explained shape compatibility. In practice, a batch can be padded to an appropriate selected length, such as its longest example; it need not always be padded to the model’s maximum context capacity.</p>
 <p>For a sequence longer than the chosen limit, truncation, chunking, or another strategy must be selected explicitly. Dividing six tokens into a four-token chunk and a padded two-token chunk is one illustration, not an automatic rule of every Transformer.</p>
 <hr />
-<h2 id="the-encoderdecoder-wrapper-map-the-overall-data-flow">🧭 The EncoderDecoder Wrapper: Map the Overall Data Flow<a class="headerlink" href="#the-encoderdecoder-wrapper-map-the-overall-data-flow" title="Permanent link">&para;</a></h2>
+<h2 id="the-encoderdecoder-wrapper-map-the-overall-data-flow">The EncoderDecoder Wrapper: Map the Overall Data Flow<a class="headerlink" href="#the-encoderdecoder-wrapper-map-the-overall-data-flow" title="Permanent link">&para;</a></h2>
 <p>The notebook first defines the top-level object before implementing all its components.</p>
 <p>Its constructor accepts:</p>
 <ul>
@@ -420,7 +420,7 @@
 <p><em>Companion clarification based on Annotated TF.pdf, pages 2–5, and the supplied notebook’s later Batch implementation. Building that Batch object was deferred rather than completed live in Class 8.</em></p>
 <p>A position can include its current <strong>input</strong> token while predicting the next token. The shift is what prevents the correct next-token label from becoming that same position’s input.</p>
 <hr />
-<h2 id="generator-decoder-features-to-vocabulary-scores">🎯 Generator: Decoder Features to Vocabulary Scores<a class="headerlink" href="#generator-decoder-features-to-vocabulary-scores" title="Permanent link">&para;</a></h2>
+<h2 id="generator-decoder-features-to-vocabulary-scores">Generator: Decoder Features to Vocabulary Scores<a class="headerlink" href="#generator-decoder-features-to-vocabulary-scores" title="Permanent link">&para;</a></h2>
 <p>Paul identified the paper’s final linear transformation and output distribution as the <strong>generator</strong>.</p>
 <p>The actual notebook implementation is:</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Generator</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -440,7 +440,7 @@
 <p>The generator’s output width follows the vocabulary; its input width follows the model representation. Those are different quantities.</p>
 <p>The later notebook’s loss and decoding routines call this module explicitly. That later usage does not change what the wrapper returns.</p>
 <hr />
-<h2 id="cloning-stacks-without-sharing-every-parameter">🧬 Cloning Stacks Without Sharing Every Parameter<a class="headerlink" href="#cloning-stacks-without-sharing-every-parameter" title="Permanent link">&para;</a></h2>
+<h2 id="cloning-stacks-without-sharing-every-parameter">Cloning Stacks Without Sharing Every Parameter<a class="headerlink" href="#cloning-stacks-without-sharing-every-parameter" title="Permanent link">&para;</a></h2>
 <p>The paper describes repeated encoder and decoder layers. The class used a helper to create the repetitions:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clones</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
     <span class="s2">&quot;Produce N identical layers.&quot;</span>
@@ -492,7 +492,7 @@
 </table>
 <p>The number of sublayer wrappers is not the number of attention heads.</p>
 <hr />
-<h2 id="layer-normalization-statistics-scale-and-shift">🧪 Layer Normalization: Statistics, Scale, and Shift<a class="headerlink" href="#layer-normalization-statistics-scale-and-shift" title="Permanent link">&para;</a></h2>
+<h2 id="layer-normalization-statistics-scale-and-shift">Layer Normalization: Statistics, Scale, and Shift<a class="headerlink" href="#layer-normalization-statistics-scale-and-shift" title="Permanent link">&para;</a></h2>
 <p>Paul paused to connect the implementation to normalization papers. The calculation uses the mean and standard deviation of an input representation, with an epsilon for numerical stability and learnable scale/shift parameters.</p>
 <p>The supplied class is:</p>
 <div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LayerNorm</span><span class="p">(</span><span class="n">nn</span><span class="o">.</span><span class="n">Module</span><span class="p">):</span>
@@ -530,7 +530,7 @@
 <p>The pedagogical structure is similar, but replacing one with the other can change values. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html">LayerNorm reference</a>, <a href="https://docs.pytorch.org/docs/2.14/generated/torch.std.html">torch.std reference</a></p>
 <p>The notebook preserves the annotated implementation rather than silently rewriting its mathematics.</p>
 <hr />
-<h2 id="residual-connections-dropout-and-pre-norm">➕ Residual Connections, Dropout, and Pre-Norm<a class="headerlink" href="#residual-connections-dropout-and-pre-norm" title="Permanent link">&para;</a></h2>
+<h2 id="residual-connections-dropout-and-pre-norm">Residual Connections, Dropout, and Pre-Norm<a class="headerlink" href="#residual-connections-dropout-and-pre-norm" title="Permanent link">&para;</a></h2>
 <p>The sublayer wrapper is reused for different operations. Its forward method is:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">sublayer</span><span class="p">):</span>
     <span class="s2">&quot;Apply residual connection to any sublayer with the same size.&quot;</span>
@@ -576,7 +576,7 @@
 <p>During evaluation, <code>nn.Dropout</code> acts as the identity. During training, it also scales surviving outputs appropriately. <code>model.train()</code> and <code>model.eval()</code> therefore matter once these layers exist. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Dropout.html">Dropout reference</a></p>
 <p>Dropout regularizes the model; it does not change the tensor’s shape.</p>
 <hr />
-<h2 id="encoder-and-decoder-layers-read-the-three-attention-inputs">🧱 Encoder and Decoder Layers: Read the Three Attention Inputs<a class="headerlink" href="#encoder-and-decoder-layers-read-the-three-attention-inputs" title="Permanent link">&para;</a></h2>
+<h2 id="encoder-and-decoder-layers-read-the-three-attention-inputs">Encoder and Decoder Layers: Read the Three Attention Inputs<a class="headerlink" href="#encoder-and-decoder-layers-read-the-three-attention-inputs" title="Permanent link">&para;</a></h2>
 <p>The encoder layer contains two sublayers: self-attention and the position-wise feed-forward network.</p>
 <p>Its forward method is:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">mask</span><span class="p">):</span>
@@ -624,7 +624,7 @@
 <p>For cross-attention, target queries can have length T while source memory has length S. The score matrix has <strong>T × S</strong> positions per head.</p>
 <p>The feature widths must be compatible with their projection layers, but translation does not require the source and target sentences to contain the same number of tokens.</p>
 <hr />
-<h2 id="build-a-causal-mask-then-apply-it-to-scores">🔺 Build a Causal Mask, Then Apply It to Scores<a class="headerlink" href="#build-a-causal-mask-then-apply-it-to-scores" title="Permanent link">&para;</a></h2>
+<h2 id="build-a-causal-mask-then-apply-it-to-scores">Build a Causal Mask, Then Apply It to Scores<a class="headerlink" href="#build-a-causal-mask-then-apply-it-to-scores" title="Permanent link">&para;</a></h2>
 <p>The notebook’s helper constructs an allowed-position mask:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">subsequent_mask</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
     <span class="s2">&quot;Mask out subsequent positions.&quot;</span>
@@ -699,7 +699,7 @@
 <p>The exact supplied code uses <strong>−1e9</strong>, a finite penalty, rather than literal minus infinity. It is preserved here. Rows with no valid keys require special handling; the simple helper does not define that edge case safely merely by applying the same finite penalty everywhere.</p>
 <p>Dropout is applied after softmax. During training, the returned post-dropout attention values need not retain an exact row sum of one.</p>
 <hr />
-<h2 id="multi-head-attention-project-split-attend-merge">👥 Multi-Head Attention: Project, Split, Attend, Merge<a class="headerlink" href="#multi-head-attention-project-split-attend-merge" title="Permanent link">&para;</a></h2>
+<h2 id="multi-head-attention-project-split-attend-merge">Multi-Head Attention: Project, Split, Attend, Merge<a class="headerlink" href="#multi-head-attention-project-split-attend-merge" title="Permanent link">&para;</a></h2>
 <p>This was the session’s densest shape walkthrough. Paul repeatedly decomposed the compact line that projects and reshapes query/key/value tensors.</p>
 <p>The constructor checks:</p>
 <p><strong>d_model % h == 0</strong></p>
@@ -769,7 +769,7 @@
 <p><code>transpose</code> changes how axes are accessed. <code>contiguous</code> provides the appropriate contiguous memory layout when needed; <code>view</code> changes shape while retaining element count. Contiguous is not itself the shape-selection operation. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.Tensor.view.html">Tensor view</a>, <a href="https://docs.pytorch.org/docs/2.14/generated/torch.Tensor.contiguous.html">Tensor contiguous</a></p>
 <p>Deleting the local query/key/value variable names at the end does not guarantee that all their storage disappears immediately. Autograd or other references may still retain tensors needed for computation.</p>
 <hr />
-<h2 id="position-wise-feed-forward-network">🧮 Position-Wise Feed-Forward Network<a class="headerlink" href="#position-wise-feed-forward-network" title="Permanent link">&para;</a></h2>
+<h2 id="position-wise-feed-forward-network">Position-Wise Feed-Forward Network<a class="headerlink" href="#position-wise-feed-forward-network" title="Permanent link">&para;</a></h2>
 <p>After attention, each token passes through the same two-layer FFN within its block.</p>
 <p>The base widths were:</p>
 <p><strong>512 → 2048 → 512</strong></p>
@@ -792,7 +792,7 @@
 <p>The parameters are shared across positions within that FFN instance. Different Transformer layers have separate instances.</p>
 <p>Paul mentioned GELU as a possible later experiment. The supplied code remains the ReLU version being studied. An architecture change should be described and tested rather than silently substituted into the original explanation.</p>
 <hr />
-<h2 id="embeddings-and-sinusoidal-positional-encoding">🔢 Embeddings and Sinusoidal Positional Encoding<a class="headerlink" href="#embeddings-and-sinusoidal-positional-encoding" title="Permanent link">&para;</a></h2>
+<h2 id="embeddings-and-sinusoidal-positional-encoding">Embeddings and Sinusoidal Positional Encoding<a class="headerlink" href="#embeddings-and-sinusoidal-positional-encoding" title="Permanent link">&para;</a></h2>
 <p>The embedding class wraps a learned lookup and scales its output:</p>
 <div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">forward</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
     <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lut</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d_model</span><span class="p">)</span>
@@ -832,13 +832,13 @@
 <p>This is why positional encoding belongs there: it needs to follow the model’s device and saved state but is not an optimizer-updated parameter. The purpose is not a special slower memory tier or a requirement caused simply by having 5000 positions. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html">nn.Module buffer reference</a></p>
 <p>Paul ended the architecture walkthrough here. Constructing the final model from these components was left for the next class.</p>
 <hr />
-<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>The next session was to assemble the complete model, inspect its initialization, and move into forward/inference examples and training using the same notebook.</p>
 <p>Paul asked participants to examine the next <strong>ten to fifteen cells</strong>, including the full-model and training material, before that session.</p>
 <p>Later plans included replacing the spaCy tokenization route with a learned subword tokenizer such as BPE, exploring larger configurations/datasets, and then studying encoder-only and decoder-only models. BERT/DistilBERT and a nanoGPT-style implementation were mentioned as future directions.</p>
 <p>The broader course emphasis remained model/SLM work first, followed later by RAG and agents. The class-time estimate for those later modules was roughly four to five months into the course; it was a roadmap statement, not a new dated schedule.</p>
 <hr />
-<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
 <p>The table includes the extended final discussion and substantive in-flow doubts. The detailed Hindi/English exchange with Sachin is condensed around its actual question about causal masking during inference.</p>
 <table>
 <thead>
@@ -1051,7 +1051,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Encoder self-attention, decoder self-attention, and decoder cross-attention have different input sources.</li>
 <li>Memory is the encoder output; it is not a mask or simply the last encoder K/V pair.</li>
@@ -1081,7 +1081,7 @@
 <li>Full assembly and training were deferred; saved notebook results do not show work completed live today.</li>
 </ul>
 <hr />
-<h2 id="action-items-after-class-8">✅ Action Items After Class 8<a class="headerlink" href="#action-items-after-class-8" title="Permanent link">&para;</a></h2>
+<h2 id="action-items-after-class-8">Action Items After Class 8<a class="headerlink" href="#action-items-after-class-8" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" disabled/> Trace the top-level encode→memory→decode path and identify all four forward inputs.</li>
 <li class="task-list-item"><input type="checkbox" disabled/> Explain why source masking is passed to the decoder as well as the encoder.</li>

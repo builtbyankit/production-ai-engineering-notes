@@ -55,17 +55,17 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">04 · Transformers 101, part 1</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#from-word-ids-to-useful-numerical-representations">🔢 From Word IDs to Useful Numerical Representations</a>
+    <li class="toctree-l2"><a class="reference internal" href="#from-word-ids-to-useful-numerical-representations">From Word IDs to Useful Numerical Representations</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#the-prerequisite-techniques-revisited">The prerequisite techniques revisited</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#sequences-sliding-windows-and-the-limits-of-local-context">🪟 Sequences, Sliding Windows, and the Limits of Local Context</a>
+    <li class="toctree-l2"><a class="reference internal" href="#sequences-sliding-windows-and-the-limits-of-local-context">Sequences, Sliding Windows, and the Limits of Local Context</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-adding-nearby-words-helps-but-is-not-enough">Why adding nearby words helps, but is not enough</a>
     </li>
@@ -73,7 +73,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#exponential-smoothing-as-an-analogy-for-reweighting">🌊 Exponential Smoothing as an Analogy for Reweighting</a>
+    <li class="toctree-l2"><a class="reference internal" href="#exponential-smoothing-as-an-analogy-for-reweighting">Exponential Smoothing as an Analogy for Reweighting</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-the-noisy-curve-sketch-was-intended-to-show">What the noisy-curve sketch was intended to show</a>
     </li>
@@ -81,13 +81,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">🐈 Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”</a>
+    <li class="toctree-l2"><a class="reference internal" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#the-proposed-transformation">The proposed transformation</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#exploring-embedding-spaces-and-reading-their-visualizations">🌌 Exploring Embedding Spaces and Reading Their Visualizations</a>
+    <li class="toctree-l2"><a class="reference internal" href="#exploring-embedding-spaces-and-reading-their-visualizations">Exploring Embedding Spaces and Reading Their Visualizations</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#word2vec-data-in-a-3d-projector">Word2Vec data in a 3D projector</a>
     </li>
@@ -101,7 +101,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#generating-reweighting-coefficients-from-the-vectors-themselves">⚖️ Generating Reweighting Coefficients from the Vectors Themselves</a>
+    <li class="toctree-l2"><a class="reference internal" href="#generating-reweighting-coefficients-from-the-vectors-themselves">Generating Reweighting Coefficients from the Vectors Themselves</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#keep-the-two-meanings-of-weight-separate">Keep the two meanings of “weight” separate</a>
     </li>
@@ -111,7 +111,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-complete-four-token-walkthrough-bank-of-a-river">🏦 The Complete Four-Token Walkthrough: “Bank of a River”</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-complete-four-token-walkthrough-bank-of-a-river">The Complete Four-Token Walkthrough: “Bank of a River”</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#step-1-fix-the-first-base-vector-and-compare-it-with-all-positions">Step 1: Fix the first base vector and compare it with all positions</a>
     </li>
@@ -125,7 +125,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#understanding-the-four-whiteboard-observations-correctly">🧩 Understanding the Four Whiteboard Observations Correctly</a>
+    <li class="toctree-l2"><a class="reference internal" href="#understanding-the-four-whiteboard-observations-correctly">Understanding the Four Whiteboard Observations Correctly</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#order-independence-is-a-property-of-the-bare-operation">Order independence is a property of the bare operation</a>
     </li>
@@ -135,7 +135,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#training-batches-and-the-boundary-of-todays-example">🛠️ Training, Batches, and the Boundary of Today's Example</a>
+    <li class="toctree-l2"><a class="reference internal" href="#training-batches-and-the-boundary-of-todays-example">Training, Batches, and the Boundary of Today's Example</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#calculating-a-representation-is-different-from-training-a-model">Calculating a representation is different from training a model</a>
     </li>
@@ -149,13 +149,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-04">✅ Action Items After Class 04</a>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-04">Action Items After Class 04</a>
     </li>
     </ul>
                   </li>
@@ -239,14 +239,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="class-04-transformers-101-part-1-embeddings-context-and-self-attention-intuition">Class 04: Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition<a class="headerlink" href="#class-04-transformers-101-part-1-embeddings-context-and-self-attention-intuition" title="Permanent link">&para;</a></h1>
-<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
 <p><strong>🎙️ Mentor:</strong> Sourangshu Pal (addressed as Paul in the transcript)<br />
 <strong>⏱️ Duration:</strong> 4 hours 11 minutes 34 seconds | <strong>📅 Session:</strong> Day 4 (1 August 2026)</p>
 <p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6e6a8149d9f2e46cc7a3d5">1 Aug Transformers 101</a></p>
 <p>This session builds the intuition for turning isolated numerical representations into representations that incorporate surrounding information. Paul starts with familiar NLP representations, uses exponential smoothing as an analogy for reweighting, explores embedding visualizations, and works through a four-token self-attention calculation. The substantial open-floor discussion revisits the distinction between calculated attention coefficients and learned model parameters.</p>
 <p>The full Transformer architecture was <strong>not</strong> completed in this class. Query/key/value projections, multi-head attention, and the research-paper walkthrough were left for subsequent sessions. The calculation here is deliberately a simplified, parameter-free illustration; the notes distinguish its properties from those of a trained Transformer.</p>
 <hr />
-<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The course dashboard contains live recordings; the course Notion page holds the syllabus, handwritten notes, and supporting links. Paul recommended bookmarking Notion so resources are easier to revisit.</li>
 <li>A Discord discussion space was opened for the batch, with separate areas for general discussion, paper drops, model drops, and news. Course-related doubts could be raised there or through the dashboard.</li>
@@ -254,7 +254,7 @@
 <li>Earlier software-installation and PyTorch sessions remain the starting prerequisites. Paul emphasized that the first Transformer lessons would move slowly to establish the concepts before the practical implementation.</li>
 </ul>
 <hr />
-<h2 id="from-word-ids-to-useful-numerical-representations">🔢 From Word IDs to Useful Numerical Representations<a class="headerlink" href="#from-word-ids-to-useful-numerical-representations" title="Permanent link">&para;</a></h2>
+<h2 id="from-word-ids-to-useful-numerical-representations">From Word IDs to Useful Numerical Representations<a class="headerlink" href="#from-word-ids-to-useful-numerical-representations" title="Permanent link">&para;</a></h2>
 <p>Machines operate on numbers, so text needs a numerical representation before a model can process it. Paul began with the simplest possible assignment: give words such as <strong>dog</strong>, <strong>car</strong>, <strong>house</strong>, and <strong>bus</strong> integer labels. This identifies the words, but the labels do not themselves describe what the words mean.</p>
 <p>If dog receives ID 1 and car receives ID 2, the numerical gap between those IDs is an arbitrary consequence of the lookup table. It does not establish that a dog is semantically closer to a car than to a bus. Changing the IDs would change that numerical gap without changing any meaning. This becomes a poor basis for semantic comparison as the vocabulary grows.</p>
 <p>The useful distinction is between <strong>an identifier</strong> and <strong>a representation</strong>:</p>
@@ -343,7 +343,7 @@
 <p>CBOW and Skip-gram were treated as complementary directions: the surrounding words can be used to predict a center word, or a center word can be used to predict surrounding words. Their training objectives were not implemented here. Likewise, the lecture did not reproduce the GloVe algorithm; its official project describes learning from aggregated global word-word co-occurrence statistics. <a href="https://nlp.stanford.edu/projects/glove/">Stanford GloVe project</a></p>
 <p>A recurring clarification was that <strong>a vector is a mathematical form</strong>, while an embedding is a particular use of that form to represent an item. Merely converting text into numbers does not guarantee that the numbers encode rich semantics. For this class, Paul asked learners to accept that suitable input vectors already existed and concentrate on the operation that combines their information.</p>
 <hr />
-<h2 id="sequences-sliding-windows-and-the-limits-of-local-context">🪟 Sequences, Sliding Windows, and the Limits of Local Context<a class="headerlink" href="#sequences-sliding-windows-and-the-limits-of-local-context" title="Permanent link">&para;</a></h2>
+<h2 id="sequences-sliding-windows-and-the-limits-of-local-context">Sequences, Sliding Windows, and the Limits of Local Context<a class="headerlink" href="#sequences-sliding-windows-and-the-limits-of-local-context" title="Permanent link">&para;</a></h2>
 <p>Language is sequential: order helps determine meaning. Paul illustrated this with <strong>“My name is Paul”</strong> and a rearrangement of the same words. The vocabulary stays the same, while the sentence's grammatical interpretation changes. This is why identifying words alone does not solve language understanding.</p>
 <p>He then used <strong>“I am going to London”</strong> to explain local context. From the full sentence, one can answer <strong>who</strong> is going and <strong>where</strong> they are going. A question about <strong>when</strong> cannot be answered from the sentence because no date or time is supplied. This small example ties context to the information that is actually present, rather than to information a reader might assume.</p>
 <p>Choose <strong>going</strong> as a center word and examine neighboring positions. Looking left and right produces a bidirectional neighborhood; looking in one direction produces a unidirectional neighborhood. A <strong>sliding window</strong> moves that center through the sequence, so the next center might be <strong>to</strong>, followed by <strong>London</strong>.</p>
@@ -370,7 +370,7 @@
 <p>For precision, images <strong>can</strong> be represented as a sequence of patches in a vision Transformer; the fact that an image starts as a spatial grid does not prohibit a sequence representation. <a href="https://huggingface.co/docs/transformers/glossary#image-patch">Hugging Face glossary: image patches</a></p>
 <p>The modality discussion was a conceptual bridge. No audio-processing, vision, or time-series model was implemented in this session.</p>
 <hr />
-<h2 id="exponential-smoothing-as-an-analogy-for-reweighting">🌊 Exponential Smoothing as an Analogy for Reweighting<a class="headerlink" href="#exponential-smoothing-as-an-analogy-for-reweighting" title="Permanent link">&para;</a></h2>
+<h2 id="exponential-smoothing-as-an-analogy-for-reweighting">Exponential Smoothing as an Analogy for Reweighting<a class="headerlink" href="#exponential-smoothing-as-an-analogy-for-reweighting" title="Permanent link">&para;</a></h2>
 <p>Before moving to attention, Paul introduced a familiar time-series operation: use weighted information from current and past observations to form a smoother representation. The idea is that a data point need not be interpreted entirely in isolation; previous information can affect the value used to describe the current state.</p>
 <p>The formula actually written in the companion PDF is:</p>
 <p>$$
@@ -400,7 +400,7 @@ $$</p>
 <p>The transferable idea is <strong>weighted influence</strong>. If one representation contributes to another representation, the latter can contain information that was absent when it was considered alone. The time-series example offers an intuitive way to see that mechanism before dealing with a sentence's vectors.</p>
 <p>The proximity rule does not transfer unchanged to language. A word close to the center may be less informative than a distant word. Paul explicitly returned to this distinction: in NLP, the useful relation can span a large gap. Attention must be able to express that relation rather than automatically suppress it because of distance.</p>
 <hr />
-<h2 id="long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">🐈 Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”<a class="headerlink" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat" title="Permanent link">&para;</a></h2>
+<h2 id="long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”<a class="headerlink" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat" title="Permanent link">&para;</a></h2>
 <p>The central language example in the handwritten notes is <strong>“Noa can be annoying, but she is a great cat.”</strong> It creates a useful ambiguity: the beginning and the pronoun <strong>she</strong> do not by themselves establish what kind of entity Noa is. The final word <strong>cat</strong> supplies the answer.</p>
 <p>Paul first chose <strong>annoying</strong> as a base word and expanded its neighborhood. A fragment such as <strong>“be annoying but”</strong> tells us little. A larger fragment such as <strong>“can be annoying but she”</strong> tells us more, and including still more of the sentence continues to reveal structure. Yet a narrow local window can still fail to connect <strong>Noa</strong> at the start with <strong>cat</strong> at the end.</p>
 <p>The PDF's dependency arrows connect the center with its nearby words and also highlight the distant subject and the final identifying phrase:</p>
@@ -423,7 +423,7 @@ $$</p>
 <p>This is a <strong>forward transformation</strong>, not yet an account of training. The class has not introduced a prediction target, a loss function, an optimizer step, or learned query/key/value projections. Its question is narrower: given vectors, how can a calculation mix information between positions?</p>
 <p>Tokenization was deliberately simplified to one word per token in the examples. Real tokenizers may emit whole words, subwords, punctuation, or special tokens, so neither “one word is always one token” nor a fixed characters-per-token estimate is a general definition. <a href="https://huggingface.co/docs/transformers/tokenizer_summary">Hugging Face tokenization algorithms</a></p>
 <hr />
-<h2 id="exploring-embedding-spaces-and-reading-their-visualizations">🌌 Exploring Embedding Spaces and Reading Their Visualizations<a class="headerlink" href="#exploring-embedding-spaces-and-reading-their-visualizations" title="Permanent link">&para;</a></h2>
+<h2 id="exploring-embedding-spaces-and-reading-their-visualizations">Exploring Embedding Spaces and Reading Their Visualizations<a class="headerlink" href="#exploring-embedding-spaces-and-reading-their-visualizations" title="Permanent link">&para;</a></h2>
 <p>Paul paused the whiteboard explanation to show what numerical representations look like when projected into a form humans can inspect. The demonstration is useful because “vectors are close” is otherwise easy to repeat without understanding what is being compared.</p>
 <h3 id="word2vec-data-in-a-3d-projector">Word2Vec data in a 3D projector<a class="headerlink" href="#word2vec-data-in-a-3d-projector" title="Permanent link">&para;</a></h3>
 <p>One example used roughly <strong>10,000 word vectors with 200 dimensions</strong>. The screen allowed the class to rotate a 3D view, zoom, and select words. Paul looked at geographical terms, numbers, related words, and alternative spellings to see whether their neighborhoods appeared sensible.</p>
@@ -467,7 +467,7 @@ $$</p>
 <p>The practical exercise is to compare the <strong>representation dimension</strong>, the <strong>task</strong>, and the <strong>quality of the resulting neighborhoods</strong>. Dimension describes capacity and resource use; it does not directly tell a learner how much useful context a model captured.</p>
 <p><strong>Class companion resources:</strong> The course's <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff">Transformers 101 resource page</a> supplies the <a href="https://projector.tensorflow.org/">Embedding Projector</a>, <a href="https://apple.github.io/embedding-atlas/examples/">Apple Embedding Atlas examples</a>, and <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB leaderboard</a>. The <a href="https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin">TensorBoard projector guide</a> explains the visualization workflow. These companion links recover useful resources whose exact URLs were not retained in the transcript.</p>
 <hr />
-<h2 id="generating-reweighting-coefficients-from-the-vectors-themselves">⚖️ Generating Reweighting Coefficients from the Vectors Themselves<a class="headerlink" href="#generating-reweighting-coefficients-from-the-vectors-themselves" title="Permanent link">&para;</a></h2>
+<h2 id="generating-reweighting-coefficients-from-the-vectors-themselves">Generating Reweighting Coefficients from the Vectors Themselves<a class="headerlink" href="#generating-reweighting-coefficients-from-the-vectors-themselves" title="Permanent link">&para;</a></h2>
 <p>Returning to the PDF, Paul compared vectors for <strong>king</strong> and <strong>queen</strong>. The drawing labels possible shared attributes such as family, royalty, power, history, and gender. The purpose is to explain why two words can have a useful relationship even when they are not next to one another in a sentence.</p>
 <p>The numbers in a learned vector are not normally a hand-written checklist of these attributes. The named features make the intuition accessible: related concepts can share patterns in their numerical representations, and those patterns can be compared.</p>
 <p>Instead of introducing an unrelated external coefficient, Paul proposed deriving a score from two available vectors through their <strong>dot product</strong>. The board illustrates this for king and queen, then develops the same idea for each pair of token vectors in a short sentence.</p>
@@ -513,7 +513,7 @@ $$</p>
 <p>Thus, an ordinary dot product can reflect both direction and magnitude, while cosine similarity removes the magnitude factor. They coincide when the compared vectors have unit norm. Numerical implementations also protect against a zero denominator. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.cosine_similarity.html">PyTorch cosine-similarity documentation</a></p>
 <p>Cosine similarity was discussed as a familiar tool for embedding comparison and retrieval. It is not the definition of semantic search, and it is not the exact operation used at every stage of attention. The present example is about producing and using attention coefficients.</p>
 <hr />
-<h2 id="the-complete-four-token-walkthrough-bank-of-a-river">🏦 The Complete Four-Token Walkthrough: “Bank of a River”<a class="headerlink" href="#the-complete-four-token-walkthrough-bank-of-a-river" title="Permanent link">&para;</a></h2>
+<h2 id="the-complete-four-token-walkthrough-bank-of-a-river">The Complete Four-Token Walkthrough: “Bank of a River”<a class="headerlink" href="#the-complete-four-token-walkthrough-bank-of-a-river" title="Permanent link">&para;</a></h2>
 <p>To reduce the amount of writing, Paul replaced the longer cat example with <strong>“Bank of a river.”</strong> Here the surrounding words can help resolve the meaning of <strong>bank</strong>. The whiteboard maps the four words to four vectors and sends them through a block labeled <strong>REWEIGH</strong>, producing four contextual outputs.</p>
 <table>
 <thead>
@@ -614,7 +614,7 @@ $$</p>
 <p>Paul used “more context” to describe the intended result: an output includes a mixture of available information rather than only its original vector. That is a structural property of the calculation. It does not prove that arbitrary input vectors will produce a correct semantic interpretation. For example, mutually orthogonal one-hot vectors do not automatically reveal that <strong>it</strong> refers to <strong>animal</strong> in a sentence.</p>
 <p>This is why the toy example is valuable as a mechanism while still leaving learned representation quality and the rest of the Transformer architecture for later lessons.</p>
 <hr />
-<h2 id="understanding-the-four-whiteboard-observations-correctly">🧩 Understanding the Four Whiteboard Observations Correctly<a class="headerlink" href="#understanding-the-four-whiteboard-observations-correctly" title="Permanent link">&para;</a></h2>
+<h2 id="understanding-the-four-whiteboard-observations-correctly">Understanding the Four Whiteboard Observations Correctly<a class="headerlink" href="#understanding-the-four-whiteboard-observations-correctly" title="Permanent link">&para;</a></h2>
 <p>After the calculation, Paul wrote four observations: no weights had been trained, order had no influence, proximity had no influence, and the calculation was shape independent. They summarize the intended toy example, but each needs a precise scope.</p>
 <table>
 <thead>
@@ -659,7 +659,7 @@ $$</p>
 <p>A token vector is not a matrix merely because it has many features; stacking several token vectors creates a matrix. Likewise, vocabulary size and embedding width need not be equal. Vocabulary size controls the number of entries in a lookup table; embedding width controls the length of each entry. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Embedding.html">PyTorch embedding shapes</a></p>
 <p>There is no general rule requiring a width to be a power of two. Paul mentioned 128, 256, and related values as common practical choices, but model design and implementation determine the actual constraints.</p>
 <hr />
-<h2 id="training-batches-and-the-boundary-of-todays-example">🛠️ Training, Batches, and the Boundary of Today's Example<a class="headerlink" href="#training-batches-and-the-boundary-of-todays-example" title="Permanent link">&para;</a></h2>
+<h2 id="training-batches-and-the-boundary-of-todays-example">Training, Batches, and the Boundary of Today's Example<a class="headerlink" href="#training-batches-and-the-boundary-of-todays-example" title="Permanent link">&para;</a></h2>
 <p>Many open-floor questions concerned training, fine-tuning, multiple attention blocks, and very large corpora. Paul kept returning to the session's limited objective: understand one reweighting operation before adding the full network.</p>
 <h3 id="calculating-a-representation-is-different-from-training-a-model">Calculating a representation is different from training a model<a class="headerlink" href="#calculating-a-representation-is-different-from-training-a-model" title="Permanent link">&para;</a></h3>
 <p>The toy block takes existing vectors and produces new vectors. No parameter update happens in that demonstration. Training introduces an objective and updates trainable parameters to improve it. Backpropagation computes gradients for that process; it is not something that must run whenever an already trained model processes a prompt.</p>
@@ -678,12 +678,12 @@ $$</p>
 <p>The hand calculation writes pairwise operations one after another so a learner can follow them. Matrix-based implementations can express many of those operations together, and GPUs are designed to execute such numerical work efficiently. The point is about the hardware and the matrix formulation, not about self-attention “helping the GPU.”</p>
 <p>In response to a question about LSTMs and GRUs, Paul distinguished their recurrent gates from the attention calculation. He also said that he still considers recurrent models for smaller-data problems. His example data-size thresholds were personal heuristics, not architecture-selection rules. The useful principle is to consider the task and available data instead of assuming that the newest architecture is always required.</p>
 <hr />
-<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>Paul said the next class would begin by revising this self-attention calculation, then move toward <strong>multi-head attention</strong> and attention as part of the larger architecture. He also intended to begin the <strong>Attention Is All You Need</strong> paper walkthrough and introduce the <strong>query/key/value</strong> idea using a database analogy.</p>
 <p>He mentioned learned linear layers as the point at which actual model weights and biases would enter the explanation. Detailed implementation was planned after the initial conceptual sessions. The transcript did not complete those topics here; diagrams suggesting additional attention blocks were briefly sketched and then set aside to keep this class focused.</p>
 <p>The Illustrated Transformer and the 3Blue1Brown attention explanation were mentioned as supporting material. The course's <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff">Transformers 101 resource page</a> supplies <a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> as further reading. The exact 3Blue1Brown video link was not preserved in the transcript or this resource entry.</p>
 <hr />
-<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
 <p>The table covers both in-flow questions and the extended open floor. Near-duplicate doubts are merged, while substantive follow-ups are retained. Speaker names follow the transcript; <strong>Urna</strong> also identified herself orally as <strong>Udnaya</strong>, and <strong>136</strong> and <strong>iPhone</strong> are transcript display labels.</p>
 <table>
 <thead>
@@ -920,7 +920,7 @@ $$</p>
 </tbody>
 </table>
 <hr />
-<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
 <ul>
 <li>A token ID identifies an item; its arbitrary numerical value is not its meaning.</li>
 <li>A vector's width, the vocabulary size, the sequence length, and the training batch size are different quantities.</li>
@@ -942,7 +942,7 @@ $$</p>
 <li>The next lesson must add the missing architecture before training and model behavior can be understood fully.</li>
 </ul>
 <hr />
-<h2 id="action-items-after-class-04">✅ Action Items After Class 04<a class="headerlink" href="#action-items-after-class-04" title="Permanent link">&para;</a></h2>
+<h2 id="action-items-after-class-04">Action Items After Class 04<a class="headerlink" href="#action-items-after-class-04" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" disabled/> Bookmark the course Notion page and locate the 1 August handwritten notes and resource links.</li>
 <li class="task-list-item"><input type="checkbox" disabled/> Revise OHE, Bag of Words, TF-IDF, co-occurrence representations, CBOW, and Skip-gram where needed.</li>

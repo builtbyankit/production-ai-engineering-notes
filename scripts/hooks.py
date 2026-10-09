@@ -4,7 +4,7 @@ import re
 
 
 def on_page_markdown(markdown, **kwargs):
-    """Keep page titles plain, including titles from future class notes."""
+    """Keep headings and their sidebar labels plain, including future notes."""
     lines = []
     fence = None
     for line in markdown.splitlines(keepends=True):
@@ -16,7 +16,7 @@ def on_page_markdown(markdown, **kwargs):
             elif fence == kind:
                 fence = None
         elif fence is None:
-            line = re.sub(r'^(#\s+)[^\w\s]+\s+(?=\w)', r'\1', line)
+            line = re.sub(r'^(#{1,6}\s+)[^\w\s]+\s+', r'\1', line)
         lines.append(line)
     return ''.join(lines)
 

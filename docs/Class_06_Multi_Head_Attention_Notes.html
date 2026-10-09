@@ -59,11 +59,11 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">06 · Multi-head attention</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#recap-from-context-mixing-to-trainable-attention">🔁 Recap: From Context Mixing to Trainable Attention</a>
+    <li class="toctree-l2"><a class="reference internal" href="#recap-from-context-mixing-to-trainable-attention">Recap: From Context Mixing to Trainable Attention</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#scores-are-scalars-score-tables-are-matrices">Scores are scalars; score tables are matrices</a>
     </li>
@@ -71,13 +71,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#why-more-than-one-attention-head">🐕 Why More Than One Attention Head?</a>
+    <li class="toctree-l2"><a class="reference internal" href="#why-more-than-one-attention-head">Why More Than One Attention Head?</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#the-cnn-filter-analogy">The CNN filter analogy</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#building-multi-head-attention-from-the-single-head-diagram">🛤️ Building Multi-Head Attention from the Single-Head Diagram</a>
+    <li class="toctree-l2"><a class="reference internal" href="#building-multi-head-attention-from-the-single-head-diagram">Building Multi-Head Attention from the Single-Head Diagram</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#concatenation-and-output-projection-are-separate-steps">Concatenation and output projection are separate steps</a>
     </li>
@@ -85,13 +85,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#how-heads-differ-initialization-learning-and-visualization">🎨 How Heads Differ: Initialization, Learning, and Visualization</a>
+    <li class="toctree-l2"><a class="reference internal" href="#how-heads-differ-initialization-learning-and-visualization">How Heads Differ: Initialization, Learning, and Visualization</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#the-tensor2tensor-demonstration">The Tensor2Tensor demonstration</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#reading-the-original-paper-what-changed-in-2017">📄 Reading the Original Paper: What Changed in 2017?</a>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-the-original-paper-what-changed-in-2017">Reading the Original Paper: What Changed in 2017?</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-parallelizable-does-not-mean-every-step-is-independent">Why parallelizable does not mean every step is independent</a>
     </li>
@@ -99,7 +99,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#scaled-dot-product-attention-one-operation-at-a-time">📐 Scaled Dot-Product Attention, One Operation at a Time</a>
+    <li class="toctree-l2"><a class="reference internal" href="#scaled-dot-product-attention-one-operation-at-a-time">Scaled Dot-Product Attention, One Operation at a Time</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-scaling-comes-before-softmax">Why scaling comes before softmax</a>
     </li>
@@ -107,7 +107,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#head-width-projection-matrices-and-the-512-8-calculation">🧮 Head Width, Projection Matrices, and the 512 ÷ 8 Calculation</a>
+    <li class="toctree-l2"><a class="reference internal" href="#head-width-projection-matrices-and-the-512-8-calculation">Head Width, Projection Matrices, and the 512 ÷ 8 Calculation</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#this-is-learned-projection-not-a-visualization-algorithm">This is learned projection, not a visualization algorithm</a>
     </li>
@@ -115,9 +115,9 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-position-wise-feed-forward-network">🧱 The Position-Wise Feed-Forward Network</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-position-wise-feed-forward-network">The Position-Wise Feed-Forward Network</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#residual-connections-and-the-two-add-norm-steps">🔀 Residual Connections and the Two “Add &amp; Norm” Steps</a>
+    <li class="toctree-l2"><a class="reference internal" href="#residual-connections-and-the-two-add-norm-steps">Residual Connections and the Two “Add &amp; Norm” Steps</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#first-residual-path-around-attention">First residual path: around attention</a>
     </li>
@@ -125,15 +125,15 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#encoder-depth-what-n-actually-repeats">🏗️ Encoder Depth: What “N×” Actually Repeats</a>
+    <li class="toctree-l2"><a class="reference internal" href="#encoder-depth-what-n-actually-repeats">Encoder Depth: What “N×” Actually Repeats</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-06">✅ Action Items After Class 06</a>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-06">Action Items After Class 06</a>
     </li>
     </ul>
                   </li>
@@ -213,14 +213,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="class-06-multi-head-attention-and-the-transformer-encoder">Class 06: Multi-Head Attention and the Transformer Encoder<a class="headerlink" href="#class-06-multi-head-attention-and-the-transformer-encoder" title="Permanent link">&para;</a></h1>
-<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
 <p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul in the transcript)<br />
 <strong>⏱️ Duration:</strong> 4 hours 1 minute 50 seconds | <strong>📅 Session:</strong> Day 6 (8 August 2026)</p>
 <p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a77978f4c8953aff8c50efa">8 Aug Transformers 101</a></p>
 <p>This class extends the previous query/key/value explanation into <strong>multi-head attention</strong>, connects the handwritten diagrams to <strong>Attention Is All You Need</strong>, and builds the encoder block from attention, residual connections, layer normalization, and a position-wise feed-forward network. Paul also demonstrates an older Tensor2Tensor attention visualizer and uses its colored connections to distinguish heads from layers.</p>
 <p>The session reaches the encoder's output. Detailed positional-encoding calculations, the internals of layer normalization, decoder masking, and the complete decoder are reserved for later discussion. The substantial closing Q&amp;A revisits dimensions, parallel computation, concatenation, and both residual additions.</p>
 <hr />
-<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The opening poll favored <strong>explanations of prepared functional code blocks</strong> over typing every line live. Paul intended to share notebooks in advance so learners could inspect them before the practical sessions.</li>
 <li>Learners who found the earlier coding difficult were asked to revise NumPy and PyTorch foundations, especially array operations and matrix shapes.</li>
@@ -230,7 +230,7 @@
 <li>Paul emphasized spending time after class exploring the examples and answering one's own smaller foundational questions, rather than relying only on attendance.</li>
 </ul>
 <hr />
-<h2 id="recap-from-context-mixing-to-trainable-attention">🔁 Recap: From Context Mixing to Trainable Attention<a class="headerlink" href="#recap-from-context-mixing-to-trainable-attention" title="Permanent link">&para;</a></h2>
+<h2 id="recap-from-context-mixing-to-trainable-attention">Recap: From Context Mixing to Trainable Attention<a class="headerlink" href="#recap-from-context-mixing-to-trainable-attention" title="Permanent link">&para;</a></h2>
 <p>The recap begins with the familiar sequence: <strong>words → tokens → numerical vectors → contextual output vectors</strong>. Self-attention combines information between positions so that a representation need not describe its token in isolation.</p>
 <p>In the earliest toy calculation, scores were obtained directly from supplied vectors. The following lesson introduced learned query, key, and value transformations. In this session, Paul treats those transformations as <strong>linear layers</strong> whose parameter matrices can be trained.</p>
 <p>The same input representation supplies three different roles:</p>
@@ -269,7 +269,7 @@ $$</p>
 <p>Paul also distinguished three operations that should not be conflated: vector dot products, matrix multiplication, and elementwise multiplication. The matrix formulation packages many dot products into one operation; it does not change what each pairwise score represents.</p>
 <p>The recap's earlier “no order” observation is scoped to attention without position information. This class explicitly identifies <strong>positional encoding</strong> as the component needed to supply order to the full Transformer.</p>
 <hr />
-<h2 id="why-more-than-one-attention-head">🐕 Why More Than One Attention Head?<a class="headerlink" href="#why-more-than-one-attention-head" title="Permanent link">&para;</a></h2>
+<h2 id="why-more-than-one-attention-head">Why More Than One Attention Head?<a class="headerlink" href="#why-more-than-one-attention-head" title="Permanent link">&para;</a></h2>
 <p>The whiteboard sentence is <strong>“I gave my dog Tommy some food.”</strong> Paul uses it to identify several relationships: <strong>who</strong> gave, <strong>to whom</strong> something was given, <strong>what</strong> was given, and the relation between <strong>dog</strong> and <strong>Tommy</strong>.</p>
 <p>The PDF draws multiple attention arcs over that one sentence. Their purpose is to show that the same input can contain several useful relations:</p>
 <pre class="mermaid"><code>flowchart LR
@@ -288,7 +288,7 @@ $$</p>
 <p>The analogy is about <strong>parallel learned views</strong>. An attention head is not literally a CNN kernel, and it is not assigned a named grammatical job by the developer. The dog/food/subject arcs are an illustration of possible relationships, not proof that particular trained heads always specialize in those roles.</p>
 <p>Increasing capacity also introduces trade-offs. More heads do not guarantee unique, nonoverlapping behavior, perfect generalization, stable optimization, or loss approaching zero. The practical question is whether the chosen architecture improves the task's measured results.</p>
 <hr />
-<h2 id="building-multi-head-attention-from-the-single-head-diagram">🛤️ Building Multi-Head Attention from the Single-Head Diagram<a class="headerlink" href="#building-multi-head-attention-from-the-single-head-diagram" title="Permanent link">&para;</a></h2>
+<h2 id="building-multi-head-attention-from-the-single-head-diagram">Building Multi-Head Attention from the Single-Head Diagram<a class="headerlink" href="#building-multi-head-attention-from-the-single-head-diagram" title="Permanent link">&para;</a></h2>
 <p>Paul redraws the prior diagram with three branches: input vectors go through <strong>key</strong>, <strong>query</strong>, and <strong>value</strong> linear transformations. Query and key outputs feed the first matrix multiplication, its scores are normalized, and the normalized coefficients combine the value outputs through a second multiplication.</p>
 <p>To extend this to multiple heads, he draws several projection blocks along each branch. The notation <strong>h</strong> identifies the number of heads. For every head, the calculation produces its own score table, normalized attention coefficients, and output vectors.</p>
 <p>The supplied diagram labels the raw scores Sᵢⱼ and the normalized coefficients Aᵢⱼ, with superscripts to distinguish heads. Those superscripts are identifiers, not exponentiation of the scores.</p>
@@ -315,7 +315,7 @@ $$</p>
 <h3 id="a-head-is-a-computation-not-just-one-linear-layer">A head is a computation, not just one linear layer<a class="headerlink" href="#a-head-is-a-computation-not-just-one-linear-layer" title="Permanent link">&para;</a></h3>
 <p>The lecture sometimes uses a projection block as shorthand for a head. More precisely, one head includes its Q/K/V projections and its attention calculation. Implementations can package the parameters into a small number of larger linear modules, then reshape their outputs into heads. Counting calls to a linear-layer constructor therefore does not reveal the head count by itself.</p>
 <hr />
-<h2 id="how-heads-differ-initialization-learning-and-visualization">🎨 How Heads Differ: Initialization, Learning, and Visualization<a class="headerlink" href="#how-heads-differ-initialization-learning-and-visualization" title="Permanent link">&para;</a></h2>
+<h2 id="how-heads-differ-initialization-learning-and-visualization">How Heads Differ: Initialization, Learning, and Visualization<a class="headerlink" href="#how-heads-differ-initialization-learning-and-visualization" title="Permanent link">&para;</a></h2>
 <p>Students asked why Sᵢⱼ from head 1 would differ from Sᵢⱼ from head 2. Paul traced the difference back to each head's learned projection parameters. Different initial values create different starting transformations, and training adjusts those transformations based on the loss.</p>
 <p>The <strong>number of heads</strong> and the <strong>initialization strategy</strong> are separate choices. Xavier/Glorot and He initialization were mentioned as familiar strategies; changing h does not define a new initialization algorithm. The exact defaults depend on the layer implementation being used.</p>
 <p>During training, gradients propagate through the final output projection, the heads' weighted mixtures, and their projection parameters. An optimizer uses those gradients to update trainable parameters. Multiple heads participate in that same network optimization; they are not separately retrained models.</p>
@@ -355,7 +355,7 @@ $$</p>
 </code></pre></div>
 <p>These are exact lines from the linked notebook, shown to identify what supports the demonstrated view. They depend on the notebook's earlier model, input, and helper setup. Its legacy TensorFlow APIs were explicitly described in class as outdated; this session did not migrate or execute a modern replacement. The notebook's unrelated MNIST training sections were not taught. <a href="https://github.com/tensorflow/tensor2tensor/blob/master/tensor2tensor/notebooks/hello_t2t.ipynb">Original notebook source</a></p>
 <hr />
-<h2 id="reading-the-original-paper-what-changed-in-2017">📄 Reading the Original Paper: What Changed in 2017?<a class="headerlink" href="#reading-the-original-paper-what-changed-in-2017" title="Permanent link">&para;</a></h2>
+<h2 id="reading-the-original-paper-what-changed-in-2017">Reading the Original Paper: What Changed in 2017?<a class="headerlink" href="#reading-the-original-paper-what-changed-in-2017" title="Permanent link">&para;</a></h2>
 <p>Paul next opens <strong>Attention Is All You Need</strong> and reads its abstract before dissecting the architecture. The starting term is <strong>sequence transduction</strong>: transform an input sequence into another sequence. Machine translation is the central example—an English sequence is mapped to a corresponding sequence in another language.</p>
 <p>Encoder–decoder models and attention existed before the Transformer. Paul references the earlier <strong>Sequence to Sequence Learning with Neural Networks</strong> paper, which uses LSTMs, and discusses attention connecting an encoder to a decoder. The important historical change is the architecture's removal of recurrence and convolution from the sequence-processing backbone, while relying on attention to connect positions.</p>
 <p>The sequence-to-sequence reference was published in 2014; its arXiv submission is September, rather than the April date spoken in the transcript. Its purpose here is historical context, not an implementation exercise. <a href="https://arxiv.org/abs/1409.3215">Original sequence-to-sequence paper</a></p>
@@ -393,7 +393,7 @@ $$</p>
 <p>BLEU was introduced here as a translation evaluation metric rather than derived in detail. Paul emphasized that a seemingly modest benchmark gain can be meaningful. There is no universal ceiling such as 65 or 70 imposed on the metric, and its score must be interpreted against the dataset, references, and evaluation setup. WMT is the machine-translation benchmark/workshop context; the session did not establish a single download size for all its language pairs.</p>
 <p>The class also distinguished broad model families: BERT uses an encoder backbone, GPT-style language models use a causal decoder backbone, and the original Transformer combines an encoder and decoder. Detailed architecture selection belongs to the task; many popular generative LLMs are decoder-based, but that does not describe every language model.</p>
 <hr />
-<h2 id="scaled-dot-product-attention-one-operation-at-a-time">📐 Scaled Dot-Product Attention, One Operation at a Time<a class="headerlink" href="#scaled-dot-product-attention-one-operation-at-a-time" title="Permanent link">&para;</a></h2>
+<h2 id="scaled-dot-product-attention-one-operation-at-a-time">Scaled Dot-Product Attention, One Operation at a Time<a class="headerlink" href="#scaled-dot-product-attention-one-operation-at-a-time" title="Permanent link">&para;</a></h2>
 <p>Paul takes the paper's formula into the handwritten notes:</p>
 <p>$$
 \operatorname{Attention}(Q,K,V)=
@@ -424,7 +424,7 @@ $$</p>
 <p>The lecture initially used illustrative dimensions interchangeably, then arrived at the paper's actual per-head value of 64. That distinction resolves the later notebook question about dividing by a query-projection width versus a key width: compatible query and key widths are equal, even if their numbers of positions differ.</p>
 <p>Softmax coefficients are normalized <strong>per query row</strong>. The sum is one for that row, not “at most one” and not one across the entire score table. No additional normalization turns them into learned parameters; they are computed values that depend on inputs and projection parameters.</p>
 <hr />
-<h2 id="head-width-projection-matrices-and-the-512-8-calculation">🧮 Head Width, Projection Matrices, and the 512 ÷ 8 Calculation<a class="headerlink" href="#head-width-projection-matrices-and-the-512-8-calculation" title="Permanent link">&para;</a></h2>
+<h2 id="head-width-projection-matrices-and-the-512-8-calculation">Head Width, Projection Matrices, and the 512 ÷ 8 Calculation<a class="headerlink" href="#head-width-projection-matrices-and-the-512-8-calculation" title="Permanent link">&para;</a></h2>
 <p>The paper's multi-head expression, copied into MHA.pdf, is:</p>
 <p>$$
 \operatorname{MultiHead}(Q,K,V)=
@@ -511,7 +511,7 @@ $$</p>
 <p>More heads at a fixed total width mean narrower individual views. Increasing the total model width can preserve a wider per-head view, but increases other resource costs. Paul recommended keeping the width around 50 or above as a personal practical heuristic. It is not a mathematical minimum, a guarantee against forgetting, or a substitute for evaluation.</p>
 <p>The number of heads is an architecture hyperparameter. It stays fixed for a constructed model; the model does not automatically add heads when a user supplies a longer paragraph. A common implementation also requires the total width to divide evenly across heads. Twelve heads and 768 dimensions show why a power-of-two count is not a general requirement.</p>
 <hr />
-<h2 id="the-position-wise-feed-forward-network">🧱 The Position-Wise Feed-Forward Network<a class="headerlink" href="#the-position-wise-feed-forward-network" title="Permanent link">&para;</a></h2>
+<h2 id="the-position-wise-feed-forward-network">The Position-Wise Feed-Forward Network<a class="headerlink" href="#the-position-wise-feed-forward-network" title="Permanent link">&para;</a></h2>
 <p>After attention, the paper applies a feed-forward network at every position. Paul points to <strong>ReLU</strong>, <strong>512</strong>, and <strong>2048</strong> in the paper to connect familiar deep-learning concepts with its notation.</p>
 <p>The formula discussed is:</p>
 <p>$$
@@ -522,7 +522,7 @@ $$</p>
 <p>Paul also reads the paper's comparison with two kernel-size-one convolutions. That describes an equivalent position-wise mapping, not the return of recurrent sequence processing to the architecture.</p>
 <p>The output width returns to 512 so that the residual path and the next encoder layer can remain compatible. The layer's inner width, the number of heads, and the number of tokens are separate choices; the repeated discussion of 2048 does not introduce 2048 additional tokens.</p>
 <hr />
-<h2 id="residual-connections-and-the-two-add-norm-steps">🔀 Residual Connections and the Two “Add &amp; Norm” Steps<a class="headerlink" href="#residual-connections-and-the-two-add-norm-steps" title="Permanent link">&para;</a></h2>
+<h2 id="residual-connections-and-the-two-add-norm-steps">Residual Connections and the Two “Add &amp; Norm” Steps<a class="headerlink" href="#residual-connections-and-the-two-add-norm-steps" title="Permanent link">&para;</a></h2>
 <p>Paul isolates the encoder side of the paper's figure and follows its arrows. At the input, token embeddings are added to positional encodings. Both have compatible dimensions, so this is an addition operation, not head concatenation. Detailed sinusoidal values are not calculated in this class.</p>
 <p>The resulting representation travels in two directions: through the multi-head attention sublayer and along a shortcut to its <strong>Add &amp; Norm</strong> block. The shortcut preserves the sublayer's input for addition to the sublayer's output.</p>
 <p>The residual expression is:</p>
@@ -564,7 +564,7 @@ $$</p>
 <p>This reproduces the shortcut structure visible in MHA.pdf. It is the original paper's <strong>normalization after the residual addition</strong> layout. Other variants exist, but they were not the subject of this session.</p>
 <p>Layer normalization is distinct from the softmax normalization inside attention and from batch normalization. Paul corrected the batch-normalization wording when a student asked and deferred the layer-normalization calculation to the next lesson. This class explains <strong>where</strong> it is applied, rather than deriving its mean, variance, and learned scale/shift.</p>
 <hr />
-<h2 id="encoder-depth-what-n-actually-repeats">🏗️ Encoder Depth: What “N×” Actually Repeats<a class="headerlink" href="#encoder-depth-what-n-actually-repeats" title="Permanent link">&para;</a></h2>
+<h2 id="encoder-depth-what-n-actually-repeats">Encoder Depth: What “N×” Actually Repeats<a class="headerlink" href="#encoder-depth-what-n-actually-repeats" title="Permanent link">&para;</a></h2>
 <p>The large outer rectangle in the paper's encoder figure encloses the attention sublayer, its residual addition and normalization, the FFN, and the second residual addition and normalization. <strong>N×</strong> indicates repeating that block in a stack.</p>
 <p>The original paper uses six encoder layers. They have the same structure but separate learned parameter values. Embeddings and positional information are supplied at the start; the next encoder layer receives the previous layer's output rather than starting again from the original words.</p>
 <pre class="mermaid"><code>flowchart LR
@@ -582,12 +582,12 @@ $$</p>
 <p>Repeating the block is not repeating an epoch or retraining a model six times. It is a deeper sequence of transformations in one forward pass. Increasing N can increase representation capacity, computation, and optimization challenges; better generalization is not guaranteed merely by adding depth.</p>
 <p>The final encoder output is a sequence of contextual representations. It goes to the decoder side in the original encoder–decoder architecture; no averaging or winner selection across encoder layers was introduced here. Encoder and decoder depths can be chosen separately, so their counts do not inherently have to match.</p>
 <hr />
-<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>Paul planned to use <strong>The Illustrated Transformer</strong> to consolidate the architecture, then examine the decoder side. He also said the next discussion would explain <strong>layer normalization</strong> and later the details of <strong>positional encoding</strong>. Cross-attention and decoder masking remained future topics.</p>
 <p>He shared <a href="https://arxiv.org/abs/2604.00965">Understanding Transformers and Attention Mechanisms: An Introduction for Applied Mathematicians</a>, dated 1 April 2026, as optional supporting reading. The paper was recommended, not worked through in this session; its later topics should not be counted as material taught today.</p>
 <p>The original <a href="https://arxiv.org/pdf/1706.03762">Transformer paper</a>, <a href="https://arxiv.org/pdf/1512.03385">ResNet paper</a>, <a href="https://arxiv.org/pdf/1409.3215">2014 sequence-to-sequence paper</a>, and Tensor2Tensor notebook were added or referenced through the course resources. Practical implementation was planned after the architecture foundations.</p>
 <hr />
-<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
 <p>The dedicated open floor continues through the end of the recording. All substantive questioners in the last two transcript parts are represented below; Vineet explicitly said he had no question and is therefore not given an invented exchange. Names follow the transcript's display labels, including <strong>Attention Seeker</strong>.</p>
 <table>
 <thead>
@@ -740,7 +740,7 @@ $$</p>
 </tbody>
 </table>
 <hr />
-<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Multi-head attention provides several learned views of the same sequence.</li>
 <li>A head includes Q/K/V projections and attention; it is not simply one linear layer.</li>
@@ -763,7 +763,7 @@ $$</p>
 <li>Complete decoder mechanics, positional formulas, and layer-normalization internals were not finished today.</li>
 </ul>
 <hr />
-<h2 id="action-items-after-class-06">✅ Action Items After Class 06<a class="headerlink" href="#action-items-after-class-06" title="Permanent link">&para;</a></h2>
+<h2 id="action-items-after-class-06">Action Items After Class 06<a class="headerlink" href="#action-items-after-class-06" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" disabled/> Revisit the prior single-head example and label queries, keys, values, raw scores, coefficients, and outputs separately.</li>
 <li class="task-list-item"><input type="checkbox" disabled/> Draw the Tommy/food relationships and explain why several learned attention patterns may be useful.</li>

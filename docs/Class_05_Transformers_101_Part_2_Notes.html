@@ -57,17 +57,17 @@
                   </li>
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">05 · Transformers 101, part 2</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-goal-give-each-token-information-about-its-context">🧭 The Goal: Give Each Token Information About Its Context</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-goal-give-each-token-information-about-its-context">The Goal: Give Each Token Information About Its Context</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#vectorization-comes-before-the-attention-calculation">Vectorization comes before the attention calculation</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#vocabulary-size-sequence-length-and-embedding-width">📚 Vocabulary Size, Sequence Length, and Embedding Width</a>
+    <li class="toctree-l2"><a class="reference internal" href="#vocabulary-size-sequence-length-and-embedding-width">Vocabulary Size, Sequence Length, and Embedding Width</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-one-hot-encoding-can-create-confusion">Why one-hot encoding can create confusion</a>
     </li>
@@ -75,7 +75,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#recapping-the-parameter-free-attention-intuition">🔄 Recapping the Parameter-Free Attention Intuition</a>
+    <li class="toctree-l2"><a class="reference internal" href="#recapping-the-parameter-free-attention-intuition">Recapping the Parameter-Free Attention Intuition</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#four-tokens-produce-sixteen-scalar-scores">Four tokens produce sixteen scalar scores</a>
     </li>
@@ -85,7 +85,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#queries-keys-and-values-three-roles-for-the-same-input">🔑 Queries, Keys, and Values: Three Roles for the Same Input</a>
+    <li class="toctree-l2"><a class="reference internal" href="#queries-keys-and-values-three-roles-for-the-same-input">Queries, Keys, and Values: Three Roles for the Same Input</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#query-the-token-requesting-information">Query: the token requesting information</a>
     </li>
@@ -97,7 +97,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#making-the-block-trainable-with-projection-matrices">🧱 Making the Block Trainable With Projection Matrices</a>
+    <li class="toctree-l2"><a class="reference internal" href="#making-the-block-trainable-with-projection-matrices">Making the Block Trainable With Projection Matrices</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#linear-layers-supply-parameters">Linear layers supply parameters</a>
     </li>
@@ -107,7 +107,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#numpy-walkthrough-build-x-q-k-and-v">🧮 NumPy Walkthrough: Build X, Q, K, and V</a>
+    <li class="toctree-l2"><a class="reference internal" href="#numpy-walkthrough-build-x-q-k-and-v">NumPy Walkthrough: Build X, Q, K, and V</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#create-one-reproducible-vector-per-vocabulary-entry">Create one reproducible vector per vocabulary entry</a>
     </li>
@@ -117,7 +117,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#scores-scaling-and-row-wise-softmax">⚖️ Scores, Scaling, and Row-Wise Softmax</a>
+    <li class="toctree-l2"><a class="reference internal" href="#scores-scaling-and-row-wise-softmax">Scores, Scaling, and Row-Wise Softmax</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-transpose-k">Why transpose K?</a>
     </li>
@@ -129,7 +129,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#compute-the-outputs-project-values-then-mix-them">🧩 Compute the Outputs: Project Values, Then Mix Them</a>
+    <li class="toctree-l2"><a class="reference internal" href="#compute-the-outputs-project-values-then-mix-them">Compute the Outputs: Project Values, Then Mix Them</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#raw-input-vectors-versus-projected-values">Raw input vectors versus projected values</a>
     </li>
@@ -139,7 +139,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-bank-experiment-context-dependence-versus-semantic-quality">🏦 The “Bank” Experiment: Context Dependence Versus Semantic Quality</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-bank-experiment-context-dependence-versus-semantic-quality">The “Bank” Experiment: Context Dependence Versus Semantic Quality</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#the-first-comparison-does-not-show-an-improvement">The first comparison does not show an improvement</a>
     </li>
@@ -149,7 +149,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#pytorch-the-same-calculation-with-trainable-modules">🔥 PyTorch: The Same Calculation With Trainable Modules</a>
+    <li class="toctree-l2"><a class="reference internal" href="#pytorch-the-same-calculation-with-trainable-modules">PyTorch: The Same Calculation With Trainable Modules</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#three-linear-projections">Three linear projections</a>
     </li>
@@ -157,7 +157,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#a-library-demonstration-one-head-multiheadattention">🧰 A Library Demonstration: One-Head MultiheadAttention</a>
+    <li class="toctree-l2"><a class="reference internal" href="#a-library-demonstration-one-head-multiheadattention">A Library Demonstration: One-Head MultiheadAttention</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-pass-x-three-times">Why pass X three times?</a>
     </li>
@@ -167,7 +167,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#multi-head-attention-what-was-previewed-what-was-deferred">👥 Multi-Head Attention: What Was Previewed, What Was Deferred</a>
+    <li class="toctree-l2"><a class="reference internal" href="#multi-head-attention-what-was-previewed-what-was-deferred">Multi-Head Attention: What Was Previewed, What Was Deferred</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#choosing-head-count">Choosing head count</a>
     </li>
@@ -175,19 +175,19 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence">🧪 Assignment: Replace the Initial Embeddings and Examine the Evidence</a>
+    <li class="toctree-l2"><a class="reference internal" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence">Assignment: Replace the Initial Embeddings and Examine the Evidence</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-to-record-for-a-useful-submission">What to record for a useful submission</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-5">✅ Action Items After Class 5</a>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-5">Action Items After Class 5</a>
     </li>
     </ul>
                   </li>
@@ -269,7 +269,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="class-5-transformers-101-part-2-queries-keys-values-and-contextualized-vectors">Class 5: Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors<a class="headerlink" href="#class-5-transformers-101-part-2-queries-keys-values-and-contextualized-vectors" title="Permanent link">&para;</a></h1>
-<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
 <p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
 <strong>⏱️ Duration:</strong> ~3 hours 46 minutes (3hr 45min 39s) | <strong>📅 Session:</strong> Day 5 (2 August 2026)</p>
 <p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6fb7c0c43020b1fd512819">2 Aug Transformers 101</a><br />
@@ -278,7 +278,7 @@
 <strong>Course resources and assignment:</strong> <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff?pvs=25">Transformers 101 Notion page</a></p>
 <p>The transcript’s instructor turns are labeled “Krish Naik,” but participants address the lecturer as Paul. These notes use the course instructor’s name, Sourangshu Pal.</p>
 <hr />
-<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The session began with a recap of the previous class’s self-attention intuition, then introduced <strong>query/key/value projections</strong> and demonstrated them in NumPy and PyTorch.</li>
 <li>A course hackathon announcement was shared for interested participants. The transcript does not preserve a usable announcement URL.</li>
@@ -289,7 +289,7 @@
 </ul>
 <p>The notebook contains untrained embeddings and untrained projection matrices. Its numerical examples demonstrate how the mechanism works; they do not establish that every output vector has better semantic meaning.</p>
 <hr />
-<h2 id="the-goal-give-each-token-information-about-its-context">🧭 The Goal: Give Each Token Information About Its Context<a class="headerlink" href="#the-goal-give-each-token-information-about-its-context" title="Permanent link">&para;</a></h2>
+<h2 id="the-goal-give-each-token-information-about-its-context">The Goal: Give Each Token Information About Its Context<a class="headerlink" href="#the-goal-give-each-token-information-about-its-context" title="Permanent link">&para;</a></h2>
 <p>Paul started with a simple question: how can a vector for one word incorporate information about the other words in its sentence?</p>
 <p>A static lookup assigns a vector to a word. If the same lookup table is used twice, the word <strong>bank</strong> starts with the same vector in both:</p>
 <ul>
@@ -315,7 +315,7 @@
 <p>One-hot encoding and TF-IDF were mentioned as other numerical representations. Their properties differ from dense learned embeddings, but all serve the broader purpose of representing text numerically.</p>
 <p>This matters for reading the example: the calculation is valid on the toy numbers even when those numbers have not learned a linguistic relationship.</p>
 <hr />
-<h2 id="vocabulary-size-sequence-length-and-embedding-width">📚 Vocabulary Size, Sequence Length, and Embedding Width<a class="headerlink" href="#vocabulary-size-sequence-length-and-embedding-width" title="Permanent link">&para;</a></h2>
+<h2 id="vocabulary-size-sequence-length-and-embedding-width">Vocabulary Size, Sequence Length, and Embedding Width<a class="headerlink" href="#vocabulary-size-sequence-length-and-embedding-width" title="Permanent link">&para;</a></h2>
 <p>A substantial live discussion concerned dimensions. Keeping three quantities separate resolves the confusion:</p>
 <table>
 <thead>
@@ -354,7 +354,7 @@
 <p>The notebook’s <code>np.stack</code> collects four individual token vectors into <strong>X</strong>, a matrix with shape <strong>(4, 8)</strong>. It does not merge their information or create a single pooled sentence embedding at this step.</p>
 <p>The number of rows follows the sentence; the number of columns follows the embedding width. This distinction is the basis for every later shape check.</p>
 <hr />
-<h2 id="recapping-the-parameter-free-attention-intuition">🔄 Recapping the Parameter-Free Attention Intuition<a class="headerlink" href="#recapping-the-parameter-free-attention-intuition" title="Permanent link">&para;</a></h2>
+<h2 id="recapping-the-parameter-free-attention-intuition">Recapping the Parameter-Free Attention Intuition<a class="headerlink" href="#recapping-the-parameter-free-attention-intuition" title="Permanent link">&para;</a></h2>
 <p>The first part revisited the previous class’s simplified calculation. For each token, compare it with all tokens, turn its scores into normalized weights, and use those weights to combine the token vectors.</p>
 <p>Paul changed the notation from the previous session’s <code>W</code> to <strong>S</strong> and <strong>A</strong>, because students had confused attention weights with trainable neural-network weights:</p>
 <ul>
@@ -425,7 +425,7 @@
 <p>Standard Transformer self-attention <strong>is trainable</strong>. The earlier property described the simplified starting point, not all self-attention mechanisms.</p>
 <p>Without positions or masks, reordering the input tokens reorders corresponding outputs rather than teaching the operation their original order. Positional encoding was identified as the future solution for injecting order information. Its implementation was deferred.</p>
 <hr />
-<h2 id="queries-keys-and-values-three-roles-for-the-same-input">🔑 Queries, Keys, and Values: Three Roles for the Same Input<a class="headerlink" href="#queries-keys-and-values-three-roles-for-the-same-input" title="Permanent link">&para;</a></h2>
+<h2 id="queries-keys-and-values-three-roles-for-the-same-input">Queries, Keys, and Values: Three Roles for the Same Input<a class="headerlink" href="#queries-keys-and-values-three-roles-for-the-same-input" title="Permanent link">&para;</a></h2>
 <p>Paul first introduced Q, K, and V as names for three roles in the calculation, then made those roles trainable with projections.</p>
 <h3 id="query-the-token-requesting-information">Query: the token requesting information<a class="headerlink" href="#query-the-token-requesting-information" title="Permanent link">&para;</a></h3>
 <p>In the whiteboard example, <strong>token 3</strong> was selected as the base token. Its query is compared with all keys to decide how strongly its output should use each value.</p>
@@ -459,7 +459,7 @@
 </ol>
 <p>The second operation depends on the attention weights. The first does not. The arrows near the end of the diagram represent using values in the weighted sum, not generating values from A.</p>
 <hr />
-<h2 id="making-the-block-trainable-with-projection-matrices">🧱 Making the Block Trainable With Projection Matrices<a class="headerlink" href="#making-the-block-trainable-with-projection-matrices" title="Permanent link">&para;</a></h2>
+<h2 id="making-the-block-trainable-with-projection-matrices">Making the Block Trainable With Projection Matrices<a class="headerlink" href="#making-the-block-trainable-with-projection-matrices" title="Permanent link">&para;</a></h2>
 <p>The original toy calculation reused the token vectors directly. Paul introduced matrices <strong>Mₖ, Mq, Mᵥ</strong>, later written in code as <strong>W_k, W_q, W_v</strong>, to create trainable transformations.</p>
 <p>Using row-oriented token vectors:</p>
 <p><strong>Q = XW_q</strong><br />
@@ -498,7 +498,7 @@
 <p>The parameter values would be learned under a task objective, such as a loss for named-entity recognition or question answering. Dimensions and head count are <strong>hyperparameters</strong>; numerical projection weights are <strong>parameters</strong>.</p>
 <p>The session explained this possibility but did <strong>not train the attention block</strong>. It supplied no complete task dataset, target labels, optimizer loop, or loss-driven update in the demonstrated attention notebook.</p>
 <hr />
-<h2 id="numpy-walkthrough-build-x-q-k-and-v">🧮 NumPy Walkthrough: Build X, Q, K, and V<a class="headerlink" href="#numpy-walkthrough-build-x-q-k-and-v" title="Permanent link">&para;</a></h2>
+<h2 id="numpy-walkthrough-build-x-q-k-and-v">NumPy Walkthrough: Build X, Q, K, and V<a class="headerlink" href="#numpy-walkthrough-build-x-q-k-and-v" title="Permanent link">&para;</a></h2>
 <p>Paul then moved from the whiteboard to the supplied notebook. NumPy was used to expose the operations directly before replacing them with PyTorch layers.</p>
 <h3 id="create-one-reproducible-vector-per-vocabulary-entry">Create one reproducible vector per vocabulary entry<a class="headerlink" href="#create-one-reproducible-vector-per-vocabulary-entry" title="Permanent link">&para;</a></h3>
 <p>The notebook begins with a four-word sentence and a small d_model of eight. It builds the lookup table with this actual code:</p>
@@ -541,7 +541,7 @@
 </ul>
 <p>These checks are more reliable than inferring shape from a label such as “embedding,” “vector,” or “weight.”</p>
 <hr />
-<h2 id="scores-scaling-and-row-wise-softmax">⚖️ Scores, Scaling, and Row-Wise Softmax<a class="headerlink" href="#scores-scaling-and-row-wise-softmax" title="Permanent link">&para;</a></h2>
+<h2 id="scores-scaling-and-row-wise-softmax">Scores, Scaling, and Row-Wise Softmax<a class="headerlink" href="#scores-scaling-and-row-wise-softmax" title="Permanent link">&para;</a></h2>
 <p>The single-head calculation implemented in class is:</p>
 <p><strong>scores = QKᵀ / √d_k</strong><br />
 <strong>A = softmax(scores), across each row</strong><br />
@@ -615,7 +615,7 @@
 <p>The heatmap shows this same matrix: the vertical axis is the query and the horizontal axis is the token attended to. It is a visualization of the calculation, not a separate model.</p>
 <p>For Bank, the largest recorded weight is on <strong>the</strong>, not river or Bank itself. With random untrained projections, the weights should not be read as reliable linguistic relevance.</p>
 <hr />
-<h2 id="compute-the-outputs-project-values-then-mix-them">🧩 Compute the Outputs: Project Values, Then Mix Them<a class="headerlink" href="#compute-the-outputs-project-values-then-mix-them" title="Permanent link">&para;</a></h2>
+<h2 id="compute-the-outputs-project-values-then-mix-them">Compute the Outputs: Project Values, Then Mix Them<a class="headerlink" href="#compute-the-outputs-project-values-then-mix-them" title="Permanent link">&para;</a></h2>
 <p>The final matrix multiplication is:</p>
 <div class="highlight"><pre><span></span><code><span class="n">Y</span> <span class="o">=</span> <span class="n">attn_weights</span> <span class="o">@</span> <span class="n">V</span>   <span class="c1"># (seq_len, d_k)  &lt;-- this is y1, y2, y3, y4 stacked</span>
 </code></pre></div>
@@ -646,7 +646,7 @@
 <p>All queries can be processed together through matrix operations, making the implementation suitable for efficient tensor computation. Q, K, and V projections can be formed from the same input.</p>
 <p>The later operations still depend on earlier results: scores need Q/K, softmax needs scores, and the weighted sum needs weights/V. Matrix parallelism does not erase those dependencies.</p>
 <hr />
-<h2 id="the-bank-experiment-context-dependence-versus-semantic-quality">🏦 The “Bank” Experiment: Context Dependence Versus Semantic Quality<a class="headerlink" href="#the-bank-experiment-context-dependence-versus-semantic-quality" title="Permanent link">&para;</a></h2>
+<h2 id="the-bank-experiment-context-dependence-versus-semantic-quality">The “Bank” Experiment: Context Dependence Versus Semantic Quality<a class="headerlink" href="#the-bank-experiment-context-dependence-versus-semantic-quality" title="Permanent link">&para;</a></h2>
 <p>The next part asked whether the new vectors were better than the starting vectors. Paul used cosine similarity and two sentences to inspect this quantitatively.</p>
 <p>For nonzero vectors, cosine similarity ranges from <strong>−1 to 1</strong>. A value of one indicates the same direction; it is not a general “probability of matching meaning.”</p>
 <p>The supplied function is:</p>
@@ -750,7 +750,7 @@
 </ol>
 <p>Replacing embeddings with pretrained vectors addresses the second question. Untrained projection matrices remain a limitation for the third.</p>
 <hr />
-<h2 id="pytorch-the-same-calculation-with-trainable-modules">🔥 PyTorch: The Same Calculation With Trainable Modules<a class="headerlink" href="#pytorch-the-same-calculation-with-trainable-modules" title="Permanent link">&para;</a></h2>
+<h2 id="pytorch-the-same-calculation-with-trainable-modules">PyTorch: The Same Calculation With Trainable Modules<a class="headerlink" href="#pytorch-the-same-calculation-with-trainable-modules" title="Permanent link">&para;</a></h2>
 <p>Paul repeated the calculation using an embedding layer and linear layers. This version makes the parameters available to PyTorch’s training machinery while keeping the same operations visible.</p>
 <p>The supplied notebook defines the vocabulary mapping and lookup as follows:</p>
 <div class="highlight"><pre><span></span><code><span class="n">vocab</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">,</span> <span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;river&quot;</span><span class="p">,</span> <span class="s2">&quot;account&quot;</span><span class="p">,</span> <span class="s2">&quot;money&quot;</span><span class="p">,</span> <span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="s2">&quot;today&quot;</span><span class="p">]</span>
@@ -800,7 +800,7 @@
 <p>The same limitation applies: outputs depend on context, but a high or low cosine from untrained parameters is not a validated measure of sense disambiguation.</p>
 <p>The function in this notebook uses the input width in its denominator because d_k equals d_model in the demonstrated configuration. If changing projection widths, the scale should continue to follow the <strong>query/key width</strong>.</p>
 <hr />
-<h2 id="a-library-demonstration-one-head-multiheadattention">🧰 A Library Demonstration: One-Head MultiheadAttention<a class="headerlink" href="#a-library-demonstration-one-head-multiheadattention" title="Permanent link">&para;</a></h2>
+<h2 id="a-library-demonstration-one-head-multiheadattention">A Library Demonstration: One-Head MultiheadAttention<a class="headerlink" href="#a-library-demonstration-one-head-multiheadattention" title="Permanent link">&para;</a></h2>
 <p>The class showed PyTorch’s built-in module after the manual implementation:</p>
 <div class="highlight"><pre><span></span><code><span class="n">mha</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">embed_dim</span><span class="o">=</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
@@ -844,7 +844,7 @@
 <p>For a higher-rank NumPy array, a plain transpose reverses all axes by default. Batched attention needs the <strong>last two key axes</strong> swapped while preserving the batch axis. The rest of the broadcasting and matrix shapes must agree. <a href="https://numpy.org/doc/stable/reference/generated/numpy.transpose.html">NumPy transpose reference</a></p>
 <p>This is a practical clarification to the notebook’s concluding shape note, not an additional batched implementation taught in class.</p>
 <hr />
-<h2 id="multi-head-attention-what-was-previewed-what-was-deferred">👥 Multi-Head Attention: What Was Previewed, What Was Deferred<a class="headerlink" href="#multi-head-attention-what-was-previewed-what-was-deferred" title="Permanent link">&para;</a></h2>
+<h2 id="multi-head-attention-what-was-previewed-what-was-deferred">Multi-Head Attention: What Was Previewed, What Was Deferred<a class="headerlink" href="#multi-head-attention-what-was-previewed-what-was-deferred" title="Permanent link">&para;</a></h2>
 <p>Near the end, Paul drew multiple parallel linear representations and introduced <strong>head count</strong> as a hyperparameter. The final whiteboard page sketches four parallel heads.</p>
 <p>The intended intuition is that several attention calculations can run in parallel using different learned projections. <strong>A head is a complete attention path</strong>, including Q/K/V and the score/weight/value calculation; it is not simply any extra linear layer.</p>
 <p>Four stacked attention blocks also are not the same as four heads. Stacking refers to depth; multiple heads operate in parallel within a block.</p>
@@ -858,7 +858,7 @@
 <p>Changing the number of heads in a pretrained model is an architecture change, not merely a routine fine-tuning setting. Check how its parameters and operations will remain compatible; unfreezing layers alone does not solve every such change.</p>
 <p>This class provides the mechanics needed to reason about those decisions. It does not supply a complete recipe for changing an existing model’s architecture.</p>
 <hr />
-<h2 id="assignment-replace-the-initial-embeddings-and-examine-the-evidence">🧪 Assignment: Replace the Initial Embeddings and Examine the Evidence<a class="headerlink" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence" title="Permanent link">&para;</a></h2>
+<h2 id="assignment-replace-the-initial-embeddings-and-examine-the-evidence">Assignment: Replace the Initial Embeddings and Examine the Evidence<a class="headerlink" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence" title="Permanent link">&para;</a></h2>
 <p>The assignment was recorded both in the live discussion and on the course Notion page:</p>
 <ol>
 <li>Start from the shared attention notebook.</li>
@@ -881,13 +881,13 @@
 <p>The raw bank vectors should still be identical across contexts when they come from a shared static lookup. Pretrained static word vectors supply better starting relationships, but the remaining random attention projections do not guarantee a semantic improvement.</p>
 <p>Report the actual results, including a result that conflicts with the expected narrative. The point of the exercise is to inspect how the representation behaves, not force a similarity to a predetermined value.</p>
 <hr />
-<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>Paul said the following week would cover <strong>multi-head attention in detail</strong>, followed by the <strong>Attention Is All You Need paper</strong> and construction of the full Transformer architecture.</p>
 <p>Positional encoding had been identified as the mechanism for adding order information, but its details were not implemented in this session.</p>
 <p>For revision, he recommended spending regular daily time on the notebook and foundational material. Books mentioned included <strong>Hands-On Large Language Models</strong> and <strong>Build a Large Language Model (From Scratch)</strong> by Sebastian Raschka. The discussion also referred to 3Blue1Brown’s neural-network material and deep-learning refresher lectures.</p>
 <p>The prerequisites he emphasized were matrix operations, shapes, activation functions, optimizers, and the broad training process. A complete CNN revision was not required for this immediate attention topic.</p>
 <hr />
-<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
 <p>The table covers the full transcript, including all substantive speakers in the final two parts and their follow-ups. Similar in-flow doubts are combined.</p>
 <table>
 <thead>
@@ -1077,7 +1077,7 @@
 </table>
 <p>AI learner was invited to speak but did not provide a substantive question. Requests for links, microphone checks, and dashboard navigation are represented in Quick Updates where useful.</p>
 <hr />
-<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Attention creates one context-dependent output per token; it does not automatically pool a sentence.</li>
 <li>Vocabulary size, sequence length, and embedding width are independent.</li>
@@ -1105,7 +1105,7 @@
 <li>Replacing embeddings in the assignment requires updating incompatible hard-coded widths.</li>
 </ul>
 <hr />
-<h2 id="action-items-after-class-5">✅ Action Items After Class 5<a class="headerlink" href="#action-items-after-class-5" title="Permanent link">&para;</a></h2>
+<h2 id="action-items-after-class-5">Action Items After Class 5<a class="headerlink" href="#action-items-after-class-5" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" disabled/> Reproduce the four-token X → Q/K/V → scores → softmax → Y calculation.</li>
 <li class="task-list-item"><input type="checkbox" disabled/> Explain the difference between an inner product, elementwise multiplication, and matrix multiplication.</li>

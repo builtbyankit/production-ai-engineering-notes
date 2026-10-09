@@ -72,17 +72,17 @@
               <ul class="current">
                   <li class="toctree-l1 current"><a class="reference internal current" href="#">11 · Tokenization foundations</a>
     <ul class="current">
-    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#where-tokenization-fits-in-the-model-pipeline">🧭 Where Tokenization Fits in the Model Pipeline</a>
+    <li class="toctree-l2"><a class="reference internal" href="#where-tokenization-fits-in-the-model-pipeline">Where Tokenization Fits in the Model Pipeline</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#four-terms-to-keep-separate">Four terms to keep separate</a>
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#word-character-and-subword-tokenization">🌳 Word, Character, and Subword Tokenization</a>
+    <li class="toctree-l2"><a class="reference internal" href="#word-character-and-subword-tokenization">Word, Character, and Subword Tokenization</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#whole-word-tokenization">Whole-word tokenization</a>
     </li>
@@ -92,7 +92,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#unicode-utf-8-bytes-and-tokens-are-different-representations">🔤 Unicode, UTF-8 Bytes, and Tokens Are Different Representations</a>
+    <li class="toctree-l2"><a class="reference internal" href="#unicode-utf-8-bytes-and-tokens-are-different-representations">Unicode, UTF-8 Bytes, and Tokens Are Different Representations</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#unicode-code-points">Unicode code points</a>
     </li>
@@ -102,7 +102,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary">🔁 BPE on the Whiteboard: Maintain Segmentation and Vocabulary</a>
+    <li class="toctree-l2"><a class="reference internal" href="#bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary">BPE on the Whiteboard: Maintain Segmentation and Vocabulary</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#pair-means-adjacent-symbols">Pair means adjacent symbols</a>
     </li>
@@ -114,7 +114,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#plain-python-example-a-corpus-with-word-frequencies">🐍 Plain-Python Example: A Corpus With Word Frequencies</a>
+    <li class="toctree-l2"><a class="reference internal" href="#plain-python-example-a-corpus-with-word-frequencies">Plain-Python Example: A Corpus With Word Frequencies</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-the-marker-does-here">What the marker does here</a>
     </li>
@@ -122,7 +122,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#apply-a-merge-everywhere-then-record-the-rule">🛠️ Apply a Merge Everywhere, Then Record the Rule</a>
+    <li class="toctree-l2"><a class="reference internal" href="#apply-a-merge-everywhere-then-record-the-rule">Apply a Merge Everywhere, Then Record the Rule</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#select-the-best-pair">Select the best pair</a>
     </li>
@@ -130,7 +130,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#eight-recorded-merges-and-the-final-segmentation">📊 Eight Recorded Merges and the Final Segmentation</a>
+    <li class="toctree-l2"><a class="reference internal" href="#eight-recorded-merges-and-the-final-segmentation">Eight Recorded Merges and the Final Segmentation</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#merge-budget-and-stopping">Merge budget and stopping</a>
     </li>
@@ -138,7 +138,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#new-words-reuse-existing-rules">🆕 New Words Reuse Existing Rules</a>
+    <li class="toctree-l2"><a class="reference internal" href="#new-words-reuse-existing-rules">New Words Reuse Existing Rules</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#encoding-does-not-automatically-extend-the-vocabulary">Encoding does not automatically extend the vocabulary</a>
     </li>
@@ -146,9 +146,9 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#research-detour-byte-latent-transformer">🔬 Research Detour: Byte Latent Transformer</a>
+    <li class="toctree-l2"><a class="reference internal" href="#research-detour-byte-latent-transformer">Research Detour: Byte Latent Transformer</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#tiktoken-compare-existing-encodings">🧮 tiktoken: Compare Existing Encodings</a>
+    <li class="toctree-l2"><a class="reference internal" href="#tiktoken-compare-existing-encodings">tiktoken: Compare Existing Encodings</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#select-the-models-encoding">Select the model’s encoding</a>
     </li>
@@ -158,7 +158,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#a-tiny-hugging-face-bpe-tokenizer">🧰 A Tiny Hugging Face BPE Tokenizer</a>
+    <li class="toctree-l2"><a class="reference internal" href="#a-tiny-hugging-face-bpe-tokenizer">A Tiny Hugging Face BPE Tokenizer</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#what-the-components-mean">What the components mean</a>
     </li>
@@ -166,7 +166,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-extended-compatibility-discussion-same-algorithm-is-not-enough">🔒 The Extended Compatibility Discussion: Same Algorithm Is Not Enough</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-extended-compatibility-discussion-same-algorithm-is-not-enough">The Extended Compatibility Discussion: Same Algorithm Is Not Enough</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#why-arbitrary-replacement-fails">Why arbitrary replacement fails</a>
     </li>
@@ -178,7 +178,7 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#the-open-floor-systems-discussion">🏢 The Open-Floor Systems Discussion</a>
+    <li class="toctree-l2"><a class="reference internal" href="#the-open-floor-systems-discussion">The Open-Floor Systems Discussion</a>
         <ul>
     <li class="toctree-l3"><a class="reference internal" href="#costs-and-routing">Costs and routing</a>
     </li>
@@ -194,13 +194,13 @@
     </li>
         </ul>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
     </li>
-    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-11">✅ Action Items After Class 11</a>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-11">Action Items After Class 11</a>
     </li>
     </ul>
                   </li>
@@ -267,14 +267,14 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="class-11-tokenization-foundations-bpe-bytes-and-model-compatibility">Class 11: Tokenization Foundations — BPE, Bytes, and Model Compatibility<a class="headerlink" href="#class-11-tokenization-foundations-bpe-bytes-and-model-compatibility" title="Permanent link">&para;</a></h1>
-<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
 <p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
 <strong>⏱️ Duration:</strong> ~5 hours 18 minutes (5hr 17min 55s) | <strong>📅 Session:</strong> Day 11 (29 August 2026)</p>
 <p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a93c924568d1b8c7bf73265">29 Aug Tokenization - 1</a><br />
 <strong>Primary transcript:</strong> <code>GMT20260829-143104_Recording.cutfile.20260830060933765.transcript.vtt</code><br />
 <strong>Companions:</strong> <code>Token.pdf</code> and <a href="https://colab.research.google.com/drive/1qICL7sEYR4B1EMYajIFTfi0GbxlqKY7m?usp=sharing">BPE Explained notebook</a></p>
 <hr />
-<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
 <ul>
 <li>The class began the tokenization module after the annotated Transformer practical. Paul checked whether participants had experimented with the earlier training/epoch assignment and asked them to share their work.</li>
 <li>The main topic actually covered was <strong>BPE</strong>, from intuition and whiteboard examples to plain Python, tiktoken, and a small Hugging Face Tokenizers example.</li>
@@ -286,7 +286,7 @@
 </ul>
 <p>These notes preserve the demonstrations while clarifying several distinctions that became blurred in the live discussion: tokenizer fitting versus model training, unseen words versus unrepresentable symbols, and algorithm similarity versus compatible token IDs.</p>
 <hr />
-<h2 id="where-tokenization-fits-in-the-model-pipeline">🧭 Where Tokenization Fits in the Model Pipeline<a class="headerlink" href="#where-tokenization-fits-in-the-model-pipeline" title="Permanent link">&para;</a></h2>
+<h2 id="where-tokenization-fits-in-the-model-pipeline">Where Tokenization Fits in the Model Pipeline<a class="headerlink" href="#where-tokenization-fits-in-the-model-pipeline" title="Permanent link">&para;</a></h2>
 <p>Tokenization determines the units in which a model receives text. Those units are assigned integer IDs, which select learned embedding vectors. The model then processes the vectors and predicts outputs in its own token vocabulary.</p>
 <pre class="mermaid"><code>flowchart LR
     A["Text"] --&gt; B["Tokenizer&lt;br/&gt;segment and assign IDs"]
@@ -329,7 +329,7 @@
 <p>The model’s embedding width also is not its vocabulary size. The lookup has one row per vocabulary entry, with a separately chosen feature width.</p>
 <p>A Transformer can process varying sequence lengths within its implementation limits. The fixed vocabulary/feature interfaces do not imply that every input sentence must have exactly the same length.</p>
 <hr />
-<h2 id="word-character-and-subword-tokenization">🌳 Word, Character, and Subword Tokenization<a class="headerlink" href="#word-character-and-subword-tokenization" title="Permanent link">&para;</a></h2>
+<h2 id="word-character-and-subword-tokenization">Word, Character, and Subword Tokenization<a class="headerlink" href="#word-character-and-subword-tokenization" title="Permanent link">&para;</a></h2>
 <p>The first whiteboard page classified tokenizers into three levels and described their tradeoffs.</p>
 <pre class="mermaid"><code>flowchart TD
     A["Tokenization units"] --&gt; B["Whole words"]
@@ -355,7 +355,7 @@
 <p>BPE learns frequent combinations statistically. It is not given an English grammar rule saying that est is a suffix. A learned piece can resemble a prefix/suffix, a whole word, punctuation, or an arbitrary fragment.</p>
 <p>WordPiece remains an available tokenizer algorithm used by models such as BERT. T5/SentencePiece also are not universally deprecated merely because BPE is popular. The important choice is the tokenizer designed for the model and task. <a href="https://huggingface.co/docs/transformers/main/tokenizer_summary">Hugging Face tokenizer overview</a></p>
 <hr />
-<h2 id="unicode-utf-8-bytes-and-tokens-are-different-representations">🔤 Unicode, UTF-8 Bytes, and Tokens Are Different Representations<a class="headerlink" href="#unicode-utf-8-bytes-and-tokens-are-different-representations" title="Permanent link">&para;</a></h2>
+<h2 id="unicode-utf-8-bytes-and-tokens-are-different-representations">Unicode, UTF-8 Bytes, and Tokens Are Different Representations<a class="headerlink" href="#unicode-utf-8-bytes-and-tokens-are-different-representations" title="Permanent link">&para;</a></h2>
 <p>Paul demonstrated Python’s <code>ord</code> and <code>bytearray</code> before the BPE implementation.</p>
 <h3 id="unicode-code-points">Unicode code points<a class="headerlink" href="#unicode-code-points" title="Permanent link">&para;</a></h3>
 <p>The notebook includes:</p>
@@ -383,7 +383,7 @@
 <p>A learned token can span several bytes, while a token also can stop inside a multi-byte character. This becomes important when inspecting the Bengali/emoji outputs later.</p>
 <p>The session’s rough Unicode character counts were illustrative. They are not tokenizer vocabulary limits or a current Unicode inventory.</p>
 <hr />
-<h2 id="bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary">🔁 BPE on the Whiteboard: Maintain Segmentation and Vocabulary<a class="headerlink" href="#bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary" title="Permanent link">&para;</a></h2>
+<h2 id="bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary">BPE on the Whiteboard: Maintain Segmentation and Vocabulary<a class="headerlink" href="#bpe-on-the-whiteboard-maintain-segmentation-and-vocabulary" title="Permanent link">&para;</a></h2>
 <p>Paul used several interactive examples—hello world, lower/low/lowest, a short sentence, and “The quick brown fox”—then wrote the process explicitly.</p>
 <p>The whiteboard sequence was:</p>
 <ol>
@@ -427,7 +427,7 @@
 <p>Tokenization is not semantic attention, but it does preserve and inspect an ordered sequence. Adjacent pairs, whitespace, punctuation, and boundary rules influence its output.</p>
 <p>Whitespace handling depends on the tokenizer’s preprocessing and representation. The class’s spaces/underscore illustrations should not be read as a universal rule that every BPE tokenizer merges across all word boundaries.</p>
 <hr />
-<h2 id="plain-python-example-a-corpus-with-word-frequencies">🐍 Plain-Python Example: A Corpus With Word Frequencies<a class="headerlink" href="#plain-python-example-a-corpus-with-word-frequencies" title="Permanent link">&para;</a></h2>
+<h2 id="plain-python-example-a-corpus-with-word-frequencies">Plain-Python Example: A Corpus With Word Frequencies<a class="headerlink" href="#plain-python-example-a-corpus-with-word-frequencies" title="Permanent link">&para;</a></h2>
 <p>The supplied notebook uses:</p>
 <table>
 <thead>
@@ -496,7 +496,7 @@
 <p><code>defaultdict(int)</code> gives a missing pair a default <strong>count value of zero</strong>. It does not require the dictionary key to be zero. <a href="https://docs.python.org/3/library/collections.html#collections.defaultdict">Python defaultdict documentation</a></p>
 <p>The range stops at length−1 because the final symbol has no next symbol to form a pair with.</p>
 <hr />
-<h2 id="apply-a-merge-everywhere-then-record-the-rule">🛠️ Apply a Merge Everywhere, Then Record the Rule<a class="headerlink" href="#apply-a-merge-everywhere-then-record-the-rule" title="Permanent link">&para;</a></h2>
+<h2 id="apply-a-merge-everywhere-then-record-the-rule">Apply a Merge Everywhere, Then Record the Rule<a class="headerlink" href="#apply-a-merge-everywhere-then-record-the-rule" title="Permanent link">&para;</a></h2>
 <p>The merge helper scans each word and either combines the selected adjacent pair or copies the next symbol unchanged.</p>
 <div class="highlight"><pre><span></span><code><span class="n">merged_symbol</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">pair_to_merge</span><span class="p">)</span>
 <span class="n">vocab_out</span> <span class="o">=</span> <span class="p">{}</span>
@@ -534,7 +534,7 @@
 <p>Python’s max returns the first maximal item encountered. No random generator is called in this implementation. A different implementation may define a different tie break and therefore learn different rules. <a href="https://docs.python.org/3/builtins/functions.html#max">Python max documentation</a></p>
 <p>The class’s visualizer observations do not establish that all BPE fitting randomly selects pairs.</p>
 <hr />
-<h2 id="eight-recorded-merges-and-the-final-segmentation">📊 Eight Recorded Merges and the Final Segmentation<a class="headerlink" href="#eight-recorded-merges-and-the-final-segmentation" title="Permanent link">&para;</a></h2>
+<h2 id="eight-recorded-merges-and-the-final-segmentation">Eight Recorded Merges and the Final Segmentation<a class="headerlink" href="#eight-recorded-merges-and-the-final-segmentation" title="Permanent link">&para;</a></h2>
 <p>The supplied notebook’s eight-merge run records:</p>
 <table>
 <thead>
@@ -632,7 +632,7 @@
 <p>No neural-network weights are optimized in this BPE loop. It fits a statistical tokenizer by learning merge rules.</p>
 <p>Calling this <strong>tokenizer training</strong> is appropriate. It is distinct from training/fine-tuning an LLM’s parameters, but “training” is not restricted to neural networks.</p>
 <hr />
-<h2 id="new-words-reuse-existing-rules">🆕 New Words Reuse Existing Rules<a class="headerlink" href="#new-words-reuse-existing-rules" title="Permanent link">&para;</a></h2>
+<h2 id="new-words-reuse-existing-rules">New Words Reuse Existing Rules<a class="headerlink" href="#new-words-reuse-existing-rules" title="Permanent link">&para;</a></h2>
 <p>The next experiment applied the learned rules to <strong>lowest</strong> and <strong>newer</strong>, which were absent from the training corpus.</p>
 <p>The recorded result is:</p>
 <table>
@@ -677,7 +677,7 @@
 </ol>
 <p>A missing <strong>whole-word token</strong> does not prove the LLM is blind to that word. An actual UNK replacement does lose identity, but ordinary subword decomposition does not.</p>
 <hr />
-<h2 id="research-detour-byte-latent-transformer">🔬 Research Detour: Byte Latent Transformer<a class="headerlink" href="#research-detour-byte-latent-transformer" title="Permanent link">&para;</a></h2>
+<h2 id="research-detour-byte-latent-transformer">Research Detour: Byte Latent Transformer<a class="headerlink" href="#research-detour-byte-latent-transformer" title="Permanent link">&para;</a></h2>
 <p>Paul introduced Meta’s <strong>Byte Latent Transformer (BLT)</strong> as a research direction beyond fixed subword tokenization.</p>
 <p>BLT is a <strong>byte-level language-model architecture</strong>, not merely a separately trained tokenizer that produces a one-time tokenization file. It groups bytes into dynamically sized patches using predicted next-byte entropy, then allocates computation to those patches. <a href="https://arxiv.org/abs/2412.09871">BLT paper</a></p>
 <p>The lecture connected familiar encoder/decoder/attention components with this architecture and showed scaling/benchmark material at a high level.</p>
@@ -685,7 +685,7 @@
 <p>It also does not eliminate model training or guarantee that every benchmark improves. Paul invited interested students to read the paper as optional exploration.</p>
 <p>SentencePiece was discussed separately: it is a library supporting BPE and Unigram models, including training directly from raw text without mandatory whitespace-based pre-tokenization. This is useful for languages whose word boundaries are not reliably represented by spaces. <a href="https://github.com/google/sentencepiece">SentencePiece repository</a></p>
 <hr />
-<h2 id="tiktoken-compare-existing-encodings">🧮 tiktoken: Compare Existing Encodings<a class="headerlink" href="#tiktoken-compare-existing-encodings" title="Permanent link">&para;</a></h2>
+<h2 id="tiktoken-compare-existing-encodings">tiktoken: Compare Existing Encodings<a class="headerlink" href="#tiktoken-compare-existing-encodings" title="Permanent link">&para;</a></h2>
 <p>The notebook then compared <strong>cl100k_base</strong> with <strong>o200k_base</strong> using OpenAI’s tiktoken.</p>
 <p>It loaded existing encodings, encoded each sample, and printed IDs/pieces. This was <strong>encoding with pretrained tokenizer rules</strong>, not learning new rules from the sample.</p>
 <p>The recorded results include:</p>
@@ -744,7 +744,7 @@
 <p>A plain-text token count is not automatically the complete billed request count: message structure, tools, multimodal inputs, and model-specific formatting can add tokens. Provider-reported usage and supported request-counting APIs resolve those details. <a href="https://developers.openai.com/api/docs/guides/token-counting">OpenAI token-counting documentation</a></p>
 <p>No class-time price is reproduced as a current quote.</p>
 <hr />
-<h2 id="a-tiny-hugging-face-bpe-tokenizer">🧰 A Tiny Hugging Face BPE Tokenizer<a class="headerlink" href="#a-tiny-hugging-face-bpe-tokenizer" title="Permanent link">&para;</a></h2>
+<h2 id="a-tiny-hugging-face-bpe-tokenizer">A Tiny Hugging Face BPE Tokenizer<a class="headerlink" href="#a-tiny-hugging-face-bpe-tokenizer" title="Permanent link">&para;</a></h2>
 <p>The next demonstration used <strong>Hugging Face Tokenizers</strong> to fit BPE on a small text corpus.</p>
 <p>The supplied code configures:</p>
 <div class="highlight"><pre><span></span><code><span class="n">hf_bpe</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">BPE</span><span class="p">(</span><span class="n">unk_token</span><span class="o">=</span><span class="s2">&quot;[UNK]&quot;</span><span class="p">))</span>
@@ -831,7 +831,7 @@
 <p>These IDs are categorical indexes, not random embedding values and not semantic scores.</p>
 <p>The fitted vocabulary/merges and configuration must be saved with the model that uses them. The next class was to expand this exercise toward a larger corpus and portfolio artifact.</p>
 <hr />
-<h2 id="the-extended-compatibility-discussion-same-algorithm-is-not-enough">🔒 The Extended Compatibility Discussion: Same Algorithm Is Not Enough<a class="headerlink" href="#the-extended-compatibility-discussion-same-algorithm-is-not-enough" title="Permanent link">&para;</a></h2>
+<h2 id="the-extended-compatibility-discussion-same-algorithm-is-not-enough">The Extended Compatibility Discussion: Same Algorithm Is Not Enough<a class="headerlink" href="#the-extended-compatibility-discussion-same-algorithm-is-not-enough" title="Permanent link">&para;</a></h2>
 <p>Rachit, Murtuza, Debajyoti, Abhishek, Anunay, Dishant, and Prashanth explored whether custom tokenizers could be used with existing models.</p>
 <p>The key rule is <strong>preserve the model’s interpretation of token IDs</strong>.</p>
 <p>A model trained with token ID 100 representing one piece does not suddenly understand ID 100 as a different piece merely because both tokenizers use BPE or have the same number of entries.</p>
@@ -858,7 +858,7 @@
 <p>Prashanth asked whether uploading an updated tokenizer changes the public original. Creating a separate model/tokenizer repository does not itself merge changes into the upstream model.</p>
 <p>Keep a compatible model and tokenizer revision together. Repository visibility and authorized access determine who can obtain the uploaded artifacts. Publishing a tokenizer alone does not make an unrelated pretrained model compatible with its IDs.</p>
 <hr />
-<h2 id="the-open-floor-systems-discussion">🏢 The Open-Floor Systems Discussion<a class="headerlink" href="#the-open-floor-systems-discussion" title="Permanent link">&para;</a></h2>
+<h2 id="the-open-floor-systems-discussion">The Open-Floor Systems Discussion<a class="headerlink" href="#the-open-floor-systems-discussion" title="Permanent link">&para;</a></h2>
 <p>The later discussion widened into application architecture. These were conceptual exchanges, not implementations added to the BPE notebook.</p>
 <h3 id="costs-and-routing">Costs and routing<a class="headerlink" href="#costs-and-routing" title="Permanent link">&para;</a></h3>
 <p>Mangesh asked about showing users a cost estimate. Paul described maintaining model pricing and recording usage at a gateway or observability layer.</p>
@@ -906,13 +906,13 @@
 <p>Ragas is not just a BLEU comparison against an expected answer. Different metrics assess retrieval, faithfulness, relevancy, correctness, and other aspects, with different required inputs. <a href="https://docs.ragas.io/en/stable/concepts/metrics/overview/">Ragas metric overview</a></p>
 <p>For coding-agent output, the session emphasized software-engineering validation as well as AI evaluation: check logic, failure cases, integrations, concurrency, and adherence to the organization’s design conventions.</p>
 <hr />
-<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
 <p>Paul proposed continuing with <strong>WordPiece</strong>, the <strong>SentencePiece library</strong>, and more detailed custom tokenizer construction.</p>
 <p>A larger corpus, comparison of general versus domain-specific tokenizer behavior, and saving/uploading a tokenizer to Hugging Face were discussed for upcoming work. The exact timing shifted between “tomorrow” and the following Saturday during Q&A; these remained future plans.</p>
 <p>The annotated Transformer’s spaCy tokenizer was to be revisited using BPE. Andrej Karpathy’s tokenizer-building material was also identified as a forthcoming practice/reference route.</p>
 <p>BLT remained optional research reading. Domain-specific tokenizer/model adaptation, fine-tuning, and later RAG projects were future course work rather than completed deliverables today.</p>
 <hr />
-<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
 <p>The table includes the full open-floor segment, with special attention to Dishant, Prashanth, Sachin, and Swati’s extended exchanges in the last two transcript parts.</p>
 <table>
 <thead>
@@ -1221,7 +1221,7 @@
 </tbody>
 </table>
 <hr />
-<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
 <ul>
 <li>Tokenization, token IDs, embeddings, and semantic knowledge are different.</li>
 <li>Vocabulary size differs from embedding width and sequence length.</li>
@@ -1251,7 +1251,7 @@
 <li>Multiple model judges can help review; their agreement is not automatically truth.</li>
 </ul>
 <hr />
-<h2 id="action-items-after-class-11">✅ Action Items After Class 11<a class="headerlink" href="#action-items-after-class-11" title="Permanent link">&para;</a></h2>
+<h2 id="action-items-after-class-11">Action Items After Class 11<a class="headerlink" href="#action-items-after-class-11" title="Permanent link">&para;</a></h2>
 <ul class="task-list">
 <li class="task-list-item"><input type="checkbox" disabled/> Trace text → pieces/IDs → embedding → model → output IDs → decoding.</li>
 <li class="task-list-item"><input type="checkbox" disabled/> Practice a few BPE merges by hand using the low/lower/newest/widest corpus.</li>
