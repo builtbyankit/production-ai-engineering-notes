@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_09_Transformer_Training_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>09 · Transformer training - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "09 \u00b7 Transformer training";
+        var mkdocs_page_input_path = "Class_09_Transformer_Training_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_09_Transformer_Training_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">09 · Transformer training</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reconnecting-the-earlier-components">🧩 Reconnecting the Earlier Components</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#deep-copies-preserve-separate-layer-objects">Deep copies preserve separate layer objects</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-factory-function-constructing-the-model">🏭 The Factory Function: Constructing the Model</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-initialization-condition-checks">What the initialization condition checks</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#untrained-inference-checking-the-wiring">🧪 Untrained Inference: Checking the Wiring</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#one-start-symbol-then-a-growing-prefix">One start symbol, then a growing prefix</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-last-position-is-not-the-last-vocabulary-word">The last position is not the last vocabulary word</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#evaluation-mode-and-gradient-recording">Evaluation mode and gradient recording</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-batch-object-data-masks-and-token-counts">📦 The Batch Object: Data, Masks, and Token Counts</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#padding-is-a-selected-id">Padding is a selected ID</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#unsqueeze-inserts-an-axis">Unsqueeze inserts an axis</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#why-count-non-padding-labels">Why count non-padding labels?</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#target-shifts-predict-the-next-token">↔️ Target Shifts: Predict the Next Token</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#more-than-shape-matching">More than shape matching</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#combining-padding-and-causal-restrictions">🎭 Combining Padding and Causal Restrictions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-epoch-loop-forward-loss-backward-update">🔄 The Epoch Loop: Forward, Loss, Backward, Update</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#gradient-accumulation-intent-and-actual-loop-behavior">🧠 Gradient Accumulation: Intent and Actual Loop Behavior</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#read-the-supplied-example-literally">Read the supplied example literally</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#none-versus-zero-gradients">None versus zero gradients</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#progress-reporting-what-the-counters-mean">📊 Progress Reporting: What the Counters Mean</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#adam-and-the-warmup-schedule">📈 Adam and the Warmup Schedule</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#moving-from-the-teaching-model-to-larger-jobs">🖥️ Moving from the Teaching Model to Larger Jobs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-09">✅ Action Items After Class 09</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Transformers</li>
+      <li class="breadcrumb-item active">09 · Transformer training</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-09-assembling-and-training-a-transformer-from-scratch">🏋️ Class 09: Assembling and Training a Transformer from Scratch<a class="headerlink" href="#class-09-assembling-and-training-a-transformer-from-scratch" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul in the transcript)<br />
+<strong>⏱️ Duration:</strong> 3 hours 21 minutes 49 seconds | <strong>📅 Session:</strong> Day 9 (22 August 2026)</p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd">22 Aug Transformer practical</a></p>
+<p>This session connects the previous class's components into an encoder–decoder model, checks its forward path with untrained greedy decoding, constructs batch masks and shifted target labels, and explains the training loop and learning-rate schedule. The longest discussion concerns aligning decoder inputs with next-token labels through two slices of the same target.</p>
+<p>The lesson stops at the warmup schedule, before detailed label smoothing and real dataset training. The companion notebook contains later sections and stored results; their presence does not mean they were taught or rerun today.</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Paul shared an updated Annotated Transformer notebook, including an inference cell with extra print statements. The exact 22 August version supplies the code below: <a href="https://drive.google.com/file/d/1y9MZUINtAG3a3SwcfnKrPHro18uUpvEe/view?usp=sharing">class notebook</a>.</li>
+<li>Learners were asked to inspect shapes, masks, data types, and intermediate outputs while debugging. Repeated reading and small experiments were presented as the way to make scratch code familiar.</li>
+<li>Graded assignments would start after tokenization. A later task would replace the current tokenizer with a subword approach and work toward the larger WMT task.</li>
+<li>A transition to the academy's Forward Deployment Engineering course was discussed for learners whose goals favored consulting and adoption work over implementation depth. Eligibility and logistics belong with the academy.</li>
+<li>GPU-provider and API-credit discussions remained exploratory. The class did not establish a guaranteed credit allocation, a universal cheapest provider, or a measured runtime for the proposed larger training job.</li>
+</ul>
+<hr />
+<h2 id="reconnecting-the-earlier-components">🧩 Reconnecting the Earlier Components<a class="headerlink" href="#reconnecting-the-earlier-components" title="Permanent link">&para;</a></h2>
+<p>Paul starts with the architecture code. The encoder processes source tokens; the decoder processes target-side tokens while attending to the encoder output, called <strong>memory</strong>. The generator converts decoder features into target-vocabulary scores.</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Source embedding and position information</td>
+<td>Represent source IDs as position-aware vectors</td>
+</tr>
+<tr>
+<td>Encoder stack</td>
+<td>Produce the source representation sequence</td>
+</tr>
+<tr>
+<td>Decoder stack</td>
+<td>Combine target-prefix information with source memory</td>
+</tr>
+<tr>
+<td>Target embedding and position information</td>
+<td>Represent the decoder's input IDs</td>
+</tr>
+<tr>
+<td>Generator</td>
+<td>Project features to vocabulary scores and apply log-softmax</td>
+</tr>
+<tr>
+<td>Source mask</td>
+<td>Exclude padded source positions from attention</td>
+</tr>
+<tr>
+<td>Target mask</td>
+<td>Combine target padding and causal restrictions</td>
+</tr>
+</tbody>
+</table>
+<p>The <strong>generator</strong> is a neural-network module, not Python's lazy-iteration generator. Its actual forward method uses log-softmax, so it returns <strong>log-probabilities</strong>, rather than raw logits or ordinary probabilities.</p>
+<p>The encoder has two sublayers: self-attention and feed-forward. The decoder has three: masked self-attention, source attention, and feed-forward. <strong>Source attention</strong> is the implementation's name for cross-attention: queries come from the decoder, while keys and values come from source memory. These counts explain why the encoder and decoder have different numbers of residual sublayer connections.</p>
+<h3 id="deep-copies-preserve-separate-layer-objects">Deep copies preserve separate layer objects<a class="headerlink" href="#deep-copies-preserve-separate-layer-objects" title="Permanent link">&para;</a></h3>
+<p>The cloning helper uses deepcopy and a ModuleList. Repeated structure should not unintentionally reuse one mutable parameter set. Deep copies begin with copied values but have separate parameter objects that can subsequently learn independently.</p>
+<p>The code also differs from the paper's pictured normalization order. Its SublayerConnection normalizes before the sublayer, then adds the residual. The notebook explicitly says this is for code simplicity. Reading the forward method is more reliable than assuming its “residual followed by layer norm” docstring describes execution order.</p>
+<p>In the recap, Paul identifies layer normalization's learned scale and shift, initially ones and zeros, and epsilon for stable division. Normalization does not generally place all features between zero and one. Similarly, the sine/cosine recap concerns alternating <strong>feature dimensions</strong>, rather than even and odd token positions.</p>
+<hr />
+<h2 id="the-factory-function-constructing-the-model">🏭 The Factory Function: Constructing the Model<a class="headerlink" href="#the-factory-function-constructing-the-model" title="Permanent link">&para;</a></h2>
+<p>The make_model function assembles the previously defined components. Paul calls it a <strong>factory function</strong>: configuration values go in, and a connected model object comes out.</p>
+<p>The exact class source is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">make_model</span><span class="p">(</span>
+    <span class="n">src_vocab</span><span class="p">,</span> <span class="n">tgt_vocab</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">6</span><span class="p">,</span> <span class="n">d_model</span><span class="o">=</span><span class="mi">512</span><span class="p">,</span> <span class="n">d_ff</span><span class="o">=</span><span class="mi">2048</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">dropout</span><span class="o">=</span><span class="mf">0.1</span>
+<span class="p">):</span>
+    <span class="s2">&quot;Helper: Construct a model from hyperparameters.&quot;</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span>
+    <span class="n">attn</span> <span class="o">=</span> <span class="n">MultiHeadedAttention</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">d_model</span><span class="p">)</span>
+    <span class="n">ff</span> <span class="o">=</span> <span class="n">PositionwiseFeedForward</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_ff</span><span class="p">,</span> <span class="n">dropout</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="n">PositionalEncoding</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">dropout</span><span class="p">)</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">EncoderDecoder</span><span class="p">(</span>
+        <span class="n">Encoder</span><span class="p">(</span><span class="n">EncoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="n">attn</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">ff</span><span class="p">),</span> <span class="n">dropout</span><span class="p">),</span> <span class="n">N</span><span class="p">),</span>
+        <span class="n">Decoder</span><span class="p">(</span><span class="n">DecoderLayer</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">c</span><span class="p">(</span><span class="n">attn</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">attn</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">ff</span><span class="p">),</span> <span class="n">dropout</span><span class="p">),</span> <span class="n">N</span><span class="p">),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">Embeddings</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">src_vocab</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">position</span><span class="p">)),</span>
+        <span class="n">nn</span><span class="o">.</span><span class="n">Sequential</span><span class="p">(</span><span class="n">Embeddings</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">tgt_vocab</span><span class="p">),</span> <span class="n">c</span><span class="p">(</span><span class="n">position</span><span class="p">)),</span>
+        <span class="n">Generator</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">tgt_vocab</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># This was important from their code.</span>
+    <span class="c1"># Initialize parameters with Glorot / fan_avg.</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">parameters</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">dim</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">nn</span><span class="o">.</span><span class="n">init</span><span class="o">.</span><span class="n">xavier_uniform_</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model</span>
+</code></pre></div>
+<p>The short name c means <strong>deep copy</strong>; c(attn) does not mean cross-attention. The decoder receives two independent attention copies, one for target self-attention and one for source attention. Source and target embeddings use their respective vocabulary sizes.</p>
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th style="text-align: right;">Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>N</td>
+<td style="text-align: right;">6</td>
+<td>Depth used for both stacks by this factory</td>
+</tr>
+<tr>
+<td>d_model</td>
+<td style="text-align: right;">512</td>
+<td>Common representation width</td>
+</tr>
+<tr>
+<td>d_ff</td>
+<td style="text-align: right;">2048</td>
+<td>Feed-forward inner width</td>
+</tr>
+<tr>
+<td>h</td>
+<td style="text-align: right;">8</td>
+<td>Attention head count</td>
+</tr>
+<tr>
+<td>dropout</td>
+<td style="text-align: right;">0.1</td>
+<td>Configured dropout probability</td>
+</tr>
+<tr>
+<td>src_vocab / tgt_vocab</td>
+<td style="text-align: right;">Supplied</td>
+<td>Number of entries in each vocabulary</td>
+</tr>
+</tbody>
+</table>
+<p>The paper's <strong>base</strong> and <strong>big</strong> configurations were mentioned. They are not the encoder versus decoder halves, and they are not the names of the smaller Multi30k versus larger WMT datasets. Architecture scale and data choice are separate experimental decisions.</p>
+<h3 id="what-the-initialization-condition-checks">What the initialization condition checks<a class="headerlink" href="#what-the-initialization-condition-checks" title="Permanent link">&para;</a></h3>
+<p>The condition p.dim() &gt; 1 checks the number of <strong>axes</strong> of a parameter tensor. It does not check whether an embedding width is greater than one or reject a “zero-dimensional model.” Matrix-like parameters receive Xavier initialization; one-dimensional parameters, such as many biases and normalization coefficients, keep their earlier initialization.</p>
+<p>Paul suggested experimenting with other initializations. Their impact is not universally restricted to a tiny change in a final decimal: initialization can materially affect optimization. The practical lesson is to inspect and test the selected scheme.</p>
+<hr />
+<h2 id="untrained-inference-checking-the-wiring">🧪 Untrained Inference: Checking the Wiring<a class="headerlink" href="#untrained-inference-checking-the-wiring" title="Permanent link">&para;</a></h2>
+<p>Before loading actual data, Paul tests whether the components can process an input and produce an output. This is a <strong>structural check</strong>, not a translation-quality test or proof that the model has learned to copy numbers.</p>
+<p>The example uses vocabulary sizes 11 and 11, stack depth two, and source IDs 1 through 10. Torch's long type is the integer representation needed for token indices; the retrieved embedding vectors have a different, floating-point representation.</p>
+<p>The source mask contains ones because this sample has no padded positions. Its shape is <strong>1 × 1 × 10</strong>; it is not merely a flat ten-item vector. Its singleton axis supports attention broadcasting.</p>
+<p>The actual test is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">inference_test</span><span class="p">():</span>
+    <span class="n">test_model</span> <span class="o">=</span> <span class="n">make_model</span><span class="p">(</span><span class="mi">11</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">test_model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+    <span class="n">src</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">10</span><span class="p">]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">long</span><span class="p">)</span>
+    <span class="n">src_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+
+    <span class="n">memory</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">src</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">)</span>
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">src</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">9</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span>
+            <span class="n">memory</span><span class="p">,</span> <span class="n">src_mask</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">subsequent_mask</span><span class="p">(</span><span class="n">ys</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span><span class="n">src</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">test_model</span><span class="o">.</span><span class="n">generator</span><span class="p">(</span><span class="n">out</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">next_word</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">prob</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">next_word</span> <span class="o">=</span> <span class="n">next_word</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">ys</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">next_word</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">ys</span><span class="o">.</span><span class="n">dtype</span><span class="p">)],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span>
+        <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Example Untrained Model Prediction:&quot;</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+</code></pre></div>
+<p>Paul adds a second version with print statements to expose every step. Both versions and their outputs are preserved in the class notebook.</p>
+<h3 id="one-start-symbol-then-a-growing-prefix">One start symbol, then a growing prefix<a class="headerlink" href="#one-start-symbol-then-a-growing-prefix" title="Permanent link">&para;</a></h3>
+<p>The initial ys contains one zero. In <strong>this test</strong>, ID 0 acts as a start symbol supplied by the program. It is not predicted. Special-token IDs are vocabulary choices, so zero is not a universal starting requirement.</p>
+<p>The encoder produces memory once. The decoder then receives that memory and the current prefix. Its final position goes through the generator, the highest-scoring ID is selected, and that ID is appended. The next pass consumes the expanded prefix.</p>
+<pre class="mermaid"><code>flowchart LR
+    S["Source IDs"] --&gt; E["Encode once"] --&gt; M["Memory"]
+    Z["ys starts with token 0"] --&gt; D["Decode current prefix&lt;br/&gt;with causal mask"]
+    M --&gt; D
+    D --&gt; G["Generator on final position"]
+    G --&gt; Max["Choose highest-scoring ID"]
+    Max --&gt; A["Append ID to ys"]
+    A --&gt; D</code></pre>
+<p>The printed example starts <strong>[0] → [0, 9] → [0, 9, 1]</strong> and continues growing. Those particular IDs come from untrained random parameters, not useful facts to memorize. The outer test creates a model ten times, so new initial parameters can yield different outputs.</p>
+<h3 id="the-last-position-is-not-the-last-vocabulary-word">The last position is not the last vocabulary word<a class="headerlink" href="#the-last-position-is-not-the-last-vocabulary-word" title="Permanent link">&para;</a></h3>
+<p>The decoder returns a representation for each prefix position. The slice out[:, -1] selects its final <strong>position</strong>, used to predict the next token. It does not imply that the last vocabulary entry has the highest probability.</p>
+<p>Log-softmax preserves the ranking of probabilities, so selecting the largest log-probability chooses the same ID as selecting the largest probability. Torch's max operation along a dimension returns both a maximum value and its index; this code discards the value and keeps the index. The older data[0] expression selects the first batch element.</p>
+<p>This is <strong>greedy decoding</strong>: choose one best-scoring candidate at each step. The test runs nine iterations and contains no end-token stopping condition. That range is a demonstration choice, not a universal output length.</p>
+<h3 id="evaluation-mode-and-gradient-recording">Evaluation mode and gradient recording<a class="headerlink" href="#evaluation-mode-and-gradient-recording" title="Permanent link">&para;</a></h3>
+<p>Evaluation mode changes modules such as dropout; it does not itself disable autograd. The provided test has no no-grad or inference-mode context, so it is not an optimized inference implementation. These are separate PyTorch controls. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html#torch.nn.Module.eval">Module evaluation mode</a>, <a href="https://docs.pytorch.org/docs/2.14/notes/autograd.html#locally-disabling-gradient-computation">autograd modes</a></p>
+<hr />
+<h2 id="the-batch-object-data-masks-and-token-counts">📦 The Batch Object: Data, Masks, and Token Counts<a class="headerlink" href="#the-batch-object-data-masks-and-token-counts" title="Permanent link">&para;</a></h2>
+<p>The next section constructs a batch manually. Besides source IDs, training needs decoder input IDs, next-token labels, and masks specifying allowed attention connections.</p>
+<p>The exact class implementation is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Batch</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Object for holding a batch of data with mask during training.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">src</span><span class="p">,</span> <span class="n">tgt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>  <span class="c1"># 2 = &lt;blank&gt;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">src</span> <span class="o">=</span> <span class="n">src</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">src_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">src</span> <span class="o">!=</span> <span class="n">pad</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tgt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tgt_y</span> <span class="o">=</span> <span class="n">tgt</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tgt_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_std_mask</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tgt</span><span class="p">,</span> <span class="n">pad</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ntokens</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tgt_y</span> <span class="o">!=</span> <span class="n">pad</span><span class="p">)</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_std_mask</span><span class="p">(</span><span class="n">tgt</span><span class="p">,</span> <span class="n">pad</span><span class="p">):</span>
+        <span class="s2">&quot;Create a mask to hide padding and future words.&quot;</span>
+        <span class="n">tgt_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">tgt</span> <span class="o">!=</span> <span class="n">pad</span><span class="p">)</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">tgt_mask</span> <span class="o">=</span> <span class="n">tgt_mask</span> <span class="o">&amp;</span> <span class="n">subsequent_mask</span><span class="p">(</span><span class="n">tgt</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">type_as</span><span class="p">(</span>
+            <span class="n">tgt_mask</span><span class="o">.</span><span class="n">data</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">tgt_mask</span>
+</code></pre></div>
+<p>The optional target permits source-only construction. When a target exists, the object prepares the decoder input, its labels, the combined mask, and a non-padding label count.</p>
+<h3 id="padding-is-a-selected-id">Padding is a selected ID<a class="headerlink" href="#padding-is-a-selected-id" title="Permanent link">&para;</a></h3>
+<p>For this example, <strong>pad = 2</strong>. The comparison src != pad returns True for real tokens and False for padding. Paul draws the Boolean result before discussing its shape:</p>
+<table>
+<thead>
+<tr>
+<th>Source row in the PDF</th>
+<th>Comparison with pad = 2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[1, 3, 2, 4]</td>
+<td>[True, True, False, True]</td>
+</tr>
+<tr>
+<td>[2, 8, 1, 0]</td>
+<td>[False, True, True, True]</td>
+</tr>
+</tbody>
+</table>
+<p>Under that rule, zero is not padding. The chosen vocabulary and padding configuration must agree; changing one alone changes which positions are excluded.</p>
+<h3 id="unsqueeze-inserts-an-axis">Unsqueeze inserts an axis<a class="headerlink" href="#unsqueeze-inserts-an-axis" title="Permanent link">&para;</a></h3>
+<p>The PDF follows a <strong>(2, 4)</strong> array through unsqueeze(-2) to <strong>(2, 1, 4)</strong>. Its values do not change. A singleton axis is inserted at the second-from-last position so the mask can broadcast across query positions.</p>
+<pre class="mermaid"><code>flowchart LR
+    S["Source IDs&lt;br/&gt;batch × sequence"] --&gt; B["Compare with padding ID&lt;br/&gt;True = non-padding"]
+    B --&gt; U["unsqueeze -2"]
+    U --&gt; M["Source mask&lt;br/&gt;batch × 1 × sequence"]
+    M --&gt; A["Broadcast across queries&lt;br/&gt;during attention"]</code></pre>
+<p>This translates the source-mask sketch in <strong>Annotated TF (1).pdf</strong>. The comparison supplies Boolean information; unsqueeze supplies shape compatibility. They are separate operations.</p>
+<h3 id="why-count-non-padding-labels">Why count non-padding labels?<a class="headerlink" href="#why-count-non-padding-labels" title="Permanent link">&para;</a></h3>
+<p>The ntokens field counts labels that should contribute to loss and reporting. Padding supports compatible batch shapes but is not a real prediction target in this setup. Including padding in the denominator would make batch comparisons misleading.</p>
+<p>The count comes from tgt_y, the shifted <strong>labels</strong>, not just the source or unshifted target. Paul revisits this during the loop explanation: the useful count is the number of non-padding target tokens.</p>
+<hr />
+<h2 id="target-shifts-predict-the-next-token">↔️ Target Shifts: Predict the Next Token<a class="headerlink" href="#target-shifts-predict-the-next-token" title="Permanent link">&para;</a></h2>
+<p>The class spends substantial time on:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">tgt</span> <span class="o">=</span> <span class="n">tgt</span><span class="p">[:,</span> <span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">tgt_y</span> <span class="o">=</span> <span class="n">tgt</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+</code></pre></div>
+<p>These slices create two aligned sequences from the <strong>same full target</strong>. The first excludes the last token and supplies decoder input; the second excludes the first token and supplies the next-token label at each position.</p>
+<p>The whiteboard's two-row numerical example is:</p>
+<table>
+<thead>
+<tr>
+<th>Full target</th>
+<th>Decoder input</th>
+<th>Next-token labels</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>[1, 2, 3, 4]</td>
+<td>[1, 2, 3]</td>
+<td>[2, 3, 4]</td>
+</tr>
+<tr>
+<td>[5, 6, 7, 8]</td>
+<td>[5, 6, 7]</td>
+<td>[6, 7, 8]</td>
+</tr>
+</tbody>
+</table>
+<p>At the first output position, the model should predict the label following the first input token. At the second position, it predicts the next label. Causal masking prevents inspection of later target inputs.</p>
+<p>The PDF also uses <strong>[start, the, cat, sat]</strong>. Decoder input becomes <strong>[start, the, cat]</strong>, and labels become <strong>[the, cat, sat]</strong>. The token offset is the point, rather than any particular numerical IDs.</p>
+<pre class="mermaid"><code>flowchart TB
+    T["Full target:&lt;br/&gt;start, the, cat, sat"] --&gt; I["Decoder input:&lt;br/&gt;start, the, cat"]
+    T --&gt; L["Labels:&lt;br/&gt;the, cat, sat"]
+    I --&gt; D["Causally masked decoder&lt;br/&gt;using source memory"]
+    D --&gt; P["Predictions at aligned positions"]
+    P --&gt; C["Compare each prediction&lt;br/&gt;with its next-token label"]
+    L --&gt; C
+    C --&gt; Loss["Compute loss"]</code></pre>
+<p>This preserves the whiteboard's input-versus-label structure while clarifying its occasional loose use of “encoder phase.” These slices change target-side decoder inputs and labels; they do not shift the encoder's source sentence.</p>
+<h3 id="more-than-shape-matching">More than shape matching<a class="headerlink" href="#more-than-shape-matching" title="Permanent link">&para;</a></h3>
+<p>Both slices have equal length, permitting comparison. Their offset also defines the objective: <strong>given preceding target context, predict the next target token</strong>. Aligning each token with itself would change the task.</p>
+<p>Paul uses <strong>“I love …” → “dogs”</strong> as an analogy. The prediction must be compared with the actual next word in the dataset. Another ground-truth word changes the loss; a plausible example is not automatically a correct model output.</p>
+<p>This is <strong>teacher forcing</strong>: during training, true preceding target tokens are supplied. During free-running inference, the prefix contains the model's own generated tokens. The fill-in-the-blank analogy does not make this causal next-token objective identical to BERT-style masked language modeling.</p>
+<p>Ground truth means the intended labels in the data. The model produces a distribution over candidates, and loss evaluates that distribution against aligned labels; loss is not limited to comparing two lists of argmax IDs.</p>
+<p>With a causal mask, training can compute predictions for all target positions together while respecting the permitted context at each position. Generation still extends a prefix one token at a time. Keeping those two procedures distinct resolves much of the confusion in this section.</p>
+<hr />
+<h2 id="combining-padding-and-causal-restrictions">🎭 Combining Padding and Causal Restrictions<a class="headerlink" href="#combining-padding-and-causal-restrictions" title="Permanent link">&para;</a></h2>
+<p>The target mask requires an allowed source position on the target side to be both <strong>non-padding</strong> and <strong>not in the future</strong> relative to the query. The Boolean tensor AND operation combines those restrictions. Paul explicitly distinguishes it from addition.</p>
+<p>The helper constructs future locations using an upper triangle and returns their complement:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">subsequent_mask</span><span class="p">(</span><span class="n">size</span><span class="p">):</span>
+    <span class="s2">&quot;Mask out subsequent positions.&quot;</span>
+    <span class="n">attn_shape</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">subsequent_mask</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">triu</span><span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">attn_shape</span><span class="p">),</span> <span class="n">diagonal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">type</span><span class="p">(</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">bool</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">subsequent_mask</span> <span class="o">==</span> <span class="mi">0</span>
+</code></pre></div>
+<p>Its final True values form a lower triangle, including the diagonal. “Upper triangular” refers to locations identified for blocking, not the final allowed positions.</p>
+<p>The target padding mask starts at <strong>batch × 1 × target length</strong>. Combining it with the causal mask supplies restrictions for query/key pairs. The attention code later expands it for heads and suppresses blocked scores before softmax.</p>
+<p>The static make_std_mask method uses explicit target and padding arguments without needing instance state. It belongs to the class namespace and can be called through the class without passing self.</p>
+<p>Masking does not itself replace IDs with zero or generate tokens. It restricts attention. Tokenization, special-token IDs, target alignment, and attention masks remain separate responsibilities.</p>
+<hr />
+<h2 id="the-epoch-loop-forward-loss-backward-update">🔄 The Epoch Loop: Forward, Loss, Backward, Update<a class="headerlink" href="#the-epoch-loop-forward-loss-backward-update" title="Permanent link">&para;</a></h2>
+<p>Paul next reads TrainState and run_epoch. The state records processed batches, examples, tokens, and optimizer updates. Increasing those counters is bookkeeping, not a weight update.</p>
+<p>Each batch passes through the complete model. The custom loss helper returns:</p>
+<ul>
+<li><strong>loss:</strong> a detached reporting quantity for totals.</li>
+<li><strong>loss_node:</strong> a differentiable tensor attached to the graph for backward propagation.</li>
+</ul>
+<p>These are notebook-specific names, not required dual outputs of every PyTorch criterion. Its later helper confirms the relationship: it returns sloss.data multiplied by the token count, and sloss itself. The first supports totals; the second is the token-normalized differentiable loss.</p>
+<p>The actual inner training block is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">out</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward</span><span class="p">(</span>
+    <span class="n">batch</span><span class="o">.</span><span class="n">src</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">tgt</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">src_mask</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">tgt_mask</span>
+<span class="p">)</span>
+<span class="n">loss</span><span class="p">,</span> <span class="n">loss_node</span> <span class="o">=</span> <span class="n">loss_compute</span><span class="p">(</span><span class="n">out</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">tgt_y</span><span class="p">,</span> <span class="n">batch</span><span class="o">.</span><span class="n">ntokens</span><span class="p">)</span>
+<span class="c1"># loss_node = loss_node / accum_iter</span>
+<span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;train&quot;</span> <span class="ow">or</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;train+log&quot;</span><span class="p">:</span>
+    <span class="n">loss_node</span><span class="o">.</span><span class="n">backward</span><span class="p">()</span>
+    <span class="n">train_state</span><span class="o">.</span><span class="n">step</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">train_state</span><span class="o">.</span><span class="n">samples</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">src</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">train_state</span><span class="o">.</span><span class="n">tokens</span> <span class="o">+=</span> <span class="n">batch</span><span class="o">.</span><span class="n">ntokens</span>
+    <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="n">accum_iter</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+        <span class="n">optimizer</span><span class="o">.</span><span class="n">zero_grad</span><span class="p">(</span><span class="n">set_to_none</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">n_accum</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">train_state</span><span class="o">.</span><span class="n">accum_step</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">scheduler</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</code></pre></div>
+<p>This excerpt removes only outer indentation for display; it remains the code inside the batch loop.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Responsibility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>backward</td>
+<td>Differentiate the graph and accumulate gradients</td>
+</tr>
+<tr>
+<td>optimizer step</td>
+<td>Change parameters using those gradients</td>
+</tr>
+<tr>
+<td>zero_grad</td>
+<td>Clear gradient storage</td>
+</tr>
+<tr>
+<td>scheduler step</td>
+<td>Advance the learning-rate schedule</td>
+</tr>
+</tbody>
+</table>
+<p>Paul connects backward to automatic differentiation and the chain rule. <strong>Autograd</strong> is PyTorch's name for that machinery, not an alternative to automatic differentiation. The optimizer performs updates after gradients exist.</p>
+<p>In the function's eval mode, its training branch is skipped, so it does not call backward or the optimizer. That string does not independently call model.eval or disable graph recording; callers handle those controls.</p>
+<hr />
+<h2 id="gradient-accumulation-intent-and-actual-loop-behavior">🧠 Gradient Accumulation: Intent and Actual Loop Behavior<a class="headerlink" href="#gradient-accumulation-intent-and-actual-loop-behavior" title="Permanent link">&para;</a></h2>
+<p>Accumulation processes several smaller microbatches before updating parameters. It can approximate a desired larger batch when that batch's activations do not fit in GPU memory simultaneously.</p>
+<p>The intended cycle is: forward/backward on successive microbatches → retain gradient contributions → update at the chosen boundary → clear gradients for the next group. It does not require retaining a separate old model for each microbatch.</p>
+<p>The count is configurable. More accumulation changes update frequency and effective-batch behavior; it is not automatically faster or mandatory for every task. Loss scaling and scheduler step units must be specified consistently.</p>
+<h3 id="read-the-supplied-example-literally">Read the supplied example literally<a class="headerlink" href="#read-the-supplied-example-literally" title="Permanent link">&para;</a></h3>
+<p>Its code differs in several ways from a simple “update after four batches” description:</p>
+<ol>
+<li>Enumeration starts at <strong>i = 0</strong>, so the condition is true for the first batch. With accumulation count four, updates occur at indices <strong>0, 4, 8, …</strong>; the first update includes only one batch.</li>
+<li>Division of loss_node by accum_iter is commented out. Gradients are summed, not automatically averaged over equally weighted microbatches.</li>
+<li>The scheduler advances every training batch, outside the less frequent optimizer-update boundary.</li>
+<li>No explicit final incomplete-group flush appears. Remaining gradients can persist into another call if surrounding code does not clear them.</li>
+</ol>
+<p>These are observations from the exact companion source. Check them before reusing the teaching function as a precise large-batch implementation. No repaired code is substituted for the original.</p>
+<h3 id="none-versus-zero-gradients">None versus zero gradients<a class="headerlink" href="#none-versus-zero-gradients" title="Permanent link">&para;</a></h3>
+<p>The set_to_none=True option clears gradient fields to <strong>None</strong>, not zero-filled tensors. PyTorch documents possible memory benefits and behavioral differences for parameters without gradients. “Clear gradient storage” is the accurate description. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.optim.Optimizer.zero_grad.html">PyTorch zero_grad documentation</a></p>
+<p>Deleting local loss variables removes references, but does not guarantee immediate release of all GPU allocations if other references or allocator caches remain.</p>
+<hr />
+<h2 id="progress-reporting-what-the-counters-mean">📊 Progress Reporting: What the Counters Mean<a class="headerlink" href="#progress-reporting-what-the-counters-mean" title="Permanent link">&para;</a></h2>
+<p>Paul reads the loop's loss, token throughput, elapsed time, and current-learning-rate logging. Several counters describe different quantities:</p>
+<table>
+<thead>
+<tr>
+<th>Counter</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Batch step</td>
+<td>Batches processed</td>
+</tr>
+<tr>
+<td>Accumulation/update step</td>
+<td>Optimizer updates under the selected boundary logic</td>
+</tr>
+<tr>
+<td>Samples</td>
+<td>Examples seen</td>
+</tr>
+<tr>
+<td>Tokens</td>
+<td>Non-padding target labels seen</td>
+</tr>
+<tr>
+<td>Epoch</td>
+<td>A pass through the selected training data iterator</td>
+</tr>
+</tbody>
+</table>
+<p>Large jobs often emphasize steps, but epochs still make sense when data traversal is defined. Neither concept is restricted to a particular model size.</p>
+<p>The actual logging condition is <strong>i % 40 == 1</strong>, giving printed indices 1, 41, 81, and so on. The number is a reporting choice; odd-numbered logging intervals are not invalid.</p>
+<p>The epoch returns <strong>total reporting loss divided by total non-padding tokens</strong>, along with TrainState. Interpreting that average requires knowing the criterion and the helper's normalization.</p>
+<p>Stored later Multi30k logs demonstrate the eventual report format, but the transcript does not show that dataset-training section being taught or rerun today. This lesson prepares the machinery needed for it.</p>
+<hr />
+<h2 id="adam-and-the-warmup-schedule">📈 Adam and the Warmup Schedule<a class="headerlink" href="#adam-and-the-warmup-schedule" title="Permanent link">&para;</a></h2>
+<p>The final topic translates the paper's learning-rate formula into code. The referenced Adam settings are <strong>β₁ = 0.9</strong>, <strong>β₂ = 0.98</strong>, and <strong>ε = 10⁻⁹</strong>. Epsilon should not be read as 10.9.</p>
+<p>The schedule is:</p>
+<p>$$
+\operatorname{lr}(s)=d_{model}^{-0.5}
+\min\left(s^{-0.5},\ s\,w^{-1.5}\right)
+$$</p>
+<p>The original warmup length w is <strong>4000 steps</strong>. The lecture briefly says 400 before returning to 4000; the source and plotted original configuration establish the intended value.</p>
+<p>The first branch decreases with inverse square root of the step number. The second grows linearly while warmup length remains fixed. Their minimum produces an initial rise, a peak at the warmup boundary, and decay afterward.</p>
+<p>Warmup begins at a <strong>small</strong> rate and raises it. It does not mean starting with the maximum rate or running a separate pretraining phase before training.</p>
+<p>The exact helper is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="n">step</span><span class="p">,</span> <span class="n">model_size</span><span class="p">,</span> <span class="n">factor</span><span class="p">,</span> <span class="n">warmup</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    we have to default the step to 1 for LambdaLR function</span>
+<span class="sd">    to avoid zero raising to negative power.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">step</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">factor</span> <span class="o">*</span> <span class="p">(</span>
+        <span class="n">model_size</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">*</span> <span class="nb">min</span><span class="p">(</span><span class="n">step</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">step</span> <span class="o">*</span> <span class="n">warmup</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">))</span>
+    <span class="p">)</span>
+</code></pre></div>
+<p>The zero-step guard avoids a negative power of zero. Factor scales the curve. Model size also changes the overall scale and should not be ignored because it sits outside the minimum.</p>
+<p>Paul compares <strong>512:4000</strong>, <strong>512:8000</strong>, and <strong>256:4000</strong> configurations. Longer warmup delays the peak; model width changes the scale. The curve is predetermined by steps, rather than an automatic detector of convergence or a local minimum.</p>
+<p>LambdaLR multiplies the optimizer's initial rate by the returned factor. In the plotting example, base lr=1 makes the numerical multiplier equal the displayed rate. Another base rate changes the actual rate. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.optim.lr_scheduler.LambdaLR.html">PyTorch LambdaLR</a></p>
+<hr />
+<h2 id="moving-from-the-teaching-model-to-larger-jobs">🖥️ Moving from the Teaching Model to Larger Jobs<a class="headerlink" href="#moving-from-the-teaching-model-to-larger-jobs" title="Permanent link">&para;</a></h2>
+<p>The closing hardware discussion emphasizes choosing compatible resources and considering the total job cost. Paul discusses local hardware, hosted notebooks, A100/H100-class resources, and task-based serverless execution.</p>
+<p>The reusable decisions are to distinguish <strong>system RAM from VRAM</strong>, check the code's supported backend, and compare the cost of completion. An hourly price alone omits duration, billing increments, storage, and teardown behavior.</p>
+<p>Serverless execution was proposed to avoid retaining an instance after a job completes and its outputs are saved. It is not guaranteed cheaper for every workload. Historical provider prices, rankings, and unmeasured runtime estimates are therefore not turned into current purchasing recommendations here.</p>
+<p>The final substantive questions arrive after an initial goodbye. Sai Kiran asks whether this full pipeline is universal practice; Paul identifies it as a paper-oriented teaching implementation whose optimization differs from production systems. Prabu asks why local tools were installed if execution is remote; editing and environment management still matter, and compatible local hardware can also execute the work.</p>
+<p>The future WMT English–German task uses approximately <strong>4.5 million sentence pairs</strong>, not the five-billion figure spoken near the end. The companion's later configured Multi30k pipeline actually uses <strong>German source and English target</strong>, although some live explanations describe English-to-German. Check the actual language pipelines rather than assuming the direction.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul planned to resume with <strong>label smoothing</strong> and KL-divergence-based loss, then work through synthetic data, reusable greedy decoding, data loading, and Multi30k training.</p>
+<p>Label smoothing received only an introduction: avoid concentrating the target entirely on one class. Its implementation was deferred. The remaining probability mass concerns other vocabulary classes, not necessarily neighboring words in the sentence.</p>
+<p>Tokenization would follow, including BPE, SentencePiece, and WordPiece. Learners would then revisit this architecture, replace parts of its tokenizer/data setup, and attempt a larger task. Larger-scale training and post-training projects remained future work.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>Most doubts were relayed through chat. Arsha spoke during the break; <strong>Sai Kiran Akula</strong> and <strong>Prabu Manickam</strong> asked the final open-floor questions after the first sign-off. All substantive late follow-ups are retained.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Debal:</strong> Is the practical teaching another attention idea?</td>
+<td>It implements the earlier concepts and connects their components. Shapes, data flow, masking, and training machinery add the practical detail.</td>
+</tr>
+<tr>
+<td><strong>Yogesh:</strong> What is Xavier uniform?</td>
+<td>A parameter initialization scheme used here for multi-axis tensors. The factory's condition checks rank, and later experiments can compare initialization choices.</td>
+</tr>
+<tr>
+<td><strong>Kuman, name unclear:</strong> Why exclude dim ≤ 1?</td>
+<td>The selected scheme targets matrix-like parameters. One-dimensional biases and normalization coefficients retain their earlier initialization; this is not a check that a model has no features.</td>
+</tr>
+<tr>
+<td><strong>Uday / Udna, name unclear:</strong> Why do repeated IDs appear?</td>
+<td>The model is untrained, so repetition has no demonstrated semantic meaning. Each chosen ID extends the current prefix; recreating parameters may change the output.</td>
+</tr>
+<tr>
+<td><strong>Yogesh:</strong> Does the last word have the highest probability?</td>
+<td>The final decoder position predicts the next token. The winning vocabulary ID depends on the distribution, not its place at the end of a vocabulary.</td>
+</tr>
+<tr>
+<td><strong>Nithin:</strong> What do the final loop lines do?</td>
+<td>They extract the selected ID and append it to ys. The next call sees that larger prefix and a matching causal mask.</td>
+</tr>
+<tr>
+<td><strong>Sarvichith:</strong> Why does padding ID 2 become False?</td>
+<td>The comparison excludes IDs equal to the configured padding value. Another tokenizer can assign a different ID.</td>
+</tr>
+<tr>
+<td><strong>Chat question:</strong> What changes with unsqueeze(-2)?</td>
+<td>A singleton axis is inserted: the board's (2, 4) becomes (2, 1, 4). Values and Boolean meanings stay the same.</td>
+</tr>
+<tr>
+<td><strong>Gaurav:</strong> Why use both target slices?</td>
+<td>Excluding the last token creates decoder input; excluding the first creates next-token labels. Their offset defines the prediction alignment.</td>
+</tr>
+<tr>
+<td><strong>Thomas:</strong> Is one shift for forward and one for backward?</td>
+<td>Both prepare the forward input/label relation. Backward begins after differentiable loss is computed.</td>
+</tr>
+<tr>
+<td><strong>Ganesh:</strong> Is this teacher forcing?</td>
+<td>During training the decoder receives true preceding targets. During generation it instead extends its own selected prefix.</td>
+</tr>
+<tr>
+<td><strong>Anhu / Paritosh:</strong> Why a static mask method?</td>
+<td>It uses the arguments supplied directly and does not require instance state. It can be invoked through the class namespace.</td>
+</tr>
+<tr>
+<td><strong>Navalita, name unclear:</strong> Are steps only for large networks?</td>
+<td>Steps describe loop work or updates, while epochs describe data passes. Both are useful across model sizes.</td>
+</tr>
+<tr>
+<td><strong>Chat questions:</strong> Why accumulate gradients?</td>
+<td>To process a larger effective batch as memory-fitting microbatches. Update boundaries, scaling, and scheduler units must match the intended training behavior.</td>
+</tr>
+<tr>
+<td><strong>Gaurav:</strong> What does the scheduler control?</td>
+<td>Learning rate according to a selected schedule. The shown function follows steps, not a loss-based convergence detector.</td>
+</tr>
+<tr>
+<td><strong>Satha, name unclear:</strong> How should a paper be read?</td>
+<td>Paul suggested component breakdown, comparison with alternatives, and benchmark inspection before deeper reading. This was his workflow rather than a universal rule.</td>
+</tr>
+<tr>
+<td><strong>Arsha:</strong> How can missed classes be caught up?</td>
+<td>Recordings and resources are organized in Notion. Revisit theory and code, then practice tracing and debugging small examples.</td>
+</tr>
+<tr>
+<td><strong>Rushi and hardware questions:</strong> Why serverless?</td>
+<td>Paul wanted execution and teardown after outputs were saved. The actual cost advantage depends on the workload and provider.</td>
+</tr>
+<tr>
+<td><strong>Arun:</strong> Can local hardware run the job?</td>
+<td>Yes, if resources and the supported backend are suitable. Clarify RAM versus VRAM; the mentioned Intel hardware was not validated in class.</td>
+</tr>
+<tr>
+<td><strong>Chat questions:</strong> Must everyone use one provider or eight GPUs?</td>
+<td>No common provider was required, and students were not asked to rent an eight-GPU cluster for the upcoming task. Plan around the actual job.</td>
+</tr>
+<tr>
+<td><strong>Sai Kiran Akula:</strong> Is every production pipeline like this notebook?</td>
+<td>It is a research teaching implementation. Production systems can package and optimize the responsibilities differently; it is not a universal standard.</td>
+</tr>
+<tr>
+<td><strong>Prabu Manickam:</strong> Why install local VS Code and uv for cloud training?</td>
+<td>Local development and environment work remain useful. Execution can be local with suitable hardware or remote when that fits the task.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A factory connects existing modules; c(attn) means deep copy here.</li>
+<li>N is stack depth; h is head count; vocabulary size is another quantity.</li>
+<li>The companion's residual helper normalizes before its sublayer.</li>
+<li>The generator returns log-probabilities over target vocabulary entries.</li>
+<li>Untrained inference checks wiring, not task quality.</li>
+<li>The start ID is specific to the vocabulary and demonstration.</li>
+<li>Memory is encoder output; the decoder extends its prefix.</li>
+<li>Last decoder position does not mean last vocabulary word.</li>
+<li>Padding comparisons create Booleans; unsqueeze adds an axis.</li>
+<li>Target input and label slices define a next-token offset.</li>
+<li>Those slices do not shift the encoder's source.</li>
+<li>AND combines padding and causal restrictions.</li>
+<li>Non-padding labels supply the meaningful loss denominator.</li>
+<li>Backward calculates gradients; the optimizer changes parameters.</li>
+<li>The shown zero-based accumulation condition triggers on the first batch.</li>
+<li>Accumulation scaling and schedule step units require inspection.</li>
+<li>Clearing gradients to None is distinct from setting zero tensors.</li>
+<li>Warmup rises from a low rate before inverse-square-root decay.</li>
+<li>LambdaLR's factor multiplies the optimizer's base rate.</li>
+<li>Detailed regularization and dataset training were deferred.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-09">✅ Action Items After Class 09<a class="headerlink" href="#action-items-after-class-09" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Open the exact class notebook and separate today's cells from later examples.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Trace the factory from vocabulary sizes to each major module.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Print prefix, output shape, and mask size at successive decoding steps.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain why untrained outputs cannot validate translation quality.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Recreate the PDF's padding comparison and shape change.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Apply both target slices to its numerical and text examples.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Trace a target position's permitted context and next-token label.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the final causal mask, including the diagonal.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Separate reporting loss, differentiable loss, backward, update, and clearing.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Trace optimizer indices for accumulation count four.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check loss scaling, incomplete groups, and scheduler batch/update units.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the warmup function alongside all three plotted configurations.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Revise before the next label-smoothing and data-training lesson.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 09 transcript — </em><em>GMT20260822-143017_Recording.cutfile.20260823051524431.transcript.vtt</em><em> — the accompanying </em><em>Annotated TF (1).pdf</em><em>, and the exact <a href="https://drive.google.com/file/d/1y9MZUINtAG3a3SwcfnKrPHro18uUpvEe/view?usp=sharing">22 August notebook</a>, for “<a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd">22 Aug Transformer practical</a>,” Production AI / LLM Engineering, Krish Naik Academy. All eight transcript parts, all 125 notebook cells, and all five PDF pages were read or inspected fully. Code preserves actual companion source; only outer indentation is removed from the loop excerpt. PDF structures supply the mask and target-alignment diagrams. No training was performed while compiling the notes; stored outputs are not represented as a new run.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_08_Annotated_Transformer_Implementation_Notes.html" class="btn btn-neutral float-left" title="08 · Transformer implementation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_10_Transformer_Training_and_Inference_Notes.html" class="btn btn-neutral float-right" title="10 · Training and inference">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_08_Annotated_Transformer_Implementation_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_10_Transformer_Training_and_Inference_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

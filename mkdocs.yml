@@ -1,0 +1,80 @@
+site_name: Production AI Engineering Notes
+site_description: Notes for the 21 released Krish Naik Academy classes, with code, diagrams, Q&A, and quick revision.
+site_url: https://builtbyankit.github.io/production-ai-engineering-notes/
+repo_url: https://github.com/builtbyankit/production-ai-engineering-notes
+repo_name: GitHub
+edit_uri: ''
+docs_dir: mkdocs_docs
+site_dir: docs
+use_directory_urls: false
+hooks:
+  - scripts/hooks.py
+
+theme:
+  name: readthedocs
+  highlightjs: false
+  collapse_navigation: true
+  sticky_navigation: true
+  navigation_depth: 3
+  prev_next_buttons_location: bottom
+
+plugins:
+  - search
+
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.tasklist
+  - pymdownx.highlight:
+      use_pygments: true
+  - pymdownx.arithmatex:
+      generic: true
+      inline_syntax: [round]
+      block_syntax: [square]
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+extra_css:
+  - assets/vendor/katex/katex.min.css
+  - stylesheets/extra.css
+
+extra_javascript:
+  - assets/vendor/katex/katex.min.js
+  - assets/vendor/mermaid/mermaid.min.js
+  - javascripts/render.js
+
+nav:
+  - Course overview: index.md
+  - Foundations:
+      - '01 · Induction and course roadmap': Class_01_Induction_and_Course_Roadmap_Notes.md
+      - '02 · Software setup': Class_02_Software_Setup_Notes.md
+      - '03 · PyTorch fundamentals': Class_03_PyTorch_Fundamentals_Notes.md
+  - Transformers:
+      - '04 · Transformers 101, part 1': Class_04_Transformers_101_Part_1_Notes.md
+      - '05 · Transformers 101, part 2': Class_05_Transformers_101_Part_2_Notes.md
+      - '06 · Multi-head attention': Class_06_Multi_Head_Attention_Notes.md
+      - '07 · Transformer architecture': Class_07_Transformer_Architecture_Notes.md
+      - '08 · Transformer implementation': Class_08_Annotated_Transformer_Implementation_Notes.md
+      - '09 · Transformer training': Class_09_Transformer_Training_Notes.md
+      - '10 · Training and inference': Class_10_Transformer_Training_and_Inference_Notes.md
+  - Tokenization:
+      - '11 · Tokenization foundations': Class_11_Tokenization_Foundations_Notes.md
+      - '12 · Subword tokenization': Class_12_Subword_Tokenization_Notes.md
+      - '13 · Custom domain tokenization': Class_13_Custom_Domain_Tokenization_Notes.md
+      - '14 · Offset mapping and prompting': Class_14_Offset_Mapping_and_Prompting_Notes.md
+  - Prompting and structure:
+      - '15 · Prompt engineering': Class_15_Prompt_Engineering_Notes.md
+      - '16 · Structured generation': Class_16_Structured_Generation_Notes.md
+  - DSPy:
+      - '17 · DSPy, part 1': Class_17_DSPy_Part_1_Notes.md
+      - '18 · DSPy, part 2': Class_18_DSPy_Part_2_Notes.md
+  - Fine-tuning and inference:
+      - '19 · Fine-tuning architectures': Class_19_Fine_Tuning_Transformer_Architectures_Notes.md
+      - '20 · KV cache': Class_20_KV_Cache_Notes.md
+      - '21 · Attention variants': Class_21_Attention_Variants_Notes.md
+  - Quick revision: Course_Quick_Revision.md
+  - Downloads: downloads.md

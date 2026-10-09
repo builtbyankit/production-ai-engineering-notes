@@ -1,0 +1,27 @@
+body,.rst-content{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#243247}
+.wy-nav-content{max-width:1120px;padding:2.25rem 3rem}
+.wy-nav-side{background:#f4f6f9;border-right:1px solid #dfe5ee}
+.wy-menu-vertical a{color:#36465f}
+.wy-menu-vertical a:hover{background:#e5ebf4}
+.wy-menu-vertical li.current a{border:0}
+.wy-side-nav-search,.wy-nav-top{background:#315f9b}
+.wy-side-nav-search{position:sticky;top:0;z-index:10}
+.wy-menu-vertical header,.wy-menu-vertical p.caption{color:#315f9b}
+.rst-content h1,.rst-content h2,.rst-content h3{font-family:inherit;line-height:1.35}
+.rst-content h1{font-size:1.85rem}
+.rst-content h2{font-size:1.4rem;margin-top:2.25rem}
+.rst-content p,.rst-content li{line-height:1.8}
+.rst-content table.docutils{font-size:.9rem}
+.rst-content table.docutils td,.rst-content table.docutils th{white-space:normal;line-height:1.7;vertical-align:top;min-width:110px}
+.rst-content .wy-table-responsive{margin-bottom:1.5rem}
+.rst-content pre{overflow-x:auto}
+.rst-content p code,.rst-content li code,.rst-content td code{white-space:normal;overflow-wrap:anywhere}
+.rst-content p,.rst-content li{overflow-wrap:break-word}
+.rst-content .highlight{border:1px solid #e0e5ed;border-radius:4px;background:#f6f8fb;margin:1.5rem 0}
+.rst-content .highlight pre{padding:1rem;line-height:1.65;font-size:.8rem}
+.rst-content .mermaid{overflow-x:auto;background:#fafbfd;border:1px solid #e0e5ed;border-radius:4px;padding:1rem;margin:1.5rem 0;text-align:center}
+.rst-content .mermaid svg{max-width:100%!important;height:auto}
+.arithmatex{overflow-x:auto}
+span.arithmatex{display:inline}
+.katex{font-size:1.05em!important}
+@media(max-width:768px){.wy-nav-content{padding:1.5rem}.rst-content h1{font-size:1.5rem}.rst-content table.docutils{font-size:.82rem}}

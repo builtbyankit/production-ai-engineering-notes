@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_05_Transformers_101_Part_2_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>05 · Transformers 101, part 2 - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "05 \u00b7 Transformers 101, part 2";
+        var mkdocs_page_input_path = "Class_05_Transformers_101_Part_2_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_05_Transformers_101_Part_2_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">05 · Transformers 101, part 2</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-goal-give-each-token-information-about-its-context">🧭 The Goal: Give Each Token Information About Its Context</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#vectorization-comes-before-the-attention-calculation">Vectorization comes before the attention calculation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vocabulary-size-sequence-length-and-embedding-width">📚 Vocabulary Size, Sequence Length, and Embedding Width</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#why-one-hot-encoding-can-create-confusion">Why one-hot encoding can create confusion</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-code-actually-stacks">What the code actually stacks</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#recapping-the-parameter-free-attention-intuition">🔄 Recapping the Parameter-Free Attention Intuition</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#four-tokens-produce-sixteen-scalar-scores">Four tokens produce sixteen scalar scores</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#normalize-a-row-then-form-one-output">Normalize a row, then form one output</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#four-properties-from-the-recap-stated-precisely">Four properties from the recap, stated precisely</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#queries-keys-and-values-three-roles-for-the-same-input">🔑 Queries, Keys, and Values: Three Roles for the Same Input</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#query-the-token-requesting-information">Query: the token requesting information</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#key-the-representation-used-for-matching">Key: the representation used for matching</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#value-the-information-that-can-be-passed-onward">Value: the information that can be passed onward</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#values-exist-before-they-are-aggregated">Values exist before they are aggregated</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#making-the-block-trainable-with-projection-matrices">🧱 Making the Block Trainable With Projection Matrices</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#linear-layers-supply-parameters">Linear layers supply parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#a-layer-is-not-its-activation">A layer is not its activation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-training-would-change">What training would change</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#numpy-walkthrough-build-x-q-k-and-v">🧮 NumPy Walkthrough: Build X, Q, K, and V</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#create-one-reproducible-vector-per-vocabulary-entry">Create one reproducible vector per vocabulary entry</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#initialize-three-projection-matrices">Initialize three projection matrices</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read-shapes-at-every-stage">Read shapes at every stage</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#scores-scaling-and-row-wise-softmax">⚖️ Scores, Scaling, and Row-Wise Softmax</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#why-transpose-k">Why transpose K?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#why-divide-by-d_k">Why divide by √d_k?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#one-softmax-step-not-normalization-followed-by-softmax">One softmax step, not normalization followed by softmax</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#read-the-recorded-attention-matrix-correctly">Read the recorded attention matrix correctly</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compute-the-outputs-project-values-then-mix-them">🧩 Compute the Outputs: Project Values, Then Mix Them</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#raw-input-vectors-versus-projected-values">Raw input vectors versus projected values</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#matrix-multiplication-equals-the-expanded-weighted-sum">Matrix multiplication equals the expanded weighted sum</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#parallelizable-does-not-mean-dependency-free">Parallelizable does not mean dependency-free</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-bank-experiment-context-dependence-versus-semantic-quality">🏦 The “Bank” Experiment: Context Dependence Versus Semantic Quality</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-first-comparison-does-not-show-an-improvement">The first comparison does not show an improvement</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-two-sentence-comparison-isolates-context-dependence">The two-sentence comparison isolates context dependence</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-additional-recorded-similarities-reveal-the-limitation">The additional recorded similarities reveal the limitation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pytorch-the-same-calculation-with-trainable-modules">🔥 PyTorch: The Same Calculation With Trainable Modules</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#three-linear-projections">Three linear projections</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-second-bank-comparison">The second bank comparison</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-library-demonstration-one-head-multiheadattention">🧰 A Library Demonstration: One-Head MultiheadAttention</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#why-pass-x-three-times">Why pass X three times?</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#built-in-output-is-not-automatically-the-manual-output">Built-in output is not automatically the manual output</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#a-batching-detail-to-carry-forward">A batching detail to carry forward</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#multi-head-attention-what-was-previewed-what-was-deferred">👥 Multi-Head Attention: What Was Previewed, What Was Deferred</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#choosing-head-count">Choosing head count</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-to-learn-before-changing-a-pretrained-model">What to learn before changing a pretrained model</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence">🧪 Assignment: Replace the Initial Embeddings and Examine the Evidence</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-to-record-for-a-useful-submission">What to record for a useful submission</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-5">✅ Action Items After Class 5</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Transformers</li>
+      <li class="breadcrumb-item active">05 · Transformers 101, part 2</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-5-transformers-101-part-2-queries-keys-values-and-contextualized-vectors">🔎 Class 5: Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors<a class="headerlink" href="#class-5-transformers-101-part-2-queries-keys-values-and-contextualized-vectors" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>⏱️ Duration:</strong> ~3 hours 46 minutes (3hr 45min 39s) | <strong>📅 Session:</strong> Day 5 (2 August 2026)</p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6fb7c0c43020b1fd512819">2 Aug Transformers 101</a><br />
+<strong>Primary transcript:</strong> <code>GMT20260802-143040_Recording.cutfile.20260802213313073.transcript.vtt</code><br />
+<strong>Companions:</strong> the six-page whiteboard PDF <code>self2.pdf</code> and <a href="https://colab.research.google.com/drive/1jLgUqimlbbTc4xCDn28OjBG5w8K_M4Fy?usp=sharing">Attention → Contextualized Vectors notebook</a><br />
+<strong>Course resources and assignment:</strong> <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff?pvs=25">Transformers 101 Notion page</a></p>
+<p>The transcript’s instructor turns are labeled “Krish Naik,” but participants address the lecturer as Paul. These notes use the course instructor’s name, Sourangshu Pal.</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The session began with a recap of the previous class’s self-attention intuition, then introduced <strong>query/key/value projections</strong> and demonstrated them in NumPy and PyTorch.</li>
+<li>A course hackathon announcement was shared for interested participants. The transcript does not preserve a usable announcement URL.</li>
+<li>Discord was designated the main channel for discussion, paper drops, and model drops. The course dashboard links to Notion, where the whiteboard notes and notebook were added.</li>
+<li>Loop engineering and graph engineering were mentioned as additions for the later agentic portion of the course, not as topics taught today.</li>
+<li>A practical assignment was set: replace the notebook’s initial embeddings with <strong>GloVe or Word2Vec</strong>, examine cosine similarities, and share a viewable Colab link with the instructor.</li>
+<li>Multi-head attention received a <strong>brief preview and a one-head library demonstration</strong>. Its detailed explanation and the full Transformer architecture were deferred to the following week.</li>
+</ul>
+<p>The notebook contains untrained embeddings and untrained projection matrices. Its numerical examples demonstrate how the mechanism works; they do not establish that every output vector has better semantic meaning.</p>
+<hr />
+<h2 id="the-goal-give-each-token-information-about-its-context">🧭 The Goal: Give Each Token Information About Its Context<a class="headerlink" href="#the-goal-give-each-token-information-about-its-context" title="Permanent link">&para;</a></h2>
+<p>Paul started with a simple question: how can a vector for one word incorporate information about the other words in its sentence?</p>
+<p>A static lookup assigns a vector to a word. If the same lookup table is used twice, the word <strong>bank</strong> starts with the same vector in both:</p>
+<ul>
+<li>“bank of the river”</li>
+<li>“bank account has money”</li>
+</ul>
+<p>The surrounding words differ, so the desired representation should reflect a different context. Attention provides a way to create an output for each token by combining information from the sequence.</p>
+<p>The first whiteboard page shows four token vectors entering one self-attention block and four vectors emerging. The diagram below preserves that structure:</p>
+<pre class="mermaid"><code>flowchart LR
+    A["Token 1 → x₁"] --&gt; S["Self-attention"]
+    B["Token 2 → x₂"] --&gt; S
+    C["Token 3 → x₃"] --&gt; S
+    D["Token 4 → x₄"] --&gt; S
+    S --&gt; E["y₁"]
+    S --&gt; F["y₂"]
+    S --&gt; G["y₃"]
+    S --&gt; H["y₄"]</code></pre>
+<p><em>Based on the token-to-vector-to-attention sketch in self2.pdf, page 1.</em></p>
+<p>There is still one output per input position. This operation does not automatically reduce the sentence to one vector. Each output is a new token representation.</p>
+<p>Paul’s repeated phrase was that the outputs are <strong>more contextualized</strong>: their calculation depends on other tokens. Whether that context improves a particular task also depends on learned parameters, the training objective, and evaluation.</p>
+<h3 id="vectorization-comes-before-the-attention-calculation">Vectorization comes before the attention calculation<a class="headerlink" href="#vectorization-comes-before-the-attention-calculation" title="Permanent link">&para;</a></h3>
+<p>The class deliberately separated “convert words to numbers” from “use a sophisticated embedding model.” To study the mechanics, numbers can come from a random lookup table or an untrained embedding layer. Pretrained Word2Vec or GloVe vectors can be substituted later.</p>
+<p>One-hot encoding and TF-IDF were mentioned as other numerical representations. Their properties differ from dense learned embeddings, but all serve the broader purpose of representing text numerically.</p>
+<p>This matters for reading the example: the calculation is valid on the toy numbers even when those numbers have not learned a linguistic relationship.</p>
+<hr />
+<h2 id="vocabulary-size-sequence-length-and-embedding-width">📚 Vocabulary Size, Sequence Length, and Embedding Width<a class="headerlink" href="#vocabulary-size-sequence-length-and-embedding-width" title="Permanent link">&para;</a></h2>
+<p>A substantial live discussion concerned dimensions. Keeping three quantities separate resolves the confusion:</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Meaning</th>
+<th>Notebook example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vocabulary size</td>
+<td>Number of entries in the lookup table</td>
+<td>8</td>
+</tr>
+<tr>
+<td>Sequence length</td>
+<td>Number of tokens in the current sentence</td>
+<td>4</td>
+</tr>
+<tr>
+<td>Embedding width, d_model</td>
+<td>Number of numeric features for each token</td>
+<td>8</td>
+</tr>
+</tbody>
+</table>
+<p>The vocabulary contains <strong>bank, of, the, river, account, money, has, today</strong>. Only four of these occur in the first sentence.</p>
+<p>The example happens to use eight vocabulary entries and eight features per vector. <strong>Those two eights are independent choices.</strong> Raising the embedding width to 16 does not require a vocabulary with 16 words.</p>
+<p>A dense embedding table has shape <strong>vocabulary size × embedding width</strong>. Looking up four tokens gives a matrix with shape <strong>4 × embedding width</strong>. PyTorch names the two independent constructor arguments <code>num_embeddings</code> and <code>embedding_dim</code>. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Embedding.html">Embedding reference</a></p>
+<h3 id="why-one-hot-encoding-can-create-confusion">Why one-hot encoding can create confusion<a class="headerlink" href="#why-one-hot-encoding-can-create-confusion" title="Permanent link">&para;</a></h3>
+<p>A one-hot vector over a vocabulary has one coordinate per vocabulary entry. Its width therefore equals the vocabulary size.</p>
+<p>Dense embeddings do not follow that rule. A vocabulary of 10,000 words can have a 300-feature vector per word. Sauvik’s later question used exactly this separation: a 10,000-word vocabulary with a 300-dimensional representation is compatible with projections that consume 300 input features.</p>
+<p>The statement is not a difference between “old” and “new” NLP. Word2Vec and GloVe also use dense widths chosen separately from vocabulary size. The GloVe project, for example, publishes different vector widths for the same vocabulary. <a href="https://nlp.stanford.edu/projects/glove/">GloVe project</a></p>
+<h3 id="what-the-code-actually-stacks">What the code actually stacks<a class="headerlink" href="#what-the-code-actually-stacks" title="Permanent link">&para;</a></h3>
+<p>The notebook’s <code>np.stack</code> collects four individual token vectors into <strong>X</strong>, a matrix with shape <strong>(4, 8)</strong>. It does not merge their information or create a single pooled sentence embedding at this step.</p>
+<p>The number of rows follows the sentence; the number of columns follows the embedding width. This distinction is the basis for every later shape check.</p>
+<hr />
+<h2 id="recapping-the-parameter-free-attention-intuition">🔄 Recapping the Parameter-Free Attention Intuition<a class="headerlink" href="#recapping-the-parameter-free-attention-intuition" title="Permanent link">&para;</a></h2>
+<p>The first part revisited the previous class’s simplified calculation. For each token, compare it with all tokens, turn its scores into normalized weights, and use those weights to combine the token vectors.</p>
+<p>Paul changed the notation from the previous session’s <code>W</code> to <strong>S</strong> and <strong>A</strong>, because students had confused attention weights with trainable neural-network weights:</p>
+<ul>
+<li><strong>Sᵢⱼ:</strong> an unnormalized compatibility score for token i attending to token j.</li>
+<li><strong>Aᵢⱼ:</strong> the normalized attention weight obtained from those scores.</li>
+<li><strong>yᵢ:</strong> the output created from the weighted combination.</li>
+</ul>
+<p>These are different stages of the computation.</p>
+<h3 id="four-tokens-produce-sixteen-scalar-scores">Four tokens produce sixteen scalar scores<a class="headerlink" href="#four-tokens-produce-sixteen-scalar-scores" title="Permanent link">&para;</a></h3>
+<p>With four inputs, each token compares with all four. The score matrix therefore has shape <strong>4 × 4</strong> and contains sixteen scalar entries.</p>
+<p>For a pair of vectors, the inner product gives <strong>one scalar</strong>. Stacking many vectors into matrices and multiplying the appropriate matrices gives <strong>a matrix of pairwise scalar scores</strong>.</p>
+<p>This was an important live clarification: Ayesha/Ayush and Sauvik questioned the use of “vector” for the intermediate result. Paul later explicitly distinguished a vector dot product from a matrix product.</p>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inner product of two equal-length vectors</td>
+<td>One scalar score</td>
+</tr>
+<tr>
+<td>Elementwise multiplication of two equal-length vectors</td>
+<td>A vector of products</td>
+</tr>
+<tr>
+<td>Q @ K.T for token matrices</td>
+<td>A matrix of pairwise scores</td>
+</tr>
+<tr>
+<td>Scalar attention weight × a value vector</td>
+<td>A scaled vector</td>
+</tr>
+<tr>
+<td>Sum of scaled value vectors</td>
+<td>One output vector</td>
+</tr>
+</tbody>
+</table>
+<p>An elementwise product is not the same as an inner product. The inner product includes summation over the feature dimension.</p>
+<h3 id="normalize-a-row-then-form-one-output">Normalize a row, then form one output<a class="headerlink" href="#normalize-a-row-then-form-one-output" title="Permanent link">&para;</a></h3>
+<p>For token 1, the simplified output is:</p>
+<p><strong>y₁ = A₁₁x₁ + A₁₂x₂ + A₁₃x₃ + A₁₄x₄</strong></p>
+<p>The same process applies to token 2, token 3, and token 4. A complete matrix implementation performs these calculations together.</p>
+<pre class="mermaid"><code>flowchart LR
+    A["Base token x₁"] --&gt; B["Compare with x₁, x₂, x₃, x₄"]
+    B --&gt; C["Scores S₁₁, S₁₂, S₁₃, S₁₄"]
+    C --&gt; D["Softmax over this row"]
+    D --&gt; E["Weights A₁₁, A₁₂, A₁₃, A₁₄"]
+    E --&gt; F["Scale the corresponding vectors"]
+    G["x₁, x₂, x₃, x₄"] --&gt; F
+    F --&gt; H["Add the four contributions"]
+    H --&gt; I["Output y₁"]</code></pre>
+<p><em>Based on the score, normalization, and weighted-sum sketches across self2.pdf, pages 1–3.</em></p>
+<p>The weight assigned to a token is not necessarily largest when it attends to itself. In the projected example, relevance depends on different query and key representations; the notebook’s own rows demonstrate that another token can receive the largest weight.</p>
+<h3 id="four-properties-from-the-recap-stated-precisely">Four properties from the recap, stated precisely<a class="headerlink" href="#four-properties-from-the-recap-stated-precisely" title="Permanent link">&para;</a></h3>
+<p>Paul summarized the earlier toy system as requiring no training, not depending directly on proximity or order, and being shape-independent.</p>
+<p>For this session’s <strong>parameter-free toy calculation</strong>, that means:</p>
+<ul>
+<li>It has no newly introduced projection parameters to optimize.</li>
+<li>Every token can directly compare with every other token.</li>
+<li>No explicit distance or position information is supplied.</li>
+<li>The same calculation can be applied to different sequence lengths, provided the feature widths and operations remain compatible.</li>
+</ul>
+<p>Standard Transformer self-attention <strong>is trainable</strong>. The earlier property described the simplified starting point, not all self-attention mechanisms.</p>
+<p>Without positions or masks, reordering the input tokens reorders corresponding outputs rather than teaching the operation their original order. Positional encoding was identified as the future solution for injecting order information. Its implementation was deferred.</p>
+<hr />
+<h2 id="queries-keys-and-values-three-roles-for-the-same-input">🔑 Queries, Keys, and Values: Three Roles for the Same Input<a class="headerlink" href="#queries-keys-and-values-three-roles-for-the-same-input" title="Permanent link">&para;</a></h2>
+<p>Paul first introduced Q, K, and V as names for three roles in the calculation, then made those roles trainable with projections.</p>
+<h3 id="query-the-token-requesting-information">Query: the token requesting information<a class="headerlink" href="#query-the-token-requesting-information" title="Permanent link">&para;</a></h3>
+<p>In the whiteboard example, <strong>token 3</strong> was selected as the base token. Its query is compared with all keys to decide how strongly its output should use each value.</p>
+<p>Selecting token 3 was a drawing convenience. In the full calculation, every token produces a query and receives its own output.</p>
+<h3 id="key-the-representation-used-for-matching">Key: the representation used for matching<a class="headerlink" href="#key-the-representation-used-for-matching" title="Permanent link">&para;</a></h3>
+<p>Each token contributes a key. Query–key compatibility determines the attention scores.</p>
+<p>The database analogy gives intuition: a query is matched against keys. The calculation is a soft numerical matching operation, not a database lookup that selects only one exact record.</p>
+<h3 id="value-the-information-that-can-be-passed-onward">Value: the information that can be passed onward<a class="headerlink" href="#value-the-information-that-can-be-passed-onward" title="Permanent link">&para;</a></h3>
+<p>Each token also contributes a value. After computing the attention weights, the output combines those values.</p>
+<p>The query and key decide <strong>how much to use</strong>; the value supplies <strong>what gets combined</strong>. That separation explains why a value projection is useful.</p>
+<p>In self-attention, all three originate from the <strong>same input sequence</strong>, but their projections generally differ. Q, K, and V are not three unrelated sentences, nor are they generated one after another as a pipeline Q → K → V.</p>
+<p>The following diagram translates the single-query drawing in the PDF:</p>
+<pre class="mermaid"><code>flowchart LR
+    X["Input tokens x₁ … x₄"] --&gt; K["Key projection Mₖ"]
+    X --&gt; V["Value projection Mᵥ"]
+    X3["Base token x₃"] --&gt; Q["Query projection Mq"]
+    K --&gt; S["Compare q₃ with every key"]
+    Q --&gt; S
+    S --&gt; N["Normalize score row"]
+    N --&gt; A["A₃₁, A₃₂, A₃₃, A₃₄"]
+    A --&gt; P["Weight corresponding values"]
+    V --&gt; P
+    P --&gt; Y["Sum → y₃"]</code></pre>
+<p><em>Based on self2.pdf, pages 4–5. The base token is x₃ here; the full computation repeats the role for all positions.</em></p>
+<h3 id="values-exist-before-they-are-aggregated">Values exist before they are aggregated<a class="headerlink" href="#values-exist-before-they-are-aggregated" title="Permanent link">&para;</a></h3>
+<p>Phani and Ranjeev both asked why V is calculated from the original input when the drawing shows value contributions near the end.</p>
+<p>There are <strong>two distinct operations</strong>:</p>
+<ol>
+<li>Create the projected values: <strong>V = XWᵥ</strong>.</li>
+<li>Aggregate those values using the normalized attention weights: <strong>Y = AV</strong>.</li>
+</ol>
+<p>The second operation depends on the attention weights. The first does not. The arrows near the end of the diagram represent using values in the weighted sum, not generating values from A.</p>
+<hr />
+<h2 id="making-the-block-trainable-with-projection-matrices">🧱 Making the Block Trainable With Projection Matrices<a class="headerlink" href="#making-the-block-trainable-with-projection-matrices" title="Permanent link">&para;</a></h2>
+<p>The original toy calculation reused the token vectors directly. Paul introduced matrices <strong>Mₖ, Mq, Mᵥ</strong>, later written in code as <strong>W_k, W_q, W_v</strong>, to create trainable transformations.</p>
+<p>Using row-oriented token vectors:</p>
+<p><strong>Q = XW_q</strong><br />
+<strong>K = XW_k</strong><br />
+<strong>V = XW_v</strong></p>
+<p>The same query matrix is applied across the tokens, and likewise for the key and value matrices. There is not a separate independent W_q for each vocabulary word.</p>
+<h3 id="linear-layers-supply-parameters">Linear layers supply parameters<a class="headerlink" href="#linear-layers-supply-parameters" title="Permanent link">&para;</a></h3>
+<p>In PyTorch, the class implemented these projections as three <code>nn.Linear</code> modules. The modules hold parameters and provide the corresponding linear transformations.</p>
+<p>A linear layer can change feature width; a square matrix is only one case. Paul used square projections to keep the example easy to inspect:</p>
+<p><strong>(1 × 8) @ (8 × 8) → (1 × 8)</strong></p>
+<p>For the whole four-token sentence:</p>
+<p><strong>(4 × 8) @ (8 × 8) → (4 × 8)</strong></p>
+<p>More generally, an input width d_model can be projected to d_k for queries/keys or d_v for values. Query and key feature widths must match for their dot product. The final weighted-sum width follows the value width.</p>
+<p>The individual scores do <strong>not</strong> retain the embedding width: they are scalars, and the full score matrix is sequence length × sequence length.</p>
+<h3 id="a-layer-is-not-its-activation">A layer is not its activation<a class="headerlink" href="#a-layer-is-not-its-activation" title="Permanent link">&para;</a></h3>
+<p>The notes on the PDF use “hidden,” “linear,” “fully connected,” and “dense” together to identify the projection layer. Here, dense/fully connected describes the kind of transformation. A hidden layer is a layer’s position in a network, not a guarantee that it is linear.</p>
+<p><code>nn.Linear</code> applies an affine transformation and does not insert ReLU automatically. The notebook set <code>bias=False</code>, so the demonstrated Q/K/V projections have no additive bias. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Linear.html">Linear reference</a></p>
+<p>The attention computation still has nonlinearity through softmax. A separate activation after every projection is not a condition for making its parameters trainable.</p>
+<h3 id="what-training-would-change">What training would change<a class="headerlink" href="#what-training-would-change" title="Permanent link">&para;</a></h3>
+<p>The gradient arrows on PDF page 5 show information flowing backward through the normalized scores and the value aggregation toward the projection layers.</p>
+<pre class="mermaid"><code>flowchart LR
+    X["Input X"] --&gt; Q["Linear → Q"]
+    X --&gt; K["Linear → K"]
+    X --&gt; V["Linear → V"]
+    Q --&gt; S["QKᵀ"]
+    K --&gt; S
+    S --&gt; A["Scale and softmax"]
+    A --&gt; Y["AV → output Y"]
+    V --&gt; Y
+    Y -. "Gradient from downstream objective" .-&gt; A
+    Y -. "Gradient" .-&gt; V
+    A -. "Gradient" .-&gt; S
+    S -. "Gradient" .-&gt; Q
+    S -. "Gradient" .-&gt; K</code></pre>
+<p><em>Based on the forward arrows and backward gradient arrows in self2.pdf, page 5. Scaling is shown because it is used by the accompanying notebook.</em></p>
+<p>The parameter values would be learned under a task objective, such as a loss for named-entity recognition or question answering. Dimensions and head count are <strong>hyperparameters</strong>; numerical projection weights are <strong>parameters</strong>.</p>
+<p>The session explained this possibility but did <strong>not train the attention block</strong>. It supplied no complete task dataset, target labels, optimizer loop, or loss-driven update in the demonstrated attention notebook.</p>
+<hr />
+<h2 id="numpy-walkthrough-build-x-q-k-and-v">🧮 NumPy Walkthrough: Build X, Q, K, and V<a class="headerlink" href="#numpy-walkthrough-build-x-q-k-and-v" title="Permanent link">&para;</a></h2>
+<p>Paul then moved from the whiteboard to the supplied notebook. NumPy was used to expose the operations directly before replacing them with PyTorch layers.</p>
+<h3 id="create-one-reproducible-vector-per-vocabulary-entry">Create one reproducible vector per vocabulary entry<a class="headerlink" href="#create-one-reproducible-vector-per-vocabulary-entry" title="Permanent link">&para;</a></h3>
+<p>The notebook begins with a four-word sentence and a small d_model of eight. It builds the lookup table with this actual code:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_embeddings</span><span class="p">(</span><span class="n">vocab_words</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">seed</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1"># Toy embedding table: one random vector per unique word.</span>
+    <span class="c1"># Shape returned: (len(vocab_words), d_model)</span>
+    <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">vocab</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">vocab_words</span><span class="p">))</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">d_model</span><span class="p">)</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">vocab</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">table</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 4.</em></p>
+<p>The set removes duplicate vocabulary entries, sorting makes the order stable, and each word receives a random vector. The sentence is lowercased when looking up its entries.</p>
+<p>The output X has shape <strong>(4, 8)</strong>. The vocabulary can contain words absent from this sentence; those unused entries do not create extra rows in X.</p>
+<p>The seeds are used for reproducibility. Importantly, the explicit generators are initialized with their own seeds; a global NumPy seed and the generator’s seed are distinct settings.</p>
+<h3 id="initialize-three-projection-matrices">Initialize three projection matrices<a class="headerlink" href="#initialize-three-projection-matrices" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span>  <span class="c1"># keep same dim for simplicity (common choice for single-head)</span>
+
+<span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">W_q</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">))</span>
+<span class="n">W_k</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">))</span>
+<span class="n">W_v</span> <span class="o">=</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">))</span>
+
+<span class="n">Q</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_q</span>   <span class="c1"># (seq_len, d_k)</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_k</span>   <span class="c1"># (seq_len, d_k)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_v</span>   <span class="c1"># (seq_len, d_k)</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 6.</em></p>
+<p>The <code>@</code> operator performs matrix multiplication. In this example, each projection matrix is <strong>(8, 8)</strong>, and each projected token matrix is <strong>(4, 8)</strong>.</p>
+<p>The <code>normal</code> call samples from a Gaussian distribution. <strong><code>scale=0.5</code> is the distribution’s standard deviation</strong>, not a min/max normalization step applied after sampling. <a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.Generator.normal.html">NumPy normal generator</a></p>
+<p>Although the values are stored in matrices corresponding to trainable projections, NumPy does not train them here. They remain fixed sampled numbers during the demonstrations.</p>
+<h3 id="read-shapes-at-every-stage">Read shapes at every stage<a class="headerlink" href="#read-shapes-at-every-stage" title="Permanent link">&para;</a></h3>
+<p>Paul repeatedly asked participants to inspect printed values. A useful shape check should answer:</p>
+<ul>
+<li>Which axis indexes tokens?</li>
+<li>Which axis indexes features?</li>
+<li>Is this a parameter matrix or a representation matrix?</li>
+<li>Does the operation’s inner dimension match?</li>
+<li>Is the result a token vector, a scalar score, or all pairwise scores?</li>
+</ul>
+<p>These checks are more reliable than inferring shape from a label such as “embedding,” “vector,” or “weight.”</p>
+<hr />
+<h2 id="scores-scaling-and-row-wise-softmax">⚖️ Scores, Scaling, and Row-Wise Softmax<a class="headerlink" href="#scores-scaling-and-row-wise-softmax" title="Permanent link">&para;</a></h2>
+<p>The single-head calculation implemented in class is:</p>
+<p><strong>scores = QKᵀ / √d_k</strong><br />
+<strong>A = softmax(scores), across each row</strong><br />
+<strong>Y = AV</strong></p>
+<p>For the four-token example, Q is <strong>4 × 8</strong>, Kᵀ is <strong>8 × 4</strong>, and the score matrix is therefore <strong>4 × 4</strong>.</p>
+<h3 id="why-transpose-k">Why transpose K?<a class="headerlink" href="#why-transpose-k" title="Permanent link">&para;</a></h3>
+<p>Each row of Q is one query. Each row of K is one key. Transposing K aligns the feature dimension for multiplication, so the product contains one query–key comparison for every pair of token positions.</p>
+<p>Row i corresponds to the <strong>query token</strong>; column j corresponds to the <strong>key token it attends to</strong>. Different query and key projections also mean the resulting score matrix need not be symmetric.</p>
+<h3 id="why-divide-by-d_k">Why divide by √d_k?<a class="headerlink" href="#why-divide-by-d_k" title="Permanent link">&para;</a></h3>
+<p>The live explanation described scaling as helpful for stable training and left a fuller paper discussion for later. The paper’s rationale is more specific: dot products tend to grow in magnitude as query/key width increases, which can push softmax into regions with very small gradients. Dividing by the square root of the key width counteracts that growth. <a href="https://arxiv.org/html/1706.03762v7">Attention Is All You Need, section 3.2.1</a></p>
+<p>This scale factor is separate from the random generator’s standard deviation. It also is not the step that makes the attention weights sum to one; <strong>softmax</strong> performs that normalization.</p>
+<h3 id="one-softmax-step-not-normalization-followed-by-softmax">One softmax step, not normalization followed by softmax<a class="headerlink" href="#one-softmax-step-not-normalization-followed-by-softmax" title="Permanent link">&para;</a></h3>
+<p>Several questions treated “normalization” and “softmax” as two operations. Paul clarified that in this diagram the normalization box is implemented <strong>by softmax</strong>.</p>
+<p>For each score row, softmax produces nonnegative weights adding to one. A min/max scaler or standard scaler is not an interchangeable substitute merely because it is also called normalization.</p>
+<p>The exact notebook function is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">softmax</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">e</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>          <span class="c1"># (seq_len, seq_len)</span>
+<span class="n">attn_weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (seq_len, seq_len), rows sum to 1</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 8.</em></p>
+<p>Subtracting the row maximum improves numerical stability without changing the mathematical softmax result. The last axis contains the keys for a given query, so <code>axis=-1</code> normalizes over that axis.</p>
+<p>The PDF’s handwritten probability example illustrates the sum-to-one property. Its chosen values are illustrative, rather than an exact numerical softmax calculation for the written input list.</p>
+<h3 id="read-the-recorded-attention-matrix-correctly">Read the recorded attention matrix correctly<a class="headerlink" href="#read-the-recorded-attention-matrix-correctly" title="Permanent link">&para;</a></h3>
+<p>The supplied notebook records:</p>
+<table>
+<thead>
+<tr>
+<th>Query ↓ / attends to →</th>
+<th style="text-align: right;">Bank</th>
+<th style="text-align: right;">of</th>
+<th style="text-align: right;">the</th>
+<th style="text-align: right;">river</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bank</td>
+<td style="text-align: right;">0.215</td>
+<td style="text-align: right;">0.251</td>
+<td style="text-align: right;">0.388</td>
+<td style="text-align: right;">0.145</td>
+</tr>
+<tr>
+<td>of</td>
+<td style="text-align: right;">0.074</td>
+<td style="text-align: right;">0.255</td>
+<td style="text-align: right;">0.161</td>
+<td style="text-align: right;">0.509</td>
+</tr>
+<tr>
+<td>the</td>
+<td style="text-align: right;">0.004</td>
+<td style="text-align: right;">0.129</td>
+<td style="text-align: right;">0.029</td>
+<td style="text-align: right;">0.838</td>
+</tr>
+<tr>
+<td>river</td>
+<td style="text-align: right;">0.071</td>
+<td style="text-align: right;">0.223</td>
+<td style="text-align: right;">0.450</td>
+<td style="text-align: right;">0.256</td>
+</tr>
+</tbody>
+</table>
+<p>The notebook prints unrounded row sums of <strong>1.0</strong>. The displayed three-decimal entries can sum slightly differently because of rounding.</p>
+<p>The heatmap shows this same matrix: the vertical axis is the query and the horizontal axis is the token attended to. It is a visualization of the calculation, not a separate model.</p>
+<p>For Bank, the largest recorded weight is on <strong>the</strong>, not river or Bank itself. With random untrained projections, the weights should not be read as reliable linguistic relevance.</p>
+<hr />
+<h2 id="compute-the-outputs-project-values-then-mix-them">🧩 Compute the Outputs: Project Values, Then Mix Them<a class="headerlink" href="#compute-the-outputs-project-values-then-mix-them" title="Permanent link">&para;</a></h2>
+<p>The final matrix multiplication is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Y</span> <span class="o">=</span> <span class="n">attn_weights</span> <span class="o">@</span> <span class="n">V</span>   <span class="c1"># (seq_len, d_k)  &lt;-- this is y1, y2, y3, y4 stacked</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 11.</em></p>
+<p>The attention matrix is <strong>4 × 4</strong> and V is <strong>4 × 8</strong>, so Y is <strong>4 × 8</strong>.</p>
+<p>For one token:</p>
+<p><strong>yᵢ = Aᵢ₁v₁ + Aᵢ₂v₂ + Aᵢ₃v₃ + Aᵢ₄v₄</strong></p>
+<p>Each A entry is a scalar that scales a value vector. Adding those contributions gives an eight-feature output.</p>
+<h3 id="raw-input-vectors-versus-projected-values">Raw input vectors versus projected values<a class="headerlink" href="#raw-input-vectors-versus-projected-values" title="Permanent link">&para;</a></h3>
+<p>The earlier whiteboard recap mixed the raw vectors directly. The notebook makes the distinction explicit:</p>
+<ul>
+<li><strong>General projected calculation:</strong> Y = AV, where V = XW_v.</li>
+<li><strong>Literal simplified formula:</strong> Y_literal = AX.</li>
+</ul>
+<p>The simplified version corresponds to using the original representations as values, or an identity value projection. It is helpful intuition but should not obscure the learned V projection in the implemented block.</p>
+<h3 id="matrix-multiplication-equals-the-expanded-weighted-sum">Matrix multiplication equals the expanded weighted sum<a class="headerlink" href="#matrix-multiplication-equals-the-expanded-weighted-sum" title="Permanent link">&para;</a></h3>
+<p>The notebook verifies the simplified first output both ways:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Y_literal</span> <span class="o">=</span> <span class="n">attn_weights</span> <span class="o">@</span> <span class="n">X</span>   <span class="c1"># exactly y_i = sum_j w_ij * x_j, matching the image</span>
+
+<span class="n">y1_manual</span> <span class="o">=</span> <span class="p">(</span><span class="n">attn_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">attn_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+             <span class="o">+</span> <span class="n">attn_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="n">attn_weights</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span><span class="o">*</span><span class="n">X</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 13.</em></p>
+<p>The recorded first three values are <strong>[0.3247, 0.5943, 0.2543]</strong> for both forms, and <code>np.allclose</code> returns <strong>True</strong>.</p>
+<p>This equality check compares the manual formula with the corresponding matrix formula. It does not say AX and AV are equal for an arbitrary W_v.</p>
+<p>Also, <code>allclose</code> checks elementwise agreement <strong>within a tolerance</strong>, rather than exact bit-for-bit equality. <a href="https://numpy.org/doc/stable/reference/generated/numpy.allclose.html">NumPy allclose</a></p>
+<h3 id="parallelizable-does-not-mean-dependency-free">Parallelizable does not mean dependency-free<a class="headerlink" href="#parallelizable-does-not-mean-dependency-free" title="Permanent link">&para;</a></h3>
+<p>All queries can be processed together through matrix operations, making the implementation suitable for efficient tensor computation. Q, K, and V projections can be formed from the same input.</p>
+<p>The later operations still depend on earlier results: scores need Q/K, softmax needs scores, and the weighted sum needs weights/V. Matrix parallelism does not erase those dependencies.</p>
+<hr />
+<h2 id="the-bank-experiment-context-dependence-versus-semantic-quality">🏦 The “Bank” Experiment: Context Dependence Versus Semantic Quality<a class="headerlink" href="#the-bank-experiment-context-dependence-versus-semantic-quality" title="Permanent link">&para;</a></h2>
+<p>The next part asked whether the new vectors were better than the starting vectors. Paul used cosine similarity and two sentences to inspect this quantitatively.</p>
+<p>For nonzero vectors, cosine similarity ranges from <strong>−1 to 1</strong>. A value of one indicates the same direction; it is not a general “probability of matching meaning.”</p>
+<p>The supplied function is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">cosine</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span> <span class="o">@</span> <span class="n">b</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">b</span><span class="p">)))</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 15.</em></p>
+<h3 id="the-first-comparison-does-not-show-an-improvement">The first comparison does not show an improvement<a class="headerlink" href="#the-first-comparison-does-not-show-an-improvement" title="Permanent link">&para;</a></h3>
+<p>The recorded outputs are:</p>
+<table>
+<thead>
+<tr>
+<th>Comparison</th>
+<th style="text-align: right;">Recorded cosine</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw x_bank versus raw x_river</td>
+<td style="text-align: right;">−0.5045</td>
+</tr>
+<tr>
+<td>Projected/contextual y_bank versus raw x_river</td>
+<td style="text-align: right;">−0.6063</td>
+</tr>
+</tbody>
+</table>
+<p>The second value is <strong>lower</strong>, so this particular output does not support a claim that Bank moved closer to river.</p>
+<p>There is an additional interpretive issue: y_bank has passed through a value projection, while x_river is in the original input space. Equal vector lengths do not establish that their coordinate systems preserve semantic cosine comparisons.</p>
+<p>Paul noted that random numbers did not provide learned relationships and turned this limitation into the homework. The appropriate takeaway is to inspect the actual evidence rather than accept a surrounding claim of improvement. Some notebook narrative labels describe the intended effect more strongly than these recorded numbers support.</p>
+<h3 id="the-two-sentence-comparison-isolates-context-dependence">The two-sentence comparison isolates context dependence<a class="headerlink" href="#the-two-sentence-comparison-isolates-context-dependence" title="Permanent link">&para;</a></h3>
+<p>The reusable function uses the same embedding table and projection matrices for both sentences:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">attention</span><span class="p">(</span><span class="n">sentence_words</span><span class="p">,</span> <span class="n">embedding_table</span><span class="p">,</span> <span class="n">W_q</span><span class="p">,</span> <span class="n">W_k</span><span class="p">,</span> <span class="n">W_v</span><span class="p">):</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="n">embedding_table</span><span class="p">[</span><span class="n">w</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sentence_words</span><span class="p">])</span>
+    <span class="n">Q</span><span class="p">,</span> <span class="n">K</span><span class="p">,</span> <span class="n">V</span> <span class="o">=</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_q</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_k</span><span class="p">,</span> <span class="n">X</span> <span class="o">@</span> <span class="n">W_v</span>
+    <span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">W_q</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">@</span> <span class="n">V</span>
+    <span class="k">return</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">weights</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 18.</em></p>
+<p>The recorded comparison of the first token, bank, is:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Recorded result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Raw bank vectors equal across the sentences?</td>
+<td>True</td>
+</tr>
+<tr>
+<td>Cosine between the raw bank vectors</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>Contextual bank vectors equal across the sentences?</td>
+<td>False</td>
+</tr>
+<tr>
+<td>Cosine between contextual bank vectors</td>
+<td>0.3625</td>
+</tr>
+</tbody>
+</table>
+<p>The raw similarity of <strong>1.0 is expected</strong>: both sentences retrieve the same word entry from the same table. This would also happen with a shared static Word2Vec or GloVe lookup, not only with random numbers.</p>
+<p>The contextual vectors differ because their weights and value mixtures depend on different surrounding tokens. That is evidence of <strong>context dependence</strong>.</p>
+<p>It is not by itself proof that the block has correctly separated two meanings. An untrained random transformation can also change outputs when inputs change.</p>
+<h3 id="the-additional-recorded-similarities-reveal-the-limitation">The additional recorded similarities reveal the limitation<a class="headerlink" href="#the-additional-recorded-similarities-reveal-the-limitation" title="Permanent link">&para;</a></h3>
+<p>The notebook also records:</p>
+<table>
+<thead>
+<tr>
+<th>Contextual bank vector</th>
+<th style="text-align: right;">Similarity to raw river</th>
+<th style="text-align: right;">Similarity to raw money</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>From “bank of the river”</td>
+<td style="text-align: right;">−0.6063</td>
+<td style="text-align: right;">0.6502</td>
+</tr>
+<tr>
+<td>From “bank account has money”</td>
+<td style="text-align: right;">−0.2282</td>
+<td style="text-align: right;">0.3902</td>
+</tr>
+</tbody>
+</table>
+<p>The river-context output is more similar to raw money than raw river under this calculation. The plotted bars visualize those values; their title should not be treated as proof that each output has moved toward the intended meaning.</p>
+<p>The useful experiment separates three questions:</p>
+<ol>
+<li><strong>Does attention change a token’s output when context changes?</strong> Yes, this example demonstrates that.</li>
+<li><strong>Do the inputs already carry trained linguistic relationships?</strong> Not in the random lookup version.</li>
+<li><strong>Do the attention projections improve a semantic task?</strong> No training or task evaluation here establishes that.</li>
+</ol>
+<p>Replacing embeddings with pretrained vectors addresses the second question. Untrained projection matrices remain a limitation for the third.</p>
+<hr />
+<h2 id="pytorch-the-same-calculation-with-trainable-modules">🔥 PyTorch: The Same Calculation With Trainable Modules<a class="headerlink" href="#pytorch-the-same-calculation-with-trainable-modules" title="Permanent link">&para;</a></h2>
+<p>Paul repeated the calculation using an embedding layer and linear layers. This version makes the parameters available to PyTorch’s training machinery while keeping the same operations visible.</p>
+<p>The supplied notebook defines the vocabulary mapping and lookup as follows:</p>
+<div class="highlight"><pre><span></span><code><span class="n">vocab</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">,</span> <span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;river&quot;</span><span class="p">,</span> <span class="s2">&quot;account&quot;</span><span class="p">,</span> <span class="s2">&quot;money&quot;</span><span class="p">,</span> <span class="s2">&quot;has&quot;</span><span class="p">,</span> <span class="s2">&quot;today&quot;</span><span class="p">]</span>
+<span class="n">word2idx</span> <span class="o">=</span> <span class="p">{</span><span class="n">w</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">w</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">vocab</span><span class="p">)}</span>
+
+<span class="n">d_model</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">embedding</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Embedding</span><span class="p">(</span><span class="n">num_embeddings</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">vocab</span><span class="p">),</span> <span class="n">embedding_dim</span><span class="o">=</span><span class="n">d_model</span><span class="p">)</span>
+
+<span class="n">sentence</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;bank&quot;</span><span class="p">,</span> <span class="s2">&quot;of&quot;</span><span class="p">,</span> <span class="s2">&quot;the&quot;</span><span class="p">,</span> <span class="s2">&quot;river&quot;</span><span class="p">]</span>
+<span class="n">idx</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="n">word2idx</span><span class="p">[</span><span class="n">w</span><span class="p">]</span> <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="n">sentence</span><span class="p">])</span>   <span class="c1"># shape: (seq_len,)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>                                     <span class="c1"># shape: (seq_len, d_model)</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 23. The preceding lines import torch/nn/F and set torch.manual_seed(0).</em></p>
+<p>The integer IDs select rows from the lookup table; they are not themselves the final embedding features. The result has shape <strong>(4, 8)</strong>.</p>
+<p>A newly created <code>nn.Embedding</code> is a trainable lookup table with randomly initialized values. Using that layer does not automatically give the toy words better learned meanings than the NumPy random table. Pretrained state or training is needed for that claim. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Embedding.html">Embedding reference</a></p>
+<h3 id="three-linear-projections">Three linear projections<a class="headerlink" href="#three-linear-projections" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">d_k</span> <span class="o">=</span> <span class="n">d_model</span>
+
+<span class="n">W_q</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_k</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">W_v</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">d_k</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">Q</span> <span class="o">=</span> <span class="n">W_q</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>   <span class="c1"># (seq_len, d_k)</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">W_k</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>   <span class="c1"># (seq_len, d_k)</span>
+<span class="n">V</span> <span class="o">=</span> <span class="n">W_v</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>   <span class="c1"># (seq_len, d_k)</span>
+
+<span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="p">(</span><span class="n">d_k</span> <span class="o">**</span> <span class="mf">0.5</span><span class="p">)</span>          <span class="c1"># (seq_len, seq_len)</span>
+<span class="n">attn_weights</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># rows sum to 1</span>
+<span class="n">Y</span> <span class="o">=</span> <span class="n">attn_weights</span> <span class="o">@</span> <span class="n">V</span>                      <span class="c1"># (seq_len, d_k)  &lt;- y1..y4 stacked</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 24.</em></p>
+<p>Here, <code>W_q</code> names a <strong>module</strong>, whereas the NumPy version’s <code>W_q</code> names a numerical array. Calling the module on X applies its stored transformation. The meaning of the variable follows the code context.</p>
+<p><code>F</code> is the alias for <code>torch.nn.functional</code>, used here for softmax. The exponent <strong>0.5</strong> computes the same square-root scaling as the NumPy version.</p>
+<p>The printed shapes again are:</p>
+<ul>
+<li>Q, K, V: <strong>(4, 8)</strong></li>
+<li>attention weights: <strong>(4, 4)</strong></li>
+<li>Y: <strong>(4, 8)</strong></li>
+</ul>
+<p>The values differ from the NumPy run because the parameter initializations differ. Equivalent algorithms do not require independently initialized runs to produce identical numbers.</p>
+<h3 id="the-second-bank-comparison">The second bank comparison<a class="headerlink" href="#the-second-bank-comparison" title="Permanent link">&para;</a></h3>
+<p>Using the same embedding and projection modules for both sentences, the PyTorch example records:</p>
+<ul>
+<li>raw bank vectors equal: <strong>True</strong>;</li>
+<li>cosine between the two contextual bank outputs: <strong>0.814038…</strong>.</li>
+</ul>
+<p>The same limitation applies: outputs depend on context, but a high or low cosine from untrained parameters is not a validated measure of sense disambiguation.</p>
+<p>The function in this notebook uses the input width in its denominator because d_k equals d_model in the demonstrated configuration. If changing projection widths, the scale should continue to follow the <strong>query/key width</strong>.</p>
+<hr />
+<h2 id="a-library-demonstration-one-head-multiheadattention">🧰 A Library Demonstration: One-Head MultiheadAttention<a class="headerlink" href="#a-library-demonstration-one-head-multiheadattention" title="Permanent link">&para;</a></h2>
+<p>The class showed PyTorch’s built-in module after the manual implementation:</p>
+<div class="highlight"><pre><span></span><code><span class="n">mha</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">MultiheadAttention</span><span class="p">(</span><span class="n">embed_dim</span><span class="o">=</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">batch_first</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X_batched</span> <span class="o">=</span> <span class="n">X</span><span class="o">.</span><span class="n">unsqueeze</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># (batch=1, seq_len, d_model) - nn.MultiheadAttention wants a batch dim</span>
+<span class="n">Y_mha</span><span class="p">,</span> <span class="n">attn_weights_mha</span> <span class="o">=</span> <span class="n">mha</span><span class="p">(</span><span class="n">X_batched</span><span class="p">,</span> <span class="n">X_batched</span><span class="p">,</span> <span class="n">X_batched</span><span class="p">)</span>  <span class="c1"># self-attention: Q=K=V=X</span>
+</code></pre></div>
+<p><em>Source: supplied attention notebook, cell 26. The comment reflects the notebook’s chosen batched example; the API also supports unbatched inputs.</em></p>
+<p>The recorded shapes are:</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Input X_batched</td>
+<td>(1, 4, 8)</td>
+</tr>
+<tr>
+<td>Output Y_mha</td>
+<td>(1, 4, 8)</td>
+</tr>
+<tr>
+<td>Returned attention weights</td>
+<td>(1, 4, 4)</td>
+</tr>
+</tbody>
+</table>
+<p>The leading one is the <strong>batch size</strong>, not the number of heads or tokens. <code>unsqueeze(0)</code> adds that axis; it does not flatten the sentence.</p>
+<p>With <code>batch_first=True</code>, batched input follows <strong>batch, sequence, features</strong>. Batch size and head count are independent. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.MultiheadAttention.html">MultiheadAttention reference</a></p>
+<h3 id="why-pass-x-three-times">Why pass X three times?<a class="headerlink" href="#why-pass-x-three-times" title="Permanent link">&para;</a></h3>
+<p>For this self-attention call, query, key, and value input come from the same sequence. The module applies its internal projections. Passing the same tensor does not mean its internal projected Q, K, and V must be identical.</p>
+<p>The MHA module is an independent demonstration. Later comparison cells use the manually defined W_q/W_k/W_v modules, not Y_mha.</p>
+<h3 id="built-in-output-is-not-automatically-the-manual-output">Built-in output is not automatically the manual output<a class="headerlink" href="#built-in-output-is-not-automatically-the-manual-output" title="Permanent link">&para;</a></h3>
+<p>The built-in module has independently initialized parameters and includes an <strong>output projection</strong> after combining heads. Even with one head, numerical equality with the preceding manual <strong>AV</strong> output should not be expected without matching the parameters and accounting for that projection.</p>
+<p>The notebook calls the examples architecturally equivalent to convey the attention pattern. For an exact equivalence check, the full parameterization matters.</p>
+<h3 id="a-batching-detail-to-carry-forward">A batching detail to carry forward<a class="headerlink" href="#a-batching-detail-to-carry-forward" title="Permanent link">&para;</a></h3>
+<p>The hand-written examples use two-dimensional matrices. They should not be made batched merely by changing X to three dimensions and leaving every <code>.T</code> unchanged.</p>
+<p>For a higher-rank NumPy array, a plain transpose reverses all axes by default. Batched attention needs the <strong>last two key axes</strong> swapped while preserving the batch axis. The rest of the broadcasting and matrix shapes must agree. <a href="https://numpy.org/doc/stable/reference/generated/numpy.transpose.html">NumPy transpose reference</a></p>
+<p>This is a practical clarification to the notebook’s concluding shape note, not an additional batched implementation taught in class.</p>
+<hr />
+<h2 id="multi-head-attention-what-was-previewed-what-was-deferred">👥 Multi-Head Attention: What Was Previewed, What Was Deferred<a class="headerlink" href="#multi-head-attention-what-was-previewed-what-was-deferred" title="Permanent link">&para;</a></h2>
+<p>Near the end, Paul drew multiple parallel linear representations and introduced <strong>head count</strong> as a hyperparameter. The final whiteboard page sketches four parallel heads.</p>
+<p>The intended intuition is that several attention calculations can run in parallel using different learned projections. <strong>A head is a complete attention path</strong>, including Q/K/V and the score/weight/value calculation; it is not simply any extra linear layer.</p>
+<p>Four stacked attention blocks also are not the same as four heads. Stacking refers to depth; multiple heads operate in parallel within a block.</p>
+<p>The session did not fully derive head splitting, concatenation, and the output projection. Those were for the next class.</p>
+<h3 id="choosing-head-count">Choosing head count<a class="headerlink" href="#choosing-head-count" title="Permanent link">&para;</a></h3>
+<p>Paul mentioned common choices such as 8, 16, and 32 and emphasized experimentation. Powers of two are conventions, not a universal head-count rule.</p>
+<p>The original paper’s base configuration used eight heads. In PyTorch’s standard MHA arrangement, the model width is divided across the heads, so choose a head count compatible with that width. <a href="https://arxiv.org/html/1706.03762v7">Attention Is All You Need</a>, <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.MultiheadAttention.html">MultiheadAttention reference</a></p>
+<p>More heads do not automatically mean a proportionate increase in parameters or cost when total model width is held fixed. The actual width, sequence length, implementation, and configuration matter.</p>
+<h3 id="what-to-learn-before-changing-a-pretrained-model">What to learn before changing a pretrained model<a class="headerlink" href="#what-to-learn-before-changing-a-pretrained-model" title="Permanent link">&para;</a></h3>
+<p>Debajyoti asked where this granularity becomes useful in real projects. Paul’s answer was that application projects often consume the whole model, while model work may require understanding or modifying its internal blocks.</p>
+<p>Changing the number of heads in a pretrained model is an architecture change, not merely a routine fine-tuning setting. Check how its parameters and operations will remain compatible; unfreezing layers alone does not solve every such change.</p>
+<p>This class provides the mechanics needed to reason about those decisions. It does not supply a complete recipe for changing an existing model’s architecture.</p>
+<hr />
+<h2 id="assignment-replace-the-initial-embeddings-and-examine-the-evidence">🧪 Assignment: Replace the Initial Embeddings and Examine the Evidence<a class="headerlink" href="#assignment-replace-the-initial-embeddings-and-examine-the-evidence" title="Permanent link">&para;</a></h2>
+<p>The assignment was recorded both in the live discussion and on the course Notion page:</p>
+<ol>
+<li>Start from the shared attention notebook.</li>
+<li>Replace the random/untrained initial embedding source with <strong>GloVe or Word2Vec</strong>.</li>
+<li>Run the attention calculation and inspect the cosine similarities.</li>
+<li>Share a <strong>Google Colab view link</strong> with the instructor at <strong>app@krishnaik.in</strong>.</li>
+</ol>
+<p>This is the instructor’s submission instruction. These notes do not perform the assignment or send anything.</p>
+<p>Paul asked participants to retain the rest of the experiment. That means preserve the conceptual pipeline while updating dimensional dependencies where necessary. If the selected pretrained vectors have width 300, the input/projection shapes must consume that width; leaving hard-coded eights throughout is not compatible.</p>
+<h3 id="what-to-record-for-a-useful-submission">What to record for a useful submission<a class="headerlink" href="#what-to-record-for-a-useful-submission" title="Permanent link">&para;</a></h3>
+<ul>
+<li>The embedding source and actual vector width.</li>
+<li>Whether each toy vocabulary word is present in that source.</li>
+<li>The shapes of X, projection matrices, Q/K/V, scores, A, and Y.</li>
+<li>The attention matrix and its row sums.</li>
+<li>The raw bank comparison across the two sentences.</li>
+<li>The contextual bank comparison and the other cosine checks.</li>
+<li>Which parameters remain untrained.</li>
+</ul>
+<p>The raw bank vectors should still be identical across contexts when they come from a shared static lookup. Pretrained static word vectors supply better starting relationships, but the remaining random attention projections do not guarantee a semantic improvement.</p>
+<p>Report the actual results, including a result that conflicts with the expected narrative. The point of the exercise is to inspect how the representation behaves, not force a similarity to a predetermined value.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul said the following week would cover <strong>multi-head attention in detail</strong>, followed by the <strong>Attention Is All You Need paper</strong> and construction of the full Transformer architecture.</p>
+<p>Positional encoding had been identified as the mechanism for adding order information, but its details were not implemented in this session.</p>
+<p>For revision, he recommended spending regular daily time on the notebook and foundational material. Books mentioned included <strong>Hands-On Large Language Models</strong> and <strong>Build a Large Language Model (From Scratch)</strong> by Sebastian Raschka. The discussion also referred to 3Blue1Brown’s neural-network material and deep-learning refresher lectures.</p>
+<p>The prerequisites he emphasized were matrix operations, shapes, activation functions, optimizers, and the broad training process. A complete CNN revision was not required for this immediate attention topic.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>The table covers the full transcript, including all substantive speakers in the final two parts and their follow-ups. Similar in-flow doubts are combined.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Ayesha/Ayush / Sauvik: Does a vector dot product return a scalar?</strong></td>
+<td>Yes. Each pairwise inner product gives one score; multiplying the stacked token matrices gives a matrix of those scores. Elementwise multiplication is a different operation.</td>
+</tr>
+<tr>
+<td><strong>Chat: Where does A come from S?</strong></td>
+<td>A is the row-wise softmax of the score matrix. The diagram’s normalization box is implemented by softmax, not by a second separate scaler.</td>
+</tr>
+<tr>
+<td><strong>Manan: How are weights introduced?</strong></td>
+<td>The Q/K/V projections add parameter matrices. PyTorch linear layers store and apply them; attention weights computed for an input are different from those persistent parameters.</td>
+</tr>
+<tr>
+<td><strong>Athira: What dimensions should the linear layers have?</strong></td>
+<td>Match their input width to the embeddings and choose compatible output widths. The demo keeps widths at eight; score-matrix axes instead follow sequence length.</td>
+</tr>
+<tr>
+<td><strong>Athira: What do projection weights learn?</strong></td>
+<td>Under task training, gradients would change them to improve the objective. The session’s demonstration did not perform that learning.</td>
+</tr>
+<tr>
+<td><strong>Ayush Mishra / Rushi: Why linear projections, and where is nonlinearity?</strong></td>
+<td>Linear layers implement the projections; softmax is nonlinear. The class did not add an activation after each Q/K/V layer.</td>
+</tr>
+<tr>
+<td><strong>Shivam / Subrahmanyam: Why is only V3 shown as the query?</strong></td>
+<td>It is the chosen example token in the drawing. Every position supplies a query in the full matrix calculation.</td>
+</tr>
+<tr>
+<td><strong>Ashwa / Sai Kiran / Swati Gupta: Who initializes the matrices?</strong></td>
+<td>Initialization provides starting values. NumPy samples them explicitly here; PyTorch modules initialize their own parameters unless configured otherwise.</td>
+</tr>
+<tr>
+<td><strong>Thomas: How is this parallelized?</strong></td>
+<td>Matrix operations compute many token comparisons together. Later stages still depend on earlier results; parallelism does not remove the score→softmax→aggregation chain.</td>
+</tr>
+<tr>
+<td><strong>Subhash: Why dot product rather than another comparison?</strong></td>
+<td>It is the compatibility function used by this calculation and supports efficient matrix operations. Other attention formulations exist; this class implements scaled dot-product attention.</td>
+</tr>
+<tr>
+<td><strong>Aryan Parekh: Which side is the query?</strong></td>
+<td>The base token seeking information supplies the query. The row of QKᵀ represents that query compared with all keys.</td>
+</tr>
+<tr>
+<td><strong>Shiv Prakash: Why three matrices; can one matrix do it?</strong></td>
+<td>The standard roles have distinct projections. They can be combined in a larger packed projection that still produces distinct Q/K/V representations. <a href="https://docs.pytorch.org/tutorials/intermediate/transformer_building_blocks.html">PyTorch packed projections</a></td>
+</tr>
+<tr>
+<td><strong>S Anoop: What is the V1…VN column at the left?</strong></td>
+<td>It denotes the collection of input token vectors feeding the block, not another learned matrix or an additional layer.</td>
+</tr>
+<tr>
+<td><strong>Nithin: Can we derive the full backward pass by hand?</strong></td>
+<td>Paul recommended starting with a smaller network/example because a full attention derivative is lengthy. No complete attention backward derivation was performed.</td>
+</tr>
+<tr>
+<td><strong>Bhavani Shankar: What is NER above the stacked block?</strong></td>
+<td>Named-entity recognition was an example downstream NLP task. QA and other objectives were also mentioned; no task head was implemented.</td>
+</tr>
+<tr>
+<td><strong>Phani Kulkarni: Why are values connected to the initial input if used later?</strong></td>
+<td>V is projected from the same original input. Its later use is the separate weighted aggregation AV.</td>
+</tr>
+<tr>
+<td><strong>Chat: Does d_model have to equal vocabulary size?</strong></td>
+<td>No. The toy example has eight entries and width eight by choice. Dense embedding width is independent of vocabulary size; one-hot width follows the vocabulary.</td>
+</tr>
+<tr>
+<td><strong>Chat: Why is the score shape 4 × 4 rather than 4 × 8?</strong></td>
+<td>Each query is compared with four keys. The feature dimension is summed out in each dot product, producing sixteen scalar scores.</td>
+</tr>
+<tr>
+<td><strong>Pradhav: Is normalization done before softmax as another step?</strong></td>
+<td>No additional min/max or standard scaling occurs in that box. The scores are scaled by √d_k, then row-wise softmax provides the normalized weights.</td>
+</tr>
+<tr>
+<td><strong>Ankit / CS: Should the numerical weights show obvious word relationships or self-attention dominance?</strong></td>
+<td>Not with the untrained random parameters used here. A token need not assign itself the largest attention weight.</td>
+</tr>
+<tr>
+<td><strong>Nithin: Y_literal versus Y_manual?</strong></td>
+<td>They compute the same raw-vector weighted sum, once by matrix multiplication and once by spelling out the terms. allclose confirms approximate numerical agreement.</td>
+</tr>
+<tr>
+<td><strong>Vidyasagar: What changes if the embedding width changes?</strong></td>
+<td>Adapt the projections and other dimensional dependencies. Width and vocabulary size are separate; the hard-coded demo widths are not a universal rule.</td>
+</tr>
+<tr>
+<td><strong>Kalyan Rad: Does a smaller cross-context cosine show attention brings meaning?</strong></td>
+<td>It shows that output representations changed with context. Untrained weights and the contradictory recorded similarities prevent treating this alone as proven semantic improvement.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Why Q/K/V, and could there be fourth/fifth representations?</strong></td>
+<td>These are the conventional roles in the attention mechanism being taught. Renaming them does not change the algorithm; additional architectural components would need their own definition.</td>
+</tr>
+<tr>
+<td><strong>Gaurav: Is this already in PyTorch, and why break it down?</strong></td>
+<td>Yes, built-in modules exist. The manual breakdown explains the mechanics before later work uses higher-level functions.</td>
+</tr>
+<tr>
+<td><strong>sridhar k: Are the matrices hyperparameters?</strong></td>
+<td>Their numerical values are learned parameters. Their sizes, the architecture, and head count are hyperparameters selected as part of model design.</td>
+</tr>
+<tr>
+<td><strong>sridhar: Does cosine around 0.8 imply river and money are related?</strong></td>
+<td>It indicates geometric closeness under this particular untrained calculation, not a reliable linguistic relationship. The assignment asks for a more meaningful embedding source.</td>
+</tr>
+<tr>
+<td><strong>Debajyoti Mukhopadhyay: Where does this help beyond an API/RAG project?</strong></td>
+<td>Whole models are commonly consumed in applications. Internal knowledge helps with model analysis, customization, and debugging; changing a pretrained architecture needs more than a simple fine-tuning switch.</td>
+</tr>
+<tr>
+<td><strong>Sai Kiran Akula: NumPy or PyTorch—and was Pandas used?</strong></td>
+<td>The examples used NumPy and PyTorch. NumPy exposes the operations; PyTorch supplies trainable modules and built-in implementations. Pandas was not part of this notebook.</td>
+</tr>
+<tr>
+<td><strong>Sai Kiran: Is multi-head attention only for batching?</strong></td>
+<td>No. Batch size counts sequences; heads are parallel attention paths. The added leading axis demonstrates batching independently of the one-head configuration.</td>
+</tr>
+<tr>
+<td><strong>Sai Kiran: Should we focus on softmax and both frameworks?</strong></td>
+<td>Understand the operation and shapes first, then how the libraries express them. This attention calculation specifically normalizes scores with softmax.</td>
+</tr>
+<tr>
+<td><strong>Sauvik Chattopadhyay: With vocabulary 10,000 and width 300, do projections follow width?</strong></td>
+<td>Yes. A token supplies 300 features, so the projection input width is 300. A square 300 × 300 projection is one valid choice, not a consequence of vocabulary size.</td>
+</tr>
+<tr>
+<td><strong>LearnMath: Does the course lead to agentic or deep-learning work?</strong></td>
+<td>Paul described coverage of LLM/NLP model work, fine-tuning, RAG, and agents. He also identified limits in GPU optimization and reinforcement-learning depth.</td>
+</tr>
+<tr>
+<td><strong>LearnMath: How do job opportunities differ by location?</strong></td>
+<td>Paul shared his observations about agent/RAG demand and model-engineering roles. These were class-time opinions, not a current job-market survey or guaranteed transition.</td>
+</tr>
+<tr>
+<td><strong>Kalyan: Does the original paper specify head count?</strong></td>
+<td>Yes, its base model used eight heads. That configuration is not a universal standard; choose compatible settings and evaluate them.</td>
+</tr>
+<tr>
+<td><strong>Kalyan: What does forward-deployed engineering involve?</strong></td>
+<td>The discussion emphasized solution architecture, latency, scalability, fault tolerance, integration with legacy systems, and the application lifecycle. Coverage depends on the actual role.</td>
+</tr>
+<tr>
+<td><strong>Kalyan: What should I revise with limited time?</strong></td>
+<td>Prioritize deep-learning foundations such as optimizers, activations, and matrix operations. Paul suggested a focused refresher rather than revisiting every CNN topic now.</td>
+</tr>
+<tr>
+<td><strong>Kalyan: Which teaching resources should I use?</strong></td>
+<td>Paul mentioned several lectures and books and advised using a resource whose explanation works for you. The core concepts matter more than a particular teacher.</td>
+</tr>
+<tr>
+<td><strong>Kalyan: What value does dictation add to coding-agent work?</strong></td>
+<td>Paul uses it for long explanations, examples, and frequent text entry. He said its usefulness depends on the amount and kind of typing in the workflow.</td>
+</tr>
+<tr>
+<td><strong>Adithyan Ramesh: Is softmax in the paper or only a teaching choice?</strong></td>
+<td>It is part of the scaled dot-product attention formula. The class’s normalization box corresponds to it.</td>
+</tr>
+<tr>
+<td><strong>Adithyan: Why the square-root divisor?</strong></td>
+<td>The explanation connects it to stable training; the paper specifies controlling dot-product magnitude so softmax gradients do not become extremely small.</td>
+</tr>
+<tr>
+<td><strong>Adithyan: Which math/video prerequisites help?</strong></td>
+<td>Matrix multiplication, dimensions, and activation functions were emphasized. The 3Blue1Brown channel was mentioned; a precise video URL was not retained in the transcript.</td>
+</tr>
+<tr>
+<td><strong>Ranjeev Tiwari: Should V be computed from attention weights instead of X?</strong></td>
+<td>No. V = XW_v forms value representations; Y = AV then uses normalized weights to mix them. These two multiplications have distinct purposes.</td>
+</tr>
+<tr>
+<td><strong>Narayan Jena: Will the course teach MLOps?</strong></td>
+<td>Paul explicitly excluded general machine-learning operations, while stating that deployment related to LLM models and RAG/AI systems would be taught.</td>
+</tr>
+</tbody>
+</table>
+<p>AI learner was invited to speak but did not provide a substantive question. Requests for links, microphone checks, and dashboard navigation are represented in Quick Updates where useful.</p>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Attention creates one context-dependent output per token; it does not automatically pool a sentence.</li>
+<li>Vocabulary size, sequence length, and embedding width are independent.</li>
+<li>A vector inner product yields one scalar; QKᵀ collects all pairwise scalar scores.</li>
+<li>Attention weights A are input-dependent outputs, not the persistent projection parameters.</li>
+<li>Q/K/V originate from the same sequence in self-attention but have different roles.</li>
+<li>The query requests information, keys support matching, and values supply content.</li>
+<li>The projection matrices are shared across token positions within a block.</li>
+<li>Values are projected before aggregation; the final operation is AV.</li>
+<li>Square projections preserve width in the demo; other compatible widths are possible.</li>
+<li>Projection weights are parameters; dimensions and head count are hyperparameters.</li>
+<li>scale=0.5 in the random generator is a standard deviation.</li>
+<li>√d_k scales compatibility scores; softmax makes each attention row sum to one.</li>
+<li>Normalize across the key dimension for each query.</li>
+<li>AX is the simplified raw-vector mixture; AV uses projected values.</li>
+<li>allclose checks tolerance-based agreement.</li>
+<li>A shared static bank lookup naturally has cosine one across the two sentences.</li>
+<li>A changed contextual vector proves context dependence, not automatic semantic quality.</li>
+<li>Newly created nn.Embedding and nn.Linear modules are untrained.</li>
+<li>Compare the numerical outputs with the claim being made; some notebook narrative labels overstate the recorded evidence.</li>
+<li>Batch size and head count are different concepts.</li>
+<li>Built-in MultiheadAttention has its own projections, including an output projection.</li>
+<li>Batched attention needs the correct key-axis transpose.</li>
+<li>Multi-head attention and the full Transformer architecture were deferred for fuller treatment.</li>
+<li>Replacing embeddings in the assignment requires updating incompatible hard-coded widths.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-5">✅ Action Items After Class 5<a class="headerlink" href="#action-items-after-class-5" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce the four-token X → Q/K/V → scores → softmax → Y calculation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain the difference between an inner product, elementwise multiplication, and matrix multiplication.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Draw the single-query x₃ example from the whiteboard and identify its keys, weights, and values.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Print every intermediate shape and identify its token/feature axes.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check the attention row sums and read the heatmap’s row/column meanings.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare Y_literal with the manual first-row formula using allclose.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Run both bank sentences with one shared table and the same projection parameters.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Record the actual cosine results and separate context dependence from semantic improvement.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Replace the embedding source with <strong>GloVe or Word2Vec</strong>, as assigned.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Update d_model and projection shapes to the pretrained vector width.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Note missing vocabulary entries and any preprocessing changes in the notebook.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the PyTorch version and the independent one-head MHA example.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Distinguish the added batch dimension from the number of heads.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Prepare a <strong>viewable Google Colab link</strong> for the instructor’s requested submission to <strong>app@krishnaik.in</strong>.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review matrix operations, activation functions, optimizers, and training foundations before the next class.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Continue with the detailed multi-head attention and Transformer-paper discussion next week.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 5 transcript, all six pages of the accompanying self2.pdf, and all 29 cells of the supplied attention notebook — “2 Aug Transformers 101,” Production AI / LLM Engineering, Krish Naik Academy. Code excerpts and recorded numerical results come from that notebook. Mermaid diagrams translate the class’s actual whiteboard processes. Official documentation and the original paper clarify mathematical/API details and the limitations of the untrained experiment.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_04_Transformers_101_Part_1_Notes.html" class="btn btn-neutral float-left" title="04 · Transformers 101, part 1"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_06_Multi_Head_Attention_Notes.html" class="btn btn-neutral float-right" title="06 · Multi-head attention">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_04_Transformers_101_Part_1_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_06_Multi_Head_Attention_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

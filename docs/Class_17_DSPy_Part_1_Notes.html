@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_17_DSPy_Part_1_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>17 · DSPy, part 1 - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "17 \u00b7 DSPy, part 1";
+        var mkdocs_page_input_path = "Class_17_DSPy_Part_1_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_17_DSPy_Part_1_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">17 · DSPy, part 1</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#outlines-cfg-constrain-the-next-token-during-generation">🔒 Outlines CFG: Constrain the Next Token During Generation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#arithmetic-grammar-a-valid-expression-can-miss-the-requested-meaning">➗ Arithmetic Grammar: A Valid Expression Can Miss the Requested Meaning</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sql-and-a-custom-dsl-syntax-is-only-one-layer">🗃️ SQL and a Custom DSL: Syntax Is Only One Layer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#local-models-serving-frameworks-and-version-sensitive-apis">🌐 Local Models, Serving Frameworks, and Version-Sensitive APIs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vision-inputs-to-structured-python-objects">🖼️ Vision Inputs to Structured Python Objects</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#format-validation-extraction-accuracy-and-batch-processing">✅ Format Validation, Extraction Accuracy, and Batch Processing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dspys-three-parts-signatures-modules-and-optimizers">🧩 DSPy's Three Parts: Signatures, Modules, and Optimizers</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#signatures-a-typed-task-contract">📝 Signatures: A Typed Task Contract</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#predict-and-chainofthought-same-task-different-execution">📞 Predict and ChainOfThought: Same Task, Different Execution</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#programofthought-generate-code-execute-it-then-answer">🧮 ProgramOfThought: Generate Code, Execute It, Then Answer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-interpreter-dependencies-and-inspecting-generated-code">🛠️ The Interpreter, Dependencies, and Inspecting Generated Code</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rlm-preview-explore-large-context-through-a-program">🔁 RLM Preview: Explore Large Context Through a Program</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#inline-versus-class-based-signatures">🏷️ Inline Versus Class-Based Signatures</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-17">✅ Action Items After Class 17</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">DSPy</li>
+      <li class="breadcrumb-item active">17 · DSPy, part 1</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-17-dspy-part-1-signatures-modules-and-code-execution">🧠 Class 17: DSPy Part 1 — Signatures, Modules, and Code Execution<a class="headerlink" href="#class-17-dspy-part-1-signatures-modules-and-code-execution" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>⏱️ Duration:</strong> ~3 hours 30 minutes (3hr 29min 53s) | <strong>📅 Session:</strong> Day 17 (19 September 2026)</p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aaf5841e3af737a79b8f2d1">19 Sept DSPY Part - 1</a><br />
+<strong>Primary transcript:</strong> <code>GMT20260919-143307_Recording.cutfile.20260920035021608.transcript.vtt</code><br />
+<strong>Companions:</strong> <code>DSPY.pdf</code>; <a href="https://github.com/sourangshupal/structured-llm-notebooks/tree/main">structured LLM teaching repository</a>; <a href="https://krishnaikacademy.notion.site/DSPY-3e1eba9593d080c1932bf14dd648ce64">course DSPy resource page</a>.</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The first part completed the remaining Outlines notebooks: grammar-constrained code/SQL generation and image-to-structured-output extraction. DSPy began after the break.</li>
+<li>Students were asked to update the existing repository rather than clone an unrelated codebase. The matching paths are <code>notebooks/02_outlines/03_cfg_codegen.ipynb</code>, <code>04_vision_structure.ipynb</code>, and <code>notebooks/06_dspy/01_signatures_modules.ipynb</code>.</li>
+<li>Paul introduced <a href="https://github.com/tt-a1i/archify">Archify</a> as a diagram-generating agent skill and showed diagrams for the teaching repository. It was a resource suggestion, not a coding-agent installation exercise.</li>
+<li>Experimental typed-output models and alternative model architectures were briefly discussed as research interests. No replacement Transformer architecture was built during the session.</li>
+<li>DSPy coverage stopped after signatures, basic module examples, code-execution details, and a conceptual RLM preview. Optimizers, RAG, and ReAct implementations were deferred.</li>
+<li>In response to Mangesh's calendar question, Paul stated that classes would run through 1 November and that 7–8 November would be a Diwali break. This was the schedule announced in this recording, not an independently updated calendar.</li>
+<li>The dedicated Q&amp;A explored migrating complex prompts, integrating DSPy with LangGraph/vLLM, maintaining business rules, and separating program execution from gateway routing.</li>
+</ul>
+<p>These notes preserve the live implementations while distinguishing format constraints, task correctness, and program optimization. Source excerpts are from the current matching companion notebooks; version differences are called out where they affect reproducibility.</p>
+<hr />
+<h2 id="outlines-cfg-constrain-the-next-token-during-generation">🔒 Outlines CFG: Constrain the Next Token During Generation<a class="headerlink" href="#outlines-cfg-constrain-the-next-token-during-generation" title="Permanent link">&para;</a></h2>
+<p>A <strong>context-free grammar</strong>, or CFG, defines which strings belong to a language. In the class, the grammar was a generation blueprint: arithmetic expressions, a small SQL subset, or a custom query DSL.</p>
+<p>The Outlines demonstration loaded a small local instruction model so the generation pipeline could directly control logits:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">outlines</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">outlines.types</span><span class="w"> </span><span class="kn">import</span> <span class="n">CFG</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">AutoModelForCausalLM</span><span class="p">,</span> <span class="n">AutoTokenizer</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+
+<span class="c1"># CFG constraints require token-level masking, so they need a LOCAL model —</span>
+<span class="c1"># hosted APIs (OpenAI etc.) only support JSON-schema constraints.</span>
+<span class="c1"># First run downloads ~1 GB (Qwen2.5-0.5B); it&#39;s cached afterwards.</span>
+<span class="n">LOCAL_MODEL</span> <span class="o">=</span> <span class="s2">&quot;Qwen/Qwen2.5-0.5B-Instruct&quot;</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">LOCAL_MODEL</span><span class="p">)</span>
+<span class="n">hf_model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">LOCAL_MODEL</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+<span class="n">model</span> <span class="o">=</span> <span class="n">outlines</span><span class="o">.</span><span class="n">from_transformers</span><span class="p">(</span><span class="n">hf_model</span><span class="p">,</span> <span class="n">tokenizer</span><span class="p">)</span>
+</code></pre></div>
+<p>This is the notebook's setup cell, including its original comments. The broad hosted-API comment is a limitation of that example's path, not a universal current rule. A small model still needs enough system memory and supported dependencies; “0.5B” does not guarantee that every laptop will run it comfortably.</p>
+<p><strong>Token masking</strong> means assigning disallowed next tokens no usable probability before sampling. The decoder tracks the generated prefix and the grammar's possible continuations. It selects from tokens whose decoded content can continue that valid prefix.</p>
+<p>This differs from completing a wrong output and then repeatedly asking the model to regenerate it. The live explanation sometimes used “regeneration,” but the central benefit is preventing invalid continuations during decoding. Outlines' <a href="https://dottxt-ai.github.io/outlines/latest/features/advanced/logits_processors/">logits-processor documentation</a> describes this inference-time control.</p>
+<p>Token boundaries and character boundaries need not match. A single token may contain several characters, punctuation, or whitespace. The constraint implementation must relate the tokenizer's decoded pieces to the grammar; application code does not simply compare one token with one grammar character. That is the technical issue behind Uttam's “character misalignment” question.</p>
+<p>The previous class's FSM discussion is useful for regular constraints. A general CFG can require parsing state and a stack; an ordinary finite-state automaton alone does not recognize every context-free language. The relevant backend supplies the appropriate constraint machinery.</p>
+<p>Grammar validation also has practical limits: unsupported constructs, an invalid grammar, truncation, or an inference failure can prevent a complete result. Once a supported constrained generation completes successfully, syntactic membership still does not prove factual or task correctness.</p>
+<hr />
+<h2 id="arithmetic-grammar-a-valid-expression-can-miss-the-requested-meaning">➗ Arithmetic Grammar: A Valid Expression Can Miss the Requested Meaning<a class="headerlink" href="#arithmetic-grammar-a-valid-expression-can-miss-the-requested-meaning" title="Permanent link">&para;</a></h2>
+<p>The notebook's arithmetic example begins with <code>start: expr</code>. Expressions permit addition/subtraction; terms permit multiplication/division; factors permit numbers or parenthesized expressions.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># A simple arithmetic grammar in Lark format</span>
+<span class="n">arithmetic_grammar</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    start: expr</span>
+<span class="s2">    expr: expr &quot;+&quot; term</span>
+<span class="s2">        | expr &quot;-&quot; term</span>
+<span class="s2">        | term</span>
+<span class="s2">    term: term &quot;*&quot; factor</span>
+<span class="s2">        | term &quot;/&quot; factor</span>
+<span class="s2">        | factor</span>
+<span class="s2">    factor: NUMBER</span>
+<span class="s2">          | &quot;(&quot; expr &quot;)&quot;</span>
+<span class="s2">    NUMBER: /[0-9]+(\.[0-9]+)?/</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="s2">&quot;Write a mathematical expression for compound interest:&quot;</span><span class="p">,</span> <span class="n">CFG</span><span class="p">(</span><span class="n">arithmetic_grammar</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generated expression: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;✅ Always syntactically valid arithmetic&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The stored result is the numeric string <strong>1.105436875697257636</strong>. Paul used it to show that the model's response stays within the supplied output language even when the natural-language request asks for something the grammar cannot express fully.</p>
+<p>One clarification matters: the grammar does <strong>not</strong> allow only a single number. Its start rule also permits compound arithmetic expressions and parentheses. However, it contains no identifiers such as principal, rate, or time, and no exponentiation operator. It therefore cannot express the usual symbolic compound-interest formula with named variables. The generated number is one permitted arithmetic expression, not a computed answer to a fully specified finance problem.</p>
+<p>Likewise, <code>NUMBER: /[0-9]+(\.[0-9]+)?/</code> accepts digits <strong>0 through 9</strong>, followed by an optional decimal part. It does not restrict values to the interval zero to one.</p>
+<p>The example separates three questions:</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>What this demo establishes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Does the response fit the grammar?</td>
+<td>The stored numeric string does.</td>
+</tr>
+<tr>
+<td>Does the grammar express the requested concept?</td>
+<td>It lacks the variables/operators needed for a general symbolic formula.</td>
+</tr>
+<tr>
+<td>Is the response a correct numerical answer?</td>
+<td>No principal/rate/time inputs were supplied, so the class did not establish that.</td>
+</tr>
+</tbody>
+</table>
+<p>The later Python-expression grammar required a number followed by one or more operator/number pairs. For “three plus four,” the stored response was <strong>3+4.0</strong>. That is a generated expression; it is not automatically an evaluated result of 7. The class was demonstrating syntax control, not running an arithmetic evaluator.</p>
+<p>The useful design rule is to define an output language that actually includes the forms your task needs. A strict but incomplete grammar can force a clean-looking wrong answer.</p>
+<hr />
+<h2 id="sql-and-a-custom-dsl-syntax-is-only-one-layer">🗃️ SQL and a Custom DSL: Syntax Is Only One Layer<a class="headerlink" href="#sql-and-a-custom-dsl-syntax-is-only-one-layer" title="Permanent link">&para;</a></h2>
+<p>The first SQL grammar was intentionally small:</p>
+<div class="highlight"><pre><span></span><code><span class="n">simple_sql_grammar</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    start: &quot;SELECT &quot; columns &quot; FROM &quot; table_name</span>
+<span class="s2">    columns: &quot;*&quot; | column (&quot;,&quot; column)*</span>
+<span class="s2">    column: /[a-z_]+/</span>
+<span class="s2">    table_name: /[a-z_]+/</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<p>It permits a SELECT clause, either a star or comma-separated column names, and a table name containing lowercase letters/underscores. The stored example generated <strong>SELECT * FROM users</strong>.</p>
+<p>The next version added an optional WHERE condition, comparisons using <code>=</code>, <code>&gt;</code>, and <code>&lt;</code>, and numeric or single-quoted values. “Users older than 18” produced <strong>SELECT * FROM users WHERE age&gt;18</strong>.</p>
+<p>These examples do not constitute a complete SQL grammar. They exclude joins, grouping, aggregate syntax, subqueries, many identifier forms, dialect-specific features, and most operators. Their regex also does not establish that a generated table or column exists in a real database.</p>
+<p>The multi-prompt example is especially instructive. It uses the <strong>simple grammar</strong>, even for requests about filtered orders and counting by status. Saved outputs include long invented names such as a table identifier that narrates an “orders” requirement. The string can satisfy the demo grammar while failing the request and the actual database schema.</p>
+<p>The notebook labels this section a raw-versus-CFG syntax-error comparison, but the supplied cell shows only the constrained generation loop. It does not execute a matching raw baseline, parse each result against a real SQL dialect, or report measured accuracy/error-rate statistics. Do not turn its “100%” print statement into a performance benchmark.</p>
+<p>Next came a small <strong>domain-specific language</strong>:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Define a simple query DSL</span>
+<span class="n">query_dsl</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    start: query</span>
+<span class="s2">    query: &quot;FIND &quot; entity (&quot; WHERE &quot; condition)?</span>
+<span class="s2">    entity: &quot;users&quot; | &quot;products&quot; | &quot;orders&quot;</span>
+<span class="s2">    condition: field &quot;=&quot; value</span>
+<span class="s2">    field: &quot;name&quot; | &quot;status&quot; | &quot;price&quot; | &quot;date&quot;</span>
+<span class="s2">    value: /[a-zA-Z0-9_]+/</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</code></pre></div>
+<p>This is a custom <code>FIND</code> language, not SQL. The stored response was <strong>FIND products WHERE status=ACTIVE</strong>. Entity and field choices are constrained; the value regex still admits many arbitrary strings. Whether <code>ACTIVE</code> is a valid business value depends on the receiving system.</p>
+<p>Paul emphasized internal tools or custom languages for which an organization already has a grammar. The same principle can also help ordinary language subsets when reliable syntax matters; it is not restricted to compiler researchers or proprietary frameworks.</p>
+<p><strong>Grammar size is separate from prompt size.</strong> A decoding grammar may be compiled and enforced outside the model's text context. A large grammar file does not automatically need to be inserted into the prompt, and it does not imply that switching to RLM is the only solution. Grammar complexity instead affects backend support, compilation time, memory, and generation overhead. RLM was a later conceptual discussion about large input data.</p>
+<hr />
+<h2 id="local-models-serving-frameworks-and-version-sensitive-apis">🌐 Local Models, Serving Frameworks, and Version-Sensitive APIs<a class="headerlink" href="#local-models-serving-frameworks-and-version-sensitive-apis" title="Permanent link">&para;</a></h2>
+<p>The class distinguished a model running in an accessible inference environment from a hosted service whose logits the application cannot directly edit. A web frontend does not itself supply low-level decoding control; it can call a backend that performs constrained generation.</p>
+<p>vLLM and SGLang were introduced as serving frameworks. The notebook's final vLLM example was an illustrative string containing an OpenAI-compatible client and <code>guided_grammar</code>, not a live server deployment. The instructor deferred deeper serving internals to later modules.</p>
+<p>Two current compatibility details should accompany that historical example:</p>
+<ul>
+<li>vLLM's documentation says the old <code>guided_json</code>, <code>guided_regex</code>, <code>guided_choice</code>, and <code>guided_grammar</code> fields were removed in v0.12.0. Current integrations use <code>structured_outputs</code> and an appropriate supported backend. Copying the notebook's old request unchanged can fail. <a href="https://docs.vllm.ai/en/latest/features/structured_outputs/">vLLM structured-output reference</a>.</li>
+<li>The lecture's blanket statement that proprietary APIs cannot support CFG is too broad. OpenAI currently supports grammar-constrained custom-tool inputs on compatible models/APIs, including supported Lark syntax. That is provider-side constraint enforcement, not arbitrary client access to logits. It does not prove that the class's Outlines wrapper supports every such capability. <a href="https://developers.openai.com/api/docs/guides/function-calling">OpenAI function-calling guide</a>.</li>
+</ul>
+<p>Outlines itself documents that output-type support varies by model/backend. Select the backend according to the required constraints rather than assuming JSON-schema, regex, CFG, and multimodal behavior are interchangeable. <a href="https://dottxt-ai.github.io/outlines/latest/features/core/output_types/">Outlines output types</a>.</p>
+<p>The notebook's comment that one serving version used Outlines “under the hood” belongs to that version. Modern serving backends can differ. No particular hosting framework is universally required for production, and no universal claim that Transformers is only suitable for teaching follows from this demonstration.</p>
+<hr />
+<h2 id="vision-inputs-to-structured-python-objects">🖼️ Vision Inputs to Structured Python Objects<a class="headerlink" href="#vision-inputs-to-structured-python-objects" title="Permanent link">&para;</a></h2>
+<p>The final Outlines notebook changed the input modality from text to images while keeping the output schema explicit. It used <code>Chat</code> and <code>Image</code>, Pillow to load images, and a configured vision-capable model.</p>
+<p>The invoice schema was:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">LineItem</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">quantity</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">price</span><span class="p">:</span> <span class="nb">float</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">Invoice</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+    <span class="n">vendor</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">invoice_number</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">date</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">currency</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">line_items</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">LineItem</span><span class="p">]</span>
+    <span class="n">total</span><span class="p">:</span> <span class="nb">float</span>
+</code></pre></div>
+<p>This excerpt depends on the notebook's earlier <code>BaseModel</code> import. It declares a nested line-item list, but plain <code>str</code> and <code>float</code> types do not establish a valid currency code, an actual calendar date, nonnegative quantities, or arithmetic consistency.</p>
+<p>The generation/parsing sequence is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">prompt</span> <span class="o">=</span> <span class="n">Chat</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;system&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;Extract structured data from document images.&quot;</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;Extract the itemized table from this bill:&quot;</span><span class="p">,</span> <span class="n">Image</span><span class="p">(</span><span class="n">img</span><span class="p">)]},</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">Invoice</span><span class="p">)</span>
+<span class="n">invoice</span> <span class="o">=</span> <span class="n">Invoice</span><span class="o">.</span><span class="n">model_validate_json</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</code></pre></div>
+<p>This is an excerpt from the image cell, after <code>img</code>, <code>model</code>, and the schemas are defined. Outlines returns structured text in this path; <code>model_validate_json</code> converts it into a validated Python object. A syntactically correct object can still contain a mistaken reading.</p>
+<p>The live <strong>Green Tangerine restaurant bill</strong> demonstrated that limitation. The class compared descriptions, quantities, prices, currency, and the total, noticing inconsistent interpretations of handwriting and trailing zeros. Students using other vision models reported different values. The discrepancy was useful evidence that a structure guarantee cannot recover information the model misreads.</p>
+<p>Paul then sought a clearer digital invoice. Several attempts appeared to keep producing the synthetic widget invoice. The underlying issue was the <strong>file/path and fallback condition</strong>: if the requested file does not exist, the notebook generates a stand-in. Changing a filename without checking what image actually loaded can make an apparent model test compare the wrong input.</p>
+<p>The current notebook's first image path points to <code>sample.png</code>, and its stored output is a different invoice from the original restaurant bill. It lists six line items at 100 each but a total of 440. That saved inconsistency further illustrates the need for business validation; it should not be silently “fixed” in notes as if the model had produced a correct total.</p>
+<p>The class briefly attributed a failure to WebP. The recorded debugging did not establish a universal WebP prohibition; supported formats depend on the vision provider and image wrapper, and the fallback/path problem was also active. Check the loaded image and the actual error before changing formats.</p>
+<p>A second example extracted an <strong>energy-safety chart</strong>. Its schema included chart type, title, axis labels, unit, source, and typed label/value points. The saved response recognized a bar chart and extracted multiple death-rate/emissions series, but some labels and the title were inferred or rephrased. The purpose was chart-to-schema extraction; the energy statistics were not an independent scientific claim established by this lecture.</p>
+<p>Base64 was explained as a reversible way to transport binary image bytes through a text field. Encoding does not improve image quality, perform OCR, or supply semantic understanding. In the raw provider call, the Base64 content was placed in an image data URL.</p>
+<hr />
+<h2 id="format-validation-extraction-accuracy-and-batch-processing">✅ Format Validation, Extraction Accuracy, and Batch Processing<a class="headerlink" href="#format-validation-extraction-accuracy-and-batch-processing" title="Permanent link">&para;</a></h2>
+<p>The raw vision comparison asked for JSON without the Outlines schema path. Its stored answer arrived inside Markdown code fences; calling <code>json.loads</code> directly on that whole string failed. That is a <strong>format-parsing failure</strong>, separate from whether the extracted invoice values were correct.</p>
+<p>The constrained path gave predictable structure, but both paths could misread the same low-quality image. This creates two independent evaluation axes:</p>
+<table>
+<thead>
+<tr>
+<th>Axis</th>
+<th>Example check</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Structural validity</td>
+<td>Is the JSON complete and compatible with the required fields/types?</td>
+</tr>
+<tr>
+<td>Extraction accuracy</td>
+<td>Do vendor, currency, amounts, quantities, and descriptions match the image?</td>
+</tr>
+</tbody>
+</table>
+<p>For production document work, the session suggested comparing fields with OCR output. Additional natural checks include required-field completeness, arithmetic consistency, and rules from the business domain. OCR can also misread text; an OCR layer is another source of evidence to evaluate, not a guarantee of correctness.</p>
+<p>Paul preferred an OCR stage when documents were complex or image quality was poor, and direct vision extraction when the format was simple and stable. The examples support testing that tradeoff on representative scans. They do not establish a universal cost multiplier for vision calls or that every OCR system is cheaper/better in every workload.</p>
+<p>The batch cell scans three matching sample filenames and applies the extraction schema to each. <strong>The actual source runs a normal synchronous <code>for</code> loop</strong>. It is sequential, despite the live discussion describing parallel calls. Batch processing means processing a collection; it does not by itself imply concurrency.</p>
+<p>The document schema allows <code>total_amount: float | None</code>, useful for documents such as purchase orders that may not carry a total. The saved results include two invoices and a historical purchase-order confirmation. A null value records absent information more honestly than inventing an amount, although the model must still identify absence correctly.</p>
+<p>The exercise was to test a good-quality invoice from students' own examples, keep the schema comparable, and check the values. The class did not measure a large extraction benchmark or deploy an asynchronous service.</p>
+<hr />
+<h2 id="dspys-three-parts-signatures-modules-and-optimizers">🧩 DSPy's Three Parts: Signatures, Modules, and Optimizers<a class="headerlink" href="#dspys-three-parts-signatures-modules-and-optimizers" title="Permanent link">&para;</a></h2>
+<p>DSPy introduces a programmatic way to express language-model tasks. The instructor's three-part map was:</p>
+<table>
+<thead>
+<tr>
+<th>Part</th>
+<th>Main question</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Signature</td>
+<td>What is the task, what goes in, and what comes out?</td>
+</tr>
+<tr>
+<td>Module</td>
+<td>How should the task execute?</td>
+</tr>
+<tr>
+<td>Optimizer</td>
+<td>How can prompts/demonstrations or other supported program parameters improve against a metric?</td>
+</tr>
+</tbody>
+</table>
+<p>Older materials may call optimizers <strong>teleprompters</strong>. That terminology still appears in some package paths; it is not a fourth conceptual component.</p>
+<p>The session described DSPy as “programming, not prompting.” The useful interpretation is that you declare tasks and compose reusable modules rather than manually maintain every prompt string. <strong>The model still receives prompts/messages internally.</strong> DSPy's adapter formats instructions, fields, and examples into requests and parses outputs back into typed values. <a href="https://dspy.ai/current/diving-deeper/adapters/">Official adapter explanation</a>.</p>
+<p>This is visible in the supplied notebook's saved execution history: it contains system/user messages, field markers such as <code>[[ ## question ## ]]</code>, generated code, and final-answer instructions. A Python docstring is Python syntax, but DSPy also uses its content as task instructions for the LM.</p>
+<p>That distinction answers Thomas's in-class challenge and Phani's open-floor follow-up. Programs provide a better interface for composition and optimization; they do not eliminate the need to communicate a task to the model.</p>
+<p>The class used the common <code>dspy.LM</code> integration and discussed LiteLLM as the provider layer. The repository's <code>get_dspy_lm</code> helper selects provider-prefixed model identifiers and uses <code>.env</code> settings. The setup cell is:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">dspy</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">src.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_dspy_lm</span><span class="p">,</span> <span class="n">print_config</span>
+
+<span class="n">print_config</span><span class="p">()</span>
+
+<span class="c1"># Configure DSPy with our unified LM</span>
+<span class="n">lm</span> <span class="o">=</span> <span class="n">get_dspy_lm</span><span class="p">()</span>
+<span class="n">dspy</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="n">lm</span><span class="o">=</span><span class="n">lm</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">✅ DSPy configured with: </span><span class="si">{</span><span class="n">lm</span><span class="o">.</span><span class="n">model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>This assumes the repository and its dependencies are installed and its provider settings are configured. Defining a signature alone does not contact an LLM; invoking a configured predictor/module does.</p>
+<p>The discussion included personal concerns about gateway reliability and past incidents. It did not establish a current security assessment of LiteLLM or alternative gateways. Keep gateway selection, authentication, routing, and observability responsibilities separate from the DSPy task program.</p>
+<hr />
+<h2 id="signatures-a-typed-task-contract">📝 Signatures: A Typed Task Contract<a class="headerlink" href="#signatures-a-typed-task-contract" title="Permanent link">&para;</a></h2>
+<p>The PDF defines a signature as a <strong>typed contract</strong> containing three things:</p>
+<ol>
+<li><strong>Task:</strong> a concise description of what the LM should accomplish.</li>
+<li><strong>Inputs:</strong> named fields and their types.</li>
+<li><strong>Outputs:</strong> named fields and the expected forms of their values.</li>
+</ol>
+<p>A class-based example was:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Class-based signature (recommended for production)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">QuestionAnswering</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">Signature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Answer questions with short factual responses.&quot;&quot;&quot;</span>
+
+    <span class="n">question</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">InputField</span><span class="p">()</span>
+    <span class="n">answer</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">OutputField</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot;A concise, factual answer&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The class inherits DSPy's signature behavior. <code>question</code> is input supplied by the caller; <code>answer</code> is output returned by the predictor. The docstring and field description tell the model what “answer” means.</p>
+<p>Printing <code>QuestionAnswering.fields.keys()</code> shows both <strong>question</strong> and <strong>answer</strong>. The notebook labels that print as “Input,” but it is listing all fields, not claiming both are inputs.</p>
+<p>The signature should state the task and useful rules, rather than accumulate a persona/role essay unrelated to it. Paul recommended class-based signatures because field types and descriptions remain clear. Multiple input fields are allowed: an actual workflow can supply a question, context, business rules, or other information separately.</p>
+<p>An email/support-ticket triage illustration used typed text input and controlled urgency labels. The transcript suggested that a connector might supply the email; no Outlook or Gmail connector was implemented during this class. A signature describes processing the input it receives, not fetching mail automatically.</p>
+<p>Python typing and parsing are valuable, but an output type does not prove business correctness. A string can still contain the wrong label unless the type/validation restricts it, and a concise factual-answer instruction cannot make an unknown fact true.</p>
+<p>DSPy hides much of the explicit Pydantic setup in this interface; it does not mean that Pydantic concepts or internal typed validation vanish. Its <a href="https://dspy.ai/current/getting-started/class-based-signatures/">class-based signature guide</a> explains the task/field pattern.</p>
+<hr />
+<h2 id="predict-and-chainofthought-same-task-different-execution">📞 Predict and ChainOfThought: Same Task, Different Execution<a class="headerlink" href="#predict-and-chainofthought-same-task-different-execution" title="Permanent link">&para;</a></h2>
+<p><strong>Predict</strong> is the simplest LM-backed module in the class. Instantiate it with a signature, then supply the input field values:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Basic prediction module</span>
+<span class="n">predictor</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">Predict</span><span class="p">(</span><span class="n">QuestionAnswering</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">predictor</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;What is the capital of India?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Question: What is the capital of India?&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The stored answer was <strong>New Delhi</strong>. This makes the division concrete: the signature defines the task, the module supplies the execution pattern, the input call provides the question, and the Prediction object exposes the answer.</p>
+<p>“Predict” here is not the same operation as <code>predict()</code> on a trained XGBoost estimator. It invokes an LM program; it does not fit a conventional tabular model. LLMs themselves are trained machine-learning models, so the live aside that there is “no machine learning” should be understood as distinguishing the interfaces rather than excluding generative AI from machine learning.</p>
+<p><strong>ChainOfThought</strong> adds a generated reasoning field before the answer:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ChainOfThought automatically adds a &#39;reasoning&#39; field (dspy 3.x renamed &#39;rationale&#39;)</span>
+<span class="n">cot</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ChainOfThought</span><span class="p">(</span><span class="n">QuestionAnswering</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">cot</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;If a train travels 60 km/h for 2.5 hours, how far does it go?&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rationale:&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">reasoning</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Answer: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The saved reasoning uses distance = speed × time, giving <strong>150 kilometers</strong>. The same QuestionAnswering signature is used; changing the module changes how the task is requested and the fields available in the returned result.</p>
+<p>This is a generated explanation/rationale. It should not be equated with unrestricted access to a proprietary model's hidden internal reasoning. Nor does the extra field guarantee correct reasoning. Treat both explanation and final answer as outputs to evaluate. <a href="https://dspy.ai/current/api/modules/ChainOfThought/">ChainOfThought API</a>.</p>
+<p>Paul connected such outputs with synthetic-data or fine-tuning workflows. That was a future-use suggestion. The class did not validate a reasoning dataset, train a student model, or establish that every generated explanation is appropriate training material.</p>
+<p>Additional output text can increase token consumption and latency. Use ChainOfThought when the task benefits from explicit intermediate reasoning; do not assume that changing every Predict call to ChainOfThought improves a product.</p>
+<hr />
+<h2 id="programofthought-generate-code-execute-it-then-answer">🧮 ProgramOfThought: Generate Code, Execute It, Then Answer<a class="headerlink" href="#programofthought-generate-code-execute-it-then-answer" title="Permanent link">&para;</a></h2>
+<p>ProgramOfThought introduced a different tool-assisted pattern. For an arithmetic task, the LM generates Python, an interpreter executes it, and the computed result is used to produce the final answer.</p>
+<p>The supplied PDF's flow becomes:</p>
+<pre class="mermaid"><code>flowchart TD
+    A["User question"] --&gt; B["DSPy ProgramOfThought"]
+    B --&gt; C["LM generates Python code"]
+    C --&gt; D["Interpreter executes code"]
+    D --&gt; E["Computed result"]
+    E --&gt; F["LM formats final answer"]
+    F --&gt; G["Returned prediction"]
+    D --&gt;|"Execution error; bounded retry"| C</code></pre>
+<p>The class example was the average of <strong>45, 67, 89, and 23</strong>. The source call is:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># ProgramOfThought generates and executes Python code</span>
+<span class="n">pot</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">ProgramOfThought</span><span class="p">(</span><span class="n">QuestionAnswering</span><span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">pot</span><span class="p">(</span><span class="n">question</span><span class="o">=</span><span class="s2">&quot;What is the average of 45, 67, 89, and 23?&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Answer: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">This answer was computed by generated Python code, not guessed by the LLM.&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The stored answer is <strong>56</strong>, matching 224÷4. The notebook history records generated Python using <code>sum</code>, <code>len</code>, division, and a <code>SUBMIT</code> call to return an answer dictionary. That is evidence of the execution pipeline in the saved demonstration, not just a prompt asking for a numerical answer.</p>
+<p>An LM generates text/code; it is the attached runtime that executes that code. The operation is not simply running arbitrary code inside the language model.</p>
+<p>The live explanation suggested continuing until the code succeeds. The actual module has a <strong>bounded iteration limit</strong>; the current API's default <code>max_iters</code> is 3. It can terminate with an error instead of indefinitely repairing every program. A successfully executed program can also use the wrong formula or data, so execution is not a correctness proof. <a href="https://dspy.ai/current/api/modules/ProgramOfThought/">ProgramOfThought reference</a>.</p>
+<p>A significant version note: current documentation marks <strong>ProgramOfThought deprecated</strong>, with removal planned in DSPy 3.5 and RLM preferred as its replacement. The session noticed CodeAct's deprecation but still taught ProgramOfThought. Preserve the historical example when studying the recording and check the installed version before implementing a new project.</p>
+<hr />
+<h2 id="the-interpreter-dependencies-and-inspecting-generated-code">🛠️ The Interpreter, Dependencies, and Inspecting Generated Code<a class="headerlink" href="#the-interpreter-dependencies-and-inspecting-generated-code" title="Permanent link">&para;</a></h2>
+<p>The whiteboard moved from the high-level flow to <strong>Deno</strong>, <code>runner.js</code>, JSON-RPC, WebAssembly, and <strong>Pyodide</strong>.</p>
+<p>The precise default-runtime picture is:</p>
+<ul>
+<li>DSPy's Python process communicates with a Deno subprocess.</li>
+<li>Deno hosts the runner.</li>
+<li>Pyodide executes Python within a WebAssembly environment.</li>
+<li>Messages and results cross the boundary through the interpreter protocol.</li>
+</ul>
+<p>Deno is a JavaScript/TypeScript runtime; it is not itself a native Python compiler. The Python execution environment inside this stack is Pyodide. “Local” means it runs on the local host, not that it automatically shares the notebook kernel's modules and filesystem.</p>
+<p>The default interpreter restricts host filesystem, environment, and network access. Explicit configuration or an appropriate custom interpreter is needed to expose those resources. The class's hypothetical “read sales.csv and compute an average” therefore requires access to that file or its content; a filename in a question does not magically mount the host file.</p>
+<p>Paul used the CSV example to challenge an automatic dependency on pandas/Polars. For a simple average, Python's <code>csv</code> and built-in operations may suffice. If generated code imports an unavailable library, execution reports the error, and a bounded repair loop may produce another approach.</p>
+<p>The live “pure Python only” claim is a practical restriction of the basic example, not a universal statement that Pyodide cannot use third-party packages. Pyodide supports compatible pure-Python and WebAssembly packages, while ordinary native-extension wheels and unrestricted host package installation are different matters. Availability depends on runtime setup and permissions. <a href="https://dspy.ai/current/api/tools/PythonInterpreter/">DSPy PythonInterpreter</a>, <a href="https://pyodide.org/en/stable/usage/loading-packages.html">Pyodide package loading</a>.</p>
+<p>No Docker container was launched in this notebook. Docker can be part of a deployment strategy, but it is not what the shown default execution path required.</p>
+<p><strong>Inspecting generated code</strong> became a live correction. Paul initially thought the intermediate code was not exposed in the returned result. Sahil pointed to <code>dspy.inspect_history</code>, and the instructor added an example calling <strong><code>dspy.inspect_history(n=5)</code></strong>. The saved notebook contains both generation messages and the final-answer stage.</p>
+<p>The return object's <code>answer</code> is not the entire execution trace. Inspecting LM history is the useful route shown here; do not treat a reasoning string as the exact executed program. The generated trace also contains runtime-provided helpers such as <code>SUBMIT</code>, so copying it into an unrelated Python interpreter without those helpers may fail.</p>
+<p>In the side-by-side comparison, all three modules were asked to explain Transformer attention in one sentence. Paul pointed out that ProgramOfThought was a poor match: code execution adds overhead to a straightforward explanatory task. A clean answer from the extra module does not justify its additional calls.</p>
+<hr />
+<h2 id="rlm-preview-explore-large-context-through-a-program">🔁 RLM Preview: Explore Large Context Through a Program<a class="headerlink" href="#rlm-preview-explore-large-context-through-a-program" title="Permanent link">&para;</a></h2>
+<p>The RLM discussion was conceptual. No RLM notebook was executed in this class.</p>
+<p>The board imagined a <strong>500MB document</strong> or a codebase with more text than the LM can use in one request. Rather than place the whole collection in the prompt, keep the data in a Python environment, let the LM inspect it through code, and bring selected information back into the model's working context.</p>
+<p>The actual sketch can be reconstructed as:</p>
+<pre class="mermaid"><code>flowchart TD
+    A["Large source data"] --&gt; B["Store data as variables in a Python environment"]
+    B --&gt; C["LM writes code to inspect data"]
+    C --&gt; D["Search, filter, slice, or summarize"]
+    D --&gt; E["Focused subqueries or model calls"]
+    E --&gt; F["Combine evidence into final answer"]
+    D --&gt; C</code></pre>
+<p>The critical idea is <strong>external context plus iterative access</strong>, not an unlimited context window. Python can select pieces, compute statistics, and help decompose a task. The LM still sees limited messages/results at each step and must decide which information to inspect.</p>
+<p>The current DSPy implementation also supports sub-LM queries from its interpreter, explaining the “recursive” part. RLM is an inference-time program/strategy around an LM; it does <strong>not</strong> necessarily replace the underlying Transformer with a new neural architecture or require a different model family. <a href="https://dspy.ai/current/diving-deeper/rlm/">DSPy RLM explanation</a>.</p>
+<p>Paul linked the discussion with “context rot”—quality can deteriorate as a prompt grows even before the nominal maximum context size is reached. The recommended <a href="https://www.trychroma.com/research/context-rot">Chroma context-rot study</a> examines such length-related effects. It is motivation for careful context handling, not proof that RLM always finds every relevant detail.</p>
+<p>The instructor mentioned text-to-SQL, RAG, and large custom codebases as possible applications. Those were directions to test, not implemented examples. Selection quality, runtime access, call budgets, and final validation still determine success.</p>
+<p>CodeAct was shown as another code-and-tools module but skipped after the instructor saw its deprecation notice. Current <a href="https://dspy.ai/current/api/modules/CodeAct/">CodeAct documentation</a> likewise points toward RLM. Other modules—BestOfN, MultiChainComparison, Parallel, Flex, and ReAct—were named or browsed; their implementations remained outside this class's scope.</p>
+<hr />
+<h2 id="inline-versus-class-based-signatures">🏷️ Inline Versus Class-Based Signatures<a class="headerlink" href="#inline-versus-class-based-signatures" title="Permanent link">&para;</a></h2>
+<p>The last live exercise compared two sentiment definitions on <strong>“This product is amazing!”</strong></p>
+<p>The class-based version declared:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Class-based (recommended)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SentimentClassification</span><span class="p">(</span><span class="n">dspy</span><span class="o">.</span><span class="n">Signature</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Classify the sentiment of the given text.&quot;&quot;&quot;</span>
+
+    <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">InputField</span><span class="p">()</span>
+    <span class="n">sentiment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">OutputField</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot;positive, negative, or neutral&quot;</span><span class="p">)</span>
+    <span class="n">confidence</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">dspy</span><span class="o">.</span><span class="n">OutputField</span><span class="p">(</span><span class="n">desc</span><span class="o">=</span><span class="s2">&quot;confidence score between 0 and 1&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The stored class-based output was <strong>positive, confidence 0.95</strong>. The simple inline version used <code>dspy.Predict("text -&gt; sentiment, confidence")</code> and produced <strong>positive, confidence high</strong>.</p>
+<p>The difference came from specification, not an inherent inability of inline signatures to express types. The first inline definition did not tell the parser that confidence must be a float. The notebook then built a richer <code>dspy.Signature</code> with typed outputs and instructions, and its saved inline result also gave 0.95.</p>
+<p>Class-based syntax provides room for descriptions and explicit fields; inline syntax is convenient for rapid experiments. Choose a clear, sufficiently specified contract. A long signature is not automatically better.</p>
+<p>Two further limits remain:</p>
+<ul>
+<li><code>sentiment: str</code> with a description naming labels is less restrictive than an actual enum/Literal type.</li>
+<li>A float field with “between 0 and 1” in its description is not, by itself, a hard numeric bound.</li>
+</ul>
+<p>The generated 0.95 is a model-reported confidence value, not a calibrated probability or measured 95% correctness. Evaluate confidence calibration separately if a product relies on it.</p>
+<p>The notebook redefines <code>QuestionAnswering</code> in a later cell for code execution. When rerunning or experimenting out of order, watch which class binding subsequent modules receive. The class name staying the same does not mean the task instructions stayed unchanged.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul planned the following day for additional DSPy modules, optimizers, a RAG pipeline, and a ReAct agent. BootstrapFewShot, MIPROv2, and GEPA were named as upcoming optimizer work; none was compiled or benchmarked here.</p>
+<p>RLM examples were promised for the follow-up. Fine-tuning integration was deliberately moved to the later fine-tuning module, where its place in the training workflow would be clearer.</p>
+<p>The next course module was described broadly as research on Transformer improvements, attention/position-related changes, and other listed syllabus topics. The instructor checked scope informally and did not give a finalized implementation sequence in this recording.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>All substantive dedicated questions and follow-ups from the last two transcript parts are included. Earlier chat questions are condensed where they introduced distinct implementation issues.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Yogi: What does early access mean?</strong></td>
+<td>Limited initial access, often through a waitlist. The mentioned experimental service was a resource aside, not part of the live implementation.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can CFG control run in a frontend or through any API?</strong></td>
+<td>It needs an inference backend that supports the required constraints. The local demo exposes decoding control; provider-side grammar support and backend compatibility must be checked separately.</td>
+</tr>
+<tr>
+<td><strong>Chitresh: Where did the generated compound-interest number come from?</strong></td>
+<td>It was the model's permitted output, not an established calculation. The grammar allowed numeric arithmetic but lacked symbolic variables for the requested general formula.</td>
+</tr>
+<tr>
+<td><strong>Sidhartha and chat: Can SELECT use columns instead of star?</strong></td>
+<td>The grammar permits comma-separated column names; adjust the task and grammar for required forms. It does not validate names against a real database.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can CFG input be converted into arbitrary prose instead?</strong></td>
+<td>This example uses CFG to restrict generated output. Grammar-to-text explanation is a different task, not what this constrained call demonstrated.</td>
+</tr>
+<tr>
+<td><strong>Uttam: How is character/token misalignment handled?</strong></td>
+<td>The decoding backend must map token pieces to grammar-valid continuations. The session did not implement that mechanism manually.</td>
+</tr>
+<tr>
+<td><strong>Ashish and Vivek: When is CFG useful, and what about a huge grammar?</strong></td>
+<td>Useful when explicit output syntax matters, including custom languages. Grammar support/compilation costs matter; grammar files need not be placed entirely in the prompt.</td>
+</tr>
+<tr>
+<td><strong>Chat: Does using LangChain require writing such a grammar?</strong></td>
+<td>No. A framework integration does not imply a CFG requirement; define constraints according to the output task and backend.</td>
+</tr>
+<tr>
+<td><strong>Abhishek: Can rules restrict an if/else-style output?</strong></td>
+<td>Yes, if the allowed output language is clearly expressible. Restricting syntax does not establish that the correct branch was selected.</td>
+</tr>
+<tr>
+<td><strong>Ashwin and chat: Is vLLM the same as Azure Foundry?</strong></td>
+<td>vLLM is an inference-serving framework. The class compared it with consuming already hosted model services; the full serving topic was deferred.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can this image path use a text-only model or audio directly?</strong></td>
+<td>Use a vision-capable model for the shown image task. Audio could first pass through ASR, but no audio pipeline was implemented here.</td>
+</tr>
+<tr>
+<td><strong>Chat: What is Base64?</strong></td>
+<td>A reversible transport encoding for binary bytes. It does not perform OCR or improve an image.</td>
+</tr>
+<tr>
+<td><strong>Chat: How can extracted document fields be validated in production?</strong></td>
+<td>Define business checks and compare with source evidence, potentially including OCR. Schema parsing alone does not verify the readings or totals.</td>
+</tr>
+<tr>
+<td><strong>Arun Kumar: Is DSPy an agent orchestration framework or a DSL?</strong></td>
+<td>It is a Python framework for composing/optimizing LM programs. It can be used inside RAG/agent workflows; it does not replace all orchestration/state responsibilities.</td>
+</tr>
+<tr>
+<td><strong>Chat: Is the LiteLLM integration safe given reported past incidents?</strong></td>
+<td>Paul said the issue discussed had been addressed but could not predict future incidents. No current security assessment or alternative-gateway benchmark was performed.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can signatures have multiple input fields or images?</strong></td>
+<td>Multiple fields are supported. Multimodal use also needs compatible types/adapters and a capable model; today's DSPy examples were text-based.</td>
+</tr>
+<tr>
+<td><strong>Chat: Where are the LM and API key configured?</strong></td>
+<td>In the separate repository config/LM setup, before predictor calls. The signature defines the task contract, not the provider credentials.</td>
+</tr>
+<tr>
+<td><strong>Thomas: Why call this programming when instructions still reach the LM?</strong></td>
+<td>DSPy provides signatures/modules as the programming interface. Its adapters still convert those definitions into model messages internally.</td>
+</tr>
+<tr>
+<td><strong>Rishabh and Uttam: Can DSPy be used with domain tasks, RAG, and agents?</strong></td>
+<td>Yes, as an LM-program component, with appropriate data, model, and integration checks. It does not guarantee quality merely by replacing a prompt.</td>
+</tr>
+<tr>
+<td><strong>Chitresh: Can we supply functions or business logic?</strong></td>
+<td>Task instructions/input fields can provide relevant rules. Callable tools and interpreter integrations are separate capabilities; a prose rule is not an executed Python function.</td>
+</tr>
+<tr>
+<td><strong>Sahil: Can we inspect the Python ProgramOfThought generated?</strong></td>
+<td>Yes, the class added <code>dspy.inspect_history(n=5)</code>. History reveals LM generation/answer stages; the final Prediction is not the whole trace.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can two signatures be used together?</strong></td>
+<td>Compose separate modules/calls, passing one stage's results to another or running independent work appropriately. Multiple contracts need an explicit program structure.</td>
+</tr>
+<tr>
+<td><strong>Alok, as read from chat: Can RLM help text-to-SQL with many tables?</strong></td>
+<td>It can explore schema/context through code, but requires usable schema/relationship information and evaluation. No RLM SQL implementation was demonstrated.</td>
+</tr>
+<tr>
+<td><strong>Mangesh Khandare: Which weekends are off for Diwali?</strong></td>
+<td>Paul checked November and announced classes through 1 November and a 7–8 November break. Treat that as the recorded announcement.</td>
+</tr>
+<tr>
+<td><strong>Saikiran: Why aren't Prometheus/Grafana listed, and what alternatives will be used?</strong></td>
+<td>Paul said those exact tools were not compulsory and the later project's stack was not finalized. He deferred a concrete alternative to that module.</td>
+</tr>
+<tr>
+<td><strong>Phani: Does Predict internally turn the signature/question into a prompt?</strong></td>
+<td>Yes, the adapter assembles model messages from the signature and values. The live answer emphasized signatures; the notebook history and official docs clarify the internal prompt layer.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K: Better query-generation approaches after RAG/fine-tuning?</strong></td>
+<td>Review text-to-SQL approaches and Spider-family benchmarks. Paul explicitly said he did not know the current leader and recommended checking recent results.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K: Is “text-to-SQL” a site or a model?</strong></td>
+<td>It is a task/solution category: generating database queries from natural language. There are specialized models, systems, and benchmarks; it is not one particular tool.</td>
+</tr>
+<tr>
+<td><strong>Chitresh Kaushik: Can DSPy handle email classes with overlapping descriptions/exceptions?</strong></td>
+<td>Express task rules and compose logic as needed, then test real ambiguous cases. DSPy does not automatically resolve contradictory category definitions.</td>
+</tr>
+<tr>
+<td><strong>Yogi: What about many questions or a large signature?</strong></td>
+<td>Decompose into modules/signatures, sequence dependent work, and consider suitable module strategies. ChainOfThought was suggested; it is not a substitute for an explicit multi-stage program.</td>
+</tr>
+<tr>
+<td><strong>Yogi: Is Predict comparable with ML predict/fit, or automatically faster/better?</strong></td>
+<td>DSPy Predict makes an LM-backed call. Optimizers are the later feature for measured improvement; names shared with estimator APIs do not make the operations equivalent.</td>
+</tr>
+<tr>
+<td><strong>Saurabh Lalwani: Where do business rules and complex solution logic go?</strong></td>
+<td>Stable task instructions and field descriptions can hold rules; dynamic rules can be inputs. Split distinct stages across signatures and put deterministic control logic in the program.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Will DSPy train our SLM or be used in agents?</strong></td>
+<td>Paul suggested using it for data generation or LM components within the larger project. This class did not train an SLM.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: When prefer DSPy over Outlines?</strong></td>
+<td>Paul preferred DSPy for more involved multi-step/optimization workflows and Outlines for output-structure tasks. Choose according to actual requirements rather than treat them as interchangeable.</td>
+</tr>
+<tr>
+<td><strong>Pritam C: Is there automatic migration of complex production prompts?</strong></td>
+<td>No automatic converter was shown. Analyze tasks/fields/rules, build signatures, compare expected behavior on representative cases, and migrate after evaluation. The suggested 50–100 cases was a starting sample, not a universal acceptance criterion.</td>
+</tr>
+<tr>
+<td><strong>Arunkumar Abimanyu: Can a RunPod-hosted SQL model use DSPy within LangGraph?</strong></td>
+<td>Yes, an LM-program call can fit inside a graph node. Adjust the call interface and map graph state to signature inputs and predictions back to state.</td>
+</tr>
+<tr>
+<td><strong>Arunkumar Abimanyu: Does DSPy support our vLLM endpoint?</strong></td>
+<td>Use an appropriate OpenAI-compatible LM/backend configuration pointing at the server. vLLM hosts inference; DSPy expresses the task above it.</td>
+</tr>
+<tr>
+<td><strong>Arunkumar Abimanyu: Can dynamic few-shot examples be retained?</strong></td>
+<td>Demonstrations and optimizers such as BootstrapFewShot are relevant; their implementation was deferred. Test example selection against the actual SQL workload.</td>
+</tr>
+<tr>
+<td><strong>Arunkumar Abimanyu: Is DSPy stable, and will it improve latency/cost/accuracy?</strong></td>
+<td>Paul reported favorable experience but did not benchmark this use case. Measure it; reasoning, execution retries, and optimization calls can increase cost and latency.</td>
+</tr>
+<tr>
+<td><strong>Pritam C: Which layer selects models when a smart gateway exists?</strong></td>
+<td>The gateway/router owns model selection; DSPy can call the chosen model through the integrated LM layer. Wire the layers explicitly so the program does not bypass the router.</td>
+</tr>
+<tr>
+<td><strong>Pritam C: Should routing happen before DSPy's final model invocation?</strong></td>
+<td>That was the agreed design for his scenario. The important distinction is routing policy versus task-program execution, not a mandatory single order for every architecture.</td>
+</tr>
+<tr>
+<td><strong>Chat: Will optimizers and fine-tuning be completed next?</strong></td>
+<td>Optimizers, RAG, and agent examples were planned for the next day. Fine-tuning integration was moved to the later fine-tuning module.</td>
+</tr>
+</tbody>
+</table>
+<p>For Sridhar's follow-up reading, <a href="https://spider2-sql.github.io/">Spider 2.0's official project</a> is one relevant benchmark resource. The class did not choose or certify a current best text-to-SQL model.</p>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A grammar restricts allowed syntax; it does not verify database identifiers, formulas, or facts.</li>
+<li>Decode-time masking prevents disallowed continuations; it is not ordinary post-generation retry.</li>
+<li>A grammar used by the decoder and source data used in a prompt have different size constraints.</li>
+<li>Hosted-API constraint support varies; the local notebook's limitations are not universal.</li>
+<li>A structured invoice can contain wrong readings and inconsistent totals.</li>
+<li>Inspect the actual loaded image before attributing a fallback result to model quality.</li>
+<li>The shown image batch is sequential.</li>
+<li>Signatures define tasks; modules define execution; optimizers seek improvement against metrics.</li>
+<li>DSPy still builds model messages internally.</li>
+<li>Predict is the simplest call; ChainOfThought adds generated reasoning; code-execution modules add a runtime.</li>
+<li>The default interpreter is Deno plus Pyodide/WASM, separate from the notebook kernel.</li>
+<li>Code execution and repair are bounded and do not guarantee task correctness.</li>
+<li>Current ProgramOfThought and CodeAct documentation marks them deprecated.</li>
+<li>RLM is a programmatic context-access strategy, not necessarily a new neural model architecture.</li>
+<li>Typed confidence is not calibrated confidence; production migrations need representative evaluations.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-17">✅ Action Items After Class 17<a class="headerlink" href="#action-items-after-class-17" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Update the structured-LLM repository and record installed library versions.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Run the arithmetic grammar and explain which requested forms it cannot represent.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare SELECT-only and WHERE-capable grammars on the same SQL requests.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check generated identifiers and task semantics separately from grammar membership.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Test the vision extraction on a clear invoice, verifying the loaded file rather than a fallback.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare schema validity and field accuracy; add checks for totals, currencies, and missing fields.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the batch source and explain why it is sequential.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Define a class-based signature with a clear task, explicit inputs, and explicit outputs.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Run Predict and ChainOfThought on suitable tasks and compare useful output, token consumption, and latency.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the saved ProgramOfThought history; identify code generation, interpreter output, and final-answer stages.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review current ProgramOfThought/CodeAct deprecation before selecting a module for a new project.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain Deno, Pyodide, and WebAssembly roles, including the interpreter's access restrictions.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare class-based and typed inline sentiment signatures; distinguish a typed score from a calibrated probability.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the referenced context-rot material and prepare RLM/optimizer questions for the follow-up.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> If migrating an existing prompt, start with one bounded task and an evaluation set before changing the whole product.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 17 transcript, all four pages of <code>DSPY.pdf</code>, and all cells/text outputs of the three matching Outlines/DSPy notebooks — “19 Sept DSPY Part - 1,” Production AI / LLM Engineering, Krish Naik Academy. Repository examples and current official compatibility notes are distinguished from work actually completed live.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_16_Structured_Generation_Notes.html" class="btn btn-neutral float-left" title="16 · Structured generation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_18_DSPy_Part_2_Notes.html" class="btn btn-neutral float-right" title="18 · DSPy, part 2">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_16_Structured_Generation_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_18_DSPy_Part_2_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

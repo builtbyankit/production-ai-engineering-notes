@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_02_Software_Setup_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>02 · Software setup - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "02 \u00b7 Software setup";
+        var mkdocs_page_input_path = "Class_02_Software_Setup_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_02_Software_Setup_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">02 · Software setup</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-you-need-nowand-what-comes-later">🧭 What You Need Now—and What Comes Later</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#choosing-and-installing-python">🐍 Choosing and Installing Python</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#uv-a-small-command-set-for-everyday-work">⚡ uv: A Small Command Set for Everyday Work</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#virtual-environments-project-initialization-and-dependency-files">📦 Virtual Environments, Project Initialization, and Dependency Files</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#git-github-and-reproducible-sharing">🌿 Git, GitHub, and Reproducible Sharing</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#picking-an-editor-and-a-terminal">🖥️ Picking an Editor and a Terminal</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#coding-agents-harnesses-providers-and-byok">🤖 Coding Agents, Harnesses, Providers, and BYOK</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#match-model-cost-to-the-task">💸 Match Model Cost to the Task</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#local-hardware-cloud-machines-and-gpu-work">☁️ Local Hardware, Cloud Machines, and GPU Work</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#docker-aws-and-windows-compatibility">🐳 Docker, AWS, and Windows Compatibility</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-research-papers-as-an-engineer">📚 Reading Research Papers as an Engineer</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#foundations-why-pytorch-still-matters">🧠 Foundations: Why PyTorch Still Matters</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#local-models-apple-silicon-and-quantization">🍎 Local Models, Apple Silicon, and Quantization</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#applying-the-course-small-models-rag-and-architecture-decisions">🧩 Applying the Course: Small Models, RAG, and Architecture Decisions</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-2">✅ Action Items After Class 2</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Foundations</li>
+      <li class="breadcrumb-item active">02 · Software setup</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-2-software-setup-and-the-engineering-workflow">🛠️ Class 2: Software Setup and the Engineering Workflow<a class="headerlink" href="#class-2-software-setup-and-the-engineering-workflow" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (addressed as Paul in the transcript)<br />
+<strong>⏱️ Duration:</strong> ~3 hours 41 minutes (3hr 41min 23s) | <strong>📅 Session:</strong> Day 2 (25 July 2026)</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The previous induction recording was available through the course dashboard. The dashboard also contained the course Notion link, which was intended to be the ongoing home for notes, resources, code links, and workshop information.</li>
+<li>Paul shared the public Discord server invitation. Access to the course's private channels was planned for the following week; joining the public server did not immediately grant access to those channels. The planned channels included research papers, model releases, and relevant news, and were intended to remain available after the course.</li>
+<li>An embedded Docker cheat sheet was failing to load during the session. Paul refreshed its embedding and added a direct documentation link as an alternative.</li>
+<li>A cohort poll assessed Python, PyTorch, Git/GitHub, cloud usage, deployment experience, paper reading, and study availability. It was a planning exercise rather than a test. The responses led Paul to schedule a PyTorch refresher for the next class before beginning Transformers 101.</li>
+<li>This session primarily established the development setup. It did <strong>not</strong> teach PyTorch, transformers, Docker deployment, Kubernetes, or fine-tuning in depth; these appeared as preparation advice and future-course context.</li>
+</ul>
+<hr />
+<h2 id="what-you-need-nowand-what-comes-later">🧭 What You Need Now—and What Comes Later<a class="headerlink" href="#what-you-need-nowand-what-comes-later" title="Permanent link">&para;</a></h2>
+<p>The class included a broad tour of tools, but the immediate setup was small. Paul repeatedly returned to the same practical outcome: have Python available, be able to create an isolated environment, open notebooks or source files, use a terminal, and work with GitHub. Familiar tools were acceptable. Matching every application in his personal setup was unnecessary.</p>
+<p>The accompanying <a href="https://krishnaikacademy.notion.site/Software-Tools-Checklist-1f0eba9593d0804a8ab2cf17762d2b1b">Software &amp; Tools Checklist</a> lists Python, an IDE, Git/Git Bash, Docker, and the AWS CLI as course requirements. It labels Warp and Postman as optional, treats pip as the major package-management route, uv as optional, and Conda as less frequently used. Paul's live emphasis was more specific: <strong>Python and uv were the first installation steps</strong>, while Docker and AWS work would become relevant later. Those statements describe different stages of preparation rather than a requirement to run the whole stack on day one.</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Purpose</th>
+<th>Session guidance</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Python interpreter</td>
+<td>Executes Python scripts and notebook code</td>
+<td>Required; Paul's preferred line was Python 3.12</td>
+</tr>
+<tr>
+<td>Environment/package management</td>
+<td>Keeps each project's dependencies together</td>
+<td>uv was his preferred workflow; pip, native venv, or an existing Conda workflow could also work</td>
+</tr>
+<tr>
+<td>Git and GitHub</td>
+<td>Version control, code distribution, assignments, contributions</td>
+<td>Install Git and have a GitHub account</td>
+</tr>
+<tr>
+<td>IDE/editor</td>
+<td>Reads and edits files; opens notebooks</td>
+<td>VS Code was sufficient; Cursor, PyCharm, or another familiar editor was acceptable</td>
+</tr>
+<tr>
+<td>Terminal</td>
+<td>Executes commands, scripts, and later cloud workflows</td>
+<td>One working terminal was enough; native and integrated terminals were accepted</td>
+</tr>
+<tr>
+<td>Coding agent/harness</td>
+<td>Helps inspect, explain, modify, and explore codebases</td>
+<td>Useful for independent learning; no particular paid subscription was compulsory</td>
+</tr>
+<tr>
+<td>Docker</td>
+<td>Packages applications for reproducible execution and deployment</td>
+<td>In the broader checklist; substantial use was deferred to project work</td>
+</tr>
+<tr>
+<td>AWS CLI</td>
+<td>Performs AWS operations from the command line</td>
+<td>Install when preparing the broader stack; account/user configuration was not needed in this class</td>
+</tr>
+<tr>
+<td>GPU/cloud environment</td>
+<td>Handles workloads beyond the local machine</td>
+<td>Needed for specific later experiments rather than every session</td>
+</tr>
+</tbody>
+</table>
+<p>Velu's request for a tool-category table exposed the main source of confusion: editors, terminals, coding agents, and model providers were being discussed together. They perform different jobs. An application may combine several of them, but the roles still matter when configuring a project or troubleshooting an error.</p>
+<p>The organizing principle was Paul's reminder that a developer's established workflow should remain usable. Keep a working setup, add the capabilities the course needs, and install project-specific dependencies when the corresponding code arrives.</p>
+<hr />
+<h2 id="choosing-and-installing-python">🐍 Choosing and Installing Python<a class="headerlink" href="#choosing-and-installing-python" title="Permanent link">&para;</a></h2>
+<p>Paul opened the Python release information and discussed the tradeoff between a stable interpreter and compatibility with newer libraries. His own preferred version for the course was <strong>Python 3.12.9</strong>, with the <strong>3.12 or 3.13 lines</strong> recommended to new joiners. Students who already had a functioning 3.10 or 3.11 setup were not asked to replace it immediately. A student on 3.14 was told to use an older project environment if a later library failed to support that version.</p>
+<p>The lesson is to choose Python according to the actual project stack. Being the newest interpreter does not guarantee that a specialized training library already publishes compatible packages for it. Paul specifically anticipated possible integration friction in later work with fine-tuning tools such as Unsloth and Axolotl. He did not demonstrate a failure with either tool in this session, so this was compatibility planning rather than a verified incompatibility matrix.</p>
+<p>Python's lifecycle labels also need careful interpretation. A security-only release line still receives applicable security fixes, but that does not mean every bug has been eliminated. End-of-life means upstream support has ended. <strong>For later readers:</strong> Python 3.10 reached end-of-life in October 2026; the session's acceptance of an existing 3.10 installation should not be read as a current recommendation for new environments. Check the <a href="https://devguide.python.org/versions/">official Python version-status table</a> when selecting a supported interpreter.</p>
+<p>Two installation routes were discussed:</p>
+<ol>
+<li><strong>Direct Python installation:</strong> obtain the interpreter through the Python distribution appropriate to your operating system.</li>
+<li><strong>A distribution or environment manager:</strong> an existing Anaconda installation could supply Python; uv could also manage Python versions and environments.</li>
+</ol>
+<p>The requirement was usable Python, not a particular brand of distribution. Paul personally had moved away from Anaconda and intended to use uv throughout the course. That preference was intended to simplify his teaching workflow, not to establish that a Conda-based Python interpreter cannot execute the material.</p>
+<p>For beginners, the live recommendation was straightforward: install Python first, then uv. More experienced users could manage Python through uv itself. The <a href="https://docs.astral.sh/uv/concepts/python-versions/">uv Python-version documentation</a> confirms that uv can locate a compatible interpreter and download a managed Python version when one is unavailable, unless automatic downloads are disabled.</p>
+<hr />
+<h2 id="uv-a-small-command-set-for-everyday-work">⚡ uv: A Small Command Set for Everyday Work<a class="headerlink" href="#uv-a-small-command-set-for-everyday-work" title="Permanent link">&para;</a></h2>
+<p>uv was introduced as a Python package and project manager written in Rust. Paul favored it for speed and for a workflow that made interpreter selection, environment creation, and dependency management convenient. The course was not intended to become a complete uv tutorial: he expected learners to use a few recurring operations and refer to the documentation when needed.</p>
+<p>Install uv using the instructions for the actual operating system and shell. Paul demonstrated on macOS and a Linux-based cloud environment; Windows students were directed to the PowerShell instructions on the <a href="https://docs.astral.sh/uv/getting-started/installation/">official installation page</a>. Installation through pip was accepted too, although the standalone tool was his preference.</p>
+<p>The spoken commands, with obvious caption errors normalized, were:</p>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>Meaning in the session</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>uv --version</code></td>
+<td>Checks that the uv executable is available and reports its version</td>
+</tr>
+<tr>
+<td><code>uv self update</code></td>
+<td>Updates a standalone-installer uv installation</td>
+</tr>
+<tr>
+<td><code>uv venv</code></td>
+<td>Creates the default <code>.venv</code> environment in the current project location</td>
+</tr>
+<tr>
+<td><code>uv venv .venv</code></td>
+<td>Makes the environment name explicit</td>
+</tr>
+<tr>
+<td><code>uv venv --python 3.11</code></td>
+<td>Requests a particular Python version for an environment</td>
+</tr>
+<tr>
+<td><code>uv init</code></td>
+<td>Initializes project metadata and starter files</td>
+</tr>
+</tbody>
+</table>
+<p>The update command depends on how uv was installed. When a package manager installed it, use that package manager's update mechanism instead of assuming self-update will work. This distinction is documented in the <a href="https://docs.astral.sh/uv/getting-started/installation/">uv installation guide</a>.</p>
+<p>When participant <strong>136</strong> reported an error after trying an additional pip installation, Paul narrowed the task: first check that uv itself reports its version. Successfully installing uv was the immediate requirement. An unrelated extra installation was not a necessary step in verifying that uv worked.</p>
+<p>A useful troubleshooting habit emerges from that exchange: verify one layer at a time. Establish that the tool runs before adding project dependencies. Otherwise, an error in a later operation may be mistaken for a failed installation of the earlier tool.</p>
+<hr />
+<h2 id="virtual-environments-project-initialization-and-dependency-files">📦 Virtual Environments, Project Initialization, and Dependency Files<a class="headerlink" href="#virtual-environments-project-initialization-and-dependency-files" title="Permanent link">&para;</a></h2>
+<p>Paul demonstrated creating a project folder and then creating a virtual environment inside it. An environment isolates the packages needed by one project from those used by other projects or the operating system. The conventional name <code>.venv</code> also makes it easy to exclude the environment directory from Git.</p>
+<p>Two related uv operations were discussed, and Sameer explicitly asked whether creating an environment should produce <code>pyproject.toml</code>. The precise distinction is:</p>
+<ul>
+<li><strong><code>uv venv</code> creates an environment.</strong> It does not, by itself, initialize the project's metadata file.</li>
+<li><strong><code>uv init</code> initializes a project.</strong> It creates <code>pyproject.toml</code> and starter files. The exact generated layout can vary with uv version and options.</li>
+<li><strong>Project commands manage the environment and resolved dependencies.</strong> The project workflow creates or updates the environment as required; the live demo's <code>main.py</code> was an example of the scaffold Paul had at the time, not a universal filename guaranteed by every later version.</li>
+</ul>
+<p>These distinctions are confirmed in the <a href="https://docs.astral.sh/uv/pip/environments/">uv environment guide</a> and <a href="https://docs.astral.sh/uv/guides/projects/">project guide</a>.</p>
+<pre class="mermaid"><code>flowchart TD
+    A[Project folder] --&gt; B{What do you need?}
+    B --&gt;|Isolated Python packages| C[Create a virtual environment]
+    B --&gt;|Project metadata and scaffold| D[Initialize a project]
+    C --&gt; E[Use the selected interpreter and dependencies]
+    D --&gt; F[pyproject.toml and starter files]
+    F --&gt; E
+    E --&gt; G[Run the class notebook or script]</code></pre>
+<p>Paul used a personal shell alias named <code>activate</code>. That shorthand belonged to his own configuration. Students should use the activation mechanism for their shell rather than expect a command named <code>activate</code> to exist everywhere. The following exact example is supplied by the <strong>course checklist</strong>, not reconstructed from an unseen terminal screen:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>venv<span class="w"> </span>myenv
+<span class="nb">source</span><span class="w"> </span>myenv/bin/activate
+uv<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+deactivate
+</code></pre></div>
+<p>This activation example is for a compatible macOS/Linux shell. Windows uses scripts under the environment's <code>Scripts</code> directory; the script differs between PowerShell and Command Prompt. The <a href="https://docs.python.org/3/library/venv.html">Python venv documentation</a> explains the platform-specific activation paths and confirms that environments should be recreated from their requirements rather than copied between machines.</p>
+<p>The same checklist supplies a native Python alternative:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>myenv
+<span class="nb">source</span><span class="w"> </span>myenv/bin/activate
+deactivate
+</code></pre></div>
+<p>It also gives these project/dependency operations:</p>
+<div class="highlight"><pre><span></span><code>uv<span class="w"> </span>sync
+uv<span class="w"> </span>add<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+<p>Treat the two lines as distinct operations rather than a compulsory sequence for every class. <code>uv sync</code> synchronizes the project's environment; importing a requirements file with <code>uv add -r requirements.txt</code> adds those requirements to the project workflow. The provided project instructions determine which route to use.</p>
+<p>Paul said he would share either <strong><code>requirements.txt</code> or <code>pyproject.toml</code></strong> with the codebase. Installing every framework mentioned in the future syllabus was unnecessary. Use the dependency definition supplied with the actual exercise.</p>
+<p>The companion checklist includes the familiar pip operations below:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>freeze
+pip<span class="w"> </span>freeze<span class="w"> </span>&gt;<span class="w"> </span>requirements.txt
+pip<span class="w"> </span>list
+pip<span class="w"> </span>list<span class="w"> </span>--format<span class="o">=</span>freeze<span class="w"> </span>&gt;<span class="w"> </span>req.txt
+pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>file_name.txt
+</code></pre></div>
+<p>Here, <code>file_name.txt</code> is the checklist's placeholder for the actual dependency file. Listing packages and exporting package versions are useful for inspecting or recording an environment; installing from a file is a different operation. The terminal's working directory, the active interpreter, and the chosen file all matter.</p>
+<p>A student whose uv environment was using Anaconda Python was advised to simplify the setup. The actionable diagnostic is to select the intended interpreter deliberately and understand which environment is active. Removing an entire distribution is not a prerequisite for understanding the environment-selection issue: uv recognizes activated virtual and Conda environments, as described in its <a href="https://docs.astral.sh/uv/pip/environments/">environment-discovery documentation</a>.</p>
+<hr />
+<h2 id="git-github-and-reproducible-sharing">🌿 Git, GitHub, and Reproducible Sharing<a class="headerlink" href="#git-github-and-reproducible-sharing" title="Permanent link">&para;</a></h2>
+<p>Git and GitHub were more important to the course workflow than the choice of editor. Paul intended to distribute code through GitHub, use it for assignments, and accept useful learner contributions. A local Git installation and a GitHub account therefore belonged in the basic setup.</p>
+<p>Students unfamiliar with Git were advised to learn the small set of operations needed to initialize a repository, make a commit, and push changes. Paul did not attempt a full Git lesson. GUI tools such as GitHub Desktop were acceptable, although he personally used command-line tools, including the GitHub CLI.</p>
+<p>The environment folder should not become part of the code contribution. Paul preferred <code>.venv</code> partly because it could be consistently excluded through <code>.gitignore</code>; a custom environment name was fine if it was excluded too. When a learner asked whether broadly adding a folder would pick up everything, the useful distinction was between the files Git tracks and files deliberately ignored by the repository. Check the repository's ignore rules before staging dependencies or local environment directories.</p>
+<p>Code and dependency definitions serve different purposes. Sharing the code tells another learner what to run; sharing its requirements tells them what environment to recreate. The environment itself is a local artifact that can be rebuilt.</p>
+<p>Coding agents were linked to this workflow too. If a learner explored a notebook, found a useful improvement, or implemented an additional feature, an agent could help inspect and modify the code before a pull request. Paul still expected the learner to understand the contribution. The point was to make experimentation practical, not to eliminate responsibility for the code.</p>
+<hr />
+<h2 id="picking-an-editor-and-a-terminal">🖥️ Picking an Editor and a Terminal<a class="headerlink" href="#picking-an-editor-and-a-terminal" title="Permanent link">&para;</a></h2>
+<p>An editor helps when reading several files, modifying a function, or opening a Jupyter notebook. A terminal executes the scripts and commands. Paul intended to be strongly <strong>CLI-centric</strong>, so learners needed to be comfortable with the terminal even when their editor included one.</p>
+<p>For the editor, <strong>VS Code was sufficient</strong>. Cursor was acceptable, and students already using it did not need another editor. Paul also mentioned PyCharm and other editors or VS Code-derived products. His memory-related advice was to keep the setup light on a constrained laptop; a large IDE was an option when the machine had sufficient resources. These were his practical preferences rather than benchmarked minimum memory requirements for every application.</p>
+<p>For notebook work, Ankit's combination of VS Code, a Jupyter extension, and Copilot was accepted. There was no special paid integration required to connect Python, uv, Git, GitHub, and the editor. Install the components, select the appropriate Python environment, and use the project instructions.</p>
+<p>Paul recommended <strong>Warp</strong> to beginners for its command history and completion experience. He personally used several terminals and could edit files from some of them. The tour included native terminals, integrated terminals, WezTerm, Ghostty, and other tools whose names were sometimes unclear in the captions. This was a tour of alternatives, not a list of things everyone needed to install.</p>
+<p>Several students asked whether a separate terminal was necessary when VS Code already had one. His answer was ultimately that an integrated or native terminal was fine. A familiar terminal and keyboard shortcuts were useful assets. There was no need to copy his habit of keeping terminal applications separate from the IDE.</p>
+<p>For an 8GB MacBook, Himani was specifically advised to keep the setup light and use the default terminal if that worked. The same principle applies to the entire toolkit: convenience features should improve the experience without consuming resources needed by the exercise.</p>
+<p>Warp's terminal functionality and its AI agent were also separated. A student reporting exhausted credits was told that conversational AI use could consume the agent allowance. Running ordinary shell commands was the workflow intended for class. Product plans change, so the session's pricing comments are historical observations rather than current plan guarantees.</p>
+<hr />
+<h2 id="coding-agents-harnesses-providers-and-byok">🤖 Coding Agents, Harnesses, Providers, and BYOK<a class="headerlink" href="#coding-agents-harnesses-providers-and-byok" title="Permanent link">&para;</a></h2>
+<p>The coding-agent discussion introduced a useful separation between <strong>the application that works on code</strong> and <strong>the model it calls</strong>. Paul used the term <em>harness</em> for the surrounding application that makes the LLM useful in a coding workflow. Albert asked what that meant, and Paul explained it as using the model's capabilities through an application.</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning in this discussion</th>
+<th>Examples discussed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Editor/IDE</td>
+<td>Displays and edits the codebase</td>
+<td>VS Code, Cursor, PyCharm</td>
+</tr>
+<tr>
+<td>Coding harness/agent</td>
+<td>Provides a workflow for an LLM to inspect or change code</td>
+<td>Claude Code, Codex, OpenCode, Copilot, and other agents</td>
+</tr>
+<tr>
+<td>Model</td>
+<td>Produces the reasoning or generated content</td>
+<td>Different model families offered by providers</td>
+</tr>
+<tr>
+<td>Provider</td>
+<td>Supplies access to models</td>
+<td>A direct vendor or a multi-model service</td>
+</tr>
+<tr>
+<td>API key and base URL</td>
+<td>Authentication and endpoint configuration for supported API access</td>
+<td>Credentials configured in a compatible harness</td>
+</tr>
+<tr>
+<td>BYOK</td>
+<td>Bring your own key</td>
+<td>Use supported provider credentials with the chosen application</td>
+</tr>
+<tr>
+<td>Subscription</td>
+<td>A product's access plan and usage allowance</td>
+<td>Plan-specific model access; not necessarily interchangeable with API credits</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    A[Learner and codebase] --&gt; B[Coding harness]
+    B --&gt; C[Supported provider connection]
+    C --&gt; D[Selected model]
+    D --&gt; B
+    B --&gt; E[Explanation, edits, or experiments]
+    E --&gt; F[Learner reviews and understands the result]</code></pre>
+<p>This separation explains several repeated questions. Buying an editor subscription is not the same action as purchasing arbitrary API access. Using a model-provider key does not guarantee that every harness supports every provider or every feature. A cheap plan may require using that provider's own application, while another product may allow a supported subscription connection or BYOK.</p>
+<p>Paul discussed OpenCode as an open-source option and compared it with closed-provider workflows. OpenRouter was mentioned as a place to explore models from multiple providers. Students who already had Claude Code, Codex, Cursor, or Copilot could use their existing setup. A learner without a coding-agent subscription could still run the supplied code; a particular paid service was not compulsory.</p>
+<p>The role of the agent was to help with independent exploration of codebases that could contain thousands of lines. Paul expected to explain a function's purpose and the surrounding concepts, not narrate every source line. The learner therefore still needed enough Python to read a function, understand its inputs and outputs, and recognize what the agent had changed.</p>
+<p>Sameer raised image input as a potential limitation. Paul warned that a model's multimodal capability and a harness's ability to accept an image are separate compatibility questions. Check the specific model, product, and workflow rather than infer image support from a model-family name.</p>
+<hr />
+<h2 id="match-model-cost-to-the-task">💸 Match Model Cost to the Task<a class="headerlink" href="#match-model-cost-to-the-task" title="Permanent link">&para;</a></h2>
+<p>Paul's main purchasing advice was to spend modestly while learning. He felt the course's routine coding and experimentation did not require everyone to buy an expensive top-tier subscription. Existing access was acceptable; learners considering a new service were encouraged to begin with a small allowance and expand only when their actual usage justified it.</p>
+<p>He quoted examples such as a roughly <strong>$1 entry plan</strong> from a service transcribed as <strong>Command Code</strong>, and an <strong>OpenCode Go first-month promotion around $5</strong>, followed by a higher recurring charge. These were session-specific examples. The exact Command Code URL was not captured, and model lists, introductory pricing, renewal terms, quotas, and supported harnesses can change. The <a href="https://opencode.ai/docs/go/">OpenCode Go documentation</a> is the appropriate place to inspect that product's current terms.</p>
+<p>The durable cost questions were:</p>
+<ul>
+<li>What task will the model perform, and how much quality does that task need?</li>
+<li>What are the input and output token charges or plan limits?</li>
+<li>Does the service expose the model through the harness you want to use?</li>
+<li>Does it support required features such as images or tool calls?</li>
+<li>How frequently will you use it, and will a small allowance be enough?</li>
+</ul>
+<p>Paul used different models for different stages of his work: a more capable option for planning, research, and brainstorming, and a cheaper option for routine implementation where it met the task's needs. This was a workflow preference, not a guarantee that every lower-cost model is equally suitable for every coding task.</p>
+<p>Generating synthetic data changes the cost calculation. A learner running occasional exercises may use relatively little API capacity. Producing hundreds of thousands of samples can consume substantial input and output tokens, so the budget must reflect the volume. His recurring point was that more generation means more consumption; a subscription label alone does not describe the full economics.</p>
+<p>The discussion included many model-family and version names, along with personal quality judgments. These notes retain the selection principles rather than turn those rapidly changing rankings into a permanent recommended-model list.</p>
+<hr />
+<h2 id="local-hardware-cloud-machines-and-gpu-work">☁️ Local Hardware, Cloud Machines, and GPU Work<a class="headerlink" href="#local-hardware-cloud-machines-and-gpu-work" title="Permanent link">&para;</a></h2>
+<p>Paul discussed RAM, processors, storage, and GPUs in response to many different machines. His preferred comfortable development target was around <strong>32GB RAM</strong>, while <strong>16GB or 24GB</strong> could handle much of the ordinary work. Students with <strong>8GB</strong> were not told to stop taking the course or immediately buy a replacement laptop. They were told to use fewer heavy applications and move demanding exercises to a cloud machine.</p>
+<p>These numbers were practical class guidance, not a universal capacity formula. A notebook's requirements depend on what it loads, whether a model runs locally, and what other applications are open. CPU capability matters for CPU-intensive work; additional system RAM does not replace the GPU resources needed by a GPU-intensive training run.</p>
+<p>Rahul Soni's question made the cloud alternative concrete. A remote machine provides the CPU, memory, and possibly GPU that the local laptop lacks. The laptop becomes the interface to that environment. Paul mentioned Lightning AI, ordinary cloud instances, and dedicated GPU providers; he intended to demonstrate the specific services when the course needed them.</p>
+<pre class="mermaid"><code>flowchart TD
+    A[Class workload] --&gt; B{Fits the local machine?}
+    B --&gt;|Yes| C[Run locally with a light tool setup]
+    B --&gt;|No| D[Use a suitable cloud environment]
+    D --&gt; E[Select CPU, RAM, or GPU for the task]
+    E --&gt; F[Run the notebook or training job]
+    F --&gt; G[Save results and model weights]
+    G --&gt; H[Stop or remove resources when finished]</code></pre>
+<p>The final steps matter to the class workflow. Paul described renting the hardware for a bounded task, bringing the resulting weights back, and closing the remote environment. Dedicated hardware was not needed permanently merely because a later exercise required a powerful GPU for a few hours.</p>
+<p>Managed environments trade some infrastructure control for convenience. In md toufik's exchange, Paul contrasted a platform with ready editors, containers, and easy CPU/GPU switching against a cheaper provider that could require more manual setup. Choose according to both the hardware requirement and the setup effort you can handle.</p>
+<p>Amlan asked whether recurring cloud instances could install the same tools automatically. Paul suggested a startup/bootstrap script: obtain the code, install the needed software and project dependencies, then begin work. No actual startup script was supplied during the class, so these notes do not invent one.</p>
+<p>Google Colab was acceptable for simple notebooks and scripts. Paul expected its usefulness to diminish when the course reached larger codebases, container workflows, and fine-tuning workloads needing a more controlled GPU environment. His timeline was a course plan, not a claim that Colab cannot run any fine-tuning experiment.</p>
+<p>Storage advice varied because different workloads were being discussed. Paul initially suggested substantial free space and later accepted a student's smaller allocation for the early work. There was no measured dataset or complete storage estimate in this class. Large model weights, environments, container images, and data determine the actual requirement; a single free-space number should not be treated as a guarantee for the full course.</p>
+<hr />
+<h2 id="docker-aws-and-windows-compatibility">🐳 Docker, AWS, and Windows Compatibility<a class="headerlink" href="#docker-aws-and-windows-compatibility" title="Permanent link">&para;</a></h2>
+<p>Docker would matter when an application had been built and was ready for packaging or deployment. The initial Python and notebook exercises did not need to begin with containerization. The AWS CLI was included because Paul expected much of the cloud work to use AWS and intended to perform operations such as repository creation and image publishing through the command line. Azure or GCP tools would be introduced if those platforms became relevant.</p>
+<p>He emphasized using the <strong>Docker CLI</strong> instead of relying on the Desktop GUI. The underlying architecture is important: the CLI sends requests to a Docker daemon/Engine, which builds and runs containers. That daemon can be local or remote. Docker Desktop bundles the client and engine-related components; installing only a client does not, on its own, provide a local container runtime. See the <a href="https://docs.docker.com/get-started/docker-overview/">official Docker architecture overview</a>.</p>
+<p>Kubernetes installation was not required at this stage. Paul mentioned a later project involving EKS, but no Kubernetes implementation was taught in this class.</p>
+<p>Windows, macOS, and Linux were all acceptable course platforms. Paul's demonstrations were primarily macOS/Linux, so learners needed to recognize differences in shell syntax, paths, and environment activation. WSL was an option for Windows users rather than a mandatory first-day install.</p>
+<p>For later GPU work, <strong>WSL 2 does support CUDA on compatible NVIDIA hardware and supported drivers</strong>, with documented limitations. A general concern raised in the live discussion should therefore be interpreted as workload-specific compatibility caution, not as a blanket statement that Windows or WSL cannot run Linux GPU applications. The <a href="https://docs.nvidia.com/cuda/wsl-user-guide/">NVIDIA CUDA on WSL guide</a> documents support and constraints. Consumer NVIDIA GPUs can be useful for AI experiments too; whether one is suitable depends on model size, memory, and runtime requirements.</p>
+<p>Sugan Gowtham reported a Windows launch failure described as <strong>LoadLibrary error 87</strong> after installing Warp. Paul suggested investigating the local software/driver setup and mentioned graphics drivers as a possible cause. This remained a troubleshooting hypothesis; no diagnosis was confirmed and no successful fix was demonstrated. Using a working native terminal was an acceptable way to continue the class while investigating the application issue.</p>
+<hr />
+<h2 id="reading-research-papers-as-an-engineer">📚 Reading Research Papers as an Engineer<a class="headerlink" href="#reading-research-papers-as-an-engineer" title="Permanent link">&para;</a></h2>
+<p>Research papers were a substantial part of the open discussion. Paul pointed learners toward arXiv, Hugging Face papers, and the course's linked paper list. He distinguished broad discovery from learning a concept: finding many new papers is useful, but the immediate task is to understand what a relevant paper contributes and how that contribution affects an implementation.</p>
+<p>For a paper, look for the problem it addresses, the central method, the comparison baselines, and the evidence in its experiments or benchmarks. Those elements help determine whether the result is relevant to the data and system you are building. A paper is not useful merely because its title contains a fashionable term.</p>
+<p>For beginners following this course, Paul eventually gave a concrete starting point: <strong><a href="https://arxiv.org/abs/1706.03762">Attention Is All You Need</a></strong>, after establishing basic deep-learning knowledge. He showed that the course syllabus already included paper links for the concepts it would teach, including attention and later topics such as FlashAttention and mixture-of-experts methods. Those topics were linked for future study, not taught during the setup class.</p>
+<p>Kalyan asked specifically about agentic-AI papers. Paul suggested arXiv's relevant computer-science categories, including artificial intelligence and machine learning, and described the possibility of filtering recent papers with a small program. The proposed paper-monitoring program was not written during the class.</p>
+<p>The engineering reading workflow Paul described was:</p>
+<pre class="mermaid"><code>flowchart TD
+    A[Find a paper relevant to the concept] --&gt; B[Identify its problem and main contribution]
+    B --&gt; C[Read the key equations and method]
+    C --&gt; D[Ask focused questions with an AI assistant]
+    D --&gt; E[Check the authors' code if available]
+    E --&gt; F[Implement a small experiment]
+    F --&gt; G[Compare behavior and adapt to your own data]</code></pre>
+<p>He sometimes used a Markdown representation of a paper as the input to a coding agent with relevant skills installed. The transcript does not preserve a complete conversion URL or reproducible command, so appending an unexplained suffix to a paper link is not included as an instruction here. The useful idea is to obtain readable structured text and analyze it step by step rather than assume that uploading a PDF produces understanding by itself.</p>
+<p>NotebookLM was accepted as a tool for theoretical questions and beginner exploration. Paul personally used Claude or GPT for more implementation-oriented discussion. These were learning preferences. In every case, ask concrete questions about the paper and then test the implementation.</p>
+<p>Ankit asked how to handle formulas that are difficult to understand intuitively. Paul's first coding step was <strong>NumPy</strong>: can the equation be represented in a small numerical experiment? Once the operation and shapes make sense, moving the implementation into PyTorch or another numerical framework becomes easier. He described trying several experiments and adjusting the implementation to the actual data rather than expecting the first translation to be final.</p>
+<p>Pandian clarified whether the course would recreate all the listed papers. Paul said the goal was to teach the central concept and relevant mathematics, use implementations and frameworks where appropriate, and let learners read the surrounding literature further. It was not a commitment to repeat every research experiment. Some papers do not release code, and a paper's related-work comparisons can be much longer than the few pages needed for a particular class concept.</p>
+<hr />
+<h2 id="foundations-why-pytorch-still-matters">🧠 Foundations: Why PyTorch Still Matters<a class="headerlink" href="#foundations-why-pytorch-still-matters" title="Permanent link">&para;</a></h2>
+<p>The poll suggested that many learners had heard of PyTorch but had little practical experience. Paul consequently changed the next session to a refresher. It would cover the fundamentals needed by this course, not produce complete PyTorch mastery in a few hours.</p>
+<p>Debajyoti asked why deep PyTorch knowledge was useful when many industry solutions appear to be RAG or agent systems. Paul's answer focused on what happens below a high-level library: debugging model behavior, understanding a network, and modifying an implementation are difficult if its underlying operations are unfamiliar. The planned learning path included PyTorch, Hugging Face Transformers, and later training-oriented frameworks such as TRL.</p>
+<p>The framework comparison should be understood accurately. PyTorch provides automatic differentiation through <code>torch.autograd</code>; a training loop typically invokes the forward computation, loss, backward gradient calculation, and optimizer update. Learners do not ordinarily hand-code every derivative in a normal PyTorch training loop. Keras also allows custom training loops and custom training steps, despite its convenient high-level interfaces. See the <a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html">PyTorch autograd tutorial</a> and <a href="https://keras.io/guides/writing_a_custom_training_loop_in_tensorflow/">Keras custom-loop guide</a>. Paul's practical emphasis was learning to inspect and control the computation, not a universal limitation of the other frameworks.</p>
+<p>For learners from mathematics backgrounds, he suggested a concrete preparation exercise: take a simple two-layer neural network, work out its forward pass and backward pass on paper, and then translate the calculation into code. Review the chain rule and derivatives if needed. The exercise was assigned as foundational practice; an exact network, dataset, or worked code solution was not supplied in this session.</p>
+<p>Deep learning is part of machine learning, and most modern LLM-based generative systems build on deep-learning models. An agent application often consumes model capabilities through an API rather than training a new model itself. That relationship creates substantial overlap between agent research, model research, and engineering—but it does not make every solution a neural-network problem. Paul's broader decision principle was to inspect the use case and data before choosing a method. Unstructured data does not categorically rule out all non-deep-learning methods.</p>
+<hr />
+<h2 id="local-models-apple-silicon-and-quantization">🍎 Local Models, Apple Silicon, and Quantization<a class="headerlink" href="#local-models-apple-silicon-and-quantization" title="Permanent link">&para;</a></h2>
+<p>Ollama and LM Studio were discussed as ways to experiment with local models. Paul clarified that his earlier Ollama reference was to the local setup, while also acknowledging cloud options. He did not intend to run substantial local models on his own laptop during the course because they could compete with the rest of his development environment for resources.</p>
+<p>Billy, who had a high-memory Mac, asked about using Apple-oriented model stacks instead of NVIDIA/CUDA. Paul discussed MLX, Metal/MPS support, and unified memory. Apple's <a href="https://opensource.apple.com/projects/mlx/">MLX overview</a> describes MLX as optimized for the unified-memory architecture of Apple silicon. That architecture is useful, but available memory alone does not guarantee that a particular training framework, operation, or model is supported.</p>
+<p>The discussion also distinguished original weights from alternative formats and lower-precision variants. <strong>GGUF is a model file format</strong>, not itself a promise of a particular bit width or a fixed quality loss. It supports multiple tensor types, including floating-point and quantized types, as shown in the <a href="https://huggingface.co/docs/hub/gguf">Hugging Face GGUF documentation</a>. Model size, precision, runtime support, and the task all affect what can run locally. There is no universal rule that every quantized model loses exactly a fixed percentage of performance.</p>
+<p>Billy observed different response quality from local and hosted versions of apparently similar models. Paul suggested that a provider's surrounding inference stack could matter. No controlled comparison was performed, so these notes do not assign a confirmed cause. A fair comparison would need to establish that weights, precision, prompts, and generation configuration really match before drawing a conclusion about hosting.</p>
+<p>For the course's later training demonstrations, Paul preferred temporary access to capable NVIDIA GPUs because class time was limited. A slow run that takes many hours may be technically possible but awkward to demonstrate live. He mentioned A100/H100/H200-class hardware as options for his own demonstrations; this was not a requirement that every learner own such a GPU. H100s can serve inference as well—the recommendation to use temporary access for fine-tuning reflected the learning opportunity, not a hardware restriction.</p>
+<hr />
+<h2 id="applying-the-course-small-models-rag-and-architecture-decisions">🧩 Applying the Course: Small Models, RAG, and Architecture Decisions<a class="headerlink" href="#applying-the-course-small-models-rag-and-architecture-decisions" title="Permanent link">&para;</a></h2>
+<p>The final Q&amp;A broadened the setup discussion into how learners could use the course. Paul described the initial model foundations as useful even for architects who guide teams rather than spend every day writing model code. Better system decisions come from understanding the options, testing them on the actual data, and explaining why a particular approach is appropriate.</p>
+<p>For an existing enterprise system, he discussed adding retrieval over internal knowledge bases, using models for domain-specific tasks, and introducing agents where a workflow can usefully call tools or automate repeated work. These were examples of possible applications, not guarantees of an automation percentage or a promised job outcome.</p>
+<p>Atharva had already built a custom RAG project but was dissatisfied with generation quality. Paul suggested investigating <strong>parsing and chunking</strong> and briefly inspected the repository's organization. He did not establish a complete root cause, and the detailed review was deferred. The learning point is to examine how information enters the retrieval pipeline before assuming model fine-tuning is the first remedy. Atharva was also reminded to understand the code and core concepts behind a project generated with AI assistance, particularly when explaining it in an interview.</p>
+<p>For a student seeking an internship sooner than the end of the course, Paul suggested building on RAG and exploring agents. He named LangGraph and PydanticAI as starting points and offered to share a project reference separately. The promised repository link was not present in the transcript, so no substitute project has been invented here.</p>
+<p>Dishant asked whether small, fine-tuned models could handle narrow tasks such as intent classification, query decomposition, or tool selection rather than calling a large reasoning model for everything. Paul said the course would include foundational model work and classification/Q&amp;A examples, with distilled model families discussed later. This was future scope. The session did not provide a specialist-model training pipeline.</p>
+<p>When Dishant mentioned temporary access to one or two H100s, Paul suggested experimenting with fine-tuning, including multimodal/vision-language models using available datasets, and looking at Hugging Face, Unsloth notebooks, or Axolotl configuration-based workflows. The important prerequisite in his response was <strong>data</strong>: hardware access becomes useful when there is a defined task and a suitable dataset. No exact model/dataset recipe was selected live.</p>
+<p>For highly specific career-transition or advanced mathematics questions, Paul requested more background or an exact topic list before giving tailored advice. These exchanges ended with a request for follow-up rather than a complete individualized roadmap. Course completion alone was not presented as mastery; sustained implementation and experimentation remained necessary.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Next class:</strong> a PyTorch refresher, including installation and the course-relevant basics. Learners were not required to install PyTorch independently before that demonstration.</li>
+<li><strong>Following week:</strong> Transformers 101. Paul expected to build intuition for attention and the motivation behind the transformer paper before moving into the paper itself.</li>
+<li><strong>After the initial conceptual sessions:</strong> practical transformer implementation. The exact pacing was flexible; he did not promise that every topic or project would finish within a fixed number of classes.</li>
+<li><strong>Later course work mentioned explicitly:</strong> model training/fine-tuning, Hugging Face Transformers and TRL-related workflows, specialist/small-model applications, RAG, agents, AWS deployment, and a project involving EKS/Kubernetes. These were future plans, not completed content from Class 2.</li>
+</ul>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>The table includes questions from the setup discussion and the extended open floor. Repeated setup questions are consolidated; named follow-ups are preserved where they add a different issue.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Akarshan, Amlan:</strong> What is the minimum setup for the first few weeks?</td>
+<td>Python, a way to manage an isolated environment, an editor that can open notebooks, Git/GitHub, and a working terminal. Paul preferred uv; a specific paid tool or special cross-tool integration was not compulsory.</td>
+</tr>
+<tr>
+<td><strong>Nithin Sharma:</strong> Should every future library be installed immediately?</td>
+<td>No. Paul would share <code>requirements.txt</code> or <code>pyproject.toml</code> with the relevant code. Install the dependencies for the actual exercise rather than every framework in the syllabus.</td>
+</tr>
+<tr>
+<td><strong>Shashank, in chat:</strong> Can newly learned AI skills be included when transitioning roles?</td>
+<td>Paul accepted listing relevant skills, while emphasizing that claimed experience must be supported by the actual work, responsibilities, and projects the learner can explain. The hiring role determines which skills matter.</td>
+</tr>
+<tr>
+<td><strong>Aditya and other chat questions:</strong> Is an existing newer or older Python installation acceptable?</td>
+<td>A working setup could be retained, with a compatible environment created for a project when needed. Paul's new-install preference was 3.12/3.13; current support status should be checked separately.</td>
+</tr>
+<tr>
+<td><strong>Vivek Joshi:</strong> Must the environment have a custom name?</td>
+<td>No. <code>.venv</code> was Paul's convention. A custom name was acceptable if the directory was excluded from Git.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> Does creating a virtual environment also create <code>pyproject.toml</code>?</td>
+<td>Environment creation and project initialization are separate. Use <code>uv venv</code> for an environment and <code>uv init</code> for project metadata and scaffold.</td>
+</tr>
+<tr>
+<td><strong>Participant 136:</strong> uv reports a version, but a later pip step fails—is installation incomplete?</td>
+<td>Paul confirmed that reporting the uv version satisfied the immediate uv check. The extra pip step was not required to verify uv's installation.</td>
+</tr>
+<tr>
+<td><strong>Saravana, in chat:</strong> Why did the uv environment use Anaconda Python?</td>
+<td>The active/discovered interpreter affects environment selection. Paul wanted a simpler uv-centered setup; deliberately selecting the intended interpreter is the key diagnostic.</td>
+</tr>
+<tr>
+<td><strong>Krishna Chaitanya:</strong> Are uv projects and Docker projects alternatives?</td>
+<td>They serve different purposes. uv manages Python projects/environments; Docker packages an application for execution and deployment. Docker usage was planned for later projects.</td>
+</tr>
+<tr>
+<td><strong>Aman, in chat:</strong> Will a broad Git add operation include the environment folder?</td>
+<td>Check the repository's ignore rules before staging. Paul preferred excluding <code>.venv</code> through <code>.gitignore</code>; custom environment names need equivalent handling.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> Does OpenCode require its own subscription, or can it use other credentials?</td>
+<td>Paul discussed supported BYOK and subscription connections. Nothing was compulsory to buy; the exact connection options depend on the product/provider.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> Does the quoted OpenCode Go plan include model access, or require a second API payment?</td>
+<td>In Paul's described plan, access was included through that subscription with usage limits. The quoted promotion and allowance were historical; inspect the current product terms before purchasing.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> Is BYOK the same as a Claude subscription?</td>
+<td>No. BYOK configures supported API credentials; a product subscription gives the models and allowances of that product. Paul preferred flexible provider access, but accepted existing subscriptions.</td>
+</tr>
+<tr>
+<td><strong>Prashant Yadav:</strong> Are the low-cost provider and the coding agent the same thing?</td>
+<td>A provider supplies model access, while a harness uses that access in a coding workflow. Some products bundle both; their supported model list still needs checking.</td>
+</tr>
+<tr>
+<td><strong>Prashant Yadav:</strong> Would the quoted low-cost plan give OpenAI models?</td>
+<td>Paul did not claim that. He had used the entry plan and had not verified the higher-tier plan being asked about; he directed the learner to its actual model list.</td>
+</tr>
+<tr>
+<td><strong>Albert V:</strong> What is a coding harness?</td>
+<td>The application that makes the LLM useful for the coding workflow—Paul described it as harnessing the model's capabilities. It is distinct from the model itself.</td>
+</tr>
+<tr>
+<td><strong>Akarshan:</strong> Why use a coding agent if an editor already opens the files?</td>
+<td>To explore a larger codebase, investigate a function, try an improvement, and prepare useful contributions. The editor remains useful for reading and reviewing the code.</td>
+</tr>
+<tr>
+<td><strong>Ankit Anand:</strong> Must we use models from the lower-cost providers discussed?</td>
+<td>No. Paul's motive was to keep student costs low. An existing VS Code/Copilot setup was accepted.</td>
+</tr>
+<tr>
+<td><strong>Raghav Joshi and subscription questions:</strong> Is a large monthly plan needed to learn?</td>
+<td>Paul thought modest access was enough for ordinary exercises. Actual usage, model cost, and task complexity should determine spending; synthetic-data generation can increase consumption.</td>
+</tr>
+<tr>
+<td><strong>Pritham/Rita Mandal:</strong> Why use a different model for planning and implementation?</td>
+<td>Paul preferred more capable models for research and planning, then a cheaper model for routine implementation when it met the task's needs.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> Does a multimodal model automatically mean image paste works in the CLI?</td>
+<td>No. Harness support and model support are separate. Paul advised checking the particular workflow and relevant product issues.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> Was the Ollama reference to local Ollama or its cloud service?</td>
+<td>He clarified that he meant local Ollama, while explaining that he did not plan to run substantial models locally on his own laptop.</td>
+</tr>
+<tr>
+<td><strong>Smruti Dash, in chat:</strong> Must coding agents have a VS Code plugin?</td>
+<td>Paul favored terminal use and did not require an editor plugin. Use the interface supported by the chosen agent.</td>
+</tr>
+<tr>
+<td><strong>Akarshan, Prashant Yadav, Ankit Anand:</strong> Is a separate terminal mandatory?</td>
+<td>No. A native or integrated terminal was acceptable. Paul's separate-terminal preference was about his own developer experience.</td>
+</tr>
+<tr>
+<td><strong>Himani:</strong> Should an 8GB MacBook install Warp just because it was recommended?</td>
+<td>No. Keep the machine light and use the default terminal if it works; Warp was a convenience option.</td>
+</tr>
+<tr>
+<td><strong>Sugan Gowtham:</strong> How should Warp's Windows LoadLibrary error 87 be handled?</td>
+<td>Paul suggested investigating the local installation and drivers, with graphics-driver problems as one possibility. No confirmed cause or successful fix was established.</td>
+</tr>
+<tr>
+<td><strong>Sugan Gowtham:</strong> What terminal alternative was suggested?</td>
+<td>WezTerm was named, and a working native terminal remained acceptable. Python/uv and the editor were sufficient to continue preparing for the next class.</td>
+</tr>
+<tr>
+<td><strong>Rahul Soni:</strong> How does cloud execution help an 8GB laptop?</td>
+<td>The remote environment supplies the memory/CPU/GPU; the laptop accesses it. Rent resources for the demanding practical rather than assume a new laptop is necessary.</td>
+</tr>
+<tr>
+<td><strong>Albert V:</strong> Does 64GB system RAM solve GPU-intensive work?</td>
+<td>It helps local CPU-oriented workloads but does not replace the required GPU capability. Paul would use a cloud GPU where the exercise needed one.</td>
+</tr>
+<tr>
+<td><strong>Bhaskar, in chat:</strong> Can access to a DGX Spark help when the laptop is modest?</td>
+<td>Paul regarded the external machine as useful for local model work, especially inference, while warning that training runtime can differ from a larger datacenter GPU. The class did not establish a benchmark or validate a particular model configuration.</td>
+</tr>
+<tr>
+<td><strong>md toufik:</strong> Are a 16GB Mac or Ryzen 7/24GB machine usable?</td>
+<td>Paul accepted them for ordinary code execution. Dedicated GPU work would be handled separately when required.</td>
+</tr>
+<tr>
+<td><strong>md toufik:</strong> How difficult is moving beyond Colab to a GPU provider?</td>
+<td>Paul planned to demonstrate it. Managed platforms simplify setup and switching; cheaper infrastructure may require more manual configuration.</td>
+</tr>
+<tr>
+<td><strong>Amlan:</strong> Can existing AWS credits be used for the cloud environment?</td>
+<td>Yes, a suitable CPU or GPU instance could be used. The hardware and configuration should match the exercise.</td>
+</tr>
+<tr>
+<td><strong>Amlan:</strong> Can every new instance install the same development tools automatically?</td>
+<td>Paul suggested a startup/bootstrap script to obtain the code and install requirements. He did not provide the script in this class.</td>
+</tr>
+<tr>
+<td><strong>Amlan:</strong> Would a separate small local computer run models?</td>
+<td>It depends on the exact model and hardware. Paul mentioned Ollama, LM Studio, and direct Transformers loading, but did not validate an unspecified device/model combination.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> Is a smaller storage allocation or WSL enough?</td>
+<td>Early work could proceed, while later GPU work might use a common cloud platform. No full-course storage benchmark was established; WSL 2's actual GPU support is documented by NVIDIA.</td>
+</tr>
+<tr>
+<td><strong>Kamlesh Patel:</strong> Is Windows acceptable instead of Mac/Linux?</td>
+<td>Yes. Any of those operating systems was acceptable; a compatible cloud environment was the fallback for a workload that would not run locally.</td>
+</tr>
+<tr>
+<td><strong>Sudhanshu Kumar:</strong> Can Colab be used for practice?</td>
+<td>Yes, for simple notebooks and scripts. Paul expected a more controlled GPU environment for larger codebases, Docker-related work, and later fine-tuning.</td>
+</tr>
+<tr>
+<td><strong>Nilesh, in chat:</strong> Why install the AWS CLI?</td>
+<td>Paul intended to perform AWS operations from the command line, including later repository/image workflows. User/account setup was deferred.</td>
+</tr>
+<tr>
+<td><strong>Vijay, in chat:</strong> Is Kubernetes required now?</td>
+<td>No. It was mentioned for a later EKS-related project.</td>
+</tr>
+<tr>
+<td><strong>Ankit Anand:</strong> Is VS Code with notebook support, Copilot, and its integrated terminal enough?</td>
+<td>Yes. Paul accepted the familiar setup and did not require a switch to every tool he used.</td>
+</tr>
+<tr>
+<td><strong>Pratyush Singh Kushwah:</strong> Is there a beginner paper starter list?</td>
+<td>That early exchange did not produce a specific starter list. Later, Phanindhar's question led to the course-linked paper list and <em>Attention Is All You Need</em> as a starting point after the prerequisites.</td>
+</tr>
+<tr>
+<td><strong>PHANINDHAR GOLLA:</strong> Which paper should a beginner start with for this course?</td>
+<td><em>Attention Is All You Need</em>, after reviewing deep-learning fundamentals. Paul showed that paper links were already attached to the syllabus.</td>
+</tr>
+<tr>
+<td><strong>Kalyan Rad:</strong> Where can agentic-AI papers be found?</td>
+<td>arXiv's relevant CS categories and paper-discovery pages were suggested. Paul also proposed filtering recent papers programmatically, without writing that program live.</td>
+</tr>
+<tr>
+<td><strong>Kalyan Rad:</strong> Is there a skill/workflow to get a paper's crux first?</td>
+<td>Paul described converting it to readable Markdown and analyzing it with a coding agent and relevant skills. The transcript did not preserve a reproducible conversion instruction.</td>
+</tr>
+<tr>
+<td><strong>Kalyan Rad:</strong> How do agent papers intersect with ML/deep-learning papers?</td>
+<td>Modern agents often consume generative-model capabilities built on deep learning. The overlap is substantial, while method selection still depends on the use case and data.</td>
+</tr>
+<tr>
+<td><strong>Ankit Anand:</strong> How can difficult paper mathematics become understandable?</td>
+<td>Translate an equation into a small NumPy experiment, inspect the behavior, and then move toward the framework implementation. AI assistants can help ask focused questions, but experimentation remains necessary.</td>
+</tr>
+<tr>
+<td><strong>Pandian G:</strong> Will the course recreate all of the listed papers?</td>
+<td>No. Paul planned to explain core ideas, mathematics, and relevant implementations, not reproduce every experiment or related-work comparison.</td>
+</tr>
+<tr>
+<td><strong>Pandian G:</strong> Does every paper include code?</td>
+<td>No. Author implementations are useful when released, but publication of a paper does not guarantee a public codebase.</td>
+</tr>
+<tr>
+<td><strong>Pandian G:</strong> Which Stanford course did Paul mention?</td>
+<td>CS231n. He also mentioned other university lectures as supplementary resources and said he would provide topic-specific references during teaching.</td>
+</tr>
+<tr>
+<td><strong>Debajyoti Mukhopadhyay:</strong> Why learn PyTorch when the target is RAG/agents?</td>
+<td>Understanding the underlying model operations helps when high-level frameworks fail or need modification. The next refresher would build those course-relevant foundations.</td>
+</tr>
+<tr>
+<td><strong>shivamkumar:</strong> How should the weekdays be used to prepare?</td>
+<td>Explore PyTorch if unfamiliar; if deep-learning basics are solid, begin looking at transformers. The next class would handle the refresher.</td>
+</tr>
+<tr>
+<td><strong>shivamkumar:</strong> What mathematics should be reviewed?</td>
+<td>Derivatives, the chain rule, and backpropagation. Paul suggested manually calculating a simple two-layer network's forward and backward passes, then coding it.</td>
+</tr>
+<tr>
+<td><strong>Prabu Manickam:</strong> Is Python practice a sensible starting point from a legacy background?</td>
+<td>Yes. Python was the initial priority because the coming PyTorch work depended on it; Python and environment setup were the immediate steps.</td>
+</tr>
+<tr>
+<td><strong>Velu, Sudhanshu Kumar:</strong> How should beginners handle the unfamiliar jargon?</td>
+<td>Paul said concepts would be developed step by step with references, especially through the early foundations. Learners were encouraged to ask about unfamiliar terms and allow time for practice.</td>
+</tr>
+<tr>
+<td><strong>Billy:</strong> Can a high-memory Mac use MLX/MPS instead of CUDA?</td>
+<td>Apple-oriented workflows can be useful when the specific stack supports them. Paul's later training demonstrations would favor capable cloud NVIDIA GPUs for runtime and compatibility reasons.</td>
+</tr>
+<tr>
+<td><strong>Billy:</strong> Are GGUF and original model weights the same capacity requirement?</td>
+<td>No. Format and precision matter. Quantized variants may use less memory, but GGUF supports multiple types and does not imply a fixed accuracy loss.</td>
+</tr>
+<tr>
+<td><strong>Billy:</strong> Why can local and hosted responses differ?</td>
+<td>Paul suggested differences in the surrounding inference stack, but no controlled test established the cause. Treat the observation as a comparison to investigate.</td>
+</tr>
+<tr>
+<td><strong>Manoranjan Pani:</strong> How does this help a senior Java/solutions architect?</td>
+<td>Foundations can improve choices about retrieval, domain-specific models, agents, and deployment. Paul emphasized experiments and informed team guidance rather than a role determined solely by course completion.</td>
+</tr>
+<tr>
+<td><strong>Manoranjan Pani:</strong> Is a MacBook Air sufficient?</td>
+<td>It could be used for the development work, with temporary cloud resources for the demanding training tasks.</td>
+</tr>
+<tr>
+<td><strong>Amlan:</strong> How should a domain architect become more hands-on?</td>
+<td>Paul requested fuller background before giving a tailored path. The exchange did not produce a complete individualized roadmap.</td>
+</tr>
+<tr>
+<td><strong>Atharva Pagar:</strong> What can help with an internship before the course ends?</td>
+<td>Paul suggested building on RAG and exploring agents, rather than waiting for the whole syllabus. This was learning advice, not a guarantee of placement.</td>
+</tr>
+<tr>
+<td><strong>Atharva Pagar:</strong> Should poor RAG generation immediately lead to fine-tuning?</td>
+<td>Paul first suspected parsing/chunking issues and requested a fuller review of the repository. The cause remained unconfirmed.</td>
+</tr>
+<tr>
+<td><strong>Atharva Pagar:</strong> Is an AI-generated project with only a general overview enough?</td>
+<td>The learner still needs to understand the core concepts and implementation well enough to debug and explain it.</td>
+</tr>
+<tr>
+<td><strong>Atharva Pagar, Gurminder Singh Malhotra:</strong> Where should agent learning begin?</td>
+<td>Paul suggested LangGraph; PydanticAI was another option for Atharva. He referred to tutorials/documentation and shared a LangGraph learning link in class, whose exact URL is not preserved here.</td>
+</tr>
+<tr>
+<td><strong>Gurminder Singh Malhotra:</strong> How should someone start with Claude Code?</td>
+<td>Paul referred to Mayank's webinar/resource and official documentation, focusing on useful plugins and skills. The exact webinar URL was not captured.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> Will narrow models for intent, Q&amp;A, or tool-related tasks be covered?</td>
+<td>Paul said foundational/classification model work and distilled-model examples were part of the course plan. This session did not build that pipeline.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> What should temporary H100 access be used for?</td>
+<td>Paul suggested fine-tuning experiments, potentially with a vision-language model and an available dataset, using a suitable framework. No exact model/dataset recipe was selected.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> Are Hugging Face and framework tutorials relevant preparation?</td>
+<td>Yes, especially because the course would use Transformers. Paul also pointed toward Unsloth's notebooks and Axolotl's configuration-oriented workflow.</td>
+</tr>
+<tr>
+<td><strong>Dishant Ghai:</strong> Which resources cover manifolds and high-dimensional geometry?</td>
+<td>Paul requested an exact topic/domain list before recommending math-heavy material. The discussion did not settle on a specific geometry resource.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The first objective is a working Python development workflow; every tool mentioned is not an immediate installation requirement.</li>
+<li>Follow the dependency file for the exercise instead of installing the future syllabus in advance.</li>
+<li><code>uv venv</code> and <code>uv init</code> have different purposes: environment creation versus project initialization.</li>
+<li><code>.venv</code> is a convention that helps keep local environments out of Git; custom names are acceptable with correct ignore rules.</li>
+<li>Paul's <code>activate</code> command was a personal alias. Activation syntax depends on the shell and platform.</li>
+<li>Preserve a familiar editor and terminal when they already do the job.</li>
+<li>A coding harness, a model, a provider, and a subscription are distinct layers.</li>
+<li>BYOK support and multimodal support must be checked for the actual product/model combination.</li>
+<li>Buy model access according to usage and task needs; promotional prices quoted in class are not permanent terms.</li>
+<li>System RAM, GPU memory, software support, and runtime are different constraints.</li>
+<li>Use cloud hardware when a task outgrows the laptop; save artifacts and end the resource when finished.</li>
+<li>Docker's client needs access to an engine/daemon to build and run containers.</li>
+<li>WSL 2 can support CUDA; evaluate the documented constraints rather than reject it categorically.</li>
+<li>Read papers for their problem, main contribution, evidence, and relevance to your data.</li>
+<li>Turn difficult equations into small experiments before scaling the implementation.</li>
+<li>Learn the underlying PyTorch computation so high-level framework failures are easier to investigate.</li>
+<li>Before fine-tuning for RAG quality, inspect the ingestion and retrieval pipeline and establish the actual cause.</li>
+<li>AI assistance makes experimentation faster, but you still need to understand and review the code.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-2">✅ Action Items After Class 2<a class="headerlink" href="#action-items-after-class-2" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Locate the course Notion page and the previous recording through the dashboard.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Verify that a suitable supported Python interpreter is available; use the course project's version requirements when supplied.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Install or verify uv if following Paul's workflow, using the instructions for your operating system and shell.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Practice creating one isolated environment and distinguish that operation from initializing a uv project.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Confirm that your editor can open a notebook and use the intended Python environment.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Install Git, have a GitHub account, and review the basic commit/push workflow if unfamiliar.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check that the environment directory is excluded from the project repository.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep one working terminal; avoid adding several applications merely because they were demonstrated.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> If using a coding agent, test it on a small code-reading task and review its explanation. Reuse existing access or begin with a modest allowance if new access is needed.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Bookmark the project's dependency instructions rather than installing all later libraries now.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review derivatives, the chain rule, and a small network's forward/backward calculation if those foundations are unfamiliar.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Prepare for the next PyTorch session; let that session establish its installation and exercise requirements.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Locate the syllabus's paper links and begin <em>Attention Is All You Need</em> after reviewing the required foundations.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Identify a suitable cloud fallback if local RAM, GPU resources, or software support become limiting.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Treat Docker/AWS CLI as the broader preparation checklist, with configuration and deeper usage following the relevant project sessions.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 2 transcript — “25 July Software Requirements &amp; Tools Installation,” Production AI / LLM Engineering, Krish Naik Academy — and the course-linked Software &amp; Tools Checklist.</em></p>
+<p><em>Primary class source: <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a651ae9893a14772ed56f79">Class 2 course recording page</a>. Original transcript filename: <code>GMT20260725-142803_Recording.transcript.vtt</code>. The transcript includes the entire setup discussion and late open-floor Q&A; no supplementary PDF or class code notebook was supplied for this session. Exact command blocks above come from the companion checklist. Documentation links clarify nuanced behavior; they do not imply those additional documentation examples were executed in class.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_01_Induction_and_Course_Roadmap_Notes.html" class="btn btn-neutral float-left" title="01 · Induction and course roadmap"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_03_PyTorch_Fundamentals_Notes.html" class="btn btn-neutral float-right" title="03 · PyTorch fundamentals">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_01_Induction_and_Course_Roadmap_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_03_PyTorch_Fundamentals_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

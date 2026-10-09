@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_04_Transformers_101_Part_1_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>04 · Transformers 101, part 1 - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "04 \u00b7 Transformers 101, part 1";
+        var mkdocs_page_input_path = "Class_04_Transformers_101_Part_1_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_04_Transformers_101_Part_1_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">04 · Transformers 101, part 1</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#from-word-ids-to-useful-numerical-representations">🔢 From Word IDs to Useful Numerical Representations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-prerequisite-techniques-revisited">The prerequisite techniques revisited</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sequences-sliding-windows-and-the-limits-of-local-context">🪟 Sequences, Sliding Windows, and the Limits of Local Context</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#why-adding-nearby-words-helps-but-is-not-enough">Why adding nearby words helps, but is not enough</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-same-idea-across-other-data-types">The same idea across other data types</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#exponential-smoothing-as-an-analogy-for-reweighting">🌊 Exponential Smoothing as an Analogy for Reweighting</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-noisy-curve-sketch-was-intended-to-show">What the noisy-curve sketch was intended to show</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-bridge-to-nlp">The bridge to NLP</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">🐈 Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-proposed-transformation">The proposed transformation</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#exploring-embedding-spaces-and-reading-their-visualizations">🌌 Exploring Embedding Spaces and Reading Their Visualizations</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#word2vec-data-in-a-3d-projector">Word2Vec data in a 3D projector</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#familiar-words-make-relationships-easier-to-inspect">Familiar words make relationships easier to inspect</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#pca-t-sne-and-umap">PCA, t-SNE, and UMAP</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#an-atlas-of-an-entire-dataset">An atlas of an entire dataset</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-leaderboard-discussion">The leaderboard discussion</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#generating-reweighting-coefficients-from-the-vectors-themselves">⚖️ Generating Reweighting Coefficients from the Vectors Themselves</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#keep-the-two-meanings-of-weight-separate">Keep the two meanings of “weight” separate</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#a-dot-product-produces-a-scalar-score">A dot product produces a scalar score</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dot-product-versus-cosine-similarity">Dot product versus cosine similarity</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-complete-four-token-walkthrough-bank-of-a-river">🏦 The Complete Four-Token Walkthrough: “Bank of a River”</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-fix-the-first-base-vector-and-compare-it-with-all-positions">Step 1: Fix the first base vector and compare it with all positions</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-normalize-the-scores-for-that-base-position">Step 2: Normalize the scores for that base position</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-use-the-coefficients-to-combine-the-vectors">Step 3: Use the coefficients to combine the vectors</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-4-repeat-with-each-other-base-vector">Step 4: Repeat with each other base vector</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-outputs-do-and-what-they-do-not-yet-do">What the outputs do, and what they do not yet do</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#understanding-the-four-whiteboard-observations-correctly">🧩 Understanding the Four Whiteboard Observations Correctly</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#order-independence-is-a-property-of-the-bare-operation">Order independence is a property of the bare operation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#all-to-all-access-does-not-mean-all-sources-receive-the-same-weight">All-to-all access does not mean all sources receive the same weight</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#shape-preservation-does-not-erase-dimensional-constraints">Shape preservation does not erase dimensional constraints</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#training-batches-and-the-boundary-of-todays-example">🛠️ Training, Batches, and the Boundary of Today's Example</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#calculating-a-representation-is-different-from-training-a-model">Calculating a representation is different from training a model</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#batches-steps-and-epochs">Batches, steps, and epochs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#sentence-boundaries-and-context-windows">Sentence boundaries and context windows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-to-watch-during-training">What to watch during training</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#gpu-execution-and-recurrent-models">GPU execution and recurrent models</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-04">✅ Action Items After Class 04</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Transformers</li>
+      <li class="breadcrumb-item active">04 · Transformers 101, part 1</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-04-transformers-101-part-1-embeddings-context-and-self-attention-intuition">🧠 Class 04: Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition<a class="headerlink" href="#class-04-transformers-101-part-1-embeddings-context-and-self-attention-intuition" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (addressed as Paul in the transcript)<br />
+<strong>⏱️ Duration:</strong> 4 hours 11 minutes 34 seconds | <strong>📅 Session:</strong> Day 4 (1 August 2026)</p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6e6a8149d9f2e46cc7a3d5">1 Aug Transformers 101</a></p>
+<p>This session builds the intuition for turning isolated numerical representations into representations that incorporate surrounding information. Paul starts with familiar NLP representations, uses exponential smoothing as an analogy for reweighting, explores embedding visualizations, and works through a four-token self-attention calculation. The substantial open-floor discussion revisits the distinction between calculated attention coefficients and learned model parameters.</p>
+<p>The full Transformer architecture was <strong>not</strong> completed in this class. Query/key/value projections, multi-head attention, and the research-paper walkthrough were left for subsequent sessions. The calculation here is deliberately a simplified, parameter-free illustration; the notes distinguish its properties from those of a trained Transformer.</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The course dashboard contains live recordings; the course Notion page holds the syllabus, handwritten notes, and supporting links. Paul recommended bookmarking Notion so resources are easier to revisit.</li>
+<li>A Discord discussion space was opened for the batch, with separate areas for general discussion, paper drops, model drops, and news. Course-related doubts could be raised there or through the dashboard.</li>
+<li>The handwritten PDF for this session was uploaded under the 1 August entry at the end of class. The supplied companion, <strong>Note.pdf</strong>, contains the whiteboard diagrams used below.</li>
+<li>Earlier software-installation and PyTorch sessions remain the starting prerequisites. Paul emphasized that the first Transformer lessons would move slowly to establish the concepts before the practical implementation.</li>
+</ul>
+<hr />
+<h2 id="from-word-ids-to-useful-numerical-representations">🔢 From Word IDs to Useful Numerical Representations<a class="headerlink" href="#from-word-ids-to-useful-numerical-representations" title="Permanent link">&para;</a></h2>
+<p>Machines operate on numbers, so text needs a numerical representation before a model can process it. Paul began with the simplest possible assignment: give words such as <strong>dog</strong>, <strong>car</strong>, <strong>house</strong>, and <strong>bus</strong> integer labels. This identifies the words, but the labels do not themselves describe what the words mean.</p>
+<p>If dog receives ID 1 and car receives ID 2, the numerical gap between those IDs is an arbitrary consequence of the lookup table. It does not establish that a dog is semantically closer to a car than to a bus. Changing the IDs would change that numerical gap without changing any meaning. This becomes a poor basis for semantic comparison as the vocabulary grows.</p>
+<p>The useful distinction is between <strong>an identifier</strong> and <strong>a representation</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Object</th>
+<th>What it tells us</th>
+<th>What it does not establish by itself</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Token ID</td>
+<td>Which vocabulary entry is present</td>
+<td>Semantic similarity to another vocabulary entry</td>
+</tr>
+<tr>
+<td>One-hot vector</td>
+<td>Which entry is active in a shared vocabulary space</td>
+<td>Graded semantic relationships between different words</td>
+</tr>
+<tr>
+<td>Count or TF-IDF vector</td>
+<td>Which terms occur and how strongly they are weighted</td>
+<td>The complete meaning or word order of a sentence</td>
+</tr>
+<tr>
+<td>Learned dense embedding</td>
+<td>A compact numerical representation learned from data</td>
+<td>A guarantee that each coordinate has an obvious human label</td>
+</tr>
+<tr>
+<td>Contextual representation</td>
+<td>A representation informed by the particular surrounding sequence</td>
+<td>A complete model prediction without further processing</td>
+</tr>
+</tbody>
+</table>
+<p>The whiteboard contrasts discrete IDs with decimal-valued representations, then shows one-hot encodings for a small vocabulary. For three distinct entries, the illustrated vectors are <strong>dog = [1, 0, 0]</strong>, <strong>cat = [0, 1, 0]</strong>, and <strong>car = [0, 0, 1]</strong>. Each word is distinguishable, but the representation supplies no special shared feature for dog and cat.</p>
+<p>Paul's broader objective was to move toward a continuous vector space in which numerical operations can capture useful relationships. This does <strong>not</strong> mean that discrete IDs disappear from modern models: IDs remain the usual way to select vectors from an embedding table. PyTorch explicitly separates the dictionary size from the size of each retrieved embedding. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Embedding.html">PyTorch embedding documentation</a></p>
+<h3 id="the-prerequisite-techniques-revisited">The prerequisite techniques revisited<a class="headerlink" href="#the-prerequisite-techniques-revisited" title="Permanent link">&para;</a></h3>
+<p>The discussion surveyed older approaches rather than deriving each algorithm:</p>
+<table>
+<thead>
+<tr>
+<th>Technique</th>
+<th>Place in the class discussion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>One-hot encoding, or OHE</td>
+<td>The basic sparse representation; useful for understanding vocabulary-based encoding, and sometimes for a small set of target classes</td>
+</tr>
+<tr>
+<td>Bag of Words</td>
+<td>A count-based text representation that improves on arbitrary labels but loses ordering information</td>
+</tr>
+<tr>
+<td>TF-IDF</td>
+<td>A lexical weighting method Paul highlighted as still useful; BM25 was mentioned as another established lexical-retrieval approach</td>
+</tr>
+<tr>
+<td>N-grams</td>
+<td>Local combinations of consecutive words, used to introduce how adding neighboring words can reveal more information</td>
+</tr>
+<tr>
+<td>Co-occurrence matrices</td>
+<td>Representations based on which words appear together in a corpus</td>
+</tr>
+<tr>
+<td>Word2Vec</td>
+<td>A familiar learned representation, with CBOW and Skip-gram named as its two variants</td>
+</tr>
+<tr>
+<td>GloVe and fastText</td>
+<td>Additional established word-representation methods discussed by the class</td>
+</tr>
+<tr>
+<td>ELMo</td>
+<td>Mentioned as part of the movement toward contextual representations, beyond the simpler classical techniques</td>
+</tr>
+</tbody>
+</table>
+<p>CBOW and Skip-gram were treated as complementary directions: the surrounding words can be used to predict a center word, or a center word can be used to predict surrounding words. Their training objectives were not implemented here. Likewise, the lecture did not reproduce the GloVe algorithm; its official project describes learning from aggregated global word-word co-occurrence statistics. <a href="https://nlp.stanford.edu/projects/glove/">Stanford GloVe project</a></p>
+<p>A recurring clarification was that <strong>a vector is a mathematical form</strong>, while an embedding is a particular use of that form to represent an item. Merely converting text into numbers does not guarantee that the numbers encode rich semantics. For this class, Paul asked learners to accept that suitable input vectors already existed and concentrate on the operation that combines their information.</p>
+<hr />
+<h2 id="sequences-sliding-windows-and-the-limits-of-local-context">🪟 Sequences, Sliding Windows, and the Limits of Local Context<a class="headerlink" href="#sequences-sliding-windows-and-the-limits-of-local-context" title="Permanent link">&para;</a></h2>
+<p>Language is sequential: order helps determine meaning. Paul illustrated this with <strong>“My name is Paul”</strong> and a rearrangement of the same words. The vocabulary stays the same, while the sentence's grammatical interpretation changes. This is why identifying words alone does not solve language understanding.</p>
+<p>He then used <strong>“I am going to London”</strong> to explain local context. From the full sentence, one can answer <strong>who</strong> is going and <strong>where</strong> they are going. A question about <strong>when</strong> cannot be answered from the sentence because no date or time is supplied. This small example ties context to the information that is actually present, rather than to information a reader might assume.</p>
+<p>Choose <strong>going</strong> as a center word and examine neighboring positions. Looking left and right produces a bidirectional neighborhood; looking in one direction produces a unidirectional neighborhood. A <strong>sliding window</strong> moves that center through the sequence, so the next center might be <strong>to</strong>, followed by <strong>London</strong>.</p>
+<p>The PDF's sketch has arrows from the center word toward its neighbors:</p>
+<pre class="mermaid"><code>flowchart LR
+    I["I"] --- A["am"] --- G["going: center"] --- T["to"] --- L["London"]
+    G -. "left context" .-&gt; A
+    G -. "left context" .-&gt; I
+    G -. "right context" .-&gt; T
+    G -. "right context" .-&gt; L</code></pre>
+<p>The class used <strong>window size 2</strong> for two positions on each side. Conventions differ across implementations, so always check whether a window parameter means a radius around the center or a total number of positions. An n-gram is also a different object: a bigram contains two consecutive tokens; a center plus two neighbors on each side is not, by definition, a bigram.</p>
+<h3 id="why-adding-nearby-words-helps-but-is-not-enough">Why adding nearby words helps, but is not enough<a class="headerlink" href="#why-adding-nearby-words-helps-but-is-not-enough" title="Permanent link">&para;</a></h3>
+<p>One neighboring word may leave an expression ambiguous. Expanding a window can supply a subject, a qualifier, or an object that makes the phrase easier to interpret. Paul asked the class to consider progressively larger windows and stressed that there is no universally perfect window size.</p>
+<p>The limitation is that an important dependency may lie outside the chosen neighborhood. Increasing the window helps only until the relevant information is included, and a fixed local rule cannot know in advance which distant word will matter most. The lesson's main direction is therefore to <strong>connect representations using relevance</strong>, rather than to rely only on physical adjacency in the sentence.</p>
+<p>The discussion of two-, three-, and larger-word neighborhoods should be retained as intuition, not as a rule that three is always optimal for GloVe or for language modeling. A useful window depends on the corpus, objective, and representation method.</p>
+<h3 id="the-same-idea-across-other-data-types">The same idea across other data types<a class="headerlink" href="#the-same-idea-across-other-data-types" title="Permanent link">&para;</a></h3>
+<p>Paul briefly compared modalities to make the meaning of “sequence” concrete:</p>
+<ul>
+<li><strong>Time series:</strong> observations have a temporal order. Changing their order changes the process being described.</li>
+<li><strong>Audio:</strong> sound evolves over time. A mel spectrogram was shown as a way of visualizing time-frequency information, and earlier CNN-based audio classification was mentioned as an example of working with that visual representation.</li>
+<li><strong>Video:</strong> the order of frames matters; a frame can be treated as an image, but the video adds a temporal sequence.</li>
+<li><strong>Images:</strong> the whiteboard divides an image into patches, with several pixels inside each patch. This emphasizes spatial structure rather than an inherent reading order like a sentence.</li>
+</ul>
+<p>For precision, images <strong>can</strong> be represented as a sequence of patches in a vision Transformer; the fact that an image starts as a spatial grid does not prohibit a sequence representation. <a href="https://huggingface.co/docs/transformers/glossary#image-patch">Hugging Face glossary: image patches</a></p>
+<p>The modality discussion was a conceptual bridge. No audio-processing, vision, or time-series model was implemented in this session.</p>
+<hr />
+<h2 id="exponential-smoothing-as-an-analogy-for-reweighting">🌊 Exponential Smoothing as an Analogy for Reweighting<a class="headerlink" href="#exponential-smoothing-as-an-analogy-for-reweighting" title="Permanent link">&para;</a></h2>
+<p>Before moving to attention, Paul introduced a familiar time-series operation: use weighted information from current and past observations to form a smoother representation. The idea is that a data point need not be interpreted entirely in isolation; previous information can affect the value used to describe the current state.</p>
+<p>The formula actually written in the companion PDF is:</p>
+<p>$$
+s_t = \beta x_t + (1-\beta)s_{t-1}
+$$</p>
+<p>Here:</p>
+<ul>
+<li><span class="arithmatex">\(x_t\)</span> is the current observation.</li>
+<li><span class="arithmatex">\(s_{t-1}\)</span> is the previous smoothed value.</li>
+<li><span class="arithmatex">\(s_t\)</span> is the new smoothed value.</li>
+<li><span class="arithmatex">\(\beta\)</span> determines the balance between current and previous information.</li>
+</ul>
+<p>With the board's example <strong>β = 0.9</strong>, the current term receives a coefficient of 0.9 and the previous smoothed term receives 0.1. Increasing one coefficient reduces the other because the two add to one. This is the “control” intuition: choose how strongly each source influences the result.</p>
+<p>The class referred to exponential weighted averages, exponential moving averages, and simple exponential smoothing. The important object here is the recurrence shown above; a plain moving average is a related smoothing idea but uses a different weighting rule.</p>
+<h3 id="what-the-noisy-curve-sketch-was-intended-to-show">What the noisy-curve sketch was intended to show<a class="headerlink" href="#what-the-noisy-curve-sketch-was-intended-to-show" title="Permanent link">&para;</a></h3>
+<p>The PDF draws a noisy time series, an intermediate bell-shaped weighting illustration, and a final curve with less noise. Nearby points are described as receiving stronger influence, while far-away points receive weaker influence. Paul repeatedly made clear that the bell-shaped result was an <strong>assumed illustration</strong>, not a claim that arbitrary time-series data becomes normally distributed after smoothing.</p>
+<pre class="mermaid"><code>flowchart TB
+    N["Noisy time-series observations"] --&gt; R["Reweight information from observations"]
+    R --&gt; C["Nearby / recent information:&lt;br/&gt;stronger influence in the analogy"]
+    R --&gt; F["Distant information:&lt;br/&gt;weaker influence in the analogy"]
+    C --&gt; S["Smoothed representation&lt;br/&gt;with reduced short-term noise"]
+    F --&gt; S
+    S --&gt; Q["Can other data points supply&lt;br/&gt;useful information to this point?"]</code></pre>
+<p>The arrows reproduce the whiteboard's teaching structure: noisy observations → reweighting → a smoother representation → a question about context. They are not a new algorithm or a guarantee about the final shape of the data.</p>
+<p>In response to questions, Paul also explained that the time-series process moves from past observations toward the present and future. The recurrence above uses the previous smoothed state; it does not revise the past using an unseen future observation. The bidirectional arrows in the broader whiteboard analogy should not be confused with that causal recurrence.</p>
+<h3 id="the-bridge-to-nlp">The bridge to NLP<a class="headerlink" href="#the-bridge-to-nlp" title="Permanent link">&para;</a></h3>
+<p>The transferable idea is <strong>weighted influence</strong>. If one representation contributes to another representation, the latter can contain information that was absent when it was considered alone. The time-series example offers an intuitive way to see that mechanism before dealing with a sentence's vectors.</p>
+<p>The proximity rule does not transfer unchanged to language. A word close to the center may be less informative than a distant word. Paul explicitly returned to this distinction: in NLP, the useful relation can span a large gap. Attention must be able to express that relation rather than automatically suppress it because of distance.</p>
+<hr />
+<h2 id="long-range-context-noa-can-be-annoying-but-she-is-a-great-cat">🐈 Long-Range Context: “Noa Can Be Annoying, but She Is a Great Cat”<a class="headerlink" href="#long-range-context-noa-can-be-annoying-but-she-is-a-great-cat" title="Permanent link">&para;</a></h2>
+<p>The central language example in the handwritten notes is <strong>“Noa can be annoying, but she is a great cat.”</strong> It creates a useful ambiguity: the beginning and the pronoun <strong>she</strong> do not by themselves establish what kind of entity Noa is. The final word <strong>cat</strong> supplies the answer.</p>
+<p>Paul first chose <strong>annoying</strong> as a base word and expanded its neighborhood. A fragment such as <strong>“be annoying but”</strong> tells us little. A larger fragment such as <strong>“can be annoying but she”</strong> tells us more, and including still more of the sentence continues to reveal structure. Yet a narrow local window can still fail to connect <strong>Noa</strong> at the start with <strong>cat</strong> at the end.</p>
+<p>The PDF's dependency arrows connect the center with its nearby words and also highlight the distant subject and the final identifying phrase:</p>
+<pre class="mermaid"><code>flowchart LR
+    N["Noa"] --&gt; C["can be annoying"]
+    C --&gt; B["but"] --&gt; S["she"] --&gt; G["is a great cat"]
+    S -. "refers back to" .-&gt; N
+    G -. "identifies Noa as a cat" .-&gt; N
+    C -. "a small local window may stop here" .-&gt; S</code></pre>
+<p>This example explains <strong>why distance matters to a local method</strong>. The needed evidence is present, but a short neighborhood may exclude it. A system working only with a fragment might treat the pronoun as referring to a person or to a generic female entity. Reading the complete sentence resolves that interpretation.</p>
+<p>The point is not that every classical NLP method is incapable of representing a long dependency. It is that a fixed local representation has a limited information path, and simply enlarging a window does not provide a learned rule for which relationships deserve emphasis.</p>
+<h3 id="the-proposed-transformation">The proposed transformation<a class="headerlink" href="#the-proposed-transformation" title="Permanent link">&para;</a></h3>
+<p>Paul converted the conceptual sentence into tokens and then into vectors, using the notation <strong>V₁, V₂, …</strong>. He proposed a reweighting operation that would produce <strong>Y₁, Y₂, …</strong>, where each output is intended to carry more information about the surrounding sequence.</p>
+<p>The supplied PDF shows this as parallel token/vector columns feeding a reweighting block and continuing to contextual output vectors. Its token columns are schematic, so the number of drawn columns should not be treated as the exact output of a real tokenizer.</p>
+<pre class="mermaid"><code>flowchart TB
+    S["Sentence"] --&gt; T["Token positions"] --&gt; V["Input vectors V1 ... Vn"]
+    V --&gt; R["Reweight using relationships&lt;br/&gt;among the available vectors"]
+    R --&gt; Y["Output vectors Y1 ... Yn"]
+    Y --&gt; C["Each output can incorporate&lt;br/&gt;information from other positions"]</code></pre>
+<p>This is a <strong>forward transformation</strong>, not yet an account of training. The class has not introduced a prediction target, a loss function, an optimizer step, or learned query/key/value projections. Its question is narrower: given vectors, how can a calculation mix information between positions?</p>
+<p>Tokenization was deliberately simplified to one word per token in the examples. Real tokenizers may emit whole words, subwords, punctuation, or special tokens, so neither “one word is always one token” nor a fixed characters-per-token estimate is a general definition. <a href="https://huggingface.co/docs/transformers/tokenizer_summary">Hugging Face tokenization algorithms</a></p>
+<hr />
+<h2 id="exploring-embedding-spaces-and-reading-their-visualizations">🌌 Exploring Embedding Spaces and Reading Their Visualizations<a class="headerlink" href="#exploring-embedding-spaces-and-reading-their-visualizations" title="Permanent link">&para;</a></h2>
+<p>Paul paused the whiteboard explanation to show what numerical representations look like when projected into a form humans can inspect. The demonstration is useful because “vectors are close” is otherwise easy to repeat without understanding what is being compared.</p>
+<h3 id="word2vec-data-in-a-3d-projector">Word2Vec data in a 3D projector<a class="headerlink" href="#word2vec-data-in-a-3d-projector" title="Permanent link">&para;</a></h3>
+<p>One example used roughly <strong>10,000 word vectors with 200 dimensions</strong>. The screen allowed the class to rotate a 3D view, zoom, and select words. Paul looked at geographical terms, numbers, related words, and alternative spellings to see whether their neighborhoods appeared sensible.</p>
+<p>There are two separate quantities:</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>Meaning in the demonstration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Number of points</td>
+<td>How many represented items are displayed: approximately 10,000 words</td>
+</tr>
+<tr>
+<td>Original vector dimension</td>
+<td>How many coordinates describe each item: 200</td>
+</tr>
+<tr>
+<td>Display dimension</td>
+<td>How many coordinates the plotted view uses: two or three</td>
+</tr>
+</tbody>
+</table>
+<p>A 200-dimensional vector does not become a three-coordinate original representation merely because the browser displays it in 3D. The view is a projection. Paul stressed that a dense cloud of points is difficult to interpret without selecting items and examining their nearest neighbors.</p>
+<h3 id="familiar-words-make-relationships-easier-to-inspect">Familiar words make relationships easier to inspect<a class="headerlink" href="#familiar-words-make-relationships-easier-to-inspect" title="Permanent link">&para;</a></h3>
+<p>Another visualization used examples such as <strong>husband</strong>, <strong>wife</strong>, <strong>father</strong>, <strong>mother</strong>, <strong>daughter</strong>, <strong>son</strong>, <strong>prince</strong>, and <strong>princess</strong>. Selecting husband returned a neighborhood containing several family and relationship terms. The class compared such neighbors with a word such as <strong>computer</strong>, whose context is different from the family examples.</p>
+<p>The lesson is to ask whether a neighborhood is useful for the represented task, not merely whether two labels look close on the screen. A projected gap between prince and princess does not necessarily contradict a nearest-neighbor result computed in the original space.</p>
+<p>The display also included axes with labels such as age and a residual direction. These were visualization choices; they do not establish that every learned embedding comes with a clearly named semantic coordinate. The later king/queen drawing uses named attributes as a teaching analogy, not as a recovered list of the model's actual dimensions.</p>
+<h3 id="pca-t-sne-and-umap">PCA, t-SNE, and UMAP<a class="headerlink" href="#pca-t-sne-and-umap" title="Permanent link">&para;</a></h3>
+<p>Paul changed the projection method from PCA to t-SNE and discussed the different visual density. UMAP was also mentioned. They are useful ways to explore high-dimensional data, but t-SNE is not simply an “advanced version of PCA,” and a denser-looking plot is not proof that the underlying embeddings improved.</p>
+<p>PCA uses a linear projection. t-SNE emphasizes local neighborhoods and does not explicitly preserve global structure; its appearance also depends on its settings. A 2D or 3D view should therefore support inspection, while the original vectors and their chosen similarity measure remain the basis for numerical comparisons. <a href="https://scikit-learn.org/stable/modules/manifold.html#t-distributed-stochastic-neighbor-embedding-t-sne">Scikit-learn manifold-learning documentation</a></p>
+<h3 id="an-atlas-of-an-entire-dataset">An atlas of an entire dataset<a class="headerlink" href="#an-atlas-of-an-entire-dataset" title="Permanent link">&para;</a></h3>
+<p>The Apple Embedding Atlas demonstration moved beyond individual word labels to a large wine-review dataset, with approximately <strong>160,000 points</strong>. The class inspected metadata such as country, province, and price. Coloring points by price let Paul observe that much of the displayed data fell in the 10–100 range. This was an observation about that demo dataset, not a conclusion about wine prices generally.</p>
+<p>An atlas combines a projected embedding map with the ability to inspect the original items and their metadata. It can reveal regions worth exploring without requiring the viewer to read the full dataset line by line. The official Apple project supports this general workflow of visualizing embeddings, exploring subsets, and examining individual points. <a href="https://apple.github.io/embedding-atlas/">Apple Embedding Atlas</a></p>
+<p>Paul also mentioned Nomic Atlas as another route for building such a view and suggested that learners could start with an available embedding model rather than train one from scratch. No atlas-building code was supplied in this class.</p>
+<h3 id="the-leaderboard-discussion">The leaderboard discussion<a class="headerlink" href="#the-leaderboard-discussion" title="Permanent link">&para;</a></h3>
+<p>The class briefly looked at the MTEB leaderboard and model dimensions including <strong>128</strong>, <strong>768</strong>, and <strong>4096</strong>, with <strong>1536</strong> mentioned by students as another familiar size. These are examples of differing model outputs, not a universal minimum or a rule that larger vectors always perform better. Leaderboard entries and rankings are time-dependent; the session's comparison should not be treated as a current ranking.</p>
+<p>The practical exercise is to compare the <strong>representation dimension</strong>, the <strong>task</strong>, and the <strong>quality of the resulting neighborhoods</strong>. Dimension describes capacity and resource use; it does not directly tell a learner how much useful context a model captured.</p>
+<p><strong>Class companion resources:</strong> The course's <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff">Transformers 101 resource page</a> supplies the <a href="https://projector.tensorflow.org/">Embedding Projector</a>, <a href="https://apple.github.io/embedding-atlas/examples/">Apple Embedding Atlas examples</a>, and <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB leaderboard</a>. The <a href="https://www.tensorflow.org/tensorboard/tensorboard_projector_plugin">TensorBoard projector guide</a> explains the visualization workflow. These companion links recover useful resources whose exact URLs were not retained in the transcript.</p>
+<hr />
+<h2 id="generating-reweighting-coefficients-from-the-vectors-themselves">⚖️ Generating Reweighting Coefficients from the Vectors Themselves<a class="headerlink" href="#generating-reweighting-coefficients-from-the-vectors-themselves" title="Permanent link">&para;</a></h2>
+<p>Returning to the PDF, Paul compared vectors for <strong>king</strong> and <strong>queen</strong>. The drawing labels possible shared attributes such as family, royalty, power, history, and gender. The purpose is to explain why two words can have a useful relationship even when they are not next to one another in a sentence.</p>
+<p>The numbers in a learned vector are not normally a hand-written checklist of these attributes. The named features make the intuition accessible: related concepts can share patterns in their numerical representations, and those patterns can be compared.</p>
+<p>Instead of introducing an unrelated external coefficient, Paul proposed deriving a score from two available vectors through their <strong>dot product</strong>. The board illustrates this for king and queen, then develops the same idea for each pair of token vectors in a short sentence.</p>
+<h3 id="keep-the-two-meanings-of-weight-separate">Keep the two meanings of “weight” separate<a class="headerlink" href="#keep-the-two-meanings-of-weight-separate" title="Permanent link">&para;</a></h3>
+<p>This distinction became the most repeated clarification in the session:</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>How it is obtained</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Calculated attention coefficient</td>
+<td>Computed from the current input representations and then normalized</td>
+<td>Determines how strongly one position contributes to an output</td>
+</tr>
+<tr>
+<td>Trainable model parameter</td>
+<td>Initialized or loaded, then adjusted through training when unfrozen</td>
+<td>Defines transformations such as embedding lookup and linear projections</td>
+</tr>
+</tbody>
+</table>
+<p>Paul initially used <strong>W</strong> for the calculated coefficients. Students understandably associated this with the weights and biases of a neural network and began asking about Xavier or He initialization. He changed the notation to <strong>A</strong> to emphasize that the letter was arbitrary and that <strong>this toy calculation was not initializing or updating parameters</strong>.</p>
+<p>A calculated coefficient can change when the input changes, even when all model parameters remain fixed. Conversely, during training, a model can update the parameters that help produce those coefficients. These are connected ideas, but they describe different parts of the computation.</p>
+<p>The class's distinction should not be extended into the claim that real self-attention has no trainable parameters. A standard Transformer uses learned projections to create the representations used for attention. <a href="https://arxiv.org/html/1706.03762v7#S3">Attention Is All You Need, model architecture</a></p>
+<h3 id="a-dot-product-produces-a-scalar-score">A dot product produces a scalar score<a class="headerlink" href="#a-dot-product-produces-a-scalar-score" title="Permanent link">&para;</a></h3>
+<p>For two equal-length vectors, the dot product multiplies corresponding coordinates and sums them. Its result is a <strong>scalar</strong>. That scalar can then scale a vector; the scaled result is again a vector. Summing several such scaled vectors produces the final output vector.</p>
+<p>The class uses these operations in two distinct places:</p>
+<ol>
+<li><strong>Compare two input vectors</strong> to obtain one score.</li>
+<li><strong>Multiply a normalized scalar coefficient by a vector</strong>, then add the contributions.</li>
+</ol>
+<p>Although the spoken explanation sometimes uses “vector multiplication” broadly, these are not all the same operation. In particular, the dot product is not a cross product, and scalar-vector multiplication is not a second vector-vector dot product.</p>
+<h3 id="dot-product-versus-cosine-similarity">Dot product versus cosine similarity<a class="headerlink" href="#dot-product-versus-cosine-similarity" title="Permanent link">&para;</a></h3>
+<p>Several students asked whether the calculated score was cosine similarity. Paul directed them to the denominator of the cosine formula. A dot product supplies the numerator; cosine similarity additionally divides by the product of the vector lengths:</p>
+<p>$$
+\operatorname{cosine}(u,v)=\frac{u\cdot v}{|u|\,|v|}
+$$</p>
+<p>Thus, an ordinary dot product can reflect both direction and magnitude, while cosine similarity removes the magnitude factor. They coincide when the compared vectors have unit norm. Numerical implementations also protect against a zero denominator. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.cosine_similarity.html">PyTorch cosine-similarity documentation</a></p>
+<p>Cosine similarity was discussed as a familiar tool for embedding comparison and retrieval. It is not the definition of semantic search, and it is not the exact operation used at every stage of attention. The present example is about producing and using attention coefficients.</p>
+<hr />
+<h2 id="the-complete-four-token-walkthrough-bank-of-a-river">🏦 The Complete Four-Token Walkthrough: “Bank of a River”<a class="headerlink" href="#the-complete-four-token-walkthrough-bank-of-a-river" title="Permanent link">&para;</a></h2>
+<p>To reduce the amount of writing, Paul replaced the longer cat example with <strong>“Bank of a river.”</strong> Here the surrounding words can help resolve the meaning of <strong>bank</strong>. The whiteboard maps the four words to four vectors and sends them through a block labeled <strong>REWEIGH</strong>, producing four contextual outputs.</p>
+<table>
+<thead>
+<tr>
+<th>Position</th>
+<th>Word in the teaching example</th>
+<th>Input representation</th>
+<th>Output representation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Bank</td>
+<td>V₁</td>
+<td>Y₁</td>
+</tr>
+<tr>
+<td>2</td>
+<td>of</td>
+<td>V₂</td>
+<td>Y₂</td>
+</tr>
+<tr>
+<td>3</td>
+<td>a</td>
+<td>V₃</td>
+<td>Y₃</td>
+</tr>
+<tr>
+<td>4</td>
+<td>river</td>
+<td>V₄</td>
+<td>Y₄</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart TB
+    B["Bank"] --&gt; V1["V1"]
+    O["of"] --&gt; V2["V2"]
+    A["a"] --&gt; V3["V3"]
+    R["river"] --&gt; V4["V4"]
+    V1 --&gt; RW["REWEIGH:&lt;br/&gt;compare, normalize, and combine"]
+    V2 --&gt; RW
+    V3 --&gt; RW
+    V4 --&gt; RW
+    RW --&gt; Y1["Y1"]
+    RW --&gt; Y2["Y2"]
+    RW --&gt; Y3["Y3"]
+    RW --&gt; Y4["Y4"]</code></pre>
+<h3 id="step-1-fix-the-first-base-vector-and-compare-it-with-all-positions">Step 1: Fix the first base vector and compare it with all positions<a class="headerlink" href="#step-1-fix-the-first-base-vector-and-compare-it-with-all-positions" title="Permanent link">&para;</a></h3>
+<p>For V₁, the board calculates:</p>
+<p>$$
+s_{11}=V_1\cdot V_1,\quad
+s_{12}=V_1\cdot V_2,\quad
+s_{13}=V_1\cdot V_3,\quad
+s_{14}=V_1\cdot V_4
+$$</p>
+<p>The board calls these unnormalized values <strong>W₁₁, W₁₂, W₁₃, W₁₄</strong>. Here, the letter <strong>s</strong> makes it easier to distinguish the raw scores from the final normalized coefficients. This is a notation clarification of the same calculation, not a separate implementation.</p>
+<p>The first index identifies the position whose output is being formed. The second index identifies the position that may contribute information. Every row holds a different base position fixed.</p>
+<p>Including V₁·V₁ is allowed. In an unmasked self-attention example, the current position is one of the available sources. It is not excluded merely because its information might also be present elsewhere in the calculation.</p>
+<h3 id="step-2-normalize-the-scores-for-that-base-position">Step 2: Normalize the scores for that base position<a class="headerlink" href="#step-2-normalize-the-scores-for-that-base-position" title="Permanent link">&para;</a></h3>
+<p>Paul wrote that the final row of coefficients should <strong>sum to one</strong>. With the normalized coefficients denoted by a₁₁ through a₁₄:</p>
+<p>$$
+a_{11}+a_{12}+a_{13}+a_{14}=1
+$$</p>
+<p>The normalization is performed for each base position's row. It does not mean that every coefficient equals one, and it does not mean that the entire matrix has a single total sum of one.</p>
+<p>The class used “normalization” broadly and mentioned min-max scaling during Q&amp;A. For actual scaled dot-product attention, the standard operation is <strong>softmax across the source positions</strong>, which gives nonnegative coefficients summing to one. Ordinary min-max scaling alone does not impose that sum-to-one property. Scaling and normalization support the numerical behavior of attention; they do not simply make matrix multiplication cheaper because the numbers lie between zero and one. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html">PyTorch scaled dot-product attention</a></p>
+<h3 id="step-3-use-the-coefficients-to-combine-the-vectors">Step 3: Use the coefficients to combine the vectors<a class="headerlink" href="#step-3-use-the-coefficients-to-combine-the-vectors" title="Permanent link">&para;</a></h3>
+<p>The first output is the weighted sum shown in the PDF:</p>
+<p>$$
+Y_1=a_{11}V_1+a_{12}V_2+a_{13}V_3+a_{14}V_4
+$$</p>
+<p>Each coefficient scales the corresponding source vector, and the scaled vectors are added. The result is one output vector for the first position. It can therefore incorporate information from <strong>river</strong>, rather than represent <strong>bank</strong> in isolation.</p>
+<p>The score calculation and the weighted sum serve different purposes. The first determines <strong>how much</strong> a source should contribute; the second carries the source vector's actual numerical information into the output. This answers the repeated question of why a score is calculated and then multiplied by a vector again.</p>
+<pre class="mermaid"><code>flowchart LR
+    Base["V1: base position"] --&gt; Score["Dot products with&lt;br/&gt;V1, V2, V3, V4"]
+    Sources["All four source vectors"] --&gt; Score
+    Score --&gt; Norm["Normalize this row"]
+    Norm --&gt; Coeff["a11, a12, a13, a14"]
+    Coeff --&gt; Sum["Weighted sum:&lt;br/&gt;a11 V1 + a12 V2 + a13 V3 + a14 V4"]
+    Sources --&gt; Sum
+    Sum --&gt; Out["Y1: contextual output vector"]</code></pre>
+<h3 id="step-4-repeat-with-each-other-base-vector">Step 4: Repeat with each other base vector<a class="headerlink" href="#step-4-repeat-with-each-other-base-vector" title="Permanent link">&para;</a></h3>
+<p>Next, hold V₂ fixed, obtain its coefficients, and form Y₂. Repeat for V₃ and V₄:</p>
+<p>$$
+\begin{aligned}
+Y_2 &amp;= a_{21}V_1+a_{22}V_2+a_{23}V_3+a_{24}V_4 \
+Y_3 &amp;= a_{31}V_1+a_{32}V_2+a_{33}V_3+a_{34}V_4 \
+Y_4 &amp;= a_{41}V_1+a_{42}V_2+a_{43}V_3+a_{44}V_4
+\end{aligned}
+$$</p>
+<p>The last line on the handwritten board repeats the label Y₃; the four-output calculation and surrounding explanation establish that this final row corresponds to <strong>Y₄</strong>.</p>
+<p>The coefficients are <strong>not randomly assigned to source vectors</strong>. For output row i, aᵢⱼ multiplies source Vⱼ. Changing that association would change the operation. This is the indexing issue Paul clarified when students asked about W₂₁ and whether it should multiply V₁ or V₂.</p>
+<p>The raw toy scores have a useful mathematical nuance: V₁·V₂ and V₂·V₁ are equal. Their normalized coefficients need not be equal, because the two rows can have different normalization denominators. In a full model, different learned query and key projections add another reason that attention need not be symmetric.</p>
+<h3 id="what-the-outputs-do-and-what-they-do-not-yet-do">What the outputs do, and what they do not yet do<a class="headerlink" href="#what-the-outputs-do-and-what-they-do-not-yet-do" title="Permanent link">&para;</a></h3>
+<p>Y₁ through Y₄ are <strong>intermediate representations</strong>. They are not a translation, a next-token probability, or an answer to a question. Other blocks and a task-specific objective are needed to turn those representations into a trained system's output.</p>
+<p>Paul used “more context” to describe the intended result: an output includes a mixture of available information rather than only its original vector. That is a structural property of the calculation. It does not prove that arbitrary input vectors will produce a correct semantic interpretation. For example, mutually orthogonal one-hot vectors do not automatically reveal that <strong>it</strong> refers to <strong>animal</strong> in a sentence.</p>
+<p>This is why the toy example is valuable as a mechanism while still leaving learned representation quality and the rest of the Transformer architecture for later lessons.</p>
+<hr />
+<h2 id="understanding-the-four-whiteboard-observations-correctly">🧩 Understanding the Four Whiteboard Observations Correctly<a class="headerlink" href="#understanding-the-four-whiteboard-observations-correctly" title="Permanent link">&para;</a></h2>
+<p>After the calculation, Paul wrote four observations: no weights had been trained, order had no influence, proximity had no influence, and the calculation was shape independent. They summarize the intended toy example, but each needs a precise scope.</p>
+<table>
+<thead>
+<tr>
+<th>Whiteboard observation</th>
+<th>Meaning for this class's simplified calculation</th>
+<th>Boundary to remember</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“I have not trained any weights”</td>
+<td>The coefficients were calculated from supplied vectors; no optimization step was performed</td>
+<td>A real model can contain learned embeddings and learned attention projections</td>
+</tr>
+<tr>
+<td>“Order has no influence”</td>
+<td>No positional information was supplied to the bare all-to-all calculation</td>
+<td>Full language models require a way to represent order; changing word order can change meaning</td>
+</tr>
+<tr>
+<td>“Proximity has no influence”</td>
+<td>A position is not restricted to its immediate neighbors in the illustrated unmasked block</td>
+<td>Allowed connections depend on the attention mask and architecture; access does not imply equal importance</td>
+</tr>
+<tr>
+<td>“Shape independent”</td>
+<td>Combining equal-width vectors can preserve the vector width in the output</td>
+<td>Dimensions must still be compatible; intermediate tensors do not all have the same shape</td>
+</tr>
+</tbody>
+</table>
+<h3 id="order-independence-is-a-property-of-the-bare-operation">Order independence is a property of the bare operation<a class="headerlink" href="#order-independence-is-a-property-of-the-bare-operation" title="Permanent link">&para;</a></h3>
+<p>The all-to-all toy block has no instruction saying “this word is first” or “this word is ten positions away.” Reordering its inputs therefore reorders the associated outputs rather than creating a representation of grammar on its own. The technical term is <strong>permutation equivariance</strong>.</p>
+<p>Paul's answer to Kalyan made a useful distinction between that small block and a complete network trained on ordered language. For a full Transformer, positions still matter. The original architecture explicitly adds positional information because attention without recurrence or convolution otherwise lacks sequence order. <a href="https://arxiv.org/html/1706.03762v7#S3.SS5">Attention Is All You Need, positional encoding</a></p>
+<p>A model's ability to cope with a slightly scrambled phrase is not evidence that language order is irrelevant. It may use other clues to recover an interpretation.</p>
+<h3 id="all-to-all-access-does-not-mean-all-sources-receive-the-same-weight">All-to-all access does not mean all sources receive the same weight<a class="headerlink" href="#all-to-all-access-does-not-mean-all-sources-receive-the-same-weight" title="Permanent link">&para;</a></h3>
+<p>The distant <strong>cat</strong> can contribute to the representation of <strong>Noa</strong> because the illustrated block lets the positions interact. A nearby function word can receive less weight than a more informative distant word. The removal of a fixed locality restriction is the point; the model still needs to decide the importance of allowed sources.</p>
+<p>For an autoregressive decoder, future positions are masked. “Every position can see every other position” applies to the unmasked teaching example, not to every attention layer used in production. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html">PyTorch attention-mask behavior</a></p>
+<h3 id="shape-preservation-does-not-erase-dimensional-constraints">Shape preservation does not erase dimensional constraints<a class="headerlink" href="#shape-preservation-does-not-erase-dimensional-constraints" title="Permanent link">&para;</a></h3>
+<p>If all four source vectors have d coordinates, scaling and summing them produces another d-coordinate vector. But the collection of four vectors, the table of pairwise scores, and one individual vector are different objects. A scalar coefficient is also different from a vector.</p>
+<p>A token vector is not a matrix merely because it has many features; stacking several token vectors creates a matrix. Likewise, vocabulary size and embedding width need not be equal. Vocabulary size controls the number of entries in a lookup table; embedding width controls the length of each entry. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Embedding.html">PyTorch embedding shapes</a></p>
+<p>There is no general rule requiring a width to be a power of two. Paul mentioned 128, 256, and related values as common practical choices, but model design and implementation determine the actual constraints.</p>
+<hr />
+<h2 id="training-batches-and-the-boundary-of-todays-example">🛠️ Training, Batches, and the Boundary of Today's Example<a class="headerlink" href="#training-batches-and-the-boundary-of-todays-example" title="Permanent link">&para;</a></h2>
+<p>Many open-floor questions concerned training, fine-tuning, multiple attention blocks, and very large corpora. Paul kept returning to the session's limited objective: understand one reweighting operation before adding the full network.</p>
+<h3 id="calculating-a-representation-is-different-from-training-a-model">Calculating a representation is different from training a model<a class="headerlink" href="#calculating-a-representation-is-different-from-training-a-model" title="Permanent link">&para;</a></h3>
+<p>The toy block takes existing vectors and produces new vectors. No parameter update happens in that demonstration. Training introduces an objective and updates trainable parameters to improve it. Backpropagation computes gradients for that process; it is not something that must run whenever an already trained model processes a prompt.</p>
+<p>This distinction matters for Swati Gupta's example, <strong>“The animal did not cross the road because it was tired.”</strong> The sentence supplies context, and a forward attention computation can mix that information. A trained model's ability to use the relation meaningfully depends on learned representations and transformations. A parameter-free calculation can be executed without backpropagation, but that fact alone does not establish correct pronoun resolution.</p>
+<p>Paul also used a RAG analogy: an existing vector representation can retrieve a relevant chunk without retraining the model for each retrieval. Retrieval and model training are separate operations. This was an analogy in the Q&amp;A, not a RAG implementation or a demonstration that raw, untrained vectors understand the sentence.</p>
+<h3 id="batches-steps-and-epochs">Batches, steps, and epochs<a class="headerlink" href="#batches-steps-and-epochs" title="Permanent link">&para;</a></h3>
+<p>For a dataset too large to fit into memory at once, Paul explained breaking work into batches. Processing one batch is a step; completing a pass over the training dataset is an epoch. His simple illustration divides a dataset into ten batches, requiring ten steps for one pass.</p>
+<p>An epoch, however, does not create direct attention links across separately processed examples. It exposes the model to the dataset through parameter updates. For a particular forward pass, a token can attend only to positions included in the permitted input sequence. Gaurav's question about a dependency in a much later chunk therefore concerns input construction and context handling as well as batching; that solution was not worked through in this lesson.</p>
+<h3 id="sentence-boundaries-and-context-windows">Sentence boundaries and context windows<a class="headerlink" href="#sentence-boundaries-and-context-windows" title="Permanent link">&para;</a></h3>
+<p>Paul mentioned start/end markers and punctuation while explaining how multiple sentences can be represented. Real tokenizers and models have their own special tokens, and punctuation is not automatically a reserved special token. A delimiter indicates a boundary; the attention mask determines which connections are permitted. Multiple sentences can share a sequence and interact when the architecture allows it. <a href="https://huggingface.co/docs/transformers/glossary">Hugging Face glossary: token IDs and attention masks</a></p>
+<p>A model's context capacity constrains the token sequence it can process. It should not be confused with the width of an individual vector or with the number of examples in a training batch. The session did not implement long-context processing, cross-chunk memory, or a cache.</p>
+<h3 id="what-to-watch-during-training">What to watch during training<a class="headerlink" href="#what-to-watch-during-training" title="Permanent link">&para;</a></h3>
+<p>Swati Deepak Kumar asked whether loss alone could decide when to stop or whether to continue fine-tuning. Paul advised tracking loss over successive epochs, looking for a plateau, and also examining validation loss and validation accuracy. A decreasing training loss can coexist with disappointing validation behavior, so the model's actual task performance still matters.</p>
+<p>He mentioned incorrect annotations and an unsuitable learning rate as possible explanations for problematic results. His practice was to inspect early training behavior and decide whether the configuration looked promising. The discussion did not establish a universal number of epochs, a requirement that loss reach zero, or a single criterion suitable for every task.</p>
+<h3 id="gpu-execution-and-recurrent-models">GPU execution and recurrent models<a class="headerlink" href="#gpu-execution-and-recurrent-models" title="Permanent link">&para;</a></h3>
+<p>The hand calculation writes pairwise operations one after another so a learner can follow them. Matrix-based implementations can express many of those operations together, and GPUs are designed to execute such numerical work efficiently. The point is about the hardware and the matrix formulation, not about self-attention “helping the GPU.”</p>
+<p>In response to a question about LSTMs and GRUs, Paul distinguished their recurrent gates from the attention calculation. He also said that he still considers recurrent models for smaller-data problems. His example data-size thresholds were personal heuristics, not architecture-selection rules. The useful principle is to consider the task and available data instead of assuming that the newest architecture is always required.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul said the next class would begin by revising this self-attention calculation, then move toward <strong>multi-head attention</strong> and attention as part of the larger architecture. He also intended to begin the <strong>Attention Is All You Need</strong> paper walkthrough and introduce the <strong>query/key/value</strong> idea using a database analogy.</p>
+<p>He mentioned learned linear layers as the point at which actual model weights and biases would enter the explanation. Detailed implementation was planned after the initial conceptual sessions. The transcript did not complete those topics here; diagrams suggesting additional attention blocks were briefly sketched and then set aside to keep this class focused.</p>
+<p>The Illustrated Transformer and the 3Blue1Brown attention explanation were mentioned as supporting material. The course's <a href="https://krishnaikacademy.notion.site/Transformers-101-3afeba9593d0804fa8e1e301f12ae2ff">Transformers 101 resource page</a> supplies <a href="https://jalammar.github.io/illustrated-transformer/">The Illustrated Transformer</a> as further reading. The exact 3Blue1Brown video link was not preserved in the transcript or this resource entry.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>The table covers both in-flow questions and the extended open floor. Near-duplicate doubts are merged, while substantive follow-ups are retained. Speaker names follow the transcript; <strong>Urna</strong> also identified herself orally as <strong>Udnaya</strong>, and <strong>136</strong> and <strong>iPhone</strong> are transcript display labels.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pralad:</strong> What makes a window “sliding”?</td>
+<td>The chosen center advances through the sequence, and its neighborhood changes with it. A window's width and the movement of its center are separate ideas.</td>
+</tr>
+<tr>
+<td><strong>Question relayed in chat; name unclear:</strong> Can a mel spectrogram be converted to an embedding?</td>
+<td>Yes, with an appropriate representation model for that input. Paul distinguished this from directly applying a normal text embedding pipeline; the audio example was only a conceptual illustration.</td>
+</tr>
+<tr>
+<td><strong>Kulkarni, first name unclear / Manoj:</strong> Where do V₁ and V₂ come from?</td>
+<td>For the toy calculation, assume an agreed numerical representation produced by a vectorization method. The class did not implement the conversion; useful semantic vectors and arbitrary numeric encodings are not interchangeable in quality.</td>
+</tr>
+<tr>
+<td><strong>Sai:</strong> How can high-dimensional embeddings be shown in 3D?</td>
+<td>Reduce or project them into three display coordinates, then plot them. Paul mentioned Plotly and Matplotlib; the display does not retain every relationship of the original high-dimensional space.</td>
+</tr>
+<tr>
+<td><strong>Shiv Prakash:</strong> Is reweighting the same as gradient descent or backpropagation?</td>
+<td>No. Reweighting is the forward combination of available representations; gradient-based training changes trainable parameters.</td>
+</tr>
+<tr>
+<td><strong>Nandan:</strong> Is importance based on Euclidean distance, and does reweighting edit the vector directly?</td>
+<td>The class's attention example derives dot-product scores and uses normalized coefficients to scale source vectors. Similarity or distance choices depend on the representation and task; the lecture did not establish a universal metric.</td>
+</tr>
+<tr>
+<td><strong>Vivek:</strong> Does semantic search mean using contextual vectors?</td>
+<td>Contextual representations can support semantic retrieval, but semantic search is a retrieval objective rather than a synonym for one vector type or for cosine similarity.</td>
+</tr>
+<tr>
+<td><strong>Ritam / Kalyan Rad / Urna:</strong> How can order be irrelevant when language needs order?</td>
+<td>The bare calculation has no position input and connects the available vectors without a local ordering rule. A complete Transformer still represents positions; Kalyan's follow-up distinguished the small block from the full network.</td>
+</tr>
+<tr>
+<td><strong>Shiva:</strong> Is this logistic regression?</td>
+<td>No. The demonstrated operation calculates pairwise scores and weighted sums to produce contextual vectors; it does not fit a logistic-regression classifier.</td>
+</tr>
+<tr>
+<td><strong>Umesh:</strong> Where is the query vector?</td>
+<td>Query/key/value projections had not yet been taught. Paul asked learners to understand the mixing operation first and deferred that terminology.</td>
+</tr>
+<tr>
+<td><strong>Bansur / Shivam Kumar:</strong> Are the coefficients normalized, and is that min-max scaling?</td>
+<td>The final coefficients in each output row are intended to sum to one. Standard attention uses softmax; min-max scaling alone does not guarantee that sum.</td>
+</tr>
+<tr>
+<td><strong>Durga Rao:</strong> How many attention blocks should be used?</td>
+<td>The number is an architectural choice or hyperparameter. Paul did not select an optimum here and removed the multi-block sketch before teaching it in detail.</td>
+</tr>
+<tr>
+<td><strong>Sarita / Athira:</strong> Do these W values require Xavier or He initialization?</td>
+<td>No initialization occurs for the calculated coefficients in this illustration. Initialization concerns trainable parameters; Paul switched the coefficient notation from W to A to reduce the confusion.</td>
+</tr>
+<tr>
+<td><strong>Prem / Praveen Kumar:</strong> Are vectors multiplied randomly?</td>
+<td>No. The chosen base position is compared with every permitted source, and each coefficient remains matched to its source vector. The written calculation follows a consistent indexing scheme.</td>
+</tr>
+<tr>
+<td><strong>Question relayed in chat; name unclear:</strong> Why multiply a calculated coefficient by a vector again?</td>
+<td>The pairwise score estimates a contribution, while the subsequent weighted sum carries source information into the output. These are different stages of the attention operation.</td>
+</tr>
+<tr>
+<td><strong>Hemanth / S Anoop / Sridhar K:</strong> Is the operation a cross product or cosine similarity?</td>
+<td>It is a dot product for scoring. Cosine similarity includes vector-length normalization in its denominator; the weighted output is a sum of scalar-scaled vectors.</td>
+</tr>
+<tr>
+<td><strong>Anusha:</strong> Is including V₁'s contribution to Y₁ redundant?</td>
+<td>A position can attend to itself as well as to other allowed positions. Self-information is a valid source; repeated information is not a reason to omit it automatically.</td>
+</tr>
+<tr>
+<td><strong>Chandhruv:</strong> Could the vectors simply be added instead?</td>
+<td>The illustrated mechanism uses data-dependent coefficients, which an unweighted sum would not provide. Addition is nevertheless essential in the final weighted sum and is used elsewhere in neural networks.</td>
+</tr>
+<tr>
+<td><strong>Anoop / Ritam Ghosh:</strong> Is the result of a dot product a scalar or a vector?</td>
+<td>The pairwise dot product is a scalar. Multiplying that scalar by a source vector gives a vector, and adding the scaled vectors produces Yᵢ. GPU use does not change these mathematical object types.</td>
+</tr>
+<tr>
+<td><strong>Shivam:</strong> Is there a metric that says how much context was captured?</td>
+<td>No such metric was defined in class. Paul treated “more context” as intuition for the mixed representation; assessing usefulness requires a task and an evaluation method.</td>
+</tr>
+<tr>
+<td><strong>Manoj / Shivam Kumar / RANJEEV TIWARI:</strong> What is attention versus self-attention?</td>
+<td>The class treated self-attention as the first attention block to understand. Precisely, self-attention relates positions within the same input; attention is the broader mechanism and can also connect different sources.</td>
+</tr>
+<tr>
+<td><strong>Sachin Srivastava:</strong> How should prerequisites be revised, and are paper drops implemented in class?</td>
+<td>Paul pointed to the supplied deep-learning prerequisites and the ordered syllabus. Shared research papers do not automatically imply an in-class implementation; an implementation also depends on released material and session scope.</td>
+</tr>
+<tr>
+<td><strong>Sachin Srivastava:</strong> How can a learner pursue LLM research?</td>
+<td>Paul said a useful recommendation needs the learner's background and did not give a specific research roadmap during this exchange.</td>
+</tr>
+<tr>
+<td><strong>Kalyan Rad:</strong> Do additional attention blocks explain next-word prediction or modern reasoning behavior?</td>
+<td>Paul deferred the question to the complete architecture and its objective. One self-attention block is insufficient to explain a trained language model's entire behavior.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K:</strong> What prerequisites are enough to get started?</td>
+<td>Paul referred to the earlier PyTorch class and the shared prerequisite repository. The current lesson was the first actual Transformer-intuition session.</td>
+</tr>
+<tr>
+<td><strong>Nitish Singh:</strong> What information does each Y vector contain?</td>
+<td>Each output mixes source information with its own row of coefficients. Different outputs can emphasize different sources; the complete collection is more informative than interpreting one coefficient as the entire sentence.</td>
+</tr>
+<tr>
+<td><strong>Nitish Singh / Aishwarya:</strong> Are these Y vectors already what gets stored in a vector database?</td>
+<td>They are intermediate outputs in today's model illustration. An embedding visualization, an internal hidden state, and a vector-database entry serve different roles; no storage pipeline was demonstrated.</td>
+</tr>
+<tr>
+<td><strong>Nitish Singh:</strong> How can the same word, such as apple, have different meanings?</td>
+<td>Surrounding words supply disambiguating context. Paul deferred the fuller account to later attention and representation lessons rather than treating the isolated word as sufficient.</td>
+</tr>
+<tr>
+<td><strong>Nitish Singh / Sumit Mamtani:</strong> What determines a vector's dimension?</td>
+<td>The representation method or model defines its width. Vocabulary-based one-hot width depends on vocabulary size, while a learned embedding's width is a separate design choice; vectors compared by the dot product need compatible lengths.</td>
+</tr>
+<tr>
+<td><strong>Vikas Gupta / Praveen:</strong> Does a token mean a word, four characters, or three-quarters of a word?</td>
+<td>A word was used as a token in the teaching example. Actual tokenization is model-dependent and may produce words, subwords, punctuation, and special tokens; average length estimates are not definitions.</td>
+</tr>
+<tr>
+<td><strong>136:</strong> Does “close points amplified, far points filtered” apply equally to time series and NLP?</td>
+<td>It was introduced through the smoothing analogy. In language, a distant word may be crucial, and a nearby word may be less informative; the proximity heuristic is not the attention rule.</td>
+</tr>
+<tr>
+<td><strong>Urna:</strong> What does “no trained weights” mean?</td>
+<td>No neural-network training or parameter update was performed in the toy block. The inputs were supplied, and the coefficients were derived from them.</td>
+</tr>
+<tr>
+<td><strong>Urna:</strong> Does shape preservation also apply beyond this example?</td>
+<td>The current weighted sum preserves the common source-vector width. Later architecture must maintain compatible shapes, but intermediate projections and score matrices can have different dimensions.</td>
+</tr>
+<tr>
+<td><strong>Ritam Ghosh / S Anoop:</strong> Must input stop at one sentence, and must a 15-word sentence be split?</td>
+<td>Fifteen words was treated as a very small example. Inputs can span sentences or paragraphs within model limits; the paper's translation setting was discussed as a dataset of paired sequences.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> How would medical or finance fine-tuning alter the model?</td>
+<td>Fine-tuning was deferred until the actual trainable architecture was introduced. The current coefficient calculation is not a fine-tuning procedure.</td>
+</tr>
+<tr>
+<td><strong>Sameer Nandan:</strong> What is downloaded with a pretrained model?</td>
+<td>The learned parameters are a central part of the checkpoint. The class did not inspect a checkpoint's files or loading code.</td>
+</tr>
+<tr>
+<td><strong>Ilesh:</strong> Are the example sentences a training dataset or input features?</td>
+<td>They are inputs used to explain the transformation; no end task or training objective was defined in the demonstration.</td>
+</tr>
+<tr>
+<td><strong>Ilesh:</strong> Are V₁, V₂, and so on related to a model's context window?</td>
+<td>They represent token positions within a supplied sequence. Context length concerns how many token positions can be processed, whereas an individual vector's width is a different quantity.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> What happens when a huge corpus does not fit in memory?</td>
+<td>Paul explained batches, steps, and epochs. Processing the dataset in batches permits training, but an epoch does not directly connect tokens in separate examples through attention.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> How does a first chunk obtain context from a much later chunk?</td>
+<td>The concern was raised, but no cross-chunk method was demonstrated. Input construction, memory, retrieval, or another architecture choice would be needed; batching alone does not answer it.</td>
+</tr>
+<tr>
+<td><strong>RANJEEV TIWARI:</strong> Are W₁₂ and W₂₁ the same, and which vector gets multiplied?</td>
+<td>Raw dot products are symmetric in this toy case, but separately normalized coefficients can differ. For row 2, the coefficient associated with source 1 multiplies V₁; the base/source indices must stay consistent.</td>
+</tr>
+<tr>
+<td><strong>RANJEEV TIWARI:</strong> Can one vector represent several words, and do word counts cause different shapes?</td>
+<td>A vector may represent a token, sentence, or larger item depending on the system. In this walkthrough each token uses the same width; text length and representation width are different concepts.</td>
+</tr>
+<tr>
+<td><strong>RANJEEV TIWARI:</strong> Does a larger vector guarantee all coordinates are useful?</td>
+<td>No. Paul used the possibility of unused or less useful features to introduce pruning as a future topic. The class did not measure coordinate usefulness or establish a minimum training-data threshold.</td>
+</tr>
+<tr>
+<td><strong>Swati Deepak Kumar:</strong> Can forward and backward propagation be calculated manually?</td>
+<td>Paul suggested revisiting deep-learning fundamentals and using a small two-layer network for a pen-and-paper exercise. Such a calculation was not performed in this class.</td>
+</tr>
+<tr>
+<td><strong>Swati Deepak Kumar:</strong> Is falling loss enough to decide when to stop or fine-tune?</td>
+<td>Track its trend and also inspect validation loss and task metrics. Paul mentioned plateaus, annotation problems, and learning rate as factors; no universal stopping rule was established.</td>
+</tr>
+<tr>
+<td><strong>iPhone:</strong> Does self-attention help GPUs process faster, and how does it differ from LSTM/GRU?</td>
+<td>GPUs efficiently execute parallel numerical operations; the attention calculation can use matrix operations. Recurrent models use a different gated, sequential structure, and their suitability still depends on the problem.</td>
+</tr>
+<tr>
+<td><strong>Sai:</strong> Are two sentences always processed in isolation?</td>
+<td>Paul discussed boundary markers. More precisely, special tokens indicate structure, while masks and input construction control interaction; multiple sentences can share attention when allowed.</td>
+</tr>
+<tr>
+<td><strong>Phanindhar Golla:</strong> How does near/far influence work in the smoothing sketch?</td>
+<td>The explanation concerned the sequential use of past information in exponential smoothing. Distant observations influence the present through the recurrence; the sketch was an intuition, not a literal instruction to delete distant points.</td>
+</tr>
+<tr>
+<td><strong>Phanindhar Golla:</strong> How were papers converted to Markdown for AI-assisted reading?</td>
+<td>Paul referred to the Hugging Face paper-reading workflow he had used earlier and said other PDFs may need conversion. No conversion command or exact page link was preserved here.</td>
+</tr>
+<tr>
+<td><strong>Subbu:</strong> Will bias or linear layers be added later?</td>
+<td>Yes, Paul planned to introduce a linear-layer block and its learned parameters later. The current calculation contains no learned linear transformation; whether a specific layer includes bias is configurable. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Linear.html">PyTorch linear layer</a></td>
+</tr>
+<tr>
+<td><strong>Arun Karnik:</strong> What does “proximity has no influence” mean?</td>
+<td>The Noa/cat example shows that a relevant distant token can contribute when all permitted positions are compared. The illustrated block is not restricted to a short neighboring window.</td>
+</tr>
+<tr>
+<td><strong>Swati Gupta:</strong> Are the input vectors necessarily learned embeddings?</td>
+<td>The toy demonstration accepts numerical vectors and does not train their source. Actual models can use learned or pretrained embeddings; a simple encoding is mathematically usable without guaranteeing semantic quality.</td>
+</tr>
+<tr>
+<td><strong>Swati Gupta:</strong> Must pronoun resolution run backpropagation every time?</td>
+<td>No parameter update is required for a forward pass or retrieval. Learned representations can still be crucial to meaningful resolution; the animal/road example did not demonstrate that arbitrary untrained vectors solve it.</td>
+</tr>
+<tr>
+<td><strong>Swati Gupta:</strong> Does today's Y already encode the final, exact importance of every word?</td>
+<td>No. Paul emphasized that it is a mixed intermediate representation and that more of the architecture remained to be taught. The demonstration supplies no final task-level validation.</td>
+</tr>
+<tr>
+<td><strong>Harsh:</strong> Do embedding values learn during training or remain fixed?</td>
+<td>It depends on whether the embedding parameters are trainable or frozen. Today's example performed neither case's training; it assumed available input vectors.</td>
+</tr>
+<tr>
+<td><strong>Question relayed in chat:</strong> How can papers be prioritized for reading?</td>
+<td>Paul used adoption as a practical signal when selecting papers to read. This was his prioritization heuristic; the session did not develop a broader literature-review method.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A token ID identifies an item; its arbitrary numerical value is not its meaning.</li>
+<li>A vector's width, the vocabulary size, the sequence length, and the training batch size are different quantities.</li>
+<li>A sliding window exposes neighboring positions; a useful dependency may still lie outside it.</li>
+<li>“Noa … great cat” demonstrates why a distant word can be essential context.</li>
+<li>Exponential smoothing introduces weighted influence; its proximity intuition is not a universal NLP rule.</li>
+<li>A 2D or 3D embedding plot is a projection of the original representation.</li>
+<li>Named attributes such as royalty or gender are teaching aids, not guaranteed labels for individual embedding coordinates.</li>
+<li>A pairwise dot product produces a scalar score.</li>
+<li>A normalized coefficient scales a source vector; the weighted sum produces an output vector.</li>
+<li>Each output row has its own coefficients and normalization.</li>
+<li>Attention coefficients calculated for an input are different from parameters learned during training.</li>
+<li>Self-attention is attention within the same sequence; its definition does not depend on the absence of learned weights.</li>
+<li>Bare attention has no position information; complete Transformers still need to represent order.</li>
+<li>Access to every allowed position does not assign every position equal importance.</li>
+<li>Y₁ through Yₙ are intermediate contextual representations, not final predictions.</li>
+<li>Processing an epoch does not create direct attention across separate chunks.</li>
+<li>Backpropagation is part of parameter learning; inference does not require updating weights for every input.</li>
+<li>The next lesson must add the missing architecture before training and model behavior can be understood fully.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-04">✅ Action Items After Class 04<a class="headerlink" href="#action-items-after-class-04" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Bookmark the course Notion page and locate the 1 August handwritten notes and resource links.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Revise OHE, Bag of Words, TF-IDF, co-occurrence representations, CBOW, and Skip-gram where needed.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Draw a sliding window over “I am going to London,” marking the center separately from its neighbors.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Recreate the Noa/cat dependency sketch and explain which fact a short window can miss.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Rewrite the PDF's exponential-smoothing recurrence and explain what β = 0.9 means under that notation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce all four rows of the bank/river calculation, keeping base and source indices consistent.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Mark raw dot-product scores as scalars, final coefficients as normalized scalars, and Y outputs as vectors.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check that every coefficient row sums to one and that each coefficient scales the intended source vector.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explore an embedding projector: select a word, inspect its neighbors, and compare the projected view with the original representation dimension.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Write a short explanation of the difference between a calculated attention coefficient and a trainable model parameter.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review the four whiteboard observations with their scopes, especially positional information and shape compatibility.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Bring remaining doubts to the next revision session before moving into query/key/value and multi-head attention.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 04 transcript — </em><em>GMT20260801-143026_Recording.cutfile.20260801214748976.transcript.vtt</em><em> — and the accompanying </em><em>Note.pdf</em><em>, for “<a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6e6a8149d9f2e46cc7a3d5">1 Aug Transformers 101</a>,” Production AI / LLM Engineering, Krish Naik Academy. All 13 PDF pages were visually inspected; the final page is blank. The diagrams above translate the supplied whiteboard structures. No executable class code or notebook was provided for this session, so no reconstructed code is presented. Linked primary documentation supplies concise technical clarifications where the live explanation was simplified.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_03_PyTorch_Fundamentals_Notes.html" class="btn btn-neutral float-left" title="03 · PyTorch fundamentals"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_05_Transformers_101_Part_2_Notes.html" class="btn btn-neutral float-right" title="05 · Transformers 101, part 2">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_03_PyTorch_Fundamentals_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_05_Transformers_101_Part_2_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

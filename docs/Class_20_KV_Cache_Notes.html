@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_20_KV_Cache_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>20 · KV cache - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "20 \u00b7 KV cache";
+        var mkdocs_page_input_path = "Class_20_KV_Cache_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_20_KV_Cache_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">20 · KV cache</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#attention-recap-what-a-token-produces">🧱 Attention Recap: What a Token Produces</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#naive-autoregressive-decoding-repeats-prefix-work">🔁 Naive Autoregressive Decoding Repeats Prefix Work</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#kv-cache-store-past-keys-and-values-compute-the-new-position">🧠 KV Cache: Store Past Keys and Values, Compute the New Position</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#prefill-and-decode-two-different-workloads">📥 Prefill and Decode: Two Different Workloads</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ttft-tpot-and-streaming">⏱️ TTFT, TPOT, and Streaming</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-memory-wall-fast-arithmetic-still-needs-data">🚧 The Memory Wall: Fast Arithmetic Still Needs Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#deriving-the-kv-cache-memory-formula">🧮 Deriving the KV-Cache Memory Formula</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#model-configuration-matters-more-than-parameter-count-alone">📊 Model Configuration Matters More Than Parameter Count Alone</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mqa-keep-query-heads-share-one-kv-head">🔗 MQA: Keep Query Heads, Share One KV Head</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mqa-inference-reads-shared-values-training-learns-shared-projections">✍️ MQA Inference Reads Shared Values; Training Learns Shared Projections</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-the-mqa-paper-actually-shows">📚 What the MQA Paper Actually Shows</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#colab-benchmark-caching-faster-generation-with-the-same-model">🧪 Colab Benchmark: Caching Faster Generation with the Same Model</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#cache-lifetime-prefix-reuse-and-conversation-memory">🗄️ Cache Lifetime, Prefix Reuse, and Conversation Memory</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#decoder-only-encoderdecoder-and-context-limits">🏛️ Decoder-Only, Encoder–Decoder, and Context Limits</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-20">✅ Action Items After Class 20</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Fine-tuning and inference</li>
+      <li class="breadcrumb-item active">20 · KV cache</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-20-kv-cache-inference-memory-math-and-multi-query-attention">⚡ Class 20: KV Cache — Inference, Memory Math, and Multi-Query Attention<a class="headerlink" href="#class-20-kv-cache-inference-memory-math-and-multi-query-attention" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>⏱️ Duration:</strong> ~3 hours 25 minutes (3hr 25min 10s) | <strong>📅 Session:</strong> Day 20 (3 October 2026)</p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ac1d6e475542d6fe935b179">3 Oct Kv cache</a><br />
+<strong>Primary transcript:</strong> <code>GMT20261003-143207_Recording.cutfile.20261004043252705.transcript.vtt</code><br />
+<strong>Companions:</strong> <code>KVCACHE.pdf</code>; <a href="https://github.com/sourangshupal/kv-cache-attention-variants/tree/main">KV-cache and attention-variant repository</a>; <a href="https://colab.research.google.com/drive/18O1pldhzzjxt802ysnom8X7mGu_vAlFR?usp=sharing">KVCACHE-DEMO notebook</a>; <a href="https://arxiv.org/pdf/1911.02150">MQA paper</a>.</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The class moved from the preceding fine-tuning work to inference engineering. Its main sequence was attention recap, naive decoding, prefill/decode, the memory wall, KV-cache sizing, MQA, and a cached-versus-uncached generation benchmark.</li>
+<li>The repository was added to the course Notion page. The instructor repaired links for earlier tokenizer resources and shared access information for newly joined participants.</li>
+<li>The first five teaching notebooks supply small calculations and attention wrappers. Their toy examples illustrate shapes and costs; they are not trained language models or production serving systems.</li>
+<li>The actual text-generation practical used SmolLM2-1.7B in Colab, with <code>use_cache=False</code> and <code>use_cache=True</code>.</li>
+<li>GQA and MLA were deferred to the following day. RoPE, PagedAttention, and a fuller prefix-caching discussion were named as later topics.</li>
+<li>A possible future cohort on scaling/inference was discussed as a plan, not an added requirement or a confirmed part of this class.</li>
+</ul>
+<p>The notation below keeps <strong>query-head count</strong>, <strong>KV-head count</strong>, <strong>per-head width</strong>, and <strong>total projection width</strong> separate. The lecture sometimes used “heads” or “dimension” for more than one of these quantities; that distinction is essential for understanding MQA.</p>
+<hr />
+<h2 id="attention-recap-what-a-token-produces">🧱 Attention Recap: What a Token Produces<a class="headerlink" href="#attention-recap-what-a-token-produces" title="Permanent link">&para;</a></h2>
+<p>The foundations notebook starts with a tiny vocabulary and a random embedding table. “The cat sat” becomes IDs <code>[0, 1, 2]</code> and three vectors of width 8. This is a hand-built word lookup, not BPE, WordPiece, or a tokenizer borrowed from GPT/BERT. The random vectors demonstrate indexing and shapes, not meaningful learned similarity.</p>
+<p>Inside attention, representations are projected into:</p>
+<ul>
+<li><strong>Q, query:</strong> what a position is looking for.</li>
+<li><strong>K, key:</strong> the features against which queries are compared.</li>
+<li><strong>V, value:</strong> information mixed into the attention output.</li>
+</ul>
+<p>The correct operation order is:</p>
+<p><strong>Attention(Q, K, V) = softmax(QKᵀ / √dₖ + mask) V</strong></p>
+<p>Compute query/key scores, apply the relevant score mask, normalize across keys, then multiply the resulting weights by V. A masked score of negative infinity receives zero softmax weight. Ordinary elementwise multiplication by a zero/one mask is not interchangeable with this additive masking operation.</p>
+<p>The source's small unmasked example is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">scores</span> <span class="o">=</span> <span class="n">Q</span> <span class="o">@</span> <span class="n">K</span><span class="o">.</span><span class="n">T</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">d_k</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;raw scores (3x3, one row per query token):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scores</span><span class="p">)</span>
+
+<span class="n">weights</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">softmax</span><span class="p">(</span><span class="n">scores</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">attention weights (each row sums to 1):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;row sums:&quot;</span><span class="p">,</span> <span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">))</span>
+
+<span class="n">output</span> <span class="o">=</span> <span class="n">weights</span> <span class="o">@</span> <span class="n">V</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">output (3 tokens x d_k):</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">output</span><span class="p">)</span>
+</code></pre></div>
+<p>This excerpt depends on the earlier imports and random Q/K/V tensors. It makes the score/softmax/value order visible without claiming that those random scores represent language understanding.</p>
+<p>For causal self-attention, query position <code>i</code> can use positions <code>j ≤ i</code>. It cannot use future positions. Thus Q₀ may use K₀/V₀; Q₄ may use K₀/V₀ and K₄/V₄. The direction is <strong>a query attending to keys/values</strong>, not a key independently deciding to access another query.</p>
+<p>The notebook's upper-triangular Boolean mask uses <strong>True = blocked</strong>. This convention belongs to that mask implementation; other APIs can use different Boolean meanings.</p>
+<p>The lecture mentioned left padding for decoder-only batched generation. Left padding is common in that setting because generation continues from the last meaningful position, but <strong>padding still needs an attention mask</strong>. Causal masking and padding masking address different problems. Left padding does not make padding tokens harmless automatically. <a href="https://huggingface.co/docs/transformers/llm_tutorial">Transformers text-generation guide</a>.</p>
+<hr />
+<h2 id="naive-autoregressive-decoding-repeats-prefix-work">🔁 Naive Autoregressive Decoding Repeats Prefix Work<a class="headerlink" href="#naive-autoregressive-decoding-repeats-prefix-work" title="Permanent link">&para;</a></h2>
+<p>Autoregressive decoding generates a continuation using the prompt plus already generated tokens. The simple greedy loop chooses the highest-scoring next token, appends it, and repeats.</p>
+<p>Without a cache, the teaching implementation embeds and forwards the <strong>whole prefix again</strong>:</p>
+<div class="highlight"><pre><span></span><code>    <span class="n">ids</span> <span class="o">=</span> <span class="n">prompt_ids</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_new_tokens</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">embed</span><span class="p">(</span><span class="n">ids</span><span class="p">)</span>  <span class="c1"># recompute embeddings for the WHOLE sequence, every step</span>
+        <span class="n">hidden</span> <span class="o">=</span> <span class="n">model</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># recompute attention over the WHOLE sequence, every step</span>
+        <span class="n">next_id</span> <span class="o">=</span> <span class="n">lm_head</span><span class="p">(</span><span class="n">hidden</span><span class="p">[:,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">ids</span><span class="p">,</span> <span class="n">next_id</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ids</span>
+</code></pre></div>
+<p>This is an excerpt inside <code>generate_naive</code> in <code>naive_decode.py</code>. The supplied attention block is a small pedagogical module; the initial foundations loop even uses an identity transform as a stand-in. Neither is a complete trained decoder with all normal Transformer components.</p>
+<p>With a four-token prompt, the first five forwards process sequence lengths <strong>4, 5, 6, 7, 8</strong>. Each step repeats projections and attention for positions already handled.</p>
+<p>The board illustrated this with a growing prefix beginning at BOS and continuing through “The capital of France is.” K and V for BOS and earlier words were repeatedly recalculated. A BOS token is meaningful input when the model's format uses it; it is not a substitute for padding. EOS is generally a stopping token, not something to append to an unfinished question merely to illustrate the next-token slot.</p>
+<p>For a fixed prompt length P and N output-generation calls, the number of token positions processed by this naive loop is:</p>
+<p><strong>P + (P+1) + … + (P+N−1) = NP + N(N−1)/2</strong></p>
+<p>The class used <strong>1+2+…+N = N(N+1)/2</strong> as a simplified projection/repeated-position count: 8 gives 36, 32 gives 528, and 128 gives 8,256. That is quadratic growth, not exponential or logarithmic growth.</p>
+<p>Be precise about what is counted. The notebook calls this “total attention work,” but its triangular sum is not a full FLOP count for dense attention. Recomputing every query against every key in each prefix has additional pairwise work. KV caching removes redundant <strong>old-position processing</strong>; it does not remove the need for the latest query to attend over history.</p>
+<p>This was the motivation for caching: once a causal prefix has been processed under unchanged model settings, its past layer representations cannot depend on later tokens. Their projected K/V can be reused.</p>
+<hr />
+<h2 id="kv-cache-store-past-keys-and-values-compute-the-new-position">🧠 KV Cache: Store Past Keys and Values, Compute the New Position<a class="headerlink" href="#kv-cache-store-past-keys-and-values-compute-the-new-position" title="Permanent link">&para;</a></h2>
+<p>A KV cache stores the attention <strong>keys and values for processed positions</strong>, usually separately for each layer.</p>
+<p>At the next step:</p>
+<ol>
+<li>Compute the current position's Q/K/V.</li>
+<li>Append its K/V to the cached past K/V.</li>
+<li>Compare the current query with the combined keys.</li>
+<li>Mix the corresponding values.</li>
+<li>Produce the representation used to predict the next token.</li>
+</ol>
+<p>Old queries are not needed to answer a new position's query, so the ordinary cache stores K/V rather than the whole history of Q tensors or attention outputs. That does not mean Q is unimportant; the current Q drives the new attention calculation.</p>
+<p>The per-layer data flow can be represented as:</p>
+<pre class="mermaid"><code>flowchart TD
+    A["Current token representation"] --&gt; B["Current Q, K, V"]
+    B --&gt; C["Append current K/V to layer cache"]
+    D["Past cached K/V"] --&gt; C
+    B --&gt; E["Current query"]
+    C --&gt; F["Attention over past and current positions"]
+    E --&gt; F
+    F --&gt; G["Output for next-token prediction"]</code></pre>
+<p>The full source's MHA helper demonstrates the update:</p>
+<div class="highlight"><pre><span></span><code>        <span class="k">if</span> <span class="n">past_kv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">past_k</span><span class="p">,</span> <span class="n">past_v</span> <span class="o">=</span> <span class="n">past_kv</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">past_k</span><span class="p">,</span> <span class="n">k</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">past_v</span><span class="p">,</span> <span class="n">v</span><span class="p">],</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">is_causal</span> <span class="o">=</span> <span class="n">past_kv</span> <span class="ow">is</span> <span class="kc">None</span>  <span class="c1"># single growing prompt: causal only on first pass</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">nn</span><span class="o">.</span><span class="n">functional</span><span class="o">.</span><span class="n">scaled_dot_product_attention</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">is_causal</span><span class="o">=</span><span class="n">is_causal</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_proj</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+</code></pre></div>
+<p>This is an excerpt inside the helper's <code>forward</code>, after Q/K/V projection and head splitting. The returned pair must be passed back into the next call.</p>
+<p>A source limitation is worth preserving: <strong>the cached path assumes one new token</strong>. Disabling the causal mask is safe for that single latest query because all available keys are past/current. Passing multiple new tokens with a past cache would require an offset-aware mask within the new chunk. The helper does not implement that general case or padding masks.</p>
+<p>Its repeated concatenation also copies/grows tensors. Production caches often use preallocated or paged storage; this simple source is a shape/behavior demonstration, not an optimized cache allocator.</p>
+<p>The MHA notebook's example uses <code>d_model=32</code>, four heads, and per-head width 8:</p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Input shape</th>
+<th>Cached K shape</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Five-token prefill</td>
+<td>(1, 5, 32)</td>
+<td>(1, 4, 5, 8)</td>
+</tr>
+<tr>
+<td>One new token</td>
+<td>(1, 1, 32)</td>
+<td>(1, 4, 6, 8)</td>
+</tr>
+<tr>
+<td>After five new-token steps</td>
+<td>(1, 1, 32) for each step</td>
+<td>(1, 4, 10, 8)</td>
+</tr>
+</tbody>
+</table>
+<p>V has the same layout in this example. A four-layer example stores a separate cache for every layer; all grow from three cached positions to five after two incremental steps.</p>
+<p>Cached dense attention still reads/uses earlier keys and values. Per-step work for the latest query grows with history length, even though only one position's projections and feed-forward path are new. <a href="https://huggingface.co/docs/transformers/cache_explanation">Transformers' cache explanation</a> documents per-layer reuse and the past-plus-current mask requirements.</p>
+<hr />
+<h2 id="prefill-and-decode-two-different-workloads">📥 Prefill and Decode: Two Different Workloads<a class="headerlink" href="#prefill-and-decode-two-different-workloads" title="Permanent link">&para;</a></h2>
+<p>The supplied PDF divides inference into <strong>prefill → decode → response</strong>.</p>
+<p><strong>Prefill</strong> processes the prompt. Because the prompt is already known, its token positions can be processed together within each layer, while causal attention prevents future-position leakage. Layers remain dependent on earlier layers. Large prompts may be chunked by the serving implementation; “parallel” does not mean every token in every layer executes simultaneously.</p>
+<p>Prefill builds the initial cache and computes logits from which the first continuation token can be selected. After that first token is chosen, it is fed back to compute the next one.</p>
+<p><strong>Decode</strong> continues the sequence. Ordinary autoregressive generation has a dependency between successive output tokens. Within a step, operations across heads, batches, and tensor dimensions can still run in parallel. Techniques such as speculative decoding can alter the execution schedule, but were not implemented here.</p>
+<p>The board's flow becomes:</p>
+<pre class="mermaid"><code>flowchart LR
+    A["User prompt"] --&gt; B["Prefill: process known prompt positions"]
+    B --&gt; C["Per-layer prompt K/V ready"]
+    C --&gt; D["Select first continuation token"]
+    D --&gt; E["Decode: process new token using cached past"]
+    E --&gt; F["Select next token"]
+    F --&gt; E
+    F --&gt;|"EOS or stopping limit"| G["Completed response"]</code></pre>
+<p>The instructor's analogy was reading a newspaper before writing a summary: processing the input and producing the answer have different workload shapes. A long prompt can make prefill expensive even when the answer is short. A short prompt with a long answer can make decoding dominate.</p>
+<p>The cache contains processed <strong>prompt and generated positions</strong>, not just output tokens. At the instant generation stops, the very last sampled token may not have been forwarded again; cache accounting should use the number of positions actually processed.</p>
+<p>The class concerns inference. During teacher-forced training, target tokens are known and causal computation can be parallelized across positions. Training still stores activations/intermediate values for differentiation; “nothing is saved during training” is not literally true. The persistent autoregressive cache discussed here is an inference mechanism, not a replacement for training activations.</p>
+<hr />
+<h2 id="ttft-tpot-and-streaming">⏱️ TTFT, TPOT, and Streaming<a class="headerlink" href="#ttft-tpot-and-streaming" title="Permanent link">&para;</a></h2>
+<p>The session introduced three useful serving measurements:</p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TTFT</td>
+<td>Time to first output token</td>
+</tr>
+<tr>
+<td>TPOT</td>
+<td>Time per subsequent output token, often summarized as an average</td>
+</tr>
+<tr>
+<td>Tokens/second</td>
+<td>Output rate; specify per request or aggregate throughput</td>
+</tr>
+</tbody>
+</table>
+<p>The two board scenarios were:</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th style="text-align: right;">Prompt</th>
+<th style="text-align: right;">Output</th>
+<th>Likely dominant work</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>A</td>
+<td style="text-align: right;">10,000 tokens</td>
+<td style="text-align: right;">20 tokens</td>
+<td>Prompt processing/prefill</td>
+</tr>
+<tr>
+<td>B</td>
+<td style="text-align: right;">20 tokens</td>
+<td style="text-align: right;">10,000 tokens</td>
+<td>Long sequential decode</td>
+</tr>
+</tbody>
+</table>
+<p>All else equal, A has more prompt work before the first token; B has many more continuation steps. These examples describe a workload tradeoff, not a measured latency guarantee.</p>
+<p>TTFT includes more than prefill: queueing, routing/network time, scheduling, and model execution can contribute. TPOT varies with model, sequence length, batch, hardware, and serving policy. The class's approximate 20–30ms/token figures were illustrative observations; they are not universal constants.</p>
+<p>Lower latency is desirable for both metrics. Paul emphasized the first visible response for an interactive product, but TTFT is not always more important than decode speed. A long report may be dominated by total completion time, whereas a brief conversational reply may make the initial delay more noticeable.</p>
+<p><strong>Streaming</strong> exposes generated tokens as they arrive. It lets users start reading earlier; it does not eliminate prefill or make the model compute every output token in parallel.</p>
+<p><code>max_new_tokens</code> controls an upper bound on continuation length. It differs from <code>top_k</code>/<code>top_p</code>, which guide token selection, and from the model/server's total supported context. EOS or other stopping criteria can end a response before that limit.</p>
+<hr />
+<h2 id="the-memory-wall-fast-arithmetic-still-needs-data">🚧 The Memory Wall: Fast Arithmetic Still Needs Data<a class="headerlink" href="#the-memory-wall-fast-arithmetic-still-needs-data" title="Permanent link">&para;</a></h2>
+<p>Paul introduced the memory wall using a chef who can cook 100 dishes per second while the kitchen supplies ingredients for only 20. The chef's capability is not fully used because data supply is limiting.</p>
+<p>The technical distinction is:</p>
+<table>
+<thead>
+<tr>
+<th>Quantity</th>
+<th>What it measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Compute throughput</td>
+<td>Arithmetic operations per second</td>
+</tr>
+<tr>
+<td>Memory bandwidth</td>
+<td>Bytes moved per second at a particular memory boundary</td>
+</tr>
+<tr>
+<td>Memory capacity</td>
+<td>How much data can be resident</td>
+</tr>
+<tr>
+<td>Arithmetic intensity</td>
+<td>Operations performed per byte accessed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>FLOP</strong> means a floating-point operation. <strong>FLOPS</strong> means operations per second. One <strong>TFLOPS</strong> is 10¹² floating-point operations/second; 1,000 TFLOPS is 10¹⁵, not 10⁹.</p>
+<p>The board used hypothetical peak compute and a 2GB/s transfer rate, then compared more or fewer operations on the same amount of data. Its low/high arithmetic-intensity intuition is useful, but a large amount of free VRAM does not itself make arithmetic intensity high.</p>
+<p>For example, 10 billion operations per decimal 1GB accessed gives about <strong>10 operations/byte</strong>. Increasing computation for the same traffic increases that ratio. To judge whether it is compute- or bandwidth-limited, compare it with the hardware's compute/bandwidth ratio and inspect actual execution.</p>
+<p><strong>Memory bandwidth is not only CPU RAM → GPU transfer.</strong> In GPU-resident inference, weights and cache can already be in device memory, while repeated movement from GPU memory toward its compute units still limits decoding. Host/device transfer is another boundary, with its own bandwidth.</p>
+<p>Likewise, K/V projection normally executes on the device where the model's weights and tensors reside. In a GPU forward pass, Q/K/V are computed on the GPU; they are not necessarily computed on the CPU and copied into VRAM each token. The notebook's <code>.to(device)</code> establishes device placement.</p>
+<p>MQA can reduce bytes read for cached K/V. It does not increase a GPU's physical bandwidth rating or peak FLOPS. The benefit is less traffic and a smaller persistent cache for the same query-head arrangement.</p>
+<p>Software also matters: reuse, batching, tensor layout, kernel fusion, attention tiling, and cache allocation affect data movement/utilization. The live “software can do nothing” remark overstates the hardware limit. Hardware establishes ceilings; implementation determines how efficiently the workload approaches them. <a href="https://docs.nvidia.com/deeplearning/performance/dl-performance-gpu-background/index.html">NVIDIA's GPU performance guide</a> explains arithmetic-intensity limits.</p>
+<p>The lecture's 95% memory-use/5% headroom example was an operating heuristic. It is not a universal safe allocation and is not equivalent to 95% compute utilization. Model weights, cache, workspaces, temporary activations, framework reservations, and other processes all affect usable memory. Model weights do not universally occupy 40% of a GPU.</p>
+<hr />
+<h2 id="deriving-the-kv-cache-memory-formula">🧮 Deriving the KV-Cache Memory Formula<a class="headerlink" href="#deriving-the-kv-cache-memory-formula" title="Permanent link">&para;</a></h2>
+<p>For ordinary full-attention caching with equal key/value head widths:</p>
+<p><strong>Bytes per cached token = 2 × Hₖᵥ × dₕ × L × b</strong></p>
+<p><strong>Total cache bytes = bytes/token × S × B</strong></p>
+<p>Where:</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2</td>
+<td>Store K and V</td>
+</tr>
+<tr>
+<td>Hₖᵥ</td>
+<td>Number of distinct cached KV heads per layer</td>
+</tr>
+<tr>
+<td>dₕ</td>
+<td>Width of one KV head</td>
+</tr>
+<tr>
+<td>L</td>
+<td>Number of relevant attention layers</td>
+</tr>
+<tr>
+<td>b</td>
+<td>Bytes per cached element</td>
+</tr>
+<tr>
+<td>S</td>
+<td>Number of cached sequence positions</td>
+</tr>
+<tr>
+<td>B</td>
+<td>Concurrent sequences for the equal-length example</td>
+</tr>
+</tbody>
+</table>
+<p>The cached-element precision matters. FP16 and BF16 use 2 bytes/element; FP32 uses 4; FP64 uses 8. These are <strong>storage bytes per scalar</strong>, not bytes per floating-point operation.</p>
+<p>The PDF's hand calculation assumed <strong>8 KV heads, width 64, 32 layers, FP16/BF16, batch 1</strong>:</p>
+<ol>
+<li>K: 8 × 64 = 512 scalar values per token per layer.</li>
+<li>V: another 512 scalar values.</li>
+<li>K+V: 1,024 values × 2 bytes = <strong>2,048 bytes</strong>, or 2KiB/token/layer.</li>
+<li>Across 32 layers: <strong>65,536 bytes</strong>, or 64KiB/token.</li>
+</ol>
+<p>The 32-layer choice is hypothetical; it is not the six-layer base model of the original Transformer paper. Width 64 comes from 512÷8 in the familiar teaching example.</p>
+<p>The board wrote about 640MB for 10,000 tokens and 6.4GB for 100,000. Keeping binary and decimal units separate gives:</p>
+<table>
+<thead>
+<tr>
+<th>Cached positions</th>
+<th style="text-align: right;">Exact bytes</th>
+<th style="text-align: right;">Decimal units</th>
+<th style="text-align: right;">Binary units</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td style="text-align: right;">65,536</td>
+<td style="text-align: right;">65.536KB</td>
+<td style="text-align: right;">64KiB</td>
+</tr>
+<tr>
+<td>10,000</td>
+<td style="text-align: right;">655,360,000</td>
+<td style="text-align: right;">655.36MB</td>
+<td style="text-align: right;">625MiB</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td style="text-align: right;">6,553,600,000</td>
+<td style="text-align: right;">6.5536GB</td>
+<td style="text-align: right;">About 6.10GiB</td>
+</tr>
+</tbody>
+</table>
+<p>The approximate board values communicate scale, but should not be used as exact capacity calculations. <strong>Cache grows linearly with S</strong>, holding architecture, precision, and batch fixed. It does not grow exponentially.</p>
+<p>FP32 doubles these values. A batch of ten equal-length sequences multiplies them by ten. With variable-length requests, sum their cached lengths; with paging/allocation granularity, rounding and metadata add overhead.</p>
+<p>The companion's exact calculator returns:</p>
+<div class="highlight"><pre><span></span><code>    <span class="n">per_token</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">num_kv_heads</span> <span class="o">*</span> <span class="n">head_dim</span> <span class="o">*</span> <span class="n">num_layers</span> <span class="o">*</span> <span class="n">dtype_bytes</span>
+    <span class="k">return</span> <span class="n">per_token</span> <span class="o">*</span> <span class="n">seq_len</span> <span class="o">*</span> <span class="n">batch_size</span>
+</code></pre></div>
+<p>This is the body of <code>kv_cache_bytes</code> in <code>memory_calc.py</code>. It estimates tensor payload under the stated assumptions, not total process VRAM. Weight memory, attention workspaces, allocator overhead, and temporary expanded tensors are additional.</p>
+<p>The source's <code>human_bytes</code> divides by 1,024 while labeling results “KB/MB/GB.” Those output labels are binary quantities in these examples; the notes use KiB/MiB/GiB to avoid ambiguity.</p>
+<hr />
+<h2 id="model-configuration-matters-more-than-parameter-count-alone">📊 Model Configuration Matters More Than Parameter Count Alone<a class="headerlink" href="#model-configuration-matters-more-than-parameter-count-alone" title="Permanent link">&para;</a></h2>
+<p>The repository supplies full-MHA examples at 4,096 cached positions, FP16, batch 1:</p>
+<table>
+<thead>
+<tr>
+<th>Hypothetical configuration</th>
+<th style="text-align: right;">Layers</th>
+<th style="text-align: right;">KV heads</th>
+<th style="text-align: right;">Head width</th>
+<th style="text-align: right;">KV payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7B-ish</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">32</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">2GiB</td>
+</tr>
+<tr>
+<td>13B-ish</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">40</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">3.125GiB</td>
+</tr>
+<tr>
+<td>70B-ish full-MHA</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">10GiB</td>
+</tr>
+</tbody>
+</table>
+<p>These are specified <strong>teaching configurations</strong>, not a guarantee of actual cache sizes for every model sold under those parameter labels. A real large model may use GQA or another representation, so its KV-head count must be read from the actual configuration.</p>
+<p>Parameter count can grow through layer count, model width, feed-forward width, vocabulary size, experts, and other changes. It does not grow <strong>only</strong> by adding layers. Two models with the same total parameters can have different cache sizes.</p>
+<p>The class looked for reducible factors in the formula:</p>
+<ul>
+<li>Sequence length and concurrency depend on the workload and serving limits.</li>
+<li>Layers and head dimensions are part of a fixed checkpoint's architecture.</li>
+<li>Cache precision may be reduced with a supported quantized-cache strategy.</li>
+<li>Distinct KV-head count can be reduced by an architecture designed to share K/V.</li>
+</ul>
+<p>Paul postponed quantization to focus on attention-head sharing. That is this lesson's order, not a universal requirement that cache quantization must always be the last optimization.</p>
+<p>Quantization and offloading can reduce memory but introduce their own tradeoffs. Cache precision need not be identical to weight precision; changing model-weight quantization does not automatically quantize its KV cache. Sliding-window or chunked layers also need different length accounting. <a href="https://huggingface.co/docs/transformers/kv_cache">Transformers cache strategies</a> documents these variations.</p>
+<hr />
+<h2 id="mqa-keep-query-heads-share-one-kv-head">🔗 MQA: Keep Query Heads, Share One KV Head<a class="headerlink" href="#mqa-keep-query-heads-share-one-kv-head" title="Permanent link">&para;</a></h2>
+<p>In MHA, each query head has its own projected key/value head. In <strong>multi-query attention</strong>, multiple query heads attend to <strong>one shared K head and one shared V head</strong> per layer.</p>
+<p>The class's eight-head diagram becomes:</p>
+<pre class="mermaid"><code>flowchart LR
+    Q1["Query head 1"] --&gt; KV["One shared K head&lt;br/&gt;One shared V head&lt;br/&gt;for all sequence positions"]
+    Q2["Query head 2"] --&gt; KV
+    Q3["Query head 3"] --&gt; KV
+    Q8["Query head 8"] --&gt; KV</code></pre>
+<p>“One KV head” does not mean one vector for the entire prompt. It contains a K vector and V vector for <strong>every cached position</strong>, but eliminates the separate KV-head axis entries that MHA would keep for all query heads.</p>
+<p>Use two counts:</p>
+<table>
+<thead>
+<tr>
+<th>Architecture</th>
+<th style="text-align: right;">Query heads Hq</th>
+<th style="text-align: right;">KV heads Hkv</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MHA</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">H</td>
+</tr>
+<tr>
+<td>MQA</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">1</td>
+</tr>
+<tr>
+<td>GQA, preview only</td>
+<td style="text-align: right;">H</td>
+<td style="text-align: right;">A compatible intermediate group count</td>
+</tr>
+</tbody>
+</table>
+<p>For <code>d_model=512</code>, Hq=8, and per-head width 64:</p>
+<table>
+<thead>
+<tr>
+<th>Projection</th>
+<th style="text-align: right;">MHA total width</th>
+<th style="text-align: right;">MQA total width</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q</td>
+<td style="text-align: right;">8×64 = 512</td>
+<td style="text-align: right;">8×64 = 512</td>
+</tr>
+<tr>
+<td>K</td>
+<td style="text-align: right;">8×64 = 512</td>
+<td style="text-align: right;">1×64 = 64</td>
+</tr>
+<tr>
+<td>V</td>
+<td style="text-align: right;">8×64 = 512</td>
+<td style="text-align: right;">1×64 = 64</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Per-query-head Q remains width 64</strong>, not 512. The 512 is its total concatenated projection width. K still matches each query's dot-product width of 64. The aggregate K/V width shrinks by reducing the number of distinct KV heads, not by making an incompatible 512-dimensional query attend directly to a 64-dimensional key.</p>
+<p>The paper/source keeps distinct learned K and V projections. Sharing them across query heads does not make <strong>K identical to V</strong>. Different Q projections can produce different attention distributions against the same keys; sharing K/V does not force identical attention patterns. Conversely, there is no mathematical guarantee that two heads can never coincidentally produce equal scores.</p>
+<p>The current repository implements MQA as a one-group specialization of its shared attention helper. Its projections are:</p>
+<div class="highlight"><pre><span></span><code>        <span class="bp">self</span><span class="o">.</span><span class="n">q_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_kv_groups</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">num_kv_groups</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">num_heads</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">d_model</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p>This is a constructor excerpt from the implementation used by the MQA wrapper, with <code>num_kv_groups=1</code>. It verifies today's MQA shapes; the general GQA lesson was deferred.</p>
+<p>Its cache stays compact before the helper expands K/V for the attention calculation:</p>
+<div class="highlight"><pre><span></span><code>        <span class="n">cached_kv</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>  <span class="c1"># this is what gets stored — num_kv_groups heads only</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># expand for attention math</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">v</span><span class="o">.</span><span class="n">repeat_interleave</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_size</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>This excerpt explains persistent cache storage. <code>repeat_interleave</code> may materialize expanded tensors; a pedagogical expansion does not establish the same bandwidth efficiency as an optimized MQA-aware kernel.</p>
+<p>The source shape comparison uses batch 1, sequence length 5, model width 32, Hq=4, dₕ=8:</p>
+<ul>
+<li>MHA cached K: <strong>(1, 4, 5, 8)</strong>.</li>
+<li>MQA cached K: <strong>(1, 1, 5, 8)</strong>.</li>
+</ul>
+<p>V matches the corresponding shape. For fixed dₕ/L/S/B/precision, the KV payload reduction from MHA to MQA is <strong>Hq-fold</strong>: 8 query heads give 8×; 32 give 32×. This is not an H-fold reduction in total model memory or necessarily an H-fold speedup.</p>
+<p>The notebook's “MQA cache size never changes when you change heads” exercise needs a qualifier. Its helper defines dₕ=<code>d_model/num_heads</code>; changing heads while holding d_model fixed also changes dₕ. MQA's payload is independent of Hq <strong>only when per-head width and the other factors are held fixed</strong>.</p>
+<hr />
+<h2 id="mqa-inference-reads-shared-values-training-learns-shared-projections">✍️ MQA Inference Reads Shared Values; Training Learns Shared Projections<a class="headerlink" href="#mqa-inference-reads-shared-values-training-learns-shared-projections" title="Permanent link">&para;</a></h2>
+<p>Murtuza's open-floor question exposed a key confusion: if eight query heads share K/V, do they conflict while updating the same memory?</p>
+<p><strong>During inference</strong>, the shared K and V for a new position are computed once by the K/V projection paths, appended to the cache, and read by all query heads. The model is not training those weights on each request. Old cached values are not independently rewritten by Q₁, Q₄, or whichever head is selected.</p>
+<p>The lecture briefly suggested that one query head could update the shared values first. A clearer implementation description is <strong>one shared K projection and one shared V projection produce the values</strong>. Query heads then consume them. No arbitrary query head owns the write.</p>
+<p><strong>During training</strong>, the shared projection parameters are learned through backpropagation. Gradient contributions from paths using those shared tensors are accumulated by the differentiation system. Sharing changes the architecture/parameterization; it does not preserve eight independently trained KV heads and merely erase seven at inference.</p>
+<p>This connects to Arun's final question: an MHA checkpoint cannot become an MQA model by toggling <code>use_cache=True</code> or changing a tensor shape during generation. The checkpoint must have the appropriate architecture and learned weights, or undergo a deliberate conversion/adaptation procedure. Caching is an inference option; MQA is an attention design.</p>
+<p>MQA reduces distinct KV subspaces, which can affect quality. The class called this lower attention diversity and clarified that “hallucination” is not the precise name for that architectural tradeoff. It also does not follow that every task becomes worse by a fixed percentage.</p>
+<p>GQA was introduced as the next middle ground: several KV groups rather than one or a fully separate KV head for every query. Its implementation and results were left for the following class.</p>
+<hr />
+<h2 id="what-the-mqa-paper-actually-shows">📚 What the MQA Paper Actually Shows<a class="headerlink" href="#what-the-mqa-paper-actually-shows" title="Permanent link">&para;</a></h2>
+<p>Paul opened Noam Shazeer's 2019 <strong>Fast Transformer Decoding: One Write-Head is All You Need</strong> and compared quality with inference benefit.</p>
+<p>The paper's result tables report:</p>
+<table>
+<thead>
+<tr>
+<th>Reported metric</th>
+<th style="text-align: right;">MHA</th>
+<th style="text-align: right;">MQA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Translation dev BLEU</td>
+<td style="text-align: right;">26.7</td>
+<td style="text-align: right;">26.5</td>
+</tr>
+<tr>
+<td>Translation test BLEU, beam 1</td>
+<td style="text-align: right;">27.7</td>
+<td style="text-align: right;">27.5</td>
+</tr>
+<tr>
+<td>Translation test BLEU, beam 4</td>
+<td style="text-align: right;">28.4</td>
+<td style="text-align: right;">28.5</td>
+</tr>
+<tr>
+<td>Billion-Word dev perplexity</td>
+<td style="text-align: right;">29.9</td>
+<td style="text-align: right;">30.2</td>
+</tr>
+<tr>
+<td>Amortized greedy decoder time, µs/output token</td>
+<td style="text-align: right;">46</td>
+<td style="text-align: right;">3.8</td>
+</tr>
+</tbody>
+</table>
+<p>These are the paper's task-specific experiments, not current chatbot accuracy or a universal quality drop. Its comparisons equalize total parameter counts by widening feed-forward layers. Timing uses TPUv2 and the stated workload; it is not individual-user latency on Colab. Higher BLEU and lower perplexity are preferable. <a href="https://arxiv.org/pdf/1911.02150">Original paper, results tables</a>.</p>
+<p>The practical takeaway was a large decoding benefit with comparatively small quality changes in those experiments. The lecture's “1–2%” remark should not be generalized to every model or task.</p>
+<p>Beam search keeps multiple candidate continuations; greedy decoding keeps the immediate highest-scoring choice. Sampling with top-k/top-p is another strategy. Beam search remains available for suitable tasks; it is not impossible or universally obsolete merely because many chat systems use sampling.</p>
+<p>The paper's title uses <strong>write-head</strong>, referring to shared KV production; it does not remove the multiple query heads.</p>
+<hr />
+<h2 id="colab-benchmark-caching-faster-generation-with-the-same-model">🧪 Colab Benchmark: Caching Faster Generation with the Same Model<a class="headerlink" href="#colab-benchmark-caching-faster-generation-with-the-same-model" title="Permanent link">&para;</a></h2>
+<p>The practical used <strong>HuggingFaceTB/SmolLM2-1.7B</strong>, a four-token prompt <strong>“The red cat was”</strong>, and greedy generation with up to 300 new tokens.</p>
+<p>The source setup selects CUDA when available and otherwise CPU:</p>
+<div class="highlight"><pre><span></span><code><span class="n">MODEL_NAME</span> <span class="o">=</span> <span class="s2">&quot;HuggingFaceTB/SmolLM2-1.7B&quot;</span>
+
+<span class="n">device</span> <span class="o">=</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s2">&quot;cpu&quot;</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Device:&quot;</span><span class="p">,</span> <span class="n">device</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">AutoTokenizer</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="n">MODEL_NAME</span><span class="p">)</span>
+
+<span class="n">model</span> <span class="o">=</span> <span class="n">AutoModelForCausalLM</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span>
+    <span class="n">MODEL_NAME</span><span class="p">,</span>
+    <span class="n">torch_dtype</span><span class="o">=</span><span class="n">torch</span><span class="o">.</span><span class="n">float16</span> <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span> <span class="k">else</span> <span class="n">torch</span><span class="o">.</span><span class="n">float32</span>
+<span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">eval</span><span class="p">()</span>
+</code></pre></div>
+<p>This excerpt depends on the notebook's imports. The saved output reports CUDA, but does not record the exact GPU model. Paul recommended a Colab GPU such as T4; do not turn that recommendation into a verified hardware label for the stored results.</p>
+<p><code>model.eval()</code> sets inference behavior for modules such as dropout. It does not disable autograd by itself. The benchmark wraps generation in <code>torch.no_grad()</code> to avoid recording gradients. The saved notebook warns that <code>torch_dtype</code> is deprecated in its Transformers version in favor of <code>dtype</code>; preserve the original code when comparing the recording, then follow the installed version's supported keyword.</p>
+<p>The timing helper performs one warm-up before three timed runs:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">measure_generation_time</span><span class="p">(</span><span class="n">use_cache</span><span class="p">,</span> <span class="n">runs</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">max_new_tokens</span><span class="o">=</span><span class="mi">300</span><span class="p">):</span>
+    <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Warm-up run</span>
+    <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+        <span class="n">_</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">inputs</span><span class="p">,</span>
+            <span class="n">max_new_tokens</span><span class="o">=</span><span class="n">max_new_tokens</span><span class="p">,</span>
+            <span class="n">use_cache</span><span class="o">=</span><span class="n">use_cache</span><span class="p">,</span>
+            <span class="n">do_sample</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
+        <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+    <span class="c1"># Actual benchmark</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">runs</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="k">with</span> <span class="n">torch</span><span class="o">.</span><span class="n">no_grad</span><span class="p">():</span>
+            <span class="n">output</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">generate</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">inputs</span><span class="p">,</span>
+                <span class="n">max_new_tokens</span><span class="o">=</span><span class="n">max_new_tokens</span><span class="p">,</span>
+                <span class="n">use_cache</span><span class="o">=</span><span class="n">use_cache</span><span class="p">,</span>
+                <span class="n">do_sample</span><span class="o">=</span><span class="kc">False</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">device</span> <span class="o">==</span> <span class="s2">&quot;cuda&quot;</span><span class="p">:</span>
+            <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">synchronize</span><span class="p">()</span>
+
+        <span class="n">end_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">perf_counter</span><span class="p">()</span>
+
+        <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
+
+    <span class="n">avg_time</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">times</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">avg_time</span><span class="p">,</span> <span class="n">output</span>
+</code></pre></div>
+<p>This is the exact supplied helper. <code>inputs</code>, <code>model</code>, <code>device</code>, <code>torch</code>, and <code>time</code> come from setup. CUDA work can be asynchronous, so synchronization before/after timing waits for the relevant queued work rather than measuring only dispatch. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.cuda.synchronize.html">PyTorch synchronization reference</a>.</p>
+<p>The saved notebook reports:</p>
+<table>
+<thead>
+<tr>
+<th>Saved benchmark</th>
+<th style="text-align: right;">Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cache disabled</td>
+<td style="text-align: right;">17.617 seconds</td>
+</tr>
+<tr>
+<td>Cache enabled</td>
+<td style="text-align: right;">8.171 seconds</td>
+</tr>
+<tr>
+<td>Time saved</td>
+<td style="text-align: right;">9.446 seconds</td>
+</tr>
+<tr>
+<td>Reduction</td>
+<td style="text-align: right;">53.62%</td>
+</tr>
+<tr>
+<td>Speedup</td>
+<td style="text-align: right;">2.16×</td>
+</tr>
+</tbody>
+</table>
+<p>The recording's rerun instead discussed about <strong>15.773 seconds uncached</strong>, about <strong>8 seconds cached</strong>, roughly <strong>48.8% reduction</strong>, and about <strong>1.9× speedup</strong>. These are different runs. “1.9” is a speed ratio, not minutes.</p>
+<p>The stored generated texts match and contain repetitive prose. That demonstrates reuse-related speed improvement for this workload; it does not show that caching improved language quality or that MQA was benchmarked. The <strong>same checkpoint's caching option</strong> was changed; its attention architecture was not converted.</p>
+<p>These timings include the complete generation call, not a separate TTFT/TPOT measurement. They exclude model download/loading and the warm-up. The helper averages three runs but does not report variance, exact GPU details, peak memory, or actual output-token counts. Because 300 is an upper bound, compare output lengths when reproducing the experiment.</p>
+<p>Many supported decoder-generation configurations enable caching by default, but inspect the model/generation configuration rather than assert it for every Transformers model and mode. The demonstration explicitly set both values.</p>
+<hr />
+<h2 id="cache-lifetime-prefix-reuse-and-conversation-memory">🗄️ Cache Lifetime, Prefix Reuse, and Conversation Memory<a class="headerlink" href="#cache-lifetime-prefix-reuse-and-conversation-memory" title="Permanent link">&para;</a></h2>
+<p>The late discussion repeatedly returned to “when should the cache be cleared?” Three different things must be separated:</p>
+<table>
+<thead>
+<tr>
+<th>Mechanism</th>
+<th>Stores/reuses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Active-generation KV cache</td>
+<td>Intermediate attention state needed while continuing a sequence</td>
+</tr>
+<tr>
+<td>Prefix/prompt computation cache</td>
+<td>Reusable state for a matching prompt prefix across requests</td>
+</tr>
+<tr>
+<td>Application response/history store</td>
+<td>Text, messages, results, or other application data, potentially in Redis</td>
+</tr>
+</tbody>
+</table>
+<p>An active cache is tied to <strong>specific model computation and token positions</strong>. Another user's unrelated prompt cannot use those tensors as though they were generic memory. But matching prefixes can be reused by a serving engine that implements prefix caching.</p>
+<p>Sridhar's example of a team querying the same codebase therefore has a real opportunity: place the same reusable content in a consistent prefix, process it once when supported, then handle different suffix questions separately. Reuse requires matching tokenization/prefix, compatible weights/settings, and correct handling of divergent continuations. A cache is not automatically invalid solely because the user identity changes; the engine's isolation and reuse policy determine the allowed sharing.</p>
+<p>The lecture deferred this detail to PagedAttention/prefix caching. Current vLLM documentation explicitly describes sharing cached KV for matching prefixes. It primarily saves <strong>prefill</strong>, not the work of generating new answer tokens. <a href="https://docs.vllm.ai/en/latest/features/automatic_prefix_caching/">vLLM Automatic Prefix Caching</a>.</p>
+<p>Likewise, there is no universal rule to clear all cache after 4, 10, 200, or 1,000 requests. Those numbers were illustrative policies. Serving systems manage active-request state, reuse candidates, allocation pressure, and eviction. Sequential independent <code>generate()</code> calls do not automatically retain every old KV tensor forever unless the application/runtime preserves that state. Reserved GPU memory also differs from live cached tensors.</p>
+<p>The instructor said KV must stay on GPU and cannot return to CPU. That is too absolute: supported cache <strong>offloading</strong> can move state to CPU and prefetch it back, trading speed/traffic for GPU capacity. CPU inference can also use a cache. Quantized cache, offload, and paging are different strategies, not the same option.</p>
+<p>Prasanna asked about “cached prompt tokens” in OpenRouter. Such API usage fields report provider prompt-cache reads/writes; they are not necessarily a report of GPU bytes allocated for that user's active cache. Prompt/prefix caching can reuse underlying model computation rather than merely retrieve a saved answer from Redis.</p>
+<p>The class mentioned short TTLs. Lifetimes are provider-specific: for example, Anthropic documents 5-minute and 1-hour options. Do not infer that prompt cache is always shorter-lived than active KV state. <a href="https://platform.claude.com/docs/en/build-with-claude/prompt-caching">Anthropic prompt caching</a>, <a href="https://openrouter.ai/docs/guides/best-practices/prompt-caching">OpenRouter cache usage</a>.</p>
+<p>This is a clarification of the questions, not a prefix-cache implementation completed during the session.</p>
+<hr />
+<h2 id="decoder-only-encoderdecoder-and-context-limits">🏛️ Decoder-Only, Encoder–Decoder, and Context Limits<a class="headerlink" href="#decoder-only-encoderdecoder-and-context-limits" title="Permanent link">&para;</a></h2>
+<p>Gaurav asked whether caching explains why decoder-only models omit an encoder or cross-attention. It does not. <strong>Model architecture and caching strategy are separate choices.</strong></p>
+<p>A decoder-only LM processes its prompt and continuation through causal self-attention. It has no separate text encoder whose outputs must be read through standard encoder–decoder cross-attention.</p>
+<p>An encoder–decoder system, such as T5-style sequence-to-sequence generation, processes source text with an encoder. Its decoder has:</p>
+<ul>
+<li>a causal self-attention cache for growing target positions;</li>
+<li>potentially cached cross-attention projections derived from the fixed encoder output.</li>
+</ul>
+<p>Those cross-attention K/V are not simply the encoder's own self-attention K/V transferred unchanged. They are produced by the decoder's cross-attention projections over encoder hidden states. Caching does not remove the need for the cross-attention mechanism. <a href="https://huggingface.co/docs/transformers/kv_cache">Transformers encoder–decoder cache explanation</a>.</p>
+<p>An ordinary bidirectional encoder cannot treat a growing text prefix's internal states as unchanged in the same way: newly added tokens can affect earlier representations. The relevant condition for simple append-only reuse is fixed past causal context, not merely “this model has Q/K/V somewhere.”</p>
+<p><strong>Context capacity</strong> also has several constraints. A server can configure a lower maximum than the model supports. Increasing a number in configuration does not prove that a model remains accurate or that its position scheme/runtime supports arbitrary lengths. Memory capacity is one limit, not the definition of the model's learned context behavior.</p>
+<p>For an external API, the user can request an output limit within supported bounds; that does not enlarge the provider's context window. For a self-hosted checkpoint, adjust serving/model settings only with compatible position handling and validation. <code>max_new_tokens</code>, cache capacity, and total model context are related but different quantities.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>The instructor planned to start the following session with <strong>GQA</strong>, then <strong>MLA</strong>, and possibly the RoPE position-encoding upgrade. PagedAttention and prefix-cache details were also named, with the exact sequence still tentative.</p>
+<p>FlashAttention was mentioned as a future topic for data movement and attention efficiency. No FlashAttention tiling algorithm, PagedAttention allocator, GQA/MLA notebook, or production multi-user cache policy was implemented in this class.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>All substantive open-floor questions and follow-ups from the last two transcript parts are included, along with distinct earlier chat clarifications. Caption-only names are identified cautiously.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sanjay: Will domain-specific LM work be covered?</strong></td>
+<td>Paul said domain adaptation/fine-tuning would return in future work. Today's topic was inference and KV caching.</td>
+</tr>
+<tr>
+<td><strong>Abhishek: Does top-k control how many tokens are generated?</strong></td>
+<td>No. Top-k/top-p affect selection; <code>max_new_tokens</code> and stopping criteria control continuation length.</td>
+</tr>
+<tr>
+<td><strong>Chat: Do BOS/EOS tokens have K/V? Should BOS be padding?</strong></td>
+<td>Tokens actually processed by attention produce projections, including meaningful special tokens. Padding has a separate role and mask; EOS normally stops generation.</td>
+</tr>
+<tr>
+<td><strong>Sudhi and Abhishek: Where is Q, and do later queries use old queries?</strong></td>
+<td>Current Q is still computed. New positions attend to past/current K/V, so historical Q tensors are not the ordinary reusable cache.</td>
+</tr>
+<tr>
+<td><strong>Chat: Can key position 4 access query 0?</strong></td>
+<td>State the direction correctly: Q₄ may attend to K₀/V₀. Causal visibility is a query-to-key relation.</td>
+</tr>
+<tr>
+<td><strong>Shridhar/Shiraz, as captioned: Why build TinyCausalAttention?</strong></td>
+<td>It supplies a small causal-attention example to show repeated prefix processing. It is a teaching wrapper, not a trained model.</td>
+</tr>
+<tr>
+<td><strong>Octavia, as read from chat: Why recalculate if tokens did not change?</strong></td>
+<td>The naive loop reruns the full prefix because it carries no reusable state. Caching is the alternative; repeated work is not an unavoidable Transformer rule.</td>
+</tr>
+<tr>
+<td><strong>Divankar: Why is the triangular count quadratic?</strong></td>
+<td>Summing increasing processed lengths gives a quadratic total. It counts repeated token positions/projections, not all dense-attention FLOPs.</td>
+</tr>
+<tr>
+<td><strong>Karthik: Why is decoding expensive for a short prompt?</strong></td>
+<td>A long answer requires many dependent continuation steps. Cache reuse reduces repeated work but does not remove those dependencies.</td>
+</tr>
+<tr>
+<td><strong>Chat: Why prioritize TTFT over TPOT?</strong></td>
+<td>Paul emphasized initial user-visible delay. Both matter according to product workload; TTFT is strongly influenced by prefill but also queueing/scheduling/network.</td>
+</tr>
+<tr>
+<td><strong>Chat: What if the GPU has no data to process?</strong></td>
+<td>Available compute cannot help without the required data. Memory traffic can become the limiting factor even with GPU-resident tensors.</td>
+</tr>
+<tr>
+<td><strong>Arun: What is a context window?</strong></td>
+<td>The supported token context for the model/runtime. It differs from requested output length and cannot be enlarged arbitrarily without compatibility/quality checks.</td>
+</tr>
+<tr>
+<td><strong>Kumar/Kumal: RAM versus VRAM?</strong></td>
+<td>Host memory and device memory serve different locations. Ordinary host RAM is generally DRAM; it should not all be labeled SRAM.</td>
+</tr>
+<tr>
+<td><strong>Shivam: Does context length depend on KV capacity?</strong></td>
+<td>Available cache memory can limit served context/concurrency, but model/position/runtime limits also apply.</td>
+</tr>
+<tr>
+<td><strong>Ayush: Can software improve KV-block storage/fetching and memory parallelism?</strong></td>
+<td>The lecture stressed hardware, but software layout, scheduling, batching, and kernels also affect traffic and utilization. Hardware limits are real; “software can do nothing” is too strong.</td>
+</tr>
+<tr>
+<td><strong>MP: Why is embedding dimension fixed?</strong></td>
+<td>It is part of the checkpoint's model width. Individual vectors/hidden states differ by token and context; a fixed width does not imply identical values.</td>
+</tr>
+<tr>
+<td><strong>Sridhar: Would a smaller summarizer before a long input reduce cost?</strong></td>
+<td>It can reduce the later model's input length but adds its own work and possible information loss. Paul reiterated that processing a long source can raise TTFT; no comparative pipeline was tested.</td>
+</tr>
+<tr>
+<td><strong>Viraj: Can KV be compressed?</strong></td>
+<td>Yes, supported cache quantization/offloading strategies exist. They trade memory against latency, traffic, or quality and were not implemented here.</td>
+</tr>
+<tr>
+<td><strong>Rushi: Does image generation have TTFT?</strong></td>
+<td>The text-token metric does not directly describe every image-generation architecture. Time to first preview/image may be useful, but no image model was studied here.</td>
+</tr>
+<tr>
+<td><strong>Ramdas: What exactly is a KV head?</strong></td>
+<td>A distinct key/value projection head stored for each position. In MHA its count matches query heads; MQA shares one KV head across many queries.</td>
+</tr>
+<tr>
+<td><strong>Rahul: Why is Q absent from the memory formula?</strong></td>
+<td>That formula measures persistent K/V payload. Current Q still participates in attention, but old Q is not the normal cache state.</td>
+</tr>
+<tr>
+<td><strong>Murtaza: Does cache expire by TTL?</strong></td>
+<td>Active state and reusable prefix entries have different lifecycles. Free/evict state according to engine needs and capacity; there is no universal request-count or TTL rule.</td>
+</tr>
+<tr>
+<td><strong>Ashwini/Acharya: Does sharing K/V reduce information richness?</strong></td>
+<td>It reduces distinct KV subspaces and can affect quality. Keep multiple Q heads and measure task performance rather than equate the change with a fixed hallucination rate.</td>
+</tr>
+<tr>
+<td><strong>Paritosh, in chat: Is the tradeoff hallucination?</strong></td>
+<td>Paul corrected the term to attention diversity/representational capacity. Whether an output hallucinates requires separate task evaluation.</td>
+</tr>
+<tr>
+<td><strong>BV/Neha and chat: How can 512-wide Q interact with 64-wide K/V?</strong></td>
+<td>Q's aggregate width is 8×64. Each query head is width 64 and uses the shared width-64 K/V; outputs concatenate back to model width.</td>
+</tr>
+<tr>
+<td><strong>Alok: Is a 32-head MHA→MQA reduction 32×?</strong></td>
+<td>Yes for the KV tensor payload at matched per-head width/layers/length/precision. Total memory and speed do not necessarily shrink by 32×.</td>
+</tr>
+<tr>
+<td><strong>Abhishek: How are shared Wk/Wv trained?</strong></td>
+<td>Their parameterization changes; gradients through the shared tensors accumulate during training. Inference appends projected K/V without learning from each request.</td>
+</tr>
+<tr>
+<td><strong>Devajoshi: Is cache size determined by model parameter volume?</strong></td>
+<td>Use actual layers/KV heads/head width/precision and cached lengths. Parameter count alone is insufficient, and larger models need not grow only through depth.</td>
+</tr>
+<tr>
+<td><strong>Saravana: Must cache remain on GPU?</strong></td>
+<td>GPU-resident cache is common for fast inference, but supported CPU offloading and CPU inference exist. Moving state introduces a speed/memory tradeoff.</td>
+</tr>
+<tr>
+<td><strong>Prasanna and Ramesh: When should we evict/offload users' caches?</strong></td>
+<td>Inspect live lengths, concurrency, allocation pressure, and reuse policy. The examples of clearing after N requests were not a production algorithm.</td>
+</tr>
+<tr>
+<td><strong>Ramesh: Is the 2019 MQA paper still useful?</strong></td>
+<td>Yes, it motivates shared-KV decoding. Paul preferred studying the next GQA middle ground; no universal claim that MQA is unused today was established.</td>
+</tr>
+<tr>
+<td><strong>Chat: How much quality degradation did MQA cause?</strong></td>
+<td>The paper shows small task-specific differences, including dev BLEU 26.7→26.5 and a beam-4 test result slightly favoring MQA. There is no universal 1–2% penalty.</td>
+</tr>
+<tr>
+<td><strong>Murtuza Saifee: Do eight query heads race while updating shared KV?</strong></td>
+<td>At inference, shared projections compute K/V once per new position; query heads read them. They do not independently train or overwrite the same values.</td>
+</tr>
+<tr>
+<td><strong>Murtuza Saifee: Does one selected query head perform the update?</strong></td>
+<td>No arbitrary query head is responsible. The dedicated shared K/V projections write the new state; the distinction is inference computation versus training parameter updates.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K: Will cache help short input that produces a long website/code output?</strong></td>
+<td>Reuse is useful during long continuation. Supported serving frameworks generally manage it; the benchmark explicitly disabled it for comparison.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K: Can a team's identical codebase prefix be shared across sessions?</strong></td>
+<td>A serving engine can reuse matching prefix computation when configured. It is not necessary to dedicate an entire GPU permanently to every user; different suffixes still require their own continuation state.</td>
+</tr>
+<tr>
+<td><strong>Sridhar K: Is another user's request overwriting my session cache?</strong></td>
+<td>Engines must keep active sequences correct while freeing/evicting reusable state under policy. “New user means overwrite everything” is not a general cache design.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Why not reduce Q as well? Is Q the user's sentence?</strong></td>
+<td>MQA specifically keeps query-head structure and changes KV sharing. Q is a learned projection of each token/layer representation, not the raw user sentence; other architecture changes require compatible shapes/training.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Should encoder and decoder be combined for richer output?</strong></td>
+<td>Choose architecture for the task. Encoder–decoder systems already use both; cache reuse does not decide whether a separate encoder is needed.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Does KV cache replace cross-attention in GPT/T5?</strong></td>
+<td>No. Decoder-only causal self-attention and encoder–decoder cross-attention are different structures. The latter can cache projections of fixed encoder output alongside target self-attention state.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Can unrelated requests keep using the same KV?</strong></td>
+<td>Only compatible matching computation is reusable. Conversation text/response storage is a separate application mechanism; prefix-cache policy determines intermediate-state reuse.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg: Can max-new-token/context size be changed in ChatGPT?</strong></td>
+<td>Output limits are adjustable only within the supported interface/bounds; they do not enlarge the provider's context. Self-hosted limits also need model/position/runtime compatibility.</td>
+</tr>
+<tr>
+<td><strong>Paritosh Gupta: Is an HPC resource-estimation assistant a viable hackathon idea?</strong></td>
+<td>Paul considered it possible: use formulas as a starting point, measure actual jobs, and produce practical configuration guidance. He did not validate the hackathon's criteria or a specific resource estimate.</td>
+</tr>
+<tr>
+<td><strong>Paritosh Gupta: How should distillation/config experiments scale?</strong></td>
+<td>Start with one bounded workload and GPU, inspect memory/runtime, then expand configurations and parallelism. Communication/efficiency must be measured; scaling is not guaranteed linear.</td>
+</tr>
+<tr>
+<td><strong>Paritosh Gupta: Could starter scripts become a skill or MCP tool for cluster newcomers?</strong></td>
+<td>Yes, expose measured configuration choices and launch/setup logic through such an interface. The class did not build the tool or establish whether cluster access would persist after the event.</td>
+</tr>
+<tr>
+<td><strong>Paritosh Gupta: Which research direction might use the supercomputer?</strong></td>
+<td>Paul suggested exploring scaling studies, including reinforcement-learning work, and refining the problem statement. This was an idea discussion, not a tested project plan.</td>
+</tr>
+<tr>
+<td><strong>Prasanna Sivaneni: Are OpenRouter cached prompt tokens active KV or Redis response cache?</strong></td>
+<td>They report provider prompt-cache usage. They are not a direct GPU-memory report and do not imply Redis stores the whole answer or user KV state.</td>
+</tr>
+<tr>
+<td><strong>Prasanna Sivaneni: How does prefix caching relate to prefill?</strong></td>
+<td>It reuses matching prompt-prefix computation, principally saving prefill. Paul deferred implementation details to the later PagedAttention discussion.</td>
+</tr>
+<tr>
+<td><strong>Arun Subramanian: Must the model be trained/adapted for MQA before generation?</strong></td>
+<td>Yes. MQA's shared projections are architectural; toggling cache or reshaping an ordinary MHA checkpoint at inference is insufficient.</td>
+</tr>
+</tbody>
+</table>
+<p>Ahmad was invited and an issue was said to be resolved, but no substantive audible question is preserved. Shivam was called repeatedly without a recorded spoken question. Their names are not used to invent missing exchanges.</p>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Cache old K/V because a fixed causal prefix's representations do not change when later tokens arrive.</li>
+<li>Cached attention still attends over history; all decoding is not constant-cost.</li>
+<li>Prefill handles known prompt positions; ordinary output generation has successive-token dependencies.</li>
+<li>TTFT, TPOT, throughput, and complete generation time are different measurements.</li>
+<li>KV memory is a product of architecture, precision, cached lengths, and concurrency.</li>
+<li>Cache payload grows linearly with sequence length, holding the other factors fixed.</li>
+<li>Use exact bytes and distinguish MB/GB from MiB/GiB.</li>
+<li>MQA preserves multiple query heads and shares one KV head per layer/position.</li>
+<li>Total Q width and per-query-head width are different.</li>
+<li>K and V are separate projections, even when shared across query heads.</li>
+<li>No weight updates occur during ordinary inference; shared training gradients are a separate mechanism.</li>
+<li>MQA requires compatible learned architecture; <code>use_cache</code> does not convert MHA.</li>
+<li>Smaller cache reduces traffic/capacity pressure, not the hardware's bandwidth ceiling.</li>
+<li>Prompt-prefix reuse, active KV state, and conversation/response storage have different lifecycles.</li>
+<li>A measured cache speedup for one model/run is not a universal benchmark or an MQA quality result.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-20">✅ Action Items After Class 20<a class="headerlink" href="#action-items-after-class-20" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce the naive prefix-length trace for a four-token prompt and explain repeated work.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Draw current-query attention over cached past K/V, with one cache per layer.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Recalculate the 8-head/64-width/32-layer example in bytes, MiB, and decimal MB.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read a real checkpoint's KV-head count before using its parameter label in a memory estimate.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Vary cached length, batch size, and precision separately and verify linear scaling.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Draw MHA and MQA shapes, labeling Hq, Hkv, and per-head width.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain why eight query heads can read one shared KV head without independent inference updates.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the companion helper's single-new-token assumption and compact cache before expansion.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Run the supplied Colab benchmark with a compatible environment; record model/version/device and actual output length.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare both cache settings with the same prompt, decoding parameters, warm-up, and timing procedure.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Report speedup and time reduction separately; do not interpret them as better language quality.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the MQA paper's quality and timing tables with their task/hardware context.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Distinguish active sequence state, shared-prefix reuse, and application conversation storage.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Prepare questions on GQA, MLA, RoPE, and PagedAttention for the following session.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 20 transcript, all twelve pages of <code>KVCACHE.pdf</code>, the complete supplied five-cell benchmark notebook, all cells/text outputs of the five matching teaching notebooks, and verified attention/memory helpers — “3 Oct Kv cache,” Production AI / LLM Engineering, Krish Naik Academy. Live timings, saved companion results, hypothetical configurations, and current documentation clarifications are identified separately.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html" class="btn btn-neutral float-left" title="19 · Fine-tuning architectures"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_21_Attention_Variants_Notes.html" class="btn btn-neutral float-right" title="21 · Attention variants">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_21_Attention_Variants_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_13_Custom_Domain_Tokenization_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>13 · Custom domain tokenization - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "13 \u00b7 Custom domain tokenization";
+        var mkdocs_page_input_path = "Class_13_Custom_Domain_Tokenization_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_13_Custom_Domain_Tokenization_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">13 · Custom domain tokenization</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">📰 Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-a-domain-tokenizer-can-matter">🔍 Why a Domain Tokenizer Can Matter</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#repositories-environments-and-the-actual-data">🛠️ Repositories, Environments, and the Actual Data</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-tokens-ids-and-boundary-markers">🧩 Reading Tokens, IDs, and Boundary Markers</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#fertility-and-the-first-medical-versus-general-comparison">📊 Fertility and the First Medical-versus-General Comparison</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-medical-model-does-not-automatically-have-a-medical-vocabulary">🏷️ A Medical Model Does Not Automatically Have a Medical Vocabulary</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-small-colab-experiment-three-tokenizers-on-one-sentence">🧪 The Small Colab Experiment: Three Tokenizers on One Sentence</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#model_max_length-is-metadata-not-a-new-context-window">📏 model_max_length Is Metadata, Not a New Context Window</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-training-byte-level-bpe-actually-learns">⚙️ What Training Byte-Level BPE Actually Learns</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#a-stronger-experiment-domain-control-probes-and-held-out-evaluation">🧫 A Stronger Experiment: Domain Control, Probes, and Held-out Evaluation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#single-token-rate-a-coverage-probe-not-an-accuracy-score">🎯 Single-Token Rate: A Coverage Probe, Not an Accuracy Score</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vocabulary-sweep-diminishing-returns-on-compression">📉 Vocabulary Sweep: Diminishing Returns on Compression</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-other-side-of-the-sweep-embedding-and-output-cost">💾 The Other Side of the Sweep: Embedding and Output Cost</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-knee-rule-corpus-size-and-the-unfinished-decision">⚖️ The Knee Rule, Corpus Size, and the Unfinished Decision</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#tokenizer-compatibility-with-pretrained-models-and-apis">🔗 Tokenizer Compatibility with Pretrained Models and APIs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">🗺️ What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">💬 Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-13">✅ Action Items After Class 13</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Tokenization</li>
+      <li class="breadcrumb-item active">13 · Custom domain tokenization</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-13-custom-domain-tokenization-and-vocabulary-trade-offs">🧬 Class 13: Custom Domain Tokenization and Vocabulary Trade-offs<a class="headerlink" href="#class-13-custom-domain-tokenization-and-vocabulary-trade-offs" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">📋 Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>⏱️ Duration:</strong> 3 hours 54 minutes 16 seconds | <strong>📅 Session:</strong> Day 13 (5 September 2026)</p>
+<hr />
+<h2 id="quick-updates">📰 Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<p>Paul shared two practical projects for investigating domain tokenization: the initial medical-versus-general comparison in <strong>tokener</strong>, followed by the larger controlled experiment in <strong>tokenization-explainer</strong>, on its <strong>vocab-size-sweep</strong> branch. The branch matters because the vocabulary sweep and its supporting files are part of this session’s exercise.</p>
+<p>The class continued beyond the originally expected tokenization coverage. The final decision framework, Hugging Face packaging and upload, and a closer walkthrough of the training script were carried into the following class. Prompt engineering was planned after those remaining topics; it was not taught here. Paul also invited volunteers to help administer the course Discord and said most earlier track-switch issues had been resolved.</p>
+<p>The session’s central question was practical: <strong>when does a tokenizer trained on your own domain save enough tokens to justify its vocabulary and model costs?</strong> The demonstrations trained and evaluated tokenizers. They did not train a medical language model or establish clinical accuracy.</p>
+<hr />
+<h2 id="why-a-domain-tokenizer-can-matter">🔍 Why a Domain Tokenizer Can Matter<a class="headerlink" href="#why-a-domain-tokenizer-can-matter" title="Permanent link">&para;</a></h2>
+<p>The same text can require very different numbers of tokens depending on the vocabulary and segmentation rules. General text training exposes a tokenizer to frequent everyday fragments. Medical abstracts repeatedly contain specialized drug names, conditions, biochemical terms, and units. A tokenizer trained on those abstracts can spend its vocabulary budget on pieces that occur often in that domain.</p>
+<p>Paul began with this contrast rather than treating medical terminology as inherently impossible for a general tokenizer. A general tokenizer can usually represent a long technical word through multiple subword pieces. The cost is that it consumes more sequence positions. A word split into eight pieces is not an invalid word, and the model can still learn relationships involving those pieces. The experiment measures fragmentation and compression, not a direct inability to understand medicine.</p>
+<p>With a fixed model context limit, fewer tokens can let more of the original document fit into the input. Fewer positions may also reduce parts of training and inference work. Those benefits must be weighed against a larger vocabulary, which increases the embedding table and output vocabulary computation. Token count alone does not determine total latency, memory, quality, or price.</p>
+<pre class="mermaid"><code>flowchart LR
+    T[Same medical text] --&gt; G[General vocabulary]
+    T --&gt; M[Medical vocabulary]
+    G --&gt; GS[More fragments on some domain terms]
+    M --&gt; MS[Fewer fragments on frequent domain terms]
+    GS --&gt; C[Compare corpus token counts]
+    MS --&gt; C
+    C --&gt; E[Measure compression, context use and vocabulary cost]</code></pre>
+<p>The domain examples in the class are a method you can transfer to finance, legal documents, code, or another specialized corpus. The correct starting point is representative text from the intended application. A medical result does not establish what happens on financial abbreviations, Hindi clinical notes, or a mixed-language corpus.</p>
+<hr />
+<h2 id="repositories-environments-and-the-actual-data">🛠️ Repositories, Environments, and the Actual Data<a class="headerlink" href="#repositories-environments-and-the-actual-data" title="Permanent link">&para;</a></h2>
+<p>The first project is <a href="https://github.com/sourangshupal/tokener/tree/master">tokener on its master branch</a>. It compares GPT-2 and BioGPT tokenizers and includes a small tokenizer-training experiment. The second is <a href="https://github.com/sourangshupal/tokenization-explainer/tree/vocab-size-sweep">tokenization-explainer on vocab-size-sweep</a>, which adds equal-size controls, curated probes, held-out evaluation, and several vocabulary budgets.</p>
+<p>The live setup followed the familiar sequence of getting the repository, entering its project directory, and synchronizing its environment with uv. Several problems came from the surrounding environment rather than the tokenization algorithm:</p>
+<ul>
+<li>The terminal must be in the directory containing the project configuration before synchronizing dependencies.</li>
+<li>A notebook must use the project’s Python environment as its kernel. An installed package in one environment is not automatically available in another kernel.</li>
+<li>Paul’s personal activation shortcut was an alias, not a universal command students could assume existed.</li>
+<li>Some students needed notebook-kernel support; others encountered corporate restrictions on GitHub or Hugging Face access.</li>
+<li>A copied command used the wrong output option. The second project’s training script accepts <strong><code>--out</code></strong>, not <code>--output</code>. The first project’s own CLI uses a different interface, so its options should not be mixed with the second project’s scripts.</li>
+</ul>
+<p>Public Hugging Face resources may be accessible without an access token. Gated resources can require an accepted agreement and authorized access. Authentication can also affect access limits; this does not mean every tokenizer download requires credentials.</p>
+<p>The first experiment used <strong>PubMed abstracts</strong> from the scientific-papers dataset for medical text and <strong>WikiText-2</strong> for general text. Its companion notebook uses 2,000 medical texts for the initial metric table, 5,000 for training a custom tokenizer, and a separate 1,500 for held-out medical evaluation, with a shuffle seed of 42. The distinction between these slices is essential: evaluating on tokenizer-training text makes the custom artifact’s result less informative.</p>
+<p>The larger lab used roughly <strong>50,000 medical records</strong>, divided into <strong>45,000 training records and 5,000 held-out records</strong>, and a corresponding general-text control based on WikiText-103. The live discussion briefly used other rounded training counts; the supplied split script establishes the 45,000/5,000 arrangement for a 50,000-record input.</p>
+<p>Paul referred to NIH/PubMed downloading during the session. The <strong>current companion downloader</strong> first reads a Hugging Face dataset and can fall back to NCBI compressed XML files, converting title and abstract text into JSONL records. It should not be described as proof that the original PubMed FTP format is Parquet. That source behavior is visible in the <a href="https://github.com/sourangshupal/tokenization-explainer/blob/vocab-size-sweep/scripts/download_pubmed_sample.py">supplied downloader</a>.</p>
+<pre class="mermaid"><code>flowchart TD
+    P[Medical source records] --&gt; J[JSONL text corpus]
+    J --&gt; S[Deterministic medical split]
+    S --&gt; TR[45,000 training records]
+    S --&gt; HE[5,000 held-out records]
+    W[General WikiText source] --&gt; GT[General training records]
+    W --&gt; GH[General held-out records]
+    TR --&gt; MT[Medical byte-level BPE]
+    GT --&gt; CT[General byte-level BPE with same budget]
+    MT --&gt; EV[Evaluate all tokenizers on identical test text]
+    CT --&gt; EV
+    HE --&gt; EV
+    GH --&gt; EV</code></pre>
+<p>These are record counts, not vocabulary sizes or encoded-token counts. An abstract may contain many whitespace words and more subword tokens. Keeping those units separate becomes especially important in the later corpus-size discussion.</p>
+<hr />
+<h2 id="reading-tokens-ids-and-boundary-markers">🧩 Reading Tokens, IDs, and Boundary Markers<a class="headerlink" href="#reading-tokens-ids-and-boundary-markers" title="Permanent link">&para;</a></h2>
+<p>The tokenizer turns text into token pieces and integer IDs. A language model subsequently uses those IDs to look up learned embedding rows. The tokenizer artifact and the neural model weights are separate objects. Learning a BPE vocabulary is not the same process as learning model embeddings or fine-tuning a transformer.</p>
+<p>The visible token strings contained several boundary conventions:</p>
+<table>
+<thead>
+<tr>
+<th>Representation</th>
+<th>Meaning in the demonstrated tokenizer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Ġ</code> in GPT-style byte-level BPE</td>
+<td>A displayed representation associated with a preceding space.</td>
+</tr>
+<tr>
+<td><code>&lt;/w&gt;</code> in BioGPT’s vocabulary</td>
+<td>A word-ending marker used by its BPE representation.</td>
+</tr>
+<tr>
+<td><code>##</code> in BERT WordPiece</td>
+<td>A continuation piece within a word.</td>
+</tr>
+<tr>
+<td>A leading underscore-like marker in SentencePiece examples</td>
+<td>A displayed word/space-boundary convention in that tokenizer family.</td>
+</tr>
+</tbody>
+</table>
+<p>These marks are not typographical noise to delete from tokenizer internals. The decoder uses the tokenizer’s corresponding rules to reconstruct the text. Read the pieces to understand segmentation; verify the decoded string to check the round trip.</p>
+<p>In the first example, the sentence about <strong>amoxicillin-clavulanate</strong>, <strong>community-acquired pneumonia</strong>, and <strong>echocardiography</strong> took <strong>28 GPT-2 pieces</strong> and <strong>18 BioGPT pieces</strong> in the supplied comparison notebook, with special tokens excluded. BioGPT retained larger medical pieces, including echocardiography as a word-sized unit, while GPT-2 fragmented several specialist terms.</p>
+<p>That example establishes a local difference. It does not establish that every medical term receives one token, that every general tokenizer loses on every medical sentence, or that a shorter segmentation necessarily yields better downstream answers.</p>
+<hr />
+<h2 id="fertility-and-the-first-medical-versus-general-comparison">📊 Fertility and the First Medical-versus-General Comparison<a class="headerlink" href="#fertility-and-the-first-medical-versus-general-comparison" title="Permanent link">&para;</a></h2>
+<p><strong>Fertility</strong> in this class means:</p>
+<div class="arithmatex">\[
+\text{fertility} = \frac{\text{total encoded tokens}}{\text{total whitespace-separated words}}
+\]</div>
+<p>A fertility of 1.4 means approximately 1.4 tokenizer pieces per whitespace word across the evaluated corpus. The calculation aggregates token and word totals. It is not necessarily the unweighted average of each document’s individual ratio. Whitespace word counting is a convenient convention here, not a language-independent definition of a word.</p>
+<p>The class also used token count per character budget. The first project reports <strong>tokens per 1,000 characters</strong>; the second reports <strong>tokens per 100 characters</strong>. A tenfold difference in units should not be mistaken for a tenfold change in tokenizer quality.</p>
+<p>Paul emphasized a crossover test: evaluate both tokenizers on both domains. If a medical tokenizer compresses medical text better but needs more pieces on ordinary prose, that helps reveal its specialization. The supplied first notebook’s saved results are:</p>
+<table>
+<thead>
+<tr>
+<th>Tokenizer</th>
+<th style="text-align: right;">PubMed fertility</th>
+<th style="text-align: right;">WikiText-2 fertility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-2</td>
+<td style="text-align: right;">1.337</td>
+<td style="text-align: right;">1.167</td>
+</tr>
+<tr>
+<td>BioGPT</td>
+<td style="text-align: right;">1.134</td>
+<td style="text-align: right;">1.298</td>
+</tr>
+</tbody>
+</table>
+<p>The medical tokenizer wins on the medical corpus; the general tokenizer wins on the general corpus. This is the domain-mismatch effect the lesson was illustrating. These are saved companion results, not a newly rerun benchmark. Details such as data version, filtering, tokenizer files, and evaluation sample affect the values.</p>
+<p>The same notebook’s separate held-out medical slice gives:</p>
+<table>
+<thead>
+<tr>
+<th>Tokenizer</th>
+<th style="text-align: right;">Held-out PubMed fertility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GPT-2</td>
+<td style="text-align: right;">1.345</td>
+</tr>
+<tr>
+<td>BioGPT</td>
+<td style="text-align: right;">1.137</td>
+</tr>
+<tr>
+<td>Custom BPE trained on 5,000 abstracts</td>
+<td style="text-align: right;">1.183</td>
+</tr>
+</tbody>
+</table>
+<p>The small custom tokenizer recovered much of the compression gap in this particular experiment. The held-out slice was excluded from <strong>this custom training run</strong>. It is not established that none of the pretrained baselines encountered the same documents during their original training.</p>
+<p>Lower fertility is useful for compression comparisons, but there is no universal ideal value that makes every tokenizer good. Language, punctuation, domain terms, normalization, and word-count conventions affect it. A smaller fertility score alone does not rank model accuracy. This distinction also matches the research paper <a href="https://arxiv.org/abs/2402.18376">Tokenization Is More Than Compression</a>, which investigates why minimizing token count does not by itself establish improved downstream performance.</p>
+<hr />
+<h2 id="a-medical-model-does-not-automatically-have-a-medical-vocabulary">🏷️ A Medical Model Does Not Automatically Have a Medical Vocabulary<a class="headerlink" href="#a-medical-model-does-not-automatically-have-a-medical-vocabulary" title="Permanent link">&para;</a></h2>
+<p>Paul compared BERT-family tokenizers to make a subtle but useful point: a model can acquire medical knowledge through domain pretraining while retaining a general-purpose vocabulary.</p>
+<p>The supplied notebook compares:</p>
+<ul>
+<li><strong>bert-base-cased</strong>, the general BERT vocabulary;</li>
+<li><strong>Bio_ClinicalBERT</strong>, a model adapted to clinical text;</li>
+<li><strong>BiomedBERT/PubMedBERT</strong>, using a vocabulary created for biomedical text.</li>
+</ul>
+<p>Its saved vocabulary equality check shows BioClinicalBERT’s vocabulary matches bert-base-cased’s vocabulary. The tokenization example fragments <strong>myocardial infarction</strong> into eight WordPiece components with those vocabularies, while the demonstrated biomedical vocabulary represents it with two word-sized tokens. The notebook loads the actual biomedical model identifier <code>microsoft/BiomedNLP-BiomedBERT-base-uncased-abstract-fulltext</code>; the informal “PubMedBERT” label should not obscure the artifact being used.</p>
+<p>The decision to retain an existing vocabulary is not automatically a mistake. It preserves compatibility with pretrained embedding rows and lets a model continue learning from domain text without replacing its token-ID system. Retraining the vocabulary introduces other work and risks. Inspect the tokenizer’s actual files and behavior rather than inferring vocabulary changes from the model name.</p>
+<p>This comparison also helps separate <strong>medical pretraining</strong>, <strong>medical vocabulary construction</strong>, and <strong>task fine-tuning</strong>. They affect different parts of the system, and this class primarily investigated the second.</p>
+<hr />
+<h2 id="the-small-colab-experiment-three-tokenizers-on-one-sentence">🧪 The Small Colab Experiment: Three Tokenizers on One Sentence<a class="headerlink" href="#the-small-colab-experiment-three-tokenizers-on-one-sentence" title="Permanent link">&para;</a></h2>
+<p>The separately supplied <a href="https://colab.research.google.com/drive/18w8B-hRM0HOtCvUwjDKXFrWObT-MZl7E?usp=sharing">Idea_Exploration notebook</a> loaded two already-published custom medical artifacts, GPT-2, and BioGPT. It did not create those published medical vocabularies from scratch inside this notebook.</p>
+<p>The test sentence was: <strong>Acetylcholinesterase inhibitors are used in Alzheimer's disease treatment.</strong> Its saved outputs show:</p>
+<table>
+<thead>
+<tr>
+<th>Tokenizer/artifact</th>
+<th style="text-align: right;">Vocabulary size</th>
+<th style="text-align: right;">Encoded pieces in this notebook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ashutran63/medical-bpe-16k</code></td>
+<td style="text-align: right;">16,000</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td><code>paulvision/medical-bpe-pubmed</code></td>
+<td style="text-align: right;">16,000</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr>
+<td>GPT-2</td>
+<td style="text-align: right;">50,257</td>
+<td style="text-align: right;">17</td>
+</tr>
+<tr>
+<td><code>microsoft/biogpt</code></td>
+<td style="text-align: right;">42,384</td>
+<td style="text-align: right;">12, including an initial special token</td>
+</tr>
+</tbody>
+</table>
+<p>The two custom artifacts produced the same pieces and IDs for this sentence. That observation does not establish that all files or all possible tokenizations in their repositories are identical.</p>
+<p>The custom tokenizer represented <strong>Acetylcholinesterase</strong> using three components, <code>A</code>, <code>cetyl</code>, and <code>cholinesterase</code>; GPT-2 used eight. However, the custom tokenizer fragmented <strong>Alzheimer</strong> more than GPT-2. It improved one specialist term while losing on another. Inspecting the entire sentence prevents cherry-picking a single favorable word.</p>
+<p>The BioGPT output includes <code>&lt;/s&gt;</code> at the start because the encoding call adds its special token. Its 12-piece count therefore should not be treated as a perfectly controlled comparison to the other calls without aligning special-token handling. The first repository’s comparison deliberately avoids this difference.</p>
+<p>Loading BioGPT required <strong>sacremoses</strong>, supporting its Moses-based tokenization behavior. This was a tokenizer dependency issue, not a requirement to train a PyTorch model. The scripts can perform tokenization experiments without transformer weight training.</p>
+<p>Each custom artifact successfully decoded its IDs back to the original sentence. That round-trip check verifies reconstruction for the tested string; it does not evaluate the quality of a language model attached to those IDs.</p>
+<hr />
+<h2 id="model_max_length-is-metadata-not-a-new-context-window">📏 <code>model_max_length</code> Is Metadata, Not a New Context Window<a class="headerlink" href="#model_max_length-is-metadata-not-a-new-context-window" title="Permanent link">&para;</a></h2>
+<p>The custom tokenizer reported an enormous value near <span class="arithmatex">\(10^{30}\)</span> for <code>model_max_length</code>. Paul investigated it and saved a corrected tokenizer configuration. That value is a <strong>sentinel for an unspecified limit</strong>, not evidence of a functioning trillion-token context window. Hugging Face documents the default as a very large integer when an associated limit is not supplied. <a href="https://huggingface.co/docs/transformers/main_classes/tokenizer">Tokenizer reference</a>.</p>
+<p>The supplied Colab notebook contains this exact configuration example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">transformers</span><span class="w"> </span><span class="kn">import</span> <span class="n">PreTrainedTokenizerFast</span>
+<span class="n">tok</span> <span class="o">=</span> <span class="n">PreTrainedTokenizerFast</span><span class="o">.</span><span class="n">from_pretrained</span><span class="p">(</span><span class="s2">&quot;paulvision/medical-bpe-pubmed&quot;</span><span class="p">)</span>
+<span class="n">tok</span><span class="o">.</span><span class="n">model_max_length</span> <span class="o">=</span> <span class="mi">2048</span>   <span class="c1"># or 2048, 8192 — whatever your model uses</span>
+<span class="n">tok</span><span class="o">.</span><span class="n">save_pretrained</span><span class="p">(</span><span class="s2">&quot;./my-medical-model-tokenizer&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The value must be chosen to match the intended model and application. Assigning 2,048 in the tokenizer configuration controls relevant preprocessing metadata; it does not train positional behavior, change the model architecture, or extend a pretrained model’s supported context.</p>
+<p>Chitresh’s follow-up focused on synchronizing these limits. The practical sequence is to identify the model’s supported input length, configure tokenization and truncation accordingly, save the tokenizer artifact, and verify the reloaded settings. A tokenizer trained independently has no neural model whose context limit it can automatically infer.</p>
+<hr />
+<h2 id="what-training-byte-level-bpe-actually-learns">⚙️ What Training Byte-Level BPE Actually Learns<a class="headerlink" href="#what-training-byte-level-bpe-actually-learns" title="Permanent link">&para;</a></h2>
+<p>The class trained new tokenizers on domain text and then inspected their segmentation. The process begins with byte-level pieces and learns useful merges from repeated patterns. It constructs vocabulary entries and token IDs. It does not optimize transformer attention weights, learn the embedding values used by a future LM, or create a trained SLM simply because a tokenizer JSON file now exists.</p>
+<p>The first comparison notebook provides the real configuration used for its 30,000-token experiment:</p>
+<div class="highlight"><pre><span></span><code><span class="n">med_tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">BPE</span><span class="p">())</span>
+<span class="n">med_tokenizer</span><span class="o">.</span><span class="n">pre_tokenizer</span> <span class="o">=</span> <span class="n">ByteLevel</span><span class="p">(</span><span class="n">add_prefix_space</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># match GPT-2&#39;s own setting</span>
+<span class="n">med_tokenizer</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">ByteLevelDecoder</span><span class="p">()</span>     <span class="c1"># must pair with the ByteLevel pre-tokenizer</span>
+
+<span class="n">trainer</span> <span class="o">=</span> <span class="n">BpeTrainer</span><span class="p">(</span>
+    <span class="n">vocab_size</span><span class="o">=</span><span class="mi">30000</span><span class="p">,</span>
+    <span class="n">min_frequency</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">initial_alphabet</span><span class="o">=</span><span class="n">pre_tokenizers</span><span class="o">.</span><span class="n">ByteLevel</span><span class="o">.</span><span class="n">alphabet</span><span class="p">(),</span>  <span class="c1"># all 256 bytes -&gt; lossless decoding</span>
+    <span class="n">special_tokens</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;&lt;|endoftext|&gt;&quot;</span><span class="p">],</span>
+    <span class="n">show_progress</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>This is an excerpt from the supplied notebook, which imports these classes and trains from <code>medical_train_texts</code> in the surrounding cell. It is not a standalone script. Its byte-level pre-tokenizer and decoder work together; seeding the complete byte alphabet supports representation of rare characters. Any preprocessing or normalization still needs consideration when assessing exact round trips.</p>
+<p>The larger lab uses the same general byte-level BPE idea, with an initial alphabet and <strong>two special tokens</strong>, <code>&lt;|endoftext|&gt;</code> and <code>&lt;pad&gt;</code>. Its training script reads either text lines or JSONL <code>text</code> records and writes <code>tokenizer.json</code>. The 16,000 budget is a target vocabulary size, not a promise that any tiny corpus can produce 16,000 useful merges.</p>
+<p>The minimum-frequency requirement can stop expansion before the requested budget. A tiny corpus may not contain enough eligible repeated pairs. The official <a href="https://huggingface.co/docs/tokenizers/v0.23.2/api/trainers">BPE trainer reference</a> documents vocabulary size, minimum frequency, special tokens, and initial alphabet as distinct controls.</p>
+<p>This matters for Ranjeev’s late debugging report: his actual vocabulary was only <strong>258</strong> despite a much larger request. In this implementation, 256 byte symbols plus two special tokens explain why 258 is a meaningful clue: little or no additional learned vocabulary was present. The live class did not establish the cause. An empty or wrong corpus, restrictive training settings, or an unexpected artifact requires inspection; the notes should not claim one of those possibilities was confirmed.</p>
+<hr />
+<h2 id="a-stronger-experiment-domain-control-probes-and-held-out-evaluation">🧫 A Stronger Experiment: Domain Control, Probes, and Held-out Evaluation<a class="headerlink" href="#a-stronger-experiment-domain-control-probes-and-held-out-evaluation" title="Permanent link">&para;</a></h2>
+<p>The second lab compares four tokenizer columns:</p>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cl100k</code></td>
+<td>General-purpose tiktoken baseline.</td>
+</tr>
+<tr>
+<td><code>o200k</code></td>
+<td>Another larger general-purpose tiktoken baseline.</td>
+</tr>
+<tr>
+<td><code>custom-med</code></td>
+<td>Medical byte-level BPE, initially at a 16,000 vocabulary budget.</td>
+</tr>
+<tr>
+<td><code>general-bpe</code></td>
+<td>General-text byte-level BPE with the same 16,000 budget and algorithm.</td>
+</tr>
+</tbody>
+</table>
+<p>The equal-budget control is particularly helpful. Comparing custom-med only against much larger pretrained vocabularies mixes domain, corpus, and budget differences. Comparing it against general-bpe keeps the algorithm and requested vocabulary budget aligned while changing the training corpus. Differences in the resulting held-out segmentation give more direct evidence about the benefit of domain matching.</p>
+<p>Paul first examined <strong>20 curated medical probes</strong>. The probes expose the mechanism: which terms fragment, where punctuation and doses add tokens, and where the medical vocabulary helps. They are not enough to establish a broad pass criterion because they were selected for illustration and may overlap with training text.</p>
+<p>The saved companion lab shows a mixture of wins, ties, and losses. For <strong>acetylcholinesterase inhibitor</strong>, custom-med uses three pieces against seven for cl100k, six for o200k, and ten for general-bpe. On <strong>empagliflozin 10 mg daily</strong>, custom-med ties cl100k at ten while o200k uses nine. Other strings favor a general baseline. The class explicitly examined these exceptions rather than assuming every drug receives a single token.</p>
+<p>A count of strings won and a corpus average are different statistics. A tokenizer can win on more selected phrases yet lose the average because another tokenizer saves more pieces on the remaining phrases. Likewise, a phrase-level fertility result does not substitute for the held-out corpus result.</p>
+<p>The lab reserves <strong>5,000 medical records</strong> as a held-out file. The current saved notebook evaluates the <strong>first 2,000 held-out records</strong> for its displayed medical table. That difference matters: reserving 5,000 is not the same as evaluating every one of them in every companion output. Its saved 2,000-record results are:</p>
+<table>
+<thead>
+<tr>
+<th>Tokenizer</th>
+<th style="text-align: right;">Medical fertility</th>
+<th style="text-align: right;">General fertility</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>cl100k</td>
+<td style="text-align: right;">1.470</td>
+<td style="text-align: right;">1.176</td>
+</tr>
+<tr>
+<td>o200k</td>
+<td style="text-align: right;">1.439</td>
+<td style="text-align: right;">1.166</td>
+</tr>
+<tr>
+<td>custom-med, 16k</td>
+<td style="text-align: right;">1.381</td>
+<td style="text-align: right;">1.575</td>
+</tr>
+<tr>
+<td>general-bpe, 16k</td>
+<td style="text-align: right;">1.759</td>
+<td style="text-align: right;">1.207</td>
+</tr>
+</tbody>
+</table>
+<p>These values belong to the supplied <strong>current notebook’s saved run</strong>. The live discussion and other repository tables show slightly different values; they are not silently combined into one run. In the session, the medical custom score was around <strong>1.375</strong>, with the same directional lesson: medical training improves compression on medical held-out text, while the general control does better on general prose.</p>
+<p>The effect concerns the selected corpora. A crossover is useful evidence of specialization, but a tokenizer that wins in both domains is not automatically contaminated or invalid. Corpus size, algorithm choices, and preprocessing may create broader improvements. Evaluate the controls rather than turning an expected pattern into a universal rule.</p>
+<hr />
+<h2 id="single-token-rate-a-coverage-probe-not-an-accuracy-score">🎯 Single-Token Rate: A Coverage Probe, Not an Accuracy Score<a class="headerlink" href="#single-token-rate-a-coverage-probe-not-an-accuracy-score" title="Permanent link">&para;</a></h2>
+<p>The lab separately measures the fraction of selected domain terms that encode as exactly one piece:</p>
+<div class="arithmatex">\[
+\text{single-token rate} = \frac{\text{terms encoded as one piece}}{\text{number of tested terms}}
+\]</div>
+<p>Its 20-term test produced a <strong>10% rate for custom-med</strong>, corresponding to two terms, <strong>hemoglobin</strong> and <strong>lymphocyte</strong>, and 0% for the displayed general baselines. This test uses isolated terms, rather than counting complete abstracts that happen to contain some whole-word pieces.</p>
+<p>A 0% rate means none of those 20 isolated strings was encoded as a single token under that call. It does not mean the model fails on all 20 terms or understands 0% of medicine. A multi-piece representation remains usable. A single vocabulary entry is also not an automatically correct or clinically reliable concept embedding.</p>
+<p>Boundary context matters. A word at the beginning of a string can be segmented differently from the same word after a space. Case, punctuation, plural forms, and normalization also affect the result. Evaluate the exact strings used by the application, and define whether a leading space or special tokens are included.</p>
+<p>Paul returned to this metric in Gaurav’s late question about unlimited GPU resources. He suggested checking fertility and single-token coverage across vocabulary sizes, then balancing them against cost. The remarks about higher coverage were guidance for additional experiments; the class did not present a complete sweep of downstream LM quality or prove that a larger vocabulary always improves this rate.</p>
+<hr />
+<h2 id="vocabulary-sweep-diminishing-returns-on-compression">📉 Vocabulary Sweep: Diminishing Returns on Compression<a class="headerlink" href="#vocabulary-sweep-diminishing-returns-on-compression" title="Permanent link">&para;</a></h2>
+<p>The next experiment held the medical training corpus fixed and compared requested budgets of <strong>16k, 32k, 50k, 64k, and 100k</strong>. This separates the vocabulary-budget question from the earlier domain-selection question.</p>
+<p>The instructor’s accompanying PDF, <strong>Token Domain.pdf</strong>, records the live comparison:</p>
+<table>
+<thead>
+<tr>
+<th>Requested vocabulary</th>
+<th style="text-align: right;">Average tokens per document</th>
+<th style="text-align: right;">Change versus previous budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16k</td>
+<td style="text-align: right;">188.8</td>
+<td style="text-align: right;">—</td>
+</tr>
+<tr>
+<td>32k</td>
+<td style="text-align: right;">177.2</td>
+<td style="text-align: right;">−6.2%</td>
+</tr>
+<tr>
+<td>50k</td>
+<td style="text-align: right;">173.1</td>
+<td style="text-align: right;">−2.3%</td>
+</tr>
+<tr>
+<td>64k</td>
+<td style="text-align: right;">171.5</td>
+<td style="text-align: right;">−0.9%</td>
+</tr>
+<tr>
+<td>100k</td>
+<td style="text-align: right;">169.7</td>
+<td style="text-align: right;">−1.1%</td>
+</tr>
+</tbody>
+</table>
+<p>The percentages are the displayed experiment’s rounded values. Recomputing from already-rounded averages can give a slightly different final decimal. The saved newer notebook has a different sequence, <strong>186.3, 174.8, 170.8, 169.2, 167.4</strong>, and a fallback worked example uses <strong>1250, 1050, 980, 960, 950</strong>. Those are separate examples; the fallback table is not a PubMed measurement to substitute for the live result.</p>
+<p>The largest first gain is the jump from 16k to 32k. Later budget increases buy progressively smaller reductions in sequence length. The final 64k-to-100k jump increases the requested vocabulary substantially for about a one-percent improvement relative to the previous row.</p>
+<p>“Versus previous” and “versus 16k” answer different questions. The first measures the marginal gain from the latest increase. The second measures the cumulative improvement from the starting budget. Do not add relative percentages as though they were absolute token counts.</p>
+<p>The experiment also reports actual vocabulary size. If the corpus and minimum-frequency setting cannot support more merges, a request for 100k can yield less than 100k. The actual artifact is what determines its usable token IDs and embedding-row requirement.</p>
+<hr />
+<h2 id="the-other-side-of-the-sweep-embedding-and-output-cost">💾 The Other Side of the Sweep: Embedding and Output Cost<a class="headerlink" href="#the-other-side-of-the-sweep-embedding-and-output-cost" title="Permanent link">&para;</a></h2>
+<p>The PDF pairs the compression table with an embedding-cost calculation using a fixed hidden width of <strong>1,024</strong>:</p>
+<div class="arithmatex">\[
+\text{embedding parameters} = V \times d_{model}
+\]</div>
+<table>
+<thead>
+<tr>
+<th>Vocabulary</th>
+<th style="text-align: right;">Parameters in one embedding table</th>
+<th style="text-align: right;">Relative to 16k</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16,000</td>
+<td style="text-align: right;">16,384,000</td>
+<td style="text-align: right;">1×</td>
+</tr>
+<tr>
+<td>32,000</td>
+<td style="text-align: right;">32,768,000</td>
+<td style="text-align: right;">2×</td>
+</tr>
+<tr>
+<td>50,000</td>
+<td style="text-align: right;">51,200,000</td>
+<td style="text-align: right;">3.125×</td>
+</tr>
+<tr>
+<td>64,000</td>
+<td style="text-align: right;">65,536,000</td>
+<td style="text-align: right;">4×</td>
+</tr>
+<tr>
+<td>100,000</td>
+<td style="text-align: right;">102,400,000</td>
+<td style="text-align: right;">6.25×</td>
+</tr>
+</tbody>
+</table>
+<p>Increasing vocabulary size adds <strong>rows</strong>, while the width of each row stays fixed in this comparison. It does not make every token embedding wider. The calculation counts parameters, not bytes: storage also depends on datatype, and training memory includes gradients, optimizer state, and other model components.</p>
+<p>A language model’s output head also covers the vocabulary. Input embeddings and output weights may be tied, so it is not universally correct to double the table’s parameter count. Even with tied weights, evaluating a larger output vocabulary has computation implications.</p>
+<p>Paul’s practical concern was that the 100k table is 6.25 times the 16k table, while the last step saves relatively few sequence positions. That is the trade-off: shorter sequences versus more vocabulary-related parameters and work. It is not enough to ask which row has the lowest tokens per document.</p>
+<pre class="mermaid"><code>flowchart LR
+    V[Increase vocabulary budget] --&gt; S[Often shorten encoded documents]
+    V --&gt; R[Increase embedding rows]
+    V --&gt; O[Increase output vocabulary work]
+    S --&gt; D[Compare marginal savings against model and corpus costs]
+    R --&gt; D
+    O --&gt; D</code></pre>
+<p>For a small model, vocabulary tables can represent a large share of total parameters. For a larger model, the same absolute table increase may be easier to accommodate. The session used a fixed width to make the cost visible; it did not calculate a complete end-to-end training budget for every candidate architecture.</p>
+<hr />
+<h2 id="the-knee-rule-corpus-size-and-the-unfinished-decision">⚖️ The Knee Rule, Corpus Size, and the Unfinished Decision<a class="headerlink" href="#the-knee-rule-corpus-size-and-the-unfinished-decision" title="Permanent link">&para;</a></h2>
+<p>One helper chooses the <strong>smallest vocabulary whose average encoded length is within 2% of the best tested result</strong>. This is an experiment-selection heuristic, not a universal optimum theorem.</p>
+<p>For the live table, the best displayed average is 169.7. A 2% allowance gives:</p>
+<div class="arithmatex">\[
+169.7 \times 1.02 = 173.094
+\]</div>
+<p>The <strong>64k row at 171.5</strong> clearly qualifies, as does 100k. The <strong>50k row at 173.1</strong> is borderline and very slightly outside when only those rounded numbers are used. Paul explored that boundary during the discussion. Use the unrounded experiment values for a strict automated decision; do not declare the rounded 50k value definitely inside the threshold. The supplied notebook’s own helper reports a 64k compression knee for its saved run.</p>
+<p>The second consideration was the size of the training corpus. The class discussed roughly <strong>6.3 million corpus units</strong>, which the current script counts as <strong>whitespace-separated words</strong>. It is a proxy for corpus scale, not a vocabulary of 6.3 million unique entries, not 6.3 million abstracts, and not necessarily 6.3 million encoded tokens under every tokenizer.</p>
+<p>Dividing that rounded corpus count by vocabulary size yields:</p>
+<table>
+<thead>
+<tr>
+<th>Vocabulary budget</th>
+<th style="text-align: right;">6.3 million ÷ budget</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>16k</td>
+<td style="text-align: right;">393.75</td>
+</tr>
+<tr>
+<td>32k</td>
+<td style="text-align: right;">196.875</td>
+</tr>
+<tr>
+<td>50k</td>
+<td style="text-align: right;">126</td>
+</tr>
+<tr>
+<td>64k</td>
+<td style="text-align: right;">98.4375</td>
+</tr>
+<tr>
+<td>100k</td>
+<td style="text-align: right;">63</td>
+</tr>
+</tbody>
+</table>
+<p>The ratio indicates how corpus scale compares with vocabulary capacity. It does <strong>not</strong> mean a single token compresses 394 words. It does not guarantee every vocabulary item appears 394 times either: frequencies are highly uneven, and the numerator uses a different unit from actual subword occurrence counts.</p>
+<p>The corpus-size guidance in the lab suggests smaller vocabularies for smaller corpora and larger budgets for very large pretraining corpora. Treat its bands and tenfold rule-of-thumb discussion as classroom heuristics requiring validation. The class’s papers do not establish one exact ratio as a universally sufficient condition for stable vocabulary learning.</p>
+<p>This produced a genuine tension: the compression-only rule favored a larger budget, whereas the small-corpus and embedding-cost considerations favored a smaller one. Ranjeev raised that conflict explicitly. Paul said the final balancing framework was not yet complete and would continue next class. He identified <strong>32k and 50k</strong> as practical candidates to investigate, rather than declaring one irrevocable winner for every corpus.</p>
+<p>More data also did not yield identical numbers on every student machine. The discussion included runs with different fertility scores after changing the sample count. Extra records can change frequencies and merge choices; they do not mathematically guarantee improvement on a particular test set. Reproducibility requires the same input records, filtering, split, training settings, tokenizer artifact, and metric calls. In the current sweep script, existing artifacts can be reused, so a changed corpus does not necessarily retrain an already-existing tokenizer automatically.</p>
+<p>The two research readings were <a href="https://arxiv.org/abs/2012.15613">How Good is Your Tokenizer?</a> and <a href="https://arxiv.org/abs/2402.18376">Tokenization Is More Than Compression</a>. Paul introduced them as deeper background for the continuation, rather than teaching all their experiments in this session.</p>
+<hr />
+<h2 id="tokenizer-compatibility-with-pretrained-models-and-apis">🔗 Tokenizer Compatibility with Pretrained Models and APIs<a class="headerlink" href="#tokenizer-compatibility-with-pretrained-models-and-apis" title="Permanent link">&para;</a></h2>
+<p>The most consequential deployment clarification was that a custom tokenizer is not interchangeable with a pretrained model’s tokenizer. Token IDs index learned embedding rows. If a new tokenizer assigns a different meaning to ID 500, a model trained with the old mapping still interprets row 500 according to its original training.</p>
+<pre class="mermaid"><code>flowchart LR
+    OLD[Original tokenizer: meaning of ID 500] --&gt; E[Pretrained embedding row 500]
+    NEW[New tokenizer: different meaning of ID 500] --&gt; X[Mapping mismatch]
+    E --&gt; X
+    X --&gt; B[Resizing alone does not restore the original meaning]</code></pre>
+<p>Keeping the original mapping and <strong>adding selected new tokens</strong> is a different operation from replacing the entire vocabulary. Added tokens require compatible embedding dimensions and a training strategy for their new rows. Hugging Face documents the need to resize token embeddings after vocabulary extension. LoRA applied only to attention layers is not an automatic training solution for newly added embedding rows; selective embedding training or another appropriate configuration must be considered. <a href="https://huggingface.co/docs/transformers/main_classes/tokenizer">Tokenizer reference</a>, <a href="https://huggingface.co/docs/peft/en/developer_guides/troubleshooting">PEFT troubleshooting</a>.</p>
+<p>The supplied lab includes this compatibility warning, but the complete model-adaptation process was not implemented here. A full replacement tokenizer can be paired with a new model trained accordingly; adapting existing weights is a more involved task than changing a filename.</p>
+<p>Shantan’s API question concerned sending custom token IDs to a closed model service. A locally trained tokenizer does not change the service’s internal vocabulary or billing tokenizer. Where an API accepts text, the service encodes that text using its own model-compatible tokenization. Compressing the text under your local vocabulary does not make the remote model reinterpret its embedding rows.</p>
+<p>Likewise, an SLM or agent does not inherently require a custom tokenizer. Debajyoti asked whether every SLM workflow had to pass through this step. Paul clarified that this exercise was a domain-specific experiment, trained from scratch, not an operation that appended medical terms to a general vocabulary. Reusing the model’s existing tokenizer is the sensible starting point when it already serves the application well.</p>
+<hr />
+<h2 id="whats-next">🗺️ What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul explicitly carried forward the vocabulary-selection balance between compression, corpus size, and embedding cost. The remaining practical steps were to wrap the tokenizer in a Hugging Face-compatible format, upload it to each learner’s own repository, reload and test it in Colab, and inspect the main medical-tokenizer training script more closely.</p>
+<p>Prompt-engineering basics, including chain-of-thought concepts, were planned after completing that work. The class ended before those lessons. The discussion of medical data for a future fine-tuning project was a course plan, not evidence that a medical LM had been trained during this session.</p>
+<hr />
+<h2 id="live-qa-highlights">💬 Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Why use a medical tokenizer when a general one can encode the text?</td>
+<td>Repeated medical patterns can need fewer pieces with a domain vocabulary. Evaluate compression and model costs; multiple general subwords are still valid representations.</td>
+</tr>
+<tr>
+<td>Does training the tokenizer train embeddings or an LLM?</td>
+<td>No. It learns vocabulary and segmentation artifacts. Neural embedding values and transformer weights require model training.</td>
+</tr>
+<tr>
+<td>Why does BioGPT need sacremoses?</td>
+<td>Its demonstrated tokenizer uses Moses-style preprocessing and BPE. Installing that dependency resolves the tokenizer-loading requirement shown here.</td>
+</tr>
+<tr>
+<td>What are <code>Ġ</code>, <code>&lt;/w&gt;</code>, and <code>##</code>?</td>
+<td>Display conventions for spaces, word endings, or subword continuation in different tokenizer families. Keep the matching decoder rules.</td>
+</tr>
+<tr>
+<td>Is a medical model guaranteed to have a medical vocabulary?</td>
+<td>No. The supplied BioClinicalBERT comparison retains BERT’s vocabulary, whereas the demonstrated biomedical vocabulary differs. Inspect the artifact.</td>
+</tr>
+<tr>
+<td>What does fertility mean, and is a lower value always better?</td>
+<td>It measures encoded tokens per whitespace word here. Lower means fewer pieces under that convention; it does not alone establish downstream accuracy.</td>
+</tr>
+<tr>
+<td>Why not decide from one impressive medical sentence?</td>
+<td>A selected probe can favor one vocabulary. Test representative held-out medical text and general-text controls as well.</td>
+</tr>
+<tr>
+<td>Why do token-count-per-character results look different across the projects?</td>
+<td>One uses 1,000 characters and the other 100. Align the units before comparing.</td>
+</tr>
+<tr>
+<td><strong>Pravat Mishra:</strong> Can this approach work for finance?</td>
+<td>Yes as an experiment on a representative finance corpus. Measure the relevant abbreviations and text rather than assuming medical results transfer unchanged.</td>
+</tr>
+<tr>
+<td><strong>Chitresh Kaushik / Deepak:</strong> How should tokenizer maximum length relate to the model?</td>
+<td>Read the model’s supported length and configure preprocessing accordingly. The tokenizer’s huge unspecified sentinel is not a real context window.</td>
+</tr>
+<tr>
+<td>Does assigning <code>model_max_length = 2048</code> extend the model?</td>
+<td>No. It saves tokenizer metadata; the model’s architecture and learned context behavior are separate.</td>
+</tr>
+<tr>
+<td><strong>shantan.talla:</strong> Can a custom tokenizer reduce token use in a closed API by sending its own IDs?</td>
+<td>A local vocabulary cannot replace the service model’s token-ID mapping. Remote tokenization and billing follow the service’s model.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> Can custom tokenizers be attached to niche SLMs?</td>
+<td>Tokenizer and model mappings must remain compatible. Specific model examples and full adaptation details were deferred.</td>
+</tr>
+<tr>
+<td><strong>sridhar k:</strong> Is replacement equivalent to resizing during fine-tuning?</td>
+<td>No. Resizing adds capacity; replacing meanings of existing IDs breaks compatibility. Training new rows and preserving the mapping are separate considerations.</td>
+</tr>
+<tr>
+<td>Can fewer input tokens automatically make the cheapest model suitable?</td>
+<td>Compression can help costs, but model capability, output quality, latency, and the vocabulary computation still matter.</td>
+</tr>
+<tr>
+<td><strong>Rushi:</strong> What about English and Hindi medical text?</td>
+<td>Use a representative multilingual corpus and test both languages. A custom tokenizer is not, by itself, a trained multilingual model.</td>
+</tr>
+<tr>
+<td><strong>Shashank:</strong> Do cloud-platform concepts transfer between Azure Foundry and Bedrock?</td>
+<td>Many architecture concepts transfer, while service-specific interfaces still need study. This was guidance, not a hiring guarantee.</td>
+</tr>
+<tr>
+<td>Why compare two BPE tokenizers with the same 16k budget?</td>
+<td>It controls the algorithm and budget while changing training domain, making the domain effect easier to assess.</td>
+</tr>
+<tr>
+<td>Why do some medical probes tie or favor a general tokenizer?</td>
+<td>Frequency, vocabulary allocation, punctuation, case, and prior coverage differ. Specialization does not imply winning every string.</td>
+</tr>
+<tr>
+<td>What does a 10% single-token rate mean?</td>
+<td>Two of the 20 tested isolated terms encoded as one piece. It is not a 10% medical accuracy score.</td>
+</tr>
+<tr>
+<td>How can a tokenizer win more phrases yet lose the average fertility comparison?</td>
+<td>Win counts and aggregate token totals measure different things; savings on individual phrases can have different magnitudes.</td>
+</tr>
+<tr>
+<td>Why can actual vocabulary be smaller than the requested size?</td>
+<td>Training can exhaust eligible merges under corpus and minimum-frequency constraints. Inspect actual vocabulary size.</td>
+</tr>
+<tr>
+<td>Why did a student’s larger corpus produce a different fertility result?</td>
+<td>Dataset selection, preprocessing, artifacts, settings, and evaluation calls can differ. More records do not guarantee a particular score.</td>
+</tr>
+<tr>
+<td><strong>Harsh / Manish:</strong> What is the sweep comparing?</td>
+<td>Encoded length on the same evaluated documents across vocabulary budgets, alongside the separate increase in embedding cost.</td>
+</tr>
+<tr>
+<td>Does a 100k vocabulary make each embedding vector larger?</td>
+<td>It adds rows at the fixed hidden width used in the example. Width and vocabulary size are separate dimensions.</td>
+</tr>
+<tr>
+<td>What is the 2% knee rule?</td>
+<td>Choose the smallest tested vocabulary whose encoded length is within 2% of the best result. It is a compression heuristic, not the complete decision.</td>
+</tr>
+<tr>
+<td>Is 50k definitely within 2% in the live rounded table?</td>
+<td>It is borderline: 173.1 is slightly above 169.7 × 1.02. Use unrounded values for a strict choice; 64k clearly qualifies.</td>
+</tr>
+<tr>
+<td><strong>Alok:</strong> Does the corpus-to-vocabulary ratio mean 394 words become one token?</td>
+<td>No. It compares a corpus-scale proxy with vocabulary capacity. It neither represents one-token compression nor guarantees uniform frequency per entry.</td>
+</tr>
+<tr>
+<td><strong>RANJEEV TIWARI:</strong> Why does the knee favor 64k/100k while corpus scale favors less?</td>
+<td>They optimize different considerations. Paul deferred the final balance and named 32k/50k as practical candidates requiring further experiments.</td>
+</tr>
+<tr>
+<td><strong>RANJEEV TIWARI:</strong> Why is my actual vocabulary only 258?</td>
+<td>The cause was not resolved live. In this trainer, 256 initial byte symbols plus two special tokens explain the clue; inspect the corpus, settings, and loaded artifact.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> If GPU budget is unlimited, will a larger vocabulary guarantee better quality?</td>
+<td>No. Check fertility and domain coverage, then account for parameter and training-time costs. The session did not measure downstream LM quality across the sweep.</td>
+</tr>
+<tr>
+<td><strong>Gaurav Garg:</strong> What exactly is a single token in that metric?</td>
+<td>The implemented test encodes a selected term as exactly one piece. Define term boundaries and leading-space behavior consistently.</td>
+</tr>
+<tr>
+<td><strong>Rushi:</strong> Can we publish the trained tokenizer?</td>
+<td>Packaging into the Hugging Face format was the remaining step. The full upload and reload exercise was scheduled for the following class.</td>
+</tr>
+<tr>
+<td><strong>DEBAJYOTI MUKHOPADHYAY:</strong> Must every SLM or SLM agent build a custom tokenizer?</td>
+<td>No. Start with a compatible general tokenizer unless domain evidence justifies additional work. The medical exercise trained a new tokenizer rather than appending terms.</td>
+</tr>
+<tr>
+<td><strong>DEBAJYOTI MUKHOPADHYAY:</strong> Which no-API-key test-data-generation framework had been mentioned earlier?</td>
+<td>Paul could not identify the remembered tool. Names discussed in the exchange were possibilities, not a confirmed answer to that requirement.</td>
+</tr>
+<tr>
+<td><strong>DEBAJYOTI MUKHOPADHYAY:</strong> The actual need is test data inferred from GitHub PySpark/Python joins—how to approach it?</td>
+<td>Paul suggested a coding-agent skill that reads the relevant code and generates data, followed by independent checks or multiple judges. This was an architectural suggestion, not a working demonstrated pipeline.</td>
+</tr>
+<tr>
+<td><strong>DEBAJYOTI MUKHOPADHYAY:</strong> Could Copilot be used for that code-driven workflow?</td>
+<td>Paul said a coding agent could be used. No specific local-only, key-free framework was established or tested during the exchange.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Domain matching changes segmentation efficiency; it does not automatically establish model or clinical quality.</li>
+<li>Tokenizer vocabulary learning, embedding learning, domain pretraining, and task fine-tuning are different operations.</li>
+<li>Use actual tokenizer files and IDs rather than assuming a model’s domain label implies a custom vocabulary.</li>
+<li>Report fertility with its exact word-count convention and token-per-character metrics with their units.</li>
+<li>Curated probes explain mechanisms; held-out corpora test whether the pattern persists.</li>
+<li>Hold algorithm and vocabulary budget constant when testing the training-domain effect.</li>
+<li>A single-token rate is defined over selected strings and boundaries, not over model correctness.</li>
+<li>Requested vocabulary size can exceed the number of merges the data supports.</li>
+<li>A vocabulary increase adds embedding rows; it does not automatically increase hidden width.</li>
+<li>The compression knee, corpus scale, and embedding cost can favor different choices.</li>
+<li>The roughly 6.3 million count is a corpus-scale proxy, not the number of unique vocabulary items.</li>
+<li>Preserve tokenizer-to-embedding ID compatibility with any pretrained model.</li>
+<li>An enormous <code>model_max_length</code> sentinel does not establish a real long-context capability.</li>
+<li>The final selection and publishing walkthrough were deferred, and the no-key test-data framework question remained unresolved.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-13">✅ Action Items After Class 13<a class="headerlink" href="#action-items-after-class-13" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Open the exact class repository and branch, and select the project environment as the notebook kernel.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce the GPT-2/BioGPT comparison with consistent special-token handling and a round-trip check.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect a medical model’s actual vocabulary before assuming it differs from its base tokenizer.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep training and held-out records separate; record the dataset, split, seed, and filtering used.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare custom-med against both the general baselines and an equal-budget general BPE control.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Report probe wins, held-out fertility, tokens per character budget, and single-token rate as separate measures.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Check the actual vocabulary count and the actual artifact loaded, especially if the result is only 258 entries.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Run or inspect the vocabulary sweep on the same evaluation text and calculate marginal savings alongside V × d_model.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Identify cached artifacts before assuming a changed corpus triggered retraining.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Record a provisional vocabulary choice and the evidence for it; revisit the final balancing framework next class.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Match tokenizer length metadata to the intended model and verify it after saving and reloading.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the two tokenizer papers for their research questions, without treating classroom heuristics as universal formulas.</li>
+</ul>
+<hr />
+<p><em>📝 Notes compiled from the full Class 13 transcript — “5 Sept Tokenization - 3,” Production AI / LLM Engineering, Krish Naik Academy. Primary recording: <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a9cf34c57524d8c54ee138f">Class 13 course page</a>; original transcript: <code>GMT20260905-143109_Recording.cutfile.20260906050040470.transcript.vtt</code>. Companions: all three pages of <code>Token Domain.pdf</code>; the complete <a href="https://colab.research.google.com/drive/18w8B-hRM0HOtCvUwjDKXFrWObT-MZl7E?usp=sharing">Idea_Exploration Colab notebook</a>; the supplied <a href="https://github.com/sourangshupal/tokener/blob/master/notebooks/medical_tokenizer_comparison.ipynb">tokener comparison notebook</a> and <a href="https://github.com/sourangshupal/tokener/blob/master/src/tokener/pipeline.py">pipeline</a>; and the full <a href="https://github.com/sourangshupal/tokenization-explainer/blob/vocab-size-sweep/notebooks/04_custom_vs_general.ipynb">custom-versus-general lab notebook</a>, README, student guide, and matching trainer, comparison, downloader, split, sweep, and wrapper sources. Current companion outputs are identified separately from the live tables. No notebook or repository code was executed to create these notes.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_12_Subword_Tokenization_Notes.html" class="btn btn-neutral float-left" title="12 · Subword tokenization"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_14_Offset_Mapping_and_Prompting_Notes.html" class="btn btn-neutral float-right" title="14 · Offset mapping and prompting">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_12_Subword_Tokenization_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_14_Offset_Mapping_and_Prompting_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
