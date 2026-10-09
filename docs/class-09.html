@@ -1,0 +1,345 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Class 9: Assembling and Training a Transformer from Scratch · Production AI Engineering Notes</title><meta name="description" content="Class 9 notes on Assembling and Training a Transformer from Scratch, with supplied code, diagrams, 22 live Q&amp;A entries and practice actions."/><meta name="theme-color" content="#f7f8fb"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/styles.css"><script>try{document.documentElement.dataset.theme=localStorage.getItem('pai-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}</script></head>
+<body id="top" data-class="9"><a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar"><button class="nav-toggle icon-button" aria-label="Open course navigation" aria-controls="course-nav" aria-expanded="false">☰</button><a href="index.html" class="brand"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V21a3 3 0 0 0-3-3H4V4.5Z"/><path d="M13 7.5a3 3 0 0 1 3-3h4V18h-4a3 3 0 0 0-3 3"/></svg></span><span>Production AI<span class="brand-sub">ENGINEERING NOTES</span></span></a><div class="top-actions"><button class="search-open" type="button"><span aria-hidden="true">⌕</span><span>Search all notes</span><kbd>/</kbd></button><button class="theme-toggle icon-button" type="button" aria-label="Toggle dark theme">◐</button><a class="github-link" href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub ↗</a></div></header>
+<aside class="sidebar" id="course-nav"><a class="nav-home " href="index.html">Course overview</a><a class="nav-home " href="revision.html">Quick revision</a><div class="reading-progress"><span>Your progress</span><strong data-progress-label>0 / 21</strong><progress data-progress-bar max="21" value="0" aria-label="Completed classes"></progress></div><div class="nav-group"><h2>Onboarding &amp; foundations</h2><a class="nav-class "  href="class-01.html" data-nav-class="1"><span class="nav-number">01</span><span>Induction and the Research-to-Production Roadmap</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-02.html" data-nav-class="2"><span class="nav-number">02</span><span>Software Setup and the Engineering Workflow</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-03.html" data-nav-class="3"><span class="nav-number">03</span><span>PyTorch Fundamentals — From Data to a Trained Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Transformers</h2><a class="nav-class "  href="class-04.html" data-nav-class="4"><span class="nav-number">04</span><span>Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-05.html" data-nav-class="5"><span class="nav-number">05</span><span>Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-06.html" data-nav-class="6"><span class="nav-number">06</span><span>Multi-Head Attention and the Transformer Encoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-07.html" data-nav-class="7"><span class="nav-number">07</span><span>Decoder Masking, Positional Encoding, and Cross-Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-08.html" data-nav-class="8"><span class="nav-number">08</span><span>Annotated Transformer Implementation — Designing the Encoder and Decoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class active" aria-current="page" href="class-09.html" data-nav-class="9"><span class="nav-number">09</span><span>Assembling and Training a Transformer from Scratch</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-10.html" data-nav-class="10"><span class="nav-number">10</span><span>Training and Evaluating the Transformer Translation Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Tokenization</h2><a class="nav-class "  href="class-11.html" data-nav-class="11"><span class="nav-number">11</span><span>Tokenization Foundations — BPE, Bytes, and Model Compatibility</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-12.html" data-nav-class="12"><span class="nav-number">12</span><span>Byte-Level BPE, WordPiece, and SentencePiece</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-13.html" data-nav-class="13"><span class="nav-number">13</span><span>Custom Domain Tokenization and Vocabulary Trade-offs</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-14.html" data-nav-class="14"><span class="nav-number">14</span><span>Offset Mapping, Custom BPE Decisions, and Prompting Foundations</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Prompting &amp; structured output</h2><a class="nav-class "  href="class-15.html" data-nav-class="15"><span class="nav-number">15</span><span>Prompt Engineering — Reasoning, Structured Outputs, and Evaluation</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-16.html" data-nav-class="16"><span class="nav-number">16</span><span>Structured Generation with Instructor and Outlines</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>DSPy</h2><a class="nav-class "  href="class-17.html" data-nav-class="17"><span class="nav-number">17</span><span>DSPy Part 1 — Signatures, Modules, and Code Execution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-18.html" data-nav-class="18"><span class="nav-number">18</span><span>DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Fine-tuning</h2><a class="nav-class "  href="class-19.html" data-nav-class="19"><span class="nav-number">19</span><span>Fine-Tuning Encoder, Decoder, and Encoder-Decoder Models</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Cache &amp; attention variants</h2><a class="nav-class "  href="class-20.html" data-nav-class="20"><span class="nav-number">20</span><span>KV Cache — Inference, Memory Math, and Multi-Query Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-21.html" data-nav-class="21"><span class="nav-number">21</span><span>Attention Variants — GQA, PagedAttention, and the MLA Introduction</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="sidebar-bottom"><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128" rel="noopener">Original course ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub repository ↗</a></div></aside><div class="nav-scrim" hidden></div><main id="main" class="main with-toc"><div class="main-column"><header class="chapter-header"><p class="eyebrow">CLASS 09 <span>·</span> 22 August 2026</p><h1>Assembling and Training a Transformer from Scratch</h1><div class="chapter-meta"><span>3hr 21min 49s</span><span>22 Q&A entries</span><span>3 diagrams</span></div><div class="chapter-actions"><a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd" class="text-link">Class recording ↗</a><a href="downloads/Class_09_Transformer_Training_Notes.md" class="text-link" download>Download Markdown ↓</a><button class="mark-complete" data-mark-class="9">Mark as read</button></div></header><article class="prose"><p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul in the transcript)  </p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd" rel="noopener">22 Aug Transformer practical</a></p>
+<p>This session connects the previous class&#39;s components into an encoder–decoder model, checks its forward path with untrained greedy decoding, constructs batch masks and shifted target labels, and explains the training loop and learning-rate schedule. The longest discussion concerns aligning decoder inputs with next-token labels through two slices of the same target.</p>
+<p>The lesson stops at the warmup schedule, before detailed label smoothing and real dataset training. The companion notebook contains later sections and stored results; their presence does not mean they were taught or rerun today.</p>
+<hr>
+<h2 id="quick-updates">📰 Quick Updates<a class="heading-link" href="#quick-updates" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>Paul shared an updated Annotated Transformer notebook, including an inference cell with extra print statements. The exact 22 August version supplies the code below: <a href="https://drive.google.com/file/d/1y9MZUINtAG3a3SwcfnKrPHro18uUpvEe/view?usp=sharing" rel="noopener">class notebook</a>.</li>
+<li>Learners were asked to inspect shapes, masks, data types, and intermediate outputs while debugging. Repeated reading and small experiments were presented as the way to make scratch code familiar.</li>
+<li>Graded assignments would start after tokenization. A later task would replace the current tokenizer with a subword approach and work toward the larger WMT task.</li>
+<li>A transition to the academy&#39;s Forward Deployment Engineering course was discussed for learners whose goals favored consulting and adoption work over implementation depth. Eligibility and logistics belong with the academy.</li>
+<li>GPU-provider and API-credit discussions remained exploratory. The class did not establish a guaranteed credit allocation, a universal cheapest provider, or a measured runtime for the proposed larger training job.</li>
+</ul>
+<hr>
+<h2 id="reconnecting-the-earlier-components">🧩 Reconnecting the Earlier Components<a class="heading-link" href="#reconnecting-the-earlier-components" aria-label="Link to this section">#</a></h2>
+<p>Paul starts with the architecture code. The encoder processes source tokens; the decoder processes target-side tokens while attending to the encoder output, called <strong>memory</strong>. The generator converts decoder features into target-vocabulary scores.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Component</th><th>Responsibility</th></tr></thead><tbody><tr><td>Source embedding and position information</td><td>Represent source IDs as position-aware vectors</td></tr><tr><td>Encoder stack</td><td>Produce the source representation sequence</td></tr><tr><td>Decoder stack</td><td>Combine target-prefix information with source memory</td></tr><tr><td>Target embedding and position information</td><td>Represent the decoder&#39;s input IDs</td></tr><tr><td>Generator</td><td>Project features to vocabulary scores and apply log-softmax</td></tr><tr><td>Source mask</td><td>Exclude padded source positions from attention</td></tr><tr><td>Target mask</td><td>Combine target padding and causal restrictions</td></tr></tbody></table></div>
+<p>The <strong>generator</strong> is a neural-network module, not Python&#39;s lazy-iteration generator. Its actual forward method uses log-softmax, so it returns <strong>log-probabilities</strong>, rather than raw logits or ordinary probabilities.</p>
+<p>The encoder has two sublayers: self-attention and feed-forward. The decoder has three: masked self-attention, source attention, and feed-forward. <strong>Source attention</strong> is the implementation&#39;s name for cross-attention: queries come from the decoder, while keys and values come from source memory. These counts explain why the encoder and decoder have different numbers of residual sublayer connections.</p>
+<h3 id="deep-copies-preserve-separate-layer-objects">Deep copies preserve separate layer objects<a class="heading-link" href="#deep-copies-preserve-separate-layer-objects" aria-label="Link to this section">#</a></h3>
+<p>The cloning helper uses deepcopy and a ModuleList. Repeated structure should not unintentionally reuse one mutable parameter set. Deep copies begin with copied values but have separate parameter objects that can subsequently learn independently.</p>
+<p>The code also differs from the paper&#39;s pictured normalization order. Its SublayerConnection normalizes before the sublayer, then adds the residual. The notebook explicitly says this is for code simplicity. Reading the forward method is more reliable than assuming its “residual followed by layer norm” docstring describes execution order.</p>
+<p>In the recap, Paul identifies layer normalization&#39;s learned scale and shift, initially ones and zeros, and epsilon for stable division. Normalization does not generally place all features between zero and one. Similarly, the sine/cosine recap concerns alternating <strong>feature dimensions</strong>, rather than even and odd token positions.</p>
+<hr>
+<h2 id="the-factory-function-constructing-the-model">🏭 The Factory Function: Constructing the Model<a class="heading-link" href="#the-factory-function-constructing-the-model" aria-label="Link to this section">#</a></h2>
+<p>The make_model function assembles the previously defined components. Paul calls it a <strong>factory function</strong>: configuration values go in, and a connected model object comes out.</p>
+<p>The exact class source is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def make_model(
+    src_vocab, tgt_vocab, N=6, d_model=512, d_ff=2048, h=8, dropout=0.1
+):
+    &quot;Helper: Construct a model from hyperparameters.&quot;
+    c = copy.deepcopy
+    attn = MultiHeadedAttention(h, d_model)
+    ff = PositionwiseFeedForward(d_model, d_ff, dropout)
+    position = PositionalEncoding(d_model, dropout)
+    model = EncoderDecoder(
+        Encoder(EncoderLayer(d_model, c(attn), c(ff), dropout), N),
+        Decoder(DecoderLayer(d_model, c(attn), c(attn), c(ff), dropout), N),
+        nn.Sequential(Embeddings(d_model, src_vocab), c(position)),
+        nn.Sequential(Embeddings(d_model, tgt_vocab), c(position)),
+        Generator(d_model, tgt_vocab),
+    )
+
+    # This was important from their code.
+    # Initialize parameters with Glorot / fan_avg.
+    for p in model.parameters():
+        if p.dim() &gt; 1:
+            nn.init.xavier_uniform_(p)
+    return model</code></pre></div>
+<p>The short name c means <strong>deep copy</strong>; c(attn) does not mean cross-attention. The decoder receives two independent attention copies, one for target self-attention and one for source attention. Source and target embeddings use their respective vocabulary sizes.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Argument</th><th>Default</th><th>Meaning</th></tr></thead><tbody><tr><td>N</td><td>6</td><td>Depth used for both stacks by this factory</td></tr><tr><td>d_model</td><td>512</td><td>Common representation width</td></tr><tr><td>d_ff</td><td>2048</td><td>Feed-forward inner width</td></tr><tr><td>h</td><td>8</td><td>Attention head count</td></tr><tr><td>dropout</td><td>0.1</td><td>Configured dropout probability</td></tr><tr><td>src_vocab / tgt_vocab</td><td>Supplied</td><td>Number of entries in each vocabulary</td></tr></tbody></table></div>
+<p>The paper&#39;s <strong>base</strong> and <strong>big</strong> configurations were mentioned. They are not the encoder versus decoder halves, and they are not the names of the smaller Multi30k versus larger WMT datasets. Architecture scale and data choice are separate experimental decisions.</p>
+<h3 id="what-the-initialization-condition-checks">What the initialization condition checks<a class="heading-link" href="#what-the-initialization-condition-checks" aria-label="Link to this section">#</a></h3>
+<p>The condition p.dim() &gt; 1 checks the number of <strong>axes</strong> of a parameter tensor. It does not check whether an embedding width is greater than one or reject a “zero-dimensional model.” Matrix-like parameters receive Xavier initialization; one-dimensional parameters, such as many biases and normalization coefficients, keep their earlier initialization.</p>
+<p>Paul suggested experimenting with other initializations. Their impact is not universally restricted to a tiny change in a final decimal: initialization can materially affect optimization. The practical lesson is to inspect and test the selected scheme.</p>
+<hr>
+<h2 id="untrained-inference-checking-the-wiring">🧪 Untrained Inference: Checking the Wiring<a class="heading-link" href="#untrained-inference-checking-the-wiring" aria-label="Link to this section">#</a></h2>
+<p>Before loading actual data, Paul tests whether the components can process an input and produce an output. This is a <strong>structural check</strong>, not a translation-quality test or proof that the model has learned to copy numbers.</p>
+<p>The example uses vocabulary sizes 11 and 11, stack depth two, and source IDs 1 through 10. Torch&#39;s long type is the integer representation needed for token indices; the retrieved embedding vectors have a different, floating-point representation.</p>
+<p>The source mask contains ones because this sample has no padded positions. Its shape is <strong>1 × 1 × 10</strong>; it is not merely a flat ten-item vector. Its singleton axis supports attention broadcasting.</p>
+<p>The actual test is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def inference_test():
+    test_model = make_model(11, 11, 2)
+    test_model.eval()
+    src = torch.tensor([[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]], dtype=torch.long)
+    src_mask = torch.ones(1, 1, 10)
+
+    memory = test_model.encode(src, src_mask)
+    ys = torch.zeros(1, 1).type_as(src)
+
+    for i in range(9):
+        out = test_model.decode(
+            memory, src_mask, ys, subsequent_mask(ys.size(1)).type_as(src.data)
+        )
+        prob = test_model.generator(out[:, -1])
+        _, next_word = torch.max(prob, dim=1)
+        next_word = next_word.data[0]
+        ys = torch.cat(
+            [ys, torch.full((1, 1), next_word, dtype=ys.dtype)], dim=1
+        )
+
+    print(&quot;Example Untrained Model Prediction:&quot;, ys)</code></pre></div>
+<p>Paul adds a second version with print statements to expose every step. Both versions and their outputs are preserved in the class notebook.</p>
+<h3 id="one-start-symbol-then-a-growing-prefix">One start symbol, then a growing prefix<a class="heading-link" href="#one-start-symbol-then-a-growing-prefix" aria-label="Link to this section">#</a></h3>
+<p>The initial ys contains one zero. In <strong>this test</strong>, ID 0 acts as a start symbol supplied by the program. It is not predicted. Special-token IDs are vocabulary choices, so zero is not a universal starting requirement.</p>
+<p>The encoder produces memory once. The decoder then receives that memory and the current prefix. Its final position goes through the generator, the highest-scoring ID is selected, and that ID is appended. The next pass consumes the expanded prefix.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    S[&quot;Source IDs&quot;] --&gt; E[&quot;Encode once&quot;] --&gt; M[&quot;Memory&quot;]
+    Z[&quot;ys starts with token 0&quot;] --&gt; D[&quot;Decode current prefix&lt;br/&gt;with causal mask&quot;]
+    M --&gt; D
+    D --&gt; G[&quot;Generator on final position&quot;]
+    G --&gt; Max[&quot;Choose highest-scoring ID&quot;]
+    Max --&gt; A[&quot;Append ID to ys&quot;]
+    A --&gt; D</pre><figcaption>Lecture diagram 1</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    S[&quot;Source IDs&quot;] --&gt; E[&quot;Encode once&quot;] --&gt; M[&quot;Memory&quot;]
+    Z[&quot;ys starts with token 0&quot;] --&gt; D[&quot;Decode current prefix&lt;br/&gt;with causal mask&quot;]
+    M --&gt; D
+    D --&gt; G[&quot;Generator on final position&quot;]
+    G --&gt; Max[&quot;Choose highest-scoring ID&quot;]
+    Max --&gt; A[&quot;Append ID to ys&quot;]
+    A --&gt; D</code></pre></details></figure>
+<p>The printed example starts <strong>[0] → [0, 9] → [0, 9, 1]</strong> and continues growing. Those particular IDs come from untrained random parameters, not useful facts to memorize. The outer test creates a model ten times, so new initial parameters can yield different outputs.</p>
+<h3 id="the-last-position-is-not-the-last-vocabulary-word">The last position is not the last vocabulary word<a class="heading-link" href="#the-last-position-is-not-the-last-vocabulary-word" aria-label="Link to this section">#</a></h3>
+<p>The decoder returns a representation for each prefix position. The slice out[:, -1] selects its final <strong>position</strong>, used to predict the next token. It does not imply that the last vocabulary entry has the highest probability.</p>
+<p>Log-softmax preserves the ranking of probabilities, so selecting the largest log-probability chooses the same ID as selecting the largest probability. Torch&#39;s max operation along a dimension returns both a maximum value and its index; this code discards the value and keeps the index. The older data[0] expression selects the first batch element.</p>
+<p>This is <strong>greedy decoding</strong>: choose one best-scoring candidate at each step. The test runs nine iterations and contains no end-token stopping condition. That range is a demonstration choice, not a universal output length.</p>
+<h3 id="evaluation-mode-and-gradient-recording">Evaluation mode and gradient recording<a class="heading-link" href="#evaluation-mode-and-gradient-recording" aria-label="Link to this section">#</a></h3>
+<p>Evaluation mode changes modules such as dropout; it does not itself disable autograd. The provided test has no no-grad or inference-mode context, so it is not an optimized inference implementation. These are separate PyTorch controls. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html#torch.nn.Module.eval" rel="noopener">Module evaluation mode</a>, <a href="https://docs.pytorch.org/docs/2.14/notes/autograd.html#locally-disabling-gradient-computation" rel="noopener">autograd modes</a></p>
+<hr>
+<h2 id="the-batch-object-data-masks-and-token-counts">📦 The Batch Object: Data, Masks, and Token Counts<a class="heading-link" href="#the-batch-object-data-masks-and-token-counts" aria-label="Link to this section">#</a></h2>
+<p>The next section constructs a batch manually. Besides source IDs, training needs decoder input IDs, next-token labels, and masks specifying allowed attention connections.</p>
+<p>The exact class implementation is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">class Batch:
+    &quot;&quot;&quot;Object for holding a batch of data with mask during training.&quot;&quot;&quot;
+
+    def __init__(self, src, tgt=None, pad=2):  # 2 = &lt;blank&gt;
+        self.src = src
+        self.src_mask = (src != pad).unsqueeze(-2)
+        if tgt is not None:
+            self.tgt = tgt[:, :-1]
+            self.tgt_y = tgt[:, 1:]
+            self.tgt_mask = self.make_std_mask(self.tgt, pad)
+            self.ntokens = (self.tgt_y != pad).data.sum()
+
+    @staticmethod
+    def make_std_mask(tgt, pad):
+        &quot;Create a mask to hide padding and future words.&quot;
+        tgt_mask = (tgt != pad).unsqueeze(-2)
+        tgt_mask = tgt_mask &amp; subsequent_mask(tgt.size(-1)).type_as(
+            tgt_mask.data
+        )
+        return tgt_mask</code></pre></div>
+<p>The optional target permits source-only construction. When a target exists, the object prepares the decoder input, its labels, the combined mask, and a non-padding label count.</p>
+<h3 id="padding-is-a-selected-id">Padding is a selected ID<a class="heading-link" href="#padding-is-a-selected-id" aria-label="Link to this section">#</a></h3>
+<p>For this example, <strong>pad = 2</strong>. The comparison src != pad returns True for real tokens and False for padding. Paul draws the Boolean result before discussing its shape:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Source row in the PDF</th><th>Comparison with pad = 2</th></tr></thead><tbody><tr><td>[1, 3, 2, 4]</td><td>[True, True, False, True]</td></tr><tr><td>[2, 8, 1, 0]</td><td>[False, True, True, True]</td></tr></tbody></table></div>
+<p>Under that rule, zero is not padding. The chosen vocabulary and padding configuration must agree; changing one alone changes which positions are excluded.</p>
+<h3 id="unsqueeze-inserts-an-axis">Unsqueeze inserts an axis<a class="heading-link" href="#unsqueeze-inserts-an-axis" aria-label="Link to this section">#</a></h3>
+<p>The PDF follows a <strong>(2, 4)</strong> array through unsqueeze(-2) to <strong>(2, 1, 4)</strong>. Its values do not change. A singleton axis is inserted at the second-from-last position so the mask can broadcast across query positions.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    S[&quot;Source IDs&lt;br/&gt;batch × sequence&quot;] --&gt; B[&quot;Compare with padding ID&lt;br/&gt;True = non-padding&quot;]
+    B --&gt; U[&quot;unsqueeze -2&quot;]
+    U --&gt; M[&quot;Source mask&lt;br/&gt;batch × 1 × sequence&quot;]
+    M --&gt; A[&quot;Broadcast across queries&lt;br/&gt;during attention&quot;]</pre><figcaption>Lecture diagram 2</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    S[&quot;Source IDs&lt;br/&gt;batch × sequence&quot;] --&gt; B[&quot;Compare with padding ID&lt;br/&gt;True = non-padding&quot;]
+    B --&gt; U[&quot;unsqueeze -2&quot;]
+    U --&gt; M[&quot;Source mask&lt;br/&gt;batch × 1 × sequence&quot;]
+    M --&gt; A[&quot;Broadcast across queries&lt;br/&gt;during attention&quot;]</code></pre></details></figure>
+<p>This translates the source-mask sketch in <strong>Annotated TF (1).pdf</strong>. The comparison supplies Boolean information; unsqueeze supplies shape compatibility. They are separate operations.</p>
+<h3 id="why-count-non-padding-labels">Why count non-padding labels?<a class="heading-link" href="#why-count-non-padding-labels" aria-label="Link to this section">#</a></h3>
+<p>The ntokens field counts labels that should contribute to loss and reporting. Padding supports compatible batch shapes but is not a real prediction target in this setup. Including padding in the denominator would make batch comparisons misleading.</p>
+<p>The count comes from tgt_y, the shifted <strong>labels</strong>, not just the source or unshifted target. Paul revisits this during the loop explanation: the useful count is the number of non-padding target tokens.</p>
+<hr>
+<h2 id="target-shifts-predict-the-next-token">↔️ Target Shifts: Predict the Next Token<a class="heading-link" href="#target-shifts-predict-the-next-token" aria-label="Link to this section">#</a></h2>
+<p>The class spends substantial time on:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">self.tgt = tgt[:, :-1]
+self.tgt_y = tgt[:, 1:]</code></pre></div>
+<p>These slices create two aligned sequences from the <strong>same full target</strong>. The first excludes the last token and supplies decoder input; the second excludes the first token and supplies the next-token label at each position.</p>
+<p>The whiteboard&#39;s two-row numerical example is:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Full target</th><th>Decoder input</th><th>Next-token labels</th></tr></thead><tbody><tr><td>[1, 2, 3, 4]</td><td>[1, 2, 3]</td><td>[2, 3, 4]</td></tr><tr><td>[5, 6, 7, 8]</td><td>[5, 6, 7]</td><td>[6, 7, 8]</td></tr></tbody></table></div>
+<p>At the first output position, the model should predict the label following the first input token. At the second position, it predicts the next label. Causal masking prevents inspection of later target inputs.</p>
+<p>The PDF also uses <strong>[start, the, cat, sat]</strong>. Decoder input becomes <strong>[start, the, cat]</strong>, and labels become <strong>[the, cat, sat]</strong>. The token offset is the point, rather than any particular numerical IDs.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TB
+    T[&quot;Full target:&lt;br/&gt;start, the, cat, sat&quot;] --&gt; I[&quot;Decoder input:&lt;br/&gt;start, the, cat&quot;]
+    T --&gt; L[&quot;Labels:&lt;br/&gt;the, cat, sat&quot;]
+    I --&gt; D[&quot;Causally masked decoder&lt;br/&gt;using source memory&quot;]
+    D --&gt; P[&quot;Predictions at aligned positions&quot;]
+    P --&gt; C[&quot;Compare each prediction&lt;br/&gt;with its next-token label&quot;]
+    L --&gt; C
+    C --&gt; Loss[&quot;Compute loss&quot;]</pre><figcaption>Lecture diagram 3</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart TB
+    T[&quot;Full target:&lt;br/&gt;start, the, cat, sat&quot;] --&gt; I[&quot;Decoder input:&lt;br/&gt;start, the, cat&quot;]
+    T --&gt; L[&quot;Labels:&lt;br/&gt;the, cat, sat&quot;]
+    I --&gt; D[&quot;Causally masked decoder&lt;br/&gt;using source memory&quot;]
+    D --&gt; P[&quot;Predictions at aligned positions&quot;]
+    P --&gt; C[&quot;Compare each prediction&lt;br/&gt;with its next-token label&quot;]
+    L --&gt; C
+    C --&gt; Loss[&quot;Compute loss&quot;]</code></pre></details></figure>
+<p>This preserves the whiteboard&#39;s input-versus-label structure while clarifying its occasional loose use of “encoder phase.” These slices change target-side decoder inputs and labels; they do not shift the encoder&#39;s source sentence.</p>
+<h3 id="more-than-shape-matching">More than shape matching<a class="heading-link" href="#more-than-shape-matching" aria-label="Link to this section">#</a></h3>
+<p>Both slices have equal length, permitting comparison. Their offset also defines the objective: <strong>given preceding target context, predict the next target token</strong>. Aligning each token with itself would change the task.</p>
+<p>Paul uses <strong>“I love …” → “dogs”</strong> as an analogy. The prediction must be compared with the actual next word in the dataset. Another ground-truth word changes the loss; a plausible example is not automatically a correct model output.</p>
+<p>This is <strong>teacher forcing</strong>: during training, true preceding target tokens are supplied. During free-running inference, the prefix contains the model&#39;s own generated tokens. The fill-in-the-blank analogy does not make this causal next-token objective identical to BERT-style masked language modeling.</p>
+<p>Ground truth means the intended labels in the data. The model produces a distribution over candidates, and loss evaluates that distribution against aligned labels; loss is not limited to comparing two lists of argmax IDs.</p>
+<p>With a causal mask, training can compute predictions for all target positions together while respecting the permitted context at each position. Generation still extends a prefix one token at a time. Keeping those two procedures distinct resolves much of the confusion in this section.</p>
+<hr>
+<h2 id="combining-padding-and-causal-restrictions">🎭 Combining Padding and Causal Restrictions<a class="heading-link" href="#combining-padding-and-causal-restrictions" aria-label="Link to this section">#</a></h2>
+<p>The target mask requires an allowed source position on the target side to be both <strong>non-padding</strong> and <strong>not in the future</strong> relative to the query. The Boolean tensor AND operation combines those restrictions. Paul explicitly distinguishes it from addition.</p>
+<p>The helper constructs future locations using an upper triangle and returns their complement:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def subsequent_mask(size):
+    &quot;Mask out subsequent positions.&quot;
+    attn_shape = (1, size, size)
+    subsequent_mask = torch.triu(torch.ones(attn_shape), diagonal=1).type(
+        torch.bool
+    )
+    return subsequent_mask == 0</code></pre></div>
+<p>Its final True values form a lower triangle, including the diagonal. “Upper triangular” refers to locations identified for blocking, not the final allowed positions.</p>
+<p>The target padding mask starts at <strong>batch × 1 × target length</strong>. Combining it with the causal mask supplies restrictions for query/key pairs. The attention code later expands it for heads and suppresses blocked scores before softmax.</p>
+<p>The static make_std_mask method uses explicit target and padding arguments without needing instance state. It belongs to the class namespace and can be called through the class without passing self.</p>
+<p>Masking does not itself replace IDs with zero or generate tokens. It restricts attention. Tokenization, special-token IDs, target alignment, and attention masks remain separate responsibilities.</p>
+<hr>
+<h2 id="the-epoch-loop-forward-loss-backward-update">🔄 The Epoch Loop: Forward, Loss, Backward, Update<a class="heading-link" href="#the-epoch-loop-forward-loss-backward-update" aria-label="Link to this section">#</a></h2>
+<p>Paul next reads TrainState and run_epoch. The state records processed batches, examples, tokens, and optimizer updates. Increasing those counters is bookkeeping, not a weight update.</p>
+<p>Each batch passes through the complete model. The custom loss helper returns:</p>
+<ul>
+<li><strong>loss:</strong> a detached reporting quantity for totals.</li>
+<li><strong>loss_node:</strong> a differentiable tensor attached to the graph for backward propagation.</li>
+</ul>
+<p>These are notebook-specific names, not required dual outputs of every PyTorch criterion. Its later helper confirms the relationship: it returns sloss.data multiplied by the token count, and sloss itself. The first supports totals; the second is the token-normalized differentiable loss.</p>
+<p>The actual inner training block is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">out = model.forward(
+    batch.src, batch.tgt, batch.src_mask, batch.tgt_mask
+)
+loss, loss_node = loss_compute(out, batch.tgt_y, batch.ntokens)
+# loss_node = loss_node / accum_iter
+if mode == &quot;train&quot; or mode == &quot;train+log&quot;:
+    loss_node.backward()
+    train_state.step += 1
+    train_state.samples += batch.src.shape[0]
+    train_state.tokens += batch.ntokens
+    if i % accum_iter == 0:
+        optimizer.step()
+        optimizer.zero_grad(set_to_none=True)
+        n_accum += 1
+        train_state.accum_step += 1
+    scheduler.step()</code></pre></div>
+<p>This excerpt removes only outer indentation for display; it remains the code inside the batch loop.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Action</th><th>Responsibility</th></tr></thead><tbody><tr><td>backward</td><td>Differentiate the graph and accumulate gradients</td></tr><tr><td>optimizer step</td><td>Change parameters using those gradients</td></tr><tr><td>zero_grad</td><td>Clear gradient storage</td></tr><tr><td>scheduler step</td><td>Advance the learning-rate schedule</td></tr></tbody></table></div>
+<p>Paul connects backward to automatic differentiation and the chain rule. <strong>Autograd</strong> is PyTorch&#39;s name for that machinery, not an alternative to automatic differentiation. The optimizer performs updates after gradients exist.</p>
+<p>In the function&#39;s eval mode, its training branch is skipped, so it does not call backward or the optimizer. That string does not independently call model.eval or disable graph recording; callers handle those controls.</p>
+<hr>
+<h2 id="gradient-accumulation-intent-and-actual-loop-behavior">🧠 Gradient Accumulation: Intent and Actual Loop Behavior<a class="heading-link" href="#gradient-accumulation-intent-and-actual-loop-behavior" aria-label="Link to this section">#</a></h2>
+<p>Accumulation processes several smaller microbatches before updating parameters. It can approximate a desired larger batch when that batch&#39;s activations do not fit in GPU memory simultaneously.</p>
+<p>The intended cycle is: forward/backward on successive microbatches → retain gradient contributions → update at the chosen boundary → clear gradients for the next group. It does not require retaining a separate old model for each microbatch.</p>
+<p>The count is configurable. More accumulation changes update frequency and effective-batch behavior; it is not automatically faster or mandatory for every task. Loss scaling and scheduler step units must be specified consistently.</p>
+<h3 id="read-the-supplied-example-literally">Read the supplied example literally<a class="heading-link" href="#read-the-supplied-example-literally" aria-label="Link to this section">#</a></h3>
+<p>Its code differs in several ways from a simple “update after four batches” description:</p>
+<ol>
+<li>Enumeration starts at <strong>i = 0</strong>, so the condition is true for the first batch. With accumulation count four, updates occur at indices <strong>0, 4, 8, …</strong>; the first update includes only one batch.</li>
+<li>Division of loss_node by accum_iter is commented out. Gradients are summed, not automatically averaged over equally weighted microbatches.</li>
+<li>The scheduler advances every training batch, outside the less frequent optimizer-update boundary.</li>
+<li>No explicit final incomplete-group flush appears. Remaining gradients can persist into another call if surrounding code does not clear them.</li>
+</ol>
+<p>These are observations from the exact companion source. Check them before reusing the teaching function as a precise large-batch implementation. No repaired code is substituted for the original.</p>
+<h3 id="none-versus-zero-gradients">None versus zero gradients<a class="heading-link" href="#none-versus-zero-gradients" aria-label="Link to this section">#</a></h3>
+<p>The set_to_none=True option clears gradient fields to <strong>None</strong>, not zero-filled tensors. PyTorch documents possible memory benefits and behavioral differences for parameters without gradients. “Clear gradient storage” is the accurate description. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.optim.Optimizer.zero_grad.html" rel="noopener">PyTorch zero_grad documentation</a></p>
+<p>Deleting local loss variables removes references, but does not guarantee immediate release of all GPU allocations if other references or allocator caches remain.</p>
+<hr>
+<h2 id="progress-reporting-what-the-counters-mean">📊 Progress Reporting: What the Counters Mean<a class="heading-link" href="#progress-reporting-what-the-counters-mean" aria-label="Link to this section">#</a></h2>
+<p>Paul reads the loop&#39;s loss, token throughput, elapsed time, and current-learning-rate logging. Several counters describe different quantities:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Counter</th><th>Meaning</th></tr></thead><tbody><tr><td>Batch step</td><td>Batches processed</td></tr><tr><td>Accumulation/update step</td><td>Optimizer updates under the selected boundary logic</td></tr><tr><td>Samples</td><td>Examples seen</td></tr><tr><td>Tokens</td><td>Non-padding target labels seen</td></tr><tr><td>Epoch</td><td>A pass through the selected training data iterator</td></tr></tbody></table></div>
+<p>Large jobs often emphasize steps, but epochs still make sense when data traversal is defined. Neither concept is restricted to a particular model size.</p>
+<p>The actual logging condition is <strong>i % 40 == 1</strong>, giving printed indices 1, 41, 81, and so on. The number is a reporting choice; odd-numbered logging intervals are not invalid.</p>
+<p>The epoch returns <strong>total reporting loss divided by total non-padding tokens</strong>, along with TrainState. Interpreting that average requires knowing the criterion and the helper&#39;s normalization.</p>
+<p>Stored later Multi30k logs demonstrate the eventual report format, but the transcript does not show that dataset-training section being taught or rerun today. This lesson prepares the machinery needed for it.</p>
+<hr>
+<h2 id="adam-and-the-warmup-schedule">📈 Adam and the Warmup Schedule<a class="heading-link" href="#adam-and-the-warmup-schedule" aria-label="Link to this section">#</a></h2>
+<p>The final topic translates the paper&#39;s learning-rate formula into code. The referenced Adam settings are <strong>β₁ = 0.9</strong>, <strong>β₂ = 0.98</strong>, and <strong>ε = 10⁻⁹</strong>. Epsilon should not be read as 10.9.</p>
+<p>The schedule is:</p>
+<p>$$
+\operatorname{lr}(s)=d_{model}^{-0.5}
+\min\left(s^{-0.5},\ s,w^{-1.5}\right)
+$$</p>
+<p>The original warmup length w is <strong>4000 steps</strong>. The lecture briefly says 400 before returning to 4000; the source and plotted original configuration establish the intended value.</p>
+<p>The first branch decreases with inverse square root of the step number. The second grows linearly while warmup length remains fixed. Their minimum produces an initial rise, a peak at the warmup boundary, and decay afterward.</p>
+<p>Warmup begins at a <strong>small</strong> rate and raises it. It does not mean starting with the maximum rate or running a separate pretraining phase before training.</p>
+<p>The exact helper is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def rate(step, model_size, factor, warmup):
+    &quot;&quot;&quot;
+    we have to default the step to 1 for LambdaLR function
+    to avoid zero raising to negative power.
+    &quot;&quot;&quot;
+    if step == 0:
+        step = 1
+    return factor * (
+        model_size ** (-0.5) * min(step ** (-0.5), step * warmup ** (-1.5))
+    )</code></pre></div>
+<p>The zero-step guard avoids a negative power of zero. Factor scales the curve. Model size also changes the overall scale and should not be ignored because it sits outside the minimum.</p>
+<p>Paul compares <strong>512:4000</strong>, <strong>512:8000</strong>, and <strong>256:4000</strong> configurations. Longer warmup delays the peak; model width changes the scale. The curve is predetermined by steps, rather than an automatic detector of convergence or a local minimum.</p>
+<p>LambdaLR multiplies the optimizer&#39;s initial rate by the returned factor. In the plotting example, base lr=1 makes the numerical multiplier equal the displayed rate. Another base rate changes the actual rate. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.optim.lr_scheduler.LambdaLR.html" rel="noopener">PyTorch LambdaLR</a></p>
+<hr>
+<h2 id="moving-from-the-teaching-model-to-larger-jobs">🖥️ Moving from the Teaching Model to Larger Jobs<a class="heading-link" href="#moving-from-the-teaching-model-to-larger-jobs" aria-label="Link to this section">#</a></h2>
+<p>The closing hardware discussion emphasizes choosing compatible resources and considering the total job cost. Paul discusses local hardware, hosted notebooks, A100/H100-class resources, and task-based serverless execution.</p>
+<p>The reusable decisions are to distinguish <strong>system RAM from VRAM</strong>, check the code&#39;s supported backend, and compare the cost of completion. An hourly price alone omits duration, billing increments, storage, and teardown behavior.</p>
+<p>Serverless execution was proposed to avoid retaining an instance after a job completes and its outputs are saved. It is not guaranteed cheaper for every workload. Historical provider prices, rankings, and unmeasured runtime estimates are therefore not turned into current purchasing recommendations here.</p>
+<p>The final substantive questions arrive after an initial goodbye. Sai Kiran asks whether this full pipeline is universal practice; Paul identifies it as a paper-oriented teaching implementation whose optimization differs from production systems. Prabu asks why local tools were installed if execution is remote; editing and environment management still matter, and compatible local hardware can also execute the work.</p>
+<p>The future WMT English–German task uses approximately <strong>4.5 million sentence pairs</strong>, not the five-billion figure spoken near the end. The companion&#39;s later configured Multi30k pipeline actually uses <strong>German source and English target</strong>, although some live explanations describe English-to-German. Check the actual language pipelines rather than assuming the direction.</p>
+<hr>
+<h2 id="what-39-s-next">🗺️ What&#39;s Next<a class="heading-link" href="#what-39-s-next" aria-label="Link to this section">#</a></h2>
+<p>Paul planned to resume with <strong>label smoothing</strong> and KL-divergence-based loss, then work through synthetic data, reusable greedy decoding, data loading, and Multi30k training.</p>
+<p>Label smoothing received only an introduction: avoid concentrating the target entirely on one class. Its implementation was deferred. The remaining probability mass concerns other vocabulary classes, not necessarily neighboring words in the sentence.</p>
+<p>Tokenization would follow, including BPE, SentencePiece, and WordPiece. Learners would then revisit this architecture, replace parts of its tokenizer/data setup, and attempt a larger task. Larger-scale training and post-training projects remained future work.</p>
+<hr>
+<h2 id="live-q-amp-a-highlights">💬 Live Q&amp;A Highlights<a class="heading-link" href="#live-q-amp-a-highlights" aria-label="Link to this section">#</a></h2>
+<p>Most doubts were relayed through chat. Arsha spoke during the break; <strong>Sai Kiran Akula</strong> and <strong>Prabu Manickam</strong> asked the final open-floor questions after the first sign-off. All substantive late follow-ups are retained.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td><strong>Debal:</strong> Is the practical teaching another attention idea?</td><td>It implements the earlier concepts and connects their components. Shapes, data flow, masking, and training machinery add the practical detail.</td></tr><tr><td><strong>Yogesh:</strong> What is Xavier uniform?</td><td>A parameter initialization scheme used here for multi-axis tensors. The factory&#39;s condition checks rank, and later experiments can compare initialization choices.</td></tr><tr><td><strong>Kuman, name unclear:</strong> Why exclude dim ≤ 1?</td><td>The selected scheme targets matrix-like parameters. One-dimensional biases and normalization coefficients retain their earlier initialization; this is not a check that a model has no features.</td></tr><tr><td><strong>Uday / Udna, name unclear:</strong> Why do repeated IDs appear?</td><td>The model is untrained, so repetition has no demonstrated semantic meaning. Each chosen ID extends the current prefix; recreating parameters may change the output.</td></tr><tr><td><strong>Yogesh:</strong> Does the last word have the highest probability?</td><td>The final decoder position predicts the next token. The winning vocabulary ID depends on the distribution, not its place at the end of a vocabulary.</td></tr><tr><td><strong>Nithin:</strong> What do the final loop lines do?</td><td>They extract the selected ID and append it to ys. The next call sees that larger prefix and a matching causal mask.</td></tr><tr><td><strong>Sarvichith:</strong> Why does padding ID 2 become False?</td><td>The comparison excludes IDs equal to the configured padding value. Another tokenizer can assign a different ID.</td></tr><tr><td><strong>Chat question:</strong> What changes with unsqueeze(-2)?</td><td>A singleton axis is inserted: the board&#39;s (2, 4) becomes (2, 1, 4). Values and Boolean meanings stay the same.</td></tr><tr><td><strong>Gaurav:</strong> Why use both target slices?</td><td>Excluding the last token creates decoder input; excluding the first creates next-token labels. Their offset defines the prediction alignment.</td></tr><tr><td><strong>Thomas:</strong> Is one shift for forward and one for backward?</td><td>Both prepare the forward input/label relation. Backward begins after differentiable loss is computed.</td></tr><tr><td><strong>Ganesh:</strong> Is this teacher forcing?</td><td>During training the decoder receives true preceding targets. During generation it instead extends its own selected prefix.</td></tr><tr><td><strong>Anhu / Paritosh:</strong> Why a static mask method?</td><td>It uses the arguments supplied directly and does not require instance state. It can be invoked through the class namespace.</td></tr><tr><td><strong>Navalita, name unclear:</strong> Are steps only for large networks?</td><td>Steps describe loop work or updates, while epochs describe data passes. Both are useful across model sizes.</td></tr><tr><td><strong>Chat questions:</strong> Why accumulate gradients?</td><td>To process a larger effective batch as memory-fitting microbatches. Update boundaries, scaling, and scheduler units must match the intended training behavior.</td></tr><tr><td><strong>Gaurav:</strong> What does the scheduler control?</td><td>Learning rate according to a selected schedule. The shown function follows steps, not a loss-based convergence detector.</td></tr><tr><td><strong>Satha, name unclear:</strong> How should a paper be read?</td><td>Paul suggested component breakdown, comparison with alternatives, and benchmark inspection before deeper reading. This was his workflow rather than a universal rule.</td></tr><tr><td><strong>Arsha:</strong> How can missed classes be caught up?</td><td>Recordings and resources are organized in Notion. Revisit theory and code, then practice tracing and debugging small examples.</td></tr><tr><td><strong>Rushi and hardware questions:</strong> Why serverless?</td><td>Paul wanted execution and teardown after outputs were saved. The actual cost advantage depends on the workload and provider.</td></tr><tr><td><strong>Arun:</strong> Can local hardware run the job?</td><td>Yes, if resources and the supported backend are suitable. Clarify RAM versus VRAM; the mentioned Intel hardware was not validated in class.</td></tr><tr><td><strong>Chat questions:</strong> Must everyone use one provider or eight GPUs?</td><td>No common provider was required, and students were not asked to rent an eight-GPU cluster for the upcoming task. Plan around the actual job.</td></tr><tr><td><strong>Sai Kiran Akula:</strong> Is every production pipeline like this notebook?</td><td>It is a research teaching implementation. Production systems can package and optimize the responsibilities differently; it is not a universal standard.</td></tr><tr><td><strong>Prabu Manickam:</strong> Why install local VS Code and uv for cloud training?</td><td>Local development and environment work remain useful. Execution can be local with suitable hardware or remote when that fits the task.</td></tr></tbody></table></div>
+<hr>
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="heading-link" href="#key-pointers-to-remember" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>A factory connects existing modules; c(attn) means deep copy here.</li>
+<li>N is stack depth; h is head count; vocabulary size is another quantity.</li>
+<li>The companion&#39;s residual helper normalizes before its sublayer.</li>
+<li>The generator returns log-probabilities over target vocabulary entries.</li>
+<li>Untrained inference checks wiring, not task quality.</li>
+<li>The start ID is specific to the vocabulary and demonstration.</li>
+<li>Memory is encoder output; the decoder extends its prefix.</li>
+<li>Last decoder position does not mean last vocabulary word.</li>
+<li>Padding comparisons create Booleans; unsqueeze adds an axis.</li>
+<li>Target input and label slices define a next-token offset.</li>
+<li>Those slices do not shift the encoder&#39;s source.</li>
+<li>AND combines padding and causal restrictions.</li>
+<li>Non-padding labels supply the meaningful loss denominator.</li>
+<li>Backward calculates gradients; the optimizer changes parameters.</li>
+<li>The shown zero-based accumulation condition triggers on the first batch.</li>
+<li>Accumulation scaling and schedule step units require inspection.</li>
+<li>Clearing gradients to None is distinct from setting zero tensors.</li>
+<li>Warmup rises from a low rate before inverse-square-root decay.</li>
+<li>LambdaLR&#39;s factor multiplies the optimizer&#39;s base rate.</li>
+<li>Detailed regularization and dataset training were deferred.</li>
+</ul>
+<hr>
+<h2 id="action-items-after-class-09">✅ Action Items After Class 09<a class="heading-link" href="#action-items-after-class-09" aria-label="Link to this section">#</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"> Open the exact class notebook and separate today&#39;s cells from later examples.</li>
+<li><input disabled="" type="checkbox"> Trace the factory from vocabulary sizes to each major module.</li>
+<li><input disabled="" type="checkbox"> Print prefix, output shape, and mask size at successive decoding steps.</li>
+<li><input disabled="" type="checkbox"> Explain why untrained outputs cannot validate translation quality.</li>
+<li><input disabled="" type="checkbox"> Recreate the PDF&#39;s padding comparison and shape change.</li>
+<li><input disabled="" type="checkbox"> Apply both target slices to its numerical and text examples.</li>
+<li><input disabled="" type="checkbox"> Trace a target position&#39;s permitted context and next-token label.</li>
+<li><input disabled="" type="checkbox"> Inspect the final causal mask, including the diagonal.</li>
+<li><input disabled="" type="checkbox"> Separate reporting loss, differentiable loss, backward, update, and clearing.</li>
+<li><input disabled="" type="checkbox"> Trace optimizer indices for accumulation count four.</li>
+<li><input disabled="" type="checkbox"> Check loss scaling, incomplete groups, and scheduler batch/update units.</li>
+<li><input disabled="" type="checkbox"> Read the warmup function alongside all three plotted configurations.</li>
+<li><input disabled="" type="checkbox"> Revise before the next label-smoothing and data-training lesson.</li>
+</ul>
+<hr>
+<p><em>📝 Notes compiled from the full Class 09 transcript — <strong>GMT20260822-143017_Recording.cutfile.20260823051524431.transcript.vtt</strong> — the accompanying <strong>Annotated TF (1).pdf</strong>, and the exact <a href="https://drive.google.com/file/d/1y9MZUINtAG3a3SwcfnKrPHro18uUpvEe/view?usp=sharing" rel="noopener">22 August notebook</a>, for “<a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd" rel="noopener">22 Aug Transformer practical</a>,” Production AI / LLM Engineering, Krish Naik Academy. All eight transcript parts, all 125 notebook cells, and all five PDF pages were read or inspected fully. Code preserves actual companion source; only outer indentation is removed from the loop excerpt. PDF structures supply the mask and target-alignment diagrams. No training was performed while compiling the notes; stored outputs are not represented as a new run.</em></p>
+</article><nav class="chapter-pagination" aria-label="Adjacent classes"><a href="class-08.html"><span>← PREVIOUS CLASS</span><strong>Annotated Transformer Implementation — Designing the Encoder and Decoder</strong></a><a href="class-10.html"><span>NEXT CLASS →</span><strong>Training and Evaluating the Transformer Translation Model</strong></a></nav><footer class="site-footer"><p>Independent study notes from the Krish Naik Academy course.</p><p>Released sessions: 19 July–4 October 2026. Instructor sources and verification references are linked in each chapter.</p><div><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128">Course dashboard ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes">Source repository ↗</a></div></footer></div><aside class="page-toc"><p>ON THIS PAGE</p><nav aria-label="Page sections"><a href="#quick-updates">📰 Quick Updates</a><a href="#reconnecting-the-earlier-components">🧩 Reconnecting the Earlier Components</a><a href="#the-factory-function-constructing-the-model">🏭 The Factory Function: Constructing the Model</a><a href="#untrained-inference-checking-the-wiring">🧪 Untrained Inference: Checking the Wiring</a><a href="#the-batch-object-data-masks-and-token-counts">📦 The Batch Object: Data, Masks, and Token Counts</a><a href="#target-shifts-predict-the-next-token">↔️ Target Shifts: Predict the Next Token</a><a href="#combining-padding-and-causal-restrictions">🎭 Combining Padding and Causal Restrictions</a><a href="#the-epoch-loop-forward-loss-backward-update">🔄 The Epoch Loop: Forward, Loss, Backward, Update</a><a href="#gradient-accumulation-intent-and-actual-loop-behavior">🧠 Gradient Accumulation: Intent and Actual Loop Behavior</a><a href="#progress-reporting-what-the-counters-mean">📊 Progress Reporting: What the Counters Mean</a><a href="#adam-and-the-warmup-schedule">📈 Adam and the Warmup Schedule</a><a href="#moving-from-the-teaching-model-to-larger-jobs">🖥️ Moving from the Teaching Model to Larger Jobs</a><a href="#what-39-s-next">🗺️ What&#39;s Next</a><a href="#live-q-amp-a-highlights">💬 Live Q&amp;A Highlights</a><a href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a><a href="#action-items-after-class-09">✅ Action Items After Class 09</a></nav><a class="back-to-top" href="#top">Back to top ↑</a></aside></main>
+<dialog class="search-dialog" aria-labelledby="search-title"><div class="search-heading"><h2 id="search-title">Search all 21 classes</h2><button class="search-close icon-button" aria-label="Close search">×</button></div><label class="sr-only" for="search-input">Search notes</label><input id="search-input" type="search" placeholder="Try KV cache, tokenization, or fine-tuning…" autocomplete="off"><p class="search-status" role="status">Search titles, explanations, code, and Q&A.</p><div class="search-results"></div></dialog>
+<script src="assets/vendor/mermaid/mermaid.min.js" defer></script><script src="assets/site.js" defer></script></body></html>

@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Class 3: PyTorch Fundamentals — From Data to a Trained Model · Production AI Engineering Notes</title><meta name="description" content="Class 3 notes on PyTorch Fundamentals — From Data to a Trained Model, with supplied code, diagrams, 57 live Q&amp;A entries and practice actions."/><meta name="theme-color" content="#f7f8fb"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/styles.css"><script>try{document.documentElement.dataset.theme=localStorage.getItem('pai-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}</script></head>
+<body id="top" data-class="3"><a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar"><button class="nav-toggle icon-button" aria-label="Open course navigation" aria-controls="course-nav" aria-expanded="false">☰</button><a href="index.html" class="brand"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V21a3 3 0 0 0-3-3H4V4.5Z"/><path d="M13 7.5a3 3 0 0 1 3-3h4V18h-4a3 3 0 0 0-3 3"/></svg></span><span>Production AI<span class="brand-sub">ENGINEERING NOTES</span></span></a><div class="top-actions"><button class="search-open" type="button"><span aria-hidden="true">⌕</span><span>Search all notes</span><kbd>/</kbd></button><button class="theme-toggle icon-button" type="button" aria-label="Toggle dark theme">◐</button><a class="github-link" href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub ↗</a></div></header>
+<aside class="sidebar" id="course-nav"><a class="nav-home " href="index.html">Course overview</a><a class="nav-home " href="revision.html">Quick revision</a><div class="reading-progress"><span>Your progress</span><strong data-progress-label>0 / 21</strong><progress data-progress-bar max="21" value="0" aria-label="Completed classes"></progress></div><div class="nav-group"><h2>Onboarding &amp; foundations</h2><a class="nav-class "  href="class-01.html" data-nav-class="1"><span class="nav-number">01</span><span>Induction and the Research-to-Production Roadmap</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-02.html" data-nav-class="2"><span class="nav-number">02</span><span>Software Setup and the Engineering Workflow</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class active" aria-current="page" href="class-03.html" data-nav-class="3"><span class="nav-number">03</span><span>PyTorch Fundamentals — From Data to a Trained Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Transformers</h2><a class="nav-class "  href="class-04.html" data-nav-class="4"><span class="nav-number">04</span><span>Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-05.html" data-nav-class="5"><span class="nav-number">05</span><span>Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-06.html" data-nav-class="6"><span class="nav-number">06</span><span>Multi-Head Attention and the Transformer Encoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-07.html" data-nav-class="7"><span class="nav-number">07</span><span>Decoder Masking, Positional Encoding, and Cross-Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-08.html" data-nav-class="8"><span class="nav-number">08</span><span>Annotated Transformer Implementation — Designing the Encoder and Decoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-09.html" data-nav-class="9"><span class="nav-number">09</span><span>Assembling and Training a Transformer from Scratch</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-10.html" data-nav-class="10"><span class="nav-number">10</span><span>Training and Evaluating the Transformer Translation Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Tokenization</h2><a class="nav-class "  href="class-11.html" data-nav-class="11"><span class="nav-number">11</span><span>Tokenization Foundations — BPE, Bytes, and Model Compatibility</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-12.html" data-nav-class="12"><span class="nav-number">12</span><span>Byte-Level BPE, WordPiece, and SentencePiece</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-13.html" data-nav-class="13"><span class="nav-number">13</span><span>Custom Domain Tokenization and Vocabulary Trade-offs</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-14.html" data-nav-class="14"><span class="nav-number">14</span><span>Offset Mapping, Custom BPE Decisions, and Prompting Foundations</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Prompting &amp; structured output</h2><a class="nav-class "  href="class-15.html" data-nav-class="15"><span class="nav-number">15</span><span>Prompt Engineering — Reasoning, Structured Outputs, and Evaluation</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-16.html" data-nav-class="16"><span class="nav-number">16</span><span>Structured Generation with Instructor and Outlines</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>DSPy</h2><a class="nav-class "  href="class-17.html" data-nav-class="17"><span class="nav-number">17</span><span>DSPy Part 1 — Signatures, Modules, and Code Execution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-18.html" data-nav-class="18"><span class="nav-number">18</span><span>DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Fine-tuning</h2><a class="nav-class "  href="class-19.html" data-nav-class="19"><span class="nav-number">19</span><span>Fine-Tuning Encoder, Decoder, and Encoder-Decoder Models</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Cache &amp; attention variants</h2><a class="nav-class "  href="class-20.html" data-nav-class="20"><span class="nav-number">20</span><span>KV Cache — Inference, Memory Math, and Multi-Query Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-21.html" data-nav-class="21"><span class="nav-number">21</span><span>Attention Variants — GQA, PagedAttention, and the MLA Introduction</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="sidebar-bottom"><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128" rel="noopener">Original course ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub repository ↗</a></div></aside><div class="nav-scrim" hidden></div><main id="main" class="main with-toc"><div class="main-column"><header class="chapter-header"><p class="eyebrow">CLASS 03 <span>·</span> 26 July 2026</p><h1>PyTorch Fundamentals — From Data to a Trained Model</h1><div class="chapter-meta"><span>4hr 26min 56s</span><span>57 Q&A entries</span><span>5 diagrams</span></div><div class="chapter-actions"><a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a668f79893a14772e6b1318" class="text-link">Class recording ↗</a><a href="downloads/Class_03_PyTorch_Fundamentals_Notes.md" class="text-link" download>Download Markdown ↓</a><button class="mark-complete" data-mark-class="3">Mark as read</button></div></header><article class="prose"><p><strong>🎙️ Mentor:</strong> Sourangshu Pal (addressed as Paul in the transcript)  </p>
+<p><strong>Class recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a668f79893a14772e6b1318" rel="noopener">26 July PyTorch Fundamentals</a><br><strong>Primary source:</strong> <code>GMT20260726-143017_Recording.transcript.vtt</code></p>
+<hr>
+<h2 id="quick-updates">📰 Quick Updates<a class="heading-link" href="#quick-updates" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>The agenda displayed “Transformers 101,” but Paul explicitly changed this session to a <strong>PyTorch refresher</strong>, based on the previous class’s poll. Transformer theory was deferred to the following week.</li>
+<li>The live walkthrough used the official PyTorch <strong>Learn the Basics</strong> notebooks in Google Colab. The instructor also shared his <a href="https://github.com/sourangshupal/pytorch-primer" rel="noopener">PyTorch primer repository</a> for practice.</li>
+<li>Recordings and the course Notion resource page were available through the course dashboard. The team aimed to upload recordings within 12 hours, with a stated maximum window of 24 hours.</li>
+<li>There was <strong>no formal assignment for this week</strong>. The immediate expectation was revision, executing the notebooks, and building several small neural networks.</li>
+<li>Colab’s available T4 GPU was sufficient for this demonstration. Paul did not require a paid Colab subscription at this stage; available GPU time depends on the service and account.</li>
+</ul>
+<p>The examples below are drawn from the full transcript and the matching notebooks in the course repository. Repository excerpts are labeled as companion code; their toy examples and helper functions should not be confused with the exact live notebook or its numerical results.</p>
+<hr>
+<h2 id="why-this-course-starts-with-pytorch">🧭 Why This Course Starts With PyTorch<a class="heading-link" href="#why-this-course-starts-with-pytorch" aria-label="Link to this section">#</a></h2>
+<p>The central reason for this session was preparation for <strong>implementing Transformers and understanding model training</strong>. An attention block is ultimately a collection of tensor operations and trainable parameters. Knowing what data enters the block, how its output is computed, and how gradients update its parameters makes the later implementation easier to follow.</p>
+<p>Paul distinguished two kinds of work during the discussion:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Work being done</th><th>Why PyTorch knowledge matters</th></tr></thead><tbody><tr><td>Calling an existing LLM through an API</td><td>You can build many applications without writing a neural network</td></tr><tr><td>Implementing a Transformer component</td><td>You need a framework for tensor calculations and model parameters</td></tr><tr><td>Training or fine-tuning a model</td><td>You need forward passes, losses, gradients, and parameter updates</td></tr><tr><td>Debugging a training run</td><td>You need to recognize shape, device, data, and optimization problems</td></tr><tr><td>Serving an application at scale</td><td>You also need infrastructure and dependency-level performance knowledge</td></tr></tbody></table></div>
+<p>He emphasized PyTorch’s explicit programming model: define a class, specify its layers, write the forward computation, and control the training loop. This exposes steps that a high-level training API can package behind a shorter call.</p>
+<p>The introductory comparison also touched on TensorFlow, Keras, JAX, the older Lua-based Torch project, and ONNX. Paul showed a framework comparison paper to motivate the choice of PyTorch, but the transcript does not identify the paper precisely enough to reproduce its adoption percentages or performance claims as general facts. A benchmark reflects its particular model, hardware, versions, and settings.</p>
+<p><strong>A useful framework distinction:</strong> Keras offers a convenient high-level API, while PyTorch makes the class’s lower-level workflow especially visible. Modern Keras also supports TensorFlow, JAX, and PyTorch backends, custom layers, and custom training loops. The comparison is therefore about the workflow chosen for this course, rather than an inability to customize Keras. <a href="https://keras.io/keras_3/" rel="noopener">Keras 3 overview</a></p>
+<p><strong>Inference</strong> means running a model to obtain predictions. It can happen locally, inside a notebook, or in a deployed service, and it can operate on one sample or many. Deployment is not part of the definition.</p>
+<hr>
+<h2 id="setting-up-a-working-environment">🛠️ Setting Up a Working Environment<a class="heading-link" href="#setting-up-a-working-environment" aria-label="Link to this section">#</a></h2>
+<p>Paul demonstrated both a local installation and a hosted notebook environment so participants could choose a practical route.</p>
+<h3 id="local-workflow">Local workflow<a class="heading-link" href="#local-workflow" aria-label="Link to this section">#</a></h3>
+<p>The local sequence was:</p>
+<ol>
+<li>Create or clone the project directory.</li>
+<li>Create a virtual environment with UV.</li>
+<li>Activate the environment.</li>
+<li>Install the required packages for the chosen platform.</li>
+<li>Import PyTorch and inspect its version.</li>
+<li>Check which hardware is available before running the model.</li>
+</ol>
+<p>The class’s important habit was <strong>isolating each project’s dependencies</strong>. A repository’s packages should be installed in its own environment, rather than assuming that whatever happens to be installed globally is suitable.</p>
+<p>The installation selector on PyTorch’s website varies by operating system, package manager, and compute platform. The exact version numbers spoken in the transcript are not reliable installation targets: use the command appropriate to your machine and project rather than copying a historical number from the captions.</p>
+<p>The current course repository documents this quick start:</p>
+<div class="code-block"><div class="code-label">bash<button class="copy-code" type="button">Copy</button></div><pre><code class="language-bash">uv sync
+uv run main.py
+uv run jupyter lab notebooks/</code></pre></div>
+<p><em>Companion code source: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/README.md" rel="noopener">repository README</a>. Run these from the cloned repository; its configuration supplies the dependencies.</em></p>
+<h3 id="colab-workflow">Colab workflow<a class="heading-link" href="#colab-workflow" aria-label="Link to this section">#</a></h3>
+<p>For the live Quickstart, Paul opened the tutorial in Colab, changed the runtime to a <strong>T4 GPU</strong>, connected the runtime, and inspected the hardware. The notebook environment already had PyTorch available, so checking the installed package came before considering any upgrade.</p>
+<p>The GPU report was useful for inspecting the model of GPU, available memory, driver, and CUDA information. Those details matter when a local installation fails or a package build does not match the intended accelerator. A hosted GPU session also has a lifecycle: disconnecting or deleting the runtime can remove its in-memory model and other temporary state.</p>
+<h3 id="choose-a-device-then-use-it-consistently">Choose a device, then use it consistently<a class="heading-link" href="#choose-a-device-then-use-it-consistently" aria-label="Link to this section">#</a></h3>
+<p>The session focused on CPU, NVIDIA CUDA, and Apple MPS. PyTorch also supports other accelerators, including supported Intel GPUs through XPU; hardware support depends on the device and installed build. <a href="https://docs.pytorch.org/docs/2.14/notes/get_start_xpu.html" rel="noopener">PyTorch Intel GPU guide</a></p>
+<p>Paul repeatedly returned to the same operational rule: <strong>the model and the tensors used in its computation must be on compatible devices</strong>. Detecting a GPU is only the first step. The model, input features, and labels must then be moved appropriately.</p>
+<p>The repository’s GPU notebook describes the practical changes clearly: select a device, move the model to it, and move each batch’s features and labels to that device inside the loop. Simply selecting a GPU in Colab does not relocate every tensor automatically.</p>
+<hr>
+<h2 id="the-first-full-example-fashionmnist">🧺 The First Full Example: FashionMNIST<a class="heading-link" href="#the-first-full-example-fashionmnist" aria-label="Link to this section">#</a></h2>
+<p>The first notebook covered an entire model workflow before the class revisited its components individually.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    A[&quot;Download FashionMNIST&quot;] --&gt; B[&quot;Convert and scale images&quot;]
+    B --&gt; C[&quot;DataLoader produces batches&quot;]
+    C --&gt; D[&quot;Neural network returns logits&quot;]
+    D --&gt; E[&quot;Loss compares logits with labels&quot;]
+    E --&gt; F[&quot;Backward pass and optimizer update&quot;]
+    F --&gt; G[&quot;Evaluate on held-out data&quot;]
+    G --&gt; H[&quot;Save parameters&quot;]
+    H --&gt; I[&quot;Rebuild architecture, load, predict&quot;]</pre><figcaption>Lecture diagram 1</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    A[&quot;Download FashionMNIST&quot;] --&gt; B[&quot;Convert and scale images&quot;]
+    B --&gt; C[&quot;DataLoader produces batches&quot;]
+    C --&gt; D[&quot;Neural network returns logits&quot;]
+    D --&gt; E[&quot;Loss compares logits with labels&quot;]
+    E --&gt; F[&quot;Backward pass and optimizer update&quot;]
+    F --&gt; G[&quot;Evaluate on held-out data&quot;]
+    G --&gt; H[&quot;Save parameters&quot;]
+    H --&gt; I[&quot;Rebuild architecture, load, predict&quot;]</code></pre></details></figure>
+<h3 id="dataset-facts-and-why-this-example-is-manageable">Dataset facts and why this example is manageable<a class="heading-link" href="#dataset-facts-and-why-this-example-is-manageable" aria-label="Link to this section">#</a></h3>
+<p>FashionMNIST contains <strong>60,000 training images and 10,000 test images</strong>, with ten categories of clothing and accessories. Each image is <strong>28 × 28 pixels with one grayscale channel</strong>.</p>
+<p>The class labels are T-shirt/top, trouser, pullover, dress, coat, sandal, shirt, sneaker, bag, and ankle boot. Integer labels map to those names; they are not the image pixels themselves.</p>
+<p>Paul used the small image resolution to make the dimensions easy to reason about. He also briefly introduced MNIST, CIFAR-10, CIFAR-100, and COCO as familiar datasets for experiments and benchmarking. This was background context, not a lesson implementing object detection or segmentation.</p>
+<h3 id="what-the-imports-contribute">What the imports contribute<a class="heading-link" href="#what-the-imports-contribute" aria-label="Link to this section">#</a></h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Component</th><th>Role in the example</th></tr></thead><tbody><tr><td><code>torch</code></td><td>Tensor operations and core PyTorch functionality</td></tr><tr><td><code>torch.nn</code></td><td>Layers, model building blocks, and loss functions</td></tr><tr><td><code>torch.utils.data.DataLoader</code></td><td>Iteration and batching over a dataset</td></tr><tr><td><code>torchvision.datasets</code></td><td>The provided FashionMNIST dataset implementation</td></tr><tr><td><code>torchvision.transforms.v2</code></td><td>Converting and preprocessing images</td></tr></tbody></table></div>
+<p>TorchVision is a vision package in the PyTorch ecosystem. Its transforms overlap in purpose with some Pillow and OpenCV image operations, but it is not simply another name for OpenCV.</p>
+<h3 id="loading-the-two-splits">Loading the two splits<a class="heading-link" href="#loading-the-two-splits" aria-label="Link to this section">#</a></h3>
+<p>The demonstrated dataset arguments had separate jobs:</p>
+<ul>
+<li><strong><code>root=&quot;data&quot;</code>:</strong> where the dataset is stored.</li>
+<li><strong><code>train=True</code>:</strong> select the dataset’s training split.</li>
+<li><strong><code>train=False</code>:</strong> select its test split.</li>
+<li><strong><code>download=True</code>:</strong> download the files when needed.</li>
+<li><strong><code>transform</code>:</strong> a callable applied to each image.</li>
+</ul>
+<p>The <code>train</code> argument here selects data. It does <strong>not</strong> set the model’s training mode and does <strong>not</strong> enable or disable gradients.</p>
+<p>The matching repository notebook contains:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">training_data = datasets.FashionMNIST(
+    root=&quot;data&quot;,
+    train=True,
+    download=True,
+    transform=v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]),
+)
+
+test_data = datasets.FashionMNIST(
+    root=&quot;data&quot;,
+    train=False,
+    download=True,
+    transform=v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True)]),
+)</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/10_official_quickstart.ipynb" rel="noopener">10_official_quickstart.ipynb</a>. It depends on the imports in that notebook.</em></p>
+<p>The live discussion stressed consistent preprocessing across training and prediction. An image presented to the trained model should use the expected size, channel arrangement, numeric representation, and scaling.</p>
+<hr>
+<h2 id="batches-labels-and-the-shape-you-must-understand">📐 Batches, Labels, and the Shape You Must Understand<a class="heading-link" href="#batches-labels-and-the-shape-you-must-understand" aria-label="Link to this section">#</a></h2>
+<p>The batch size used in the Quickstart was <strong>64</strong>. A batch contains a group of examples processed together; it does not change the total number of categories in the dataset.</p>
+<p>The printed feature shape was <strong><code>[64, 1, 28, 28]</code></strong>, following the <strong>N, C, H, W</strong> arrangement:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Position</th><th>Meaning</th><th>Value in the demo</th></tr></thead><tbody><tr><td>N</td><td>Number of examples in this batch</td><td>64</td></tr><tr><td>C</td><td>Channels per image</td><td>1</td></tr><tr><td>H</td><td>Image height</td><td>28</td></tr><tr><td>W</td><td>Image width</td><td>28</td></tr></tbody></table></div>
+<p>The corresponding label shape was <strong><code>[64]</code></strong>. There is one target label for each of the 64 images. There are still only <strong>ten possible categories</strong>; “64 labels in a batch” does not mean “64 unique classes.”</p>
+<p>Paul used repeated shape checks to show why these details must become familiar. A batch size, an image’s pixel dimensions, and the number of output classes answer different questions and cannot be substituted for one another.</p>
+<h3 id="choosing-batch-size">Choosing batch size<a class="heading-link" href="#choosing-batch-size" aria-label="Link to this section">#</a></h3>
+<p>Batch size is a <strong>hyperparameter</strong>. Hardware memory, model size, input size, throughput, and training behavior all influence a sensible choice. Paul recommended experimenting with familiar powers of two such as 32, 64, and 128.</p>
+<p>That is a practical starting convention, not a PyTorch requirement. A batch of 51 is valid; <code>DataLoader</code> does not automatically turn it into 64 examples padded with zeros. Its <code>batch_size</code> argument specifies the number of samples to load. <a href="https://docs.pytorch.org/docs/2.14/data.html" rel="noopener">DataLoader reference</a></p>
+<p>A loader can also produce a smaller final batch when the dataset size is not divisible by the batch size. The companion data-loader notebook demonstrates this explicitly with five examples and a batch size of two.</p>
+<h3 id="feature-and-label-types-differ">Feature and label types differ<a class="heading-link" href="#feature-and-label-types-differ" aria-label="Link to this section">#</a></h3>
+<p>The image transform uses <code>float32</code>. The class-index labels in this example use <code>int64</code>, also called <code>long</code>.</p>
+<p>These types are part of the model’s interface. In particular, <code>CrossEntropyLoss</code> requires long integer targets when labels are supplied as class indices; changing them to <code>int8</code> or <code>int16</code> for speed would break that contract. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html" rel="noopener">CrossEntropyLoss reference</a></p>
+<h3 id="print-before-guessing">Print before guessing<a class="heading-link" href="#print-before-guessing" aria-label="Link to this section">#</a></h3>
+<p>When a shape looks unclear, inspect the actual object, its shape, its dtype, and its device. Paul’s repeated debugging advice was to print the variable rather than infer its meaning only from its name.</p>
+<p>This habit later helps distinguish:</p>
+<ul>
+<li>a single image from a batch;</li>
+<li>image features from target labels;</li>
+<li>a CPU tensor from an accelerator tensor;</li>
+<li>an input-width mismatch from an output-class mismatch.</li>
+</ul>
+<hr>
+<h2 id="defining-the-neural-network">🧱 Defining the Neural Network<a class="heading-link" href="#defining-the-neural-network" aria-label="Link to this section">#</a></h2>
+<p>The live model was a <strong>fully connected network</strong>, not a CNN. Using images as the dataset does not require convolution or pooling; this example flattens each image and feeds its pixels to linear layers.</p>
+<p>Paul explained the model through a Python class inheriting from <code>nn.Module</code>:</p>
+<ul>
+<li><strong><code>__init__</code> defines the components</strong> that belong to the model.</li>
+<li><strong><code>forward</code> defines the computation</strong> performed on input data.</li>
+<li><strong><code>nn.Sequential</code> chains modules</strong> in order.</li>
+<li><strong><code>model.to(device)</code> places the model</strong> on the chosen device.</li>
+</ul>
+<p>The matching course notebook contains:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">class NeuralNetwork(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.flatten = nn.Flatten()
+        self.linear_relu_stack = nn.Sequential(
+            nn.Linear(28 * 28, 512),
+            nn.ReLU(),
+            nn.Linear(512, 512),
+            nn.ReLU(),
+            nn.Linear(512, 10),
+        )
+
+    def forward(self, x):
+        x = self.flatten(x)
+        return self.linear_relu_stack(x)</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/10_official_quickstart.ipynb" rel="noopener">10_official_quickstart.ipynb</a>.</em></p>
+<h3 id="follow-the-dimensions-through-the-network">Follow the dimensions through the network<a class="heading-link" href="#follow-the-dimensions-through-the-network" aria-label="Link to this section">#</a></h3>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    A[&quot;Images&lt;br/&gt;N × 1 × 28 × 28&quot;] --&gt; B[&quot;Flatten&lt;br/&gt;N × 784&quot;]
+    B --&gt; C[&quot;Linear 784 → 512&quot;]
+    C --&gt; D[&quot;ReLU&quot;]
+    D --&gt; E[&quot;Linear 512 → 512&quot;]
+    E --&gt; F[&quot;ReLU&quot;]
+    F --&gt; G[&quot;Linear 512 → 10&lt;br/&gt;N × 10 logits&quot;]</pre><figcaption>Lecture diagram 2</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    A[&quot;Images&lt;br/&gt;N × 1 × 28 × 28&quot;] --&gt; B[&quot;Flatten&lt;br/&gt;N × 784&quot;]
+    B --&gt; C[&quot;Linear 784 → 512&quot;]
+    C --&gt; D[&quot;ReLU&quot;]
+    D --&gt; E[&quot;Linear 512 → 512&quot;]
+    E --&gt; F[&quot;ReLU&quot;]
+    F --&gt; G[&quot;Linear 512 → 10&lt;br/&gt;N × 10 logits&quot;]</code></pre></details></figure>
+<p>The product <strong>28 × 28 = 784</strong> gives the feature width for each grayscale image. The batch dimension remains separate.</p>
+<p>A generic RGB image of 30 × 30 pixels would contain <strong>30 × 30 × 3 = 2,700 values</strong> when flattened per image. Paul used this separate example to explain the multiplication; it was not the input size of the FashionMNIST model.</p>
+<p>The default <code>nn.Flatten()</code> begins at dimension 1, preserving the batch axis. It does not collapse the entire batch into one long vector. Also, <strong><code>unsqueeze</code> is a different operation</strong>: it inserts a dimension of size one rather than merging dimensions. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.modules.flatten.Flatten.html" rel="noopener">Flatten reference</a>, <a href="https://docs.pytorch.org/docs/2.14/generated/torch.unsqueeze.html" rel="noopener">unsqueeze reference</a></p>
+<h3 id="linear-layers-and-hidden-widths">Linear layers and hidden widths<a class="heading-link" href="#linear-layers-and-hidden-widths" aria-label="Link to this section">#</a></h3>
+<p>“Dense” and “fully connected” commonly refer to the kind of layer represented by <code>nn.Linear</code>. A hidden layer describes its position in a network; it is not always a synonym for a linear layer.</p>
+<p>For the first linear layer, 784 is the input feature width and 512 is the output feature width. The next linear layer accepts the previous layer’s 512 outputs. The last layer outputs ten scores because the dataset has ten categories.</p>
+<p>The hidden width of 512 is a hyperparameter. It can be changed, provided that adjacent dimensions remain compatible. A larger width adds parameters and generally increases computation and memory requirements.</p>
+<h3 id="relu-and-logits">ReLU and logits<a class="heading-link" href="#relu-and-logits" aria-label="Link to this section">#</a></h3>
+<p>Activation functions introduce <strong>nonlinearity</strong>. The ReLU layers keep positive inputs and map negative inputs to zero. Dropout serves a different purpose; it is not the explanation for this nonlinearity.</p>
+<p>The final layer returns <strong>logits</strong>, which are raw scores. They need not be positive or add up to one. The class’s multiclass cross-entropy loss accepts logits directly, so a separate softmax should not be added before that loss. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html" rel="noopener">CrossEntropyLoss reference</a></p>
+<h3 id="how-forward-actually-gets-called">How <code>forward</code> actually gets called<a class="heading-link" href="#how-forward-actually-gets-called" aria-label="Link to this section">#</a></h3>
+<p>Sumanth asked why the code did not explicitly invoke the forward method. The precise answer is that calling <strong><code>model(X)</code></strong> uses <code>nn.Module</code>’s call machinery to invoke the defined forward computation. Calling the module instance is the standard approach and also handles registered hooks. Merely defining a method inside a Python class would not, by itself, make it run automatically. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html" rel="noopener">nn.Module reference</a></p>
+<hr>
+<h2 id="training-loss-backpropagation-and-parameter-updates">🔁 Training: Loss, Backpropagation, and Parameter Updates<a class="heading-link" href="#training-loss-backpropagation-and-parameter-updates" aria-label="Link to this section">#</a></h2>
+<p>Paul framed the training setup around four ingredients: <strong>data, model, loss function, and optimizer</strong>.</p>
+<p>For the live multiclass problem, the selected loss was <strong>cross entropy</strong>, and the optimizer was <strong>stochastic gradient descent (SGD)</strong>. Adam and RMSprop were mentioned as alternatives; the class did not compare them experimentally.</p>
+<h3 id="a-batch-level-training-step">A batch-level training step<a class="heading-link" href="#a-batch-level-training-step" aria-label="Link to this section">#</a></h3>
+<p>The loop performed these operations for each batch:</p>
+<ol>
+<li>Put the model in training mode.</li>
+<li>Obtain features and labels from the loader.</li>
+<li>Move both to the selected device.</li>
+<li>Run the model on the features to obtain predictions.</li>
+<li>Compare predictions with labels using the loss function.</li>
+<li>Compute gradients through backpropagation.</li>
+<li>Let the optimizer update the model’s parameters.</li>
+<li>Clear old gradients for the next update.</li>
+</ol>
+<p>Here is the exact inner-loop order in the repository’s FashionMNIST Quickstart:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">pred = model(X)
+loss = loss_fn(pred, y)
+
+loss.backward()
+optimizer.step()
+optimizer.zero_grad()</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/10_official_quickstart.ipynb" rel="noopener">10_official_quickstart.ipynb</a>; <code>X</code> and <code>y</code> have already been moved to the selected device.</em></p>
+<p>The companion toy training notebook uses the equally familiar arrangement of clearing gradients <strong>before</strong> calling <code>backward</code>. The essential condition is that gradients intended for a fresh update do not accidentally include the preceding update.</p>
+<h3 id="keep-these-three-operations-separate">Keep these three operations separate<a class="heading-link" href="#keep-these-three-operations-separate" aria-label="Link to this section">#</a></h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Operation</th><th>What it does</th></tr></thead><tbody><tr><td><code>loss.backward()</code></td><td>Computes gradients of the loss with respect to relevant parameters</td></tr><tr><td><code>optimizer.step()</code></td><td>Uses those gradients to update the parameters</td></tr><tr><td><code>optimizer.zero_grad()</code></td><td>Clears the stored gradients; it does not reset learned weights</td></tr></tbody></table></div>
+<p>The optimizer needs the gradients to make its update. Backpropagation computes them; it does not independently perform the optimizer’s update.</p>
+<p>This distinction resolves Vidyasagar’s question about continuing training. Learned parameters remain in memory after an update. Clearing gradients allows new derivatives to be computed from the current parameter values. Continuing with the existing model instance therefore continues from its learned weights, while restarting the runtime can lose that state.</p>
+<p>By default, repeated backward calls <strong>accumulate</strong> gradients. In ordinary minibatch training, clearing is done for each optimizer update, not merely once at the end of an epoch. Deliberate gradient accumulation is also a valid technique, including for large models; it must be an intentional loop design. <a href="https://docs.pytorch.org/tutorials/recipes/recipes/zeroing_out_gradients.html" rel="noopener">PyTorch guide to zeroing gradients</a></p>
+<h3 id="what-loss-and-learning-rate-mean-here">What “loss” and “learning rate” mean here<a class="heading-link" href="#what-loss-and-learning-rate-mean-here" aria-label="Link to this section">#</a></h3>
+<p>Loss measures how predictions compare with the targets under a chosen mathematical objective. Cross entropy is not simply “actual minus predicted”; the subtraction analogy in class was a high-level explanation of error, rather than its formula.</p>
+<p>The learning rate controls the scale of the optimizer’s update. Paul warned that an excessively high value can make training unstable. A smaller value may require more updates, but a larger value does not guarantee faster convergence or better results.</p>
+<p>The goal is to reduce the objective while retaining useful behavior on unseen data. An optimizer is not guaranteed to discover a global minimum in a neural network’s nonconvex loss landscape.</p>
+<h3 id="epochs-steps-and-printed-losses">Epochs, steps, and printed losses<a class="heading-link" href="#epochs-steps-and-printed-losses" aria-label="Link to this section">#</a></h3>
+<p>An <strong>epoch</strong> is a pass through the training dataset. A <strong>step</strong> normally processes one minibatch and performs one update. An epoch can therefore contain many forward/backward/update steps.</p>
+<p>The condition involving <code>batch % 100</code> controlled <strong>logging frequency</strong>. Several printed losses in one epoch do not mean several epochs occurred, nor do they mean the dataset was divided into only ten training steps.</p>
+<p>The live run used <strong>five epochs</strong>. Paul observed decreasing loss and improving test accuracy, starting around 50% accuracy in the first epoch. He had not fixed a random seed, so participants were not expected to reproduce exactly the same values.</p>
+<hr>
+<h2 id="evaluation-argmax-and-reading-results">🧪 Evaluation, Argmax, and Reading Results<a class="heading-link" href="#evaluation-argmax-and-reading-results" aria-label="Link to this section">#</a></h2>
+<p>The evaluation loop served a different purpose from training: measure performance using the current parameters, without updating them.</p>
+<p>Paul used two controls together:</p>
+<ul>
+<li><strong><code>model.eval()</code></strong> selects evaluation behavior for modules such as dropout and batch normalization.</li>
+<li><strong><code>torch.no_grad()</code></strong> prevents the enclosed operations from being recorded for gradient computation.</li>
+</ul>
+<p>These are independent mechanisms. Evaluation mode does not switch off autograd by itself. The simple linear/ReLU model has no dropout or batch-normalization layer, so changing the mode does not alter those particular layers’ behavior, but it remains a useful practice for models that later gain them. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Module.html" rel="noopener">nn.Module reference</a></p>
+<h3 id="argmax-returns-a-position">Argmax returns a position<a class="heading-link" href="#argmax-returns-a-position" aria-label="Link to this section">#</a></h3>
+<p>Paul paused over a ten-score example to make one point clear: <strong>argmax returns the index of the largest score, not the largest score itself</strong>.</p>
+<p>If the greatest score is at the last position of a ten-element vector, its zero-based index is <strong>9</strong>. That index can then be mapped to the corresponding class name.</p>
+<p>For a prediction tensor arranged as batch × classes, <code>argmax(1)</code> chooses one class index per example. Comparing those indices with the labels gives the number of correct predictions.</p>
+<p>Softmax and argmax are not interchangeable. Softmax converts scores into normalized class probabilities; argmax chooses the winning index. The repository also demonstrates that argmax over logits produces the same winning class as argmax after softmax.</p>
+<h3 id="loss-and-accuracy-tell-different-parts-of-the-story">Loss and accuracy tell different parts of the story<a class="heading-link" href="#loss-and-accuracy-tell-different-parts-of-the-story" aria-label="Link to this section">#</a></h3>
+<p>The live output reported both <strong>accuracy</strong> and <strong>average loss</strong>. The tutorial averaged batch losses and divided the count of correct predictions by the number of examples.</p>
+<p>Paul’s practical check was to look for loss falling and accuracy improving. A sudden spike prompted questions about the learning rate, data quality, mislabeled examples, or the architecture.</p>
+<p>That observation is a starting point for investigation, not proof that a model is robust. More epochs are a hyperparameter choice rather than an automatic improvement. A perfect result is a reason to inspect the evaluation setup and task difficulty; 100% accuracy is not inherently impossible, and zero loss is not the definition of 100% accuracy.</p>
+<p>The live tutorial checked the provided test split repeatedly to illustrate the loop. The repository’s training notebook adds the practical separation: use a <strong>validation split</strong> for tuning and reserve the test split for final evaluation. Avoid choosing settings by repeatedly optimizing against the final test results.</p>
+<h3 id="one-correct-sample-is-a-demonstration">One correct sample is a demonstration<a class="heading-link" href="#one-correct-sample-is-a-demonstration" aria-label="Link to this section">#</a></h3>
+<p>After saving and reloading the model, Paul predicted the first test image. The reported predicted and actual label were both <strong>ankle boot</strong>.</p>
+<p>He explicitly cautioned that the model was still basic and could make mistakes. Correctly predicting one image shows that the save/load/predict path works; it does not establish dependable performance across the task.</p>
+<hr>
+<h2 id="saving-loading-and-resuming-a-model">💾 Saving, Loading, and Resuming a Model<a class="heading-link" href="#saving-loading-and-resuming-a-model" aria-label="Link to this section">#</a></h2>
+<p>Paul emphasized that a usable trained model needs both:</p>
+<ol>
+<li><strong>Architecture:</strong> the layers and computation that define the model.</li>
+<li><strong>Learned state:</strong> the trained parameter values, plus relevant persistent buffers.</li>
+</ol>
+<p>For the workflow demonstrated, the saved object was a <strong>state dictionary</strong>, which is loaded into an instance of the matching architecture.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    A[&quot;Trained model&quot;] --&gt; B[&quot;Save state_dict&quot;]
+    B --&gt; C[&quot;Stored checkpoint file&quot;]
+    C --&gt; D[&quot;Create matching architecture&quot;]
+    D --&gt; E[&quot;Load saved state&quot;]
+    E --&gt; F[&quot;Set evaluation mode&quot;]
+    F --&gt; G[&quot;Predict using expected preprocessing&quot;]</pre><figcaption>Lecture diagram 3</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    A[&quot;Trained model&quot;] --&gt; B[&quot;Save state_dict&quot;]
+    B --&gt; C[&quot;Stored checkpoint file&quot;]
+    C --&gt; D[&quot;Create matching architecture&quot;]
+    D --&gt; E[&quot;Load saved state&quot;]
+    E --&gt; F[&quot;Set evaluation mode&quot;]
+    F --&gt; G[&quot;Predict using expected preprocessing&quot;]</code></pre></details></figure>
+<p>The matching repository code is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">torch.save(model.state_dict(), &quot;model.pth&quot;)
+print(&quot;Saved PyTorch Model State to model.pth&quot;)
+
+model = NeuralNetwork().to(device)
+model.load_state_dict(torch.load(&quot;model.pth&quot;, weights_only=True))</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/10_official_quickstart.ipynb" rel="noopener">10_official_quickstart.ipynb</a>.</em></p>
+<p>The “all keys matched” message indicated that the stored entries fit the receiving model. A different output width or changed parameter names can cause loading to fail. The companion saving notebook deliberately demonstrates an architecture mismatch.</p>
+<h3 id="file-extensions-are-conventions">File extensions are conventions<a class="heading-link" href="#file-extensions-are-conventions" aria-label="Link to this section">#</a></h3>
+<p><strong><code>.pt</code> and <code>.pth</code></strong> are common PyTorch filename extensions. They do not, by themselves, specify whether a file contains a state dictionary, a general checkpoint, or another serialized object.</p>
+<p>Saving a state dictionary is a recommended workflow, not an automatic rule that every PyTorch save contains only weights. A state dictionary can also contain registered buffers, such as batch-normalization statistics. PyTorch serialization uses pickle machinery internally even when a file has a <code>.pth</code> extension. <a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html" rel="noopener">Saving and loading guide</a></p>
+<h3 id="checkpointing-makes-interrupted-training-recoverable">Checkpointing makes interrupted training recoverable<a class="heading-link" href="#checkpointing-makes-interrupted-training-recoverable" aria-label="Link to this section">#</a></h3>
+<p>Vikki asked about training stopping midway. Paul described periodically saving checkpoints—for example, after every five, ten, or twenty epochs—and retaining a limited set of recent checkpoints.</p>
+<p>Saving every epoch is possible, but storage and saving overhead influence the chosen frequency. The retention count and interval are policies to choose, not fixed requirements.</p>
+<p>For <strong>resuming training</strong>, preserve more than an inference-only state dictionary: optimizer state and the current epoch/step are important, along with other training state where applicable. Restoring only weights does not necessarily recreate the same optimization trajectory. <a href="https://docs.pytorch.org/tutorials/beginner/saving_loading_models.html" rel="noopener">Saving and loading guide</a></p>
+<p>The repository’s saving notebook also demonstrates <code>map_location</code> for loading state saved on one device onto another. This is useful when a training-server checkpoint is later opened on a CPU laptop.</p>
+<p>Netron and TorchViz were mentioned for inspecting models. Safetensors and other checkpoint/export formats were acknowledged, but the class did not implement those formats.</p>
+<hr>
+<h2 id="returning-to-tensor-fundamentals">🧮 Returning to Tensor Fundamentals<a class="heading-link" href="#returning-to-tensor-fundamentals" aria-label="Link to this section">#</a></h2>
+<p>After completing the end-to-end example, Paul revisited tensors and their operations. This ordering was deliberate: first see the whole model workflow, then understand the structures that support it.</p>
+<p>A <strong>tensor</strong> is a multidimensional numeric structure. A scalar has rank zero, a vector rank one, a matrix rank two, and higher-rank tensors add axes. A tensor’s <strong>rank</strong> is the number of axes; its <strong>shape</strong> gives the size along each axis. For example, shape <code>(2, 3)</code> is more informative than merely saying “two-dimensional.”</p>
+<p>PyTorch tensors support accelerator execution and automatic differentiation. They also work on CPUs; a tensor does not become a tensor only after being moved to a GPU.</p>
+<h3 id="ways-the-session-created-tensors">Ways the session created tensors<a class="heading-link" href="#ways-the-session-created-tensors" aria-label="Link to this section">#</a></h3>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Operation</th><th>Purpose</th></tr></thead><tbody><tr><td><code>torch.tensor(data)</code></td><td>Construct a tensor from supplied Python data</td></tr><tr><td><code>torch.from_numpy(array)</code></td><td>Create a tensor linked to a compatible NumPy array</td></tr><tr><td><code>torch.ones</code> / <code>torch.zeros</code></td><td>Create a specified shape filled with ones or zeros</td></tr><tr><td><code>torch.rand</code></td><td>Create random values with a specified shape</td></tr><tr><td>A “like” constructor</td><td>Use another tensor’s shape and appropriate properties</td></tr></tbody></table></div>
+<p>The discussion used small 2 × 2 and 2 × 3 examples to inspect the results. Those shapes were teaching examples; real model tensors can be much larger.</p>
+<p>The companion tensor notebook gives this dtype demonstration:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">tensor1d = torch.tensor([1, 2, 3])
+print(tensor1d.dtype)          # torch.int64
+
+floatvec = torch.tensor([1.0, 2.0, 3.0])
+print(floatvec.dtype)          # torch.float32</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/02_tensors.ipynb" rel="noopener">02_tensors.ipynb</a>.</em></p>
+<p><strong>Precision terminology:</strong> float16, float32, and float64 describe the number of <strong>bits</strong> in the representation, not the number of digits after the decimal point. Precision, supported operations, memory use, and hardware performance must be considered together. Smaller types are not universally interchangeable or faster. <a href="https://docs.pytorch.org/docs/2.14/tensor_attributes.html" rel="noopener">Tensor attributes reference</a></p>
+<h3 id="inspect-three-attributes">Inspect three attributes<a class="heading-link" href="#inspect-three-attributes" aria-label="Link to this section">#</a></h3>
+<p>Paul focused on <strong>shape, dtype, and device</strong>. These tell you the dimensions, numeric type, and location of the tensor. The tensor notebook was run on a CPU runtime because its small operations did not need a GPU.</p>
+<h3 id="indexing-slicing-and-concatenation">Indexing, slicing, and concatenation<a class="heading-link" href="#indexing-slicing-and-concatenation" aria-label="Link to this section">#</a></h3>
+<p>The session then inspected rows and columns using NumPy-like indexing, selected portions with slicing, and joined tensors using <strong><code>torch.cat</code></strong>. Understanding which axis is being selected or concatenated matters more than memorizing an isolated result.</p>
+<p>Matrix multiplication was highlighted as particularly relevant to upcoming attention implementations. It is a different operation from elementwise multiplication; the input shapes must satisfy the chosen operation.</p>
+<h3 id="numpy-sharing-is-a-cpu-bridge">NumPy sharing is a CPU bridge<a class="heading-link" href="#numpy-sharing-is-a-cpu-bridge" aria-label="Link to this section">#</a></h3>
+<p>Compatible CPU tensors and NumPy arrays can share underlying storage, so modifying one can affect the other. That is the important meaning of the “bridge” shown in the tutorial. <a href="https://docs.pytorch.org/tutorials/beginner/basics/tensorqs_tutorial.html" rel="noopener">PyTorch tensor tutorial</a></p>
+<p>It does not mean ordinary NumPy arrays execute CUDA kernels, nor does it mean transferring data from CPU to a separate GPU requires no copying. CPU-to-GPU transfers remain a real part of the workflow and can cost time. <a href="https://docs.pytorch.org/docs/stable/notes/cuda.html" rel="noopener">CUDA semantics</a></p>
+<p>Ajinkya’s practical question was when to use <code>from_numpy</code>: use it when the existing data is a NumPy array. If starting directly from Python data or PyTorch operations, that conversion step may not be necessary. The distinction between <code>torch.tensor</code> and <code>as_tensor</code> concerns copying and reuse of storage where possible; the required dtype and device also affect what happens. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.as_tensor.html" rel="noopener">as_tensor reference</a></p>
+<hr>
+<h2 id="dataset-and-dataloader-two-different-responsibilities">🗃️ Dataset and DataLoader: Two Different Responsibilities<a class="heading-link" href="#dataset-and-dataloader-two-different-responsibilities" aria-label="Link to this section">#</a></h2>
+<p>Paul returned to data loading in a separate notebook because this interface is needed when working with your own training data.</p>
+<p><strong>Dataset answers:</strong> “What is the example at this index, and what is its label?”</p>
+<p><strong>DataLoader answers:</strong> “How should examples be selected, grouped into batches, and supplied to the loop?”</p>
+<p>Downloading a dataset, representing its samples, and moving a batch to a GPU are distinct operations.</p>
+<h3 id="the-custom-dataset-contract">The custom dataset contract<a class="heading-link" href="#the-custom-dataset-contract" aria-label="Link to this section">#</a></h3>
+<p>The class examined a directory of images and an annotation file that maps image names to labels. The key methods were:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Method</th><th>Responsibility</th></tr></thead><tbody><tr><td><code>__init__</code></td><td>Store paths, annotation data, and transform callables</td></tr><tr><td><code>__len__</code></td><td>Return the dataset’s number of samples</td></tr><tr><td><code>__getitem__</code></td><td>Load and return one sample and its target for a supplied index</td></tr></tbody></table></div>
+<p>Annotations can be simple classification labels. In other vision tasks they may include bounding boxes or more detailed structures. The implementation must match the actual task and annotation schema.</p>
+<p>For the illustrated file-backed dataset, the companion notebook’s item loader is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def __getitem__(self, idx):
+    # Loads and returns exactly one (image, label) pair, given an index.
+    img_path = os.path.join(self.img_dir, self.img_labels.iloc[idx, 0])
+    image = decode_image(img_path)
+    label = self.img_labels.iloc[idx, 1]
+    if self.transform:
+        image = self.transform(image)
+    if self.target_transform:
+        label = self.target_transform(label)
+    return image, label</code></pre></div>
+<p><em>Companion excerpt: <a href="https://github.com/sourangshupal/pytorch-primer/blob/main/notebooks/12_official_datasets_and_dataloaders.ipynb" rel="noopener">12_official_datasets_and_dataloaders.ipynb</a>. This is a method from its dataset class, not a standalone function. The notebook explicitly says that the example requires your own image directory and annotation file.</em></p>
+<h3 id="data-quality-becomes-a-shape-problem">Data quality becomes a shape problem<a class="heading-link" href="#data-quality-becomes-a-shape-problem" aria-label="Link to this section">#</a></h3>
+<p>Paul gave several examples of real training failures:</p>
+<ul>
+<li>A predominantly RGB collection contains a few grayscale images.</li>
+<li>A few images have unexpected width or height.</li>
+<li>Some images have the wrong orientation.</li>
+<li>Samples contain duplicates or unsuitable content.</li>
+<li>An annotation is wrong or points to the wrong sample.</li>
+</ul>
+<p>If a fixed-shape model or a batch-stacking operation receives incompatible shapes, training can fail. Collecting resolution, channel count, and other sample information during inspection makes debugging easier.</p>
+<p>A grayscale image can be converted or replicated into a three-channel representation as part of preprocessing, but simply editing the stated channel count does not create missing color information. The transformation and model interface must agree.</p>
+<h3 id="iterate-over-batches-rather-than-requiring-everything-in-gpu-memory">Iterate over batches rather than requiring everything in GPU memory<a class="heading-link" href="#iterate-over-batches-rather-than-requiring-everything-in-gpu-memory" aria-label="Link to this section">#</a></h3>
+<p>Paul connected data loaders with iterators, generators, and lazy loading. The useful principle is to prepare and process data in manageable portions.</p>
+<p>A loader does not guarantee that every dataset is lazy: a dataset may already hold tensors in memory, or its <code>__getitem__</code> may read from disk on demand. The benefit comes from the combined dataset/loading design.</p>
+<p>The expression <strong><code>next(iter(train_dataloader))</code></strong> obtains one batch for inspection. An ordinary loop can also iterate over the loader; iteration is not forbidden just because a dataset is large.</p>
+<p>The class briefly mentioned <code>num_workers</code> and pinned memory. Worker count affects data-loading processes and should be tuned to the task and hardware. Pinned-memory use was deferred rather than demonstrated in depth.</p>
+<hr>
+<h2 id="transforms-prepare-features-and-targets-deliberately">🎨 Transforms: Prepare Features and Targets Deliberately<a class="heading-link" href="#transforms-prepare-features-and-targets-deliberately" aria-label="Link to this section">#</a></h2>
+<p>Transforms make raw data suitable for the model. Paul discussed resizing, cropping, zooming, and the broader topic of augmentation, without teaching a complete augmentation strategy.</p>
+<p>A resize can increase or decrease an image’s dimensions. It is not automatically a pooling operation; pooling is a separate model operation with its own purpose.</p>
+<h3 id="two-transform-interfaces">Two transform interfaces<a class="heading-link" href="#two-transform-interfaces" aria-label="Link to this section">#</a></h3>
+<ul>
+<li><strong><code>transform</code> modifies the feature</strong>, such as an image.</li>
+<li><strong><code>target_transform</code> modifies the label</strong>, such as converting an integer category into a vector.</li>
+</ul>
+<p>For the FashionMNIST images, the important sequence was:</p>
+<ol>
+<li>Convert the image to the image-tensor representation.</li>
+<li>Convert it to <code>float32</code> and scale its pixel range.</li>
+</ol>
+<p>For the usual uint8 images in this example, <strong><code>v2.ToDtype(torch.float32, scale=True)</code></strong> converts the 0–255 representation to 0–1. This is dtype-based image scaling, not fitting a min/max scaler separately to each dataset. <code>v2.ToImage()</code> performs the image representation conversion; it does not supply that scaling itself. <a href="https://docs.pytorch.org/vision/stable/generated/torchvision.transforms.v2.ToDtype.html" rel="noopener">ToDtype reference</a></p>
+<h3 id="one-hot-encoding-was-a-separate-demonstration">One-hot encoding was a separate demonstration<a class="heading-link" href="#one-hot-encoding-was-a-separate-demonstration" aria-label="Link to this section">#</a></h3>
+<p>The transforms notebook showed a target label becoming a ten-element vector containing a one at the category’s index and zeros elsewhere. A lambda transform supplied the label conversion.</p>
+<p>That does not mean the Quickstart’s integer labels should be replaced blindly. The main training example used class-index labels with cross entropy. Target representation, output shape, and loss function must be compatible.</p>
+<p>Cross entropy can also accept properly formed floating-point class-probability targets, but that is a different target interface from the integer-index case used in the live model. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.CrossEntropyLoss.html" rel="noopener">CrossEntropyLoss reference</a></p>
+<h3 id="fixed-shape-is-a-property-of-the-demonstrated-architecture">Fixed shape is a property of the demonstrated architecture<a class="heading-link" href="#fixed-shape-is-a-property-of-the-demonstrated-architecture" aria-label="Link to this section">#</a></h3>
+<p>The linear model requires 784 features per example after flattening. Standardizing the image dimensions therefore makes sense for this model.</p>
+<p>This should not be generalized into “no neural network can accept dynamic shapes.” PyTorch supports dynamic dimensions in appropriate models and export workflows; the permitted shapes still depend on the architecture and operations. <a href="https://docs.pytorch.org/docs/stable/export.html" rel="noopener">Dynamic shapes in torch.export</a></p>
+<p>Paul briefly revisited the “Build Model” notebook, noting that much of it repeated the architecture already explained and added print statements for inspection. A deeper optimization notebook and extensive hyperparameter tuning were deferred.</p>
+<hr>
+<h2 id="autograd-and-the-computational-graph">🧠 Autograd and the Computational Graph<a class="heading-link" href="#autograd-and-the-computational-graph" aria-label="Link to this section">#</a></h2>
+<p>The final technical topic was <strong>automatic differentiation</strong>. Paul treated backpropagation as foundational to training and urged participants to work through at least a small example by hand.</p>
+<p>The class’s simple model was expressed as:</p>
+<p><strong>z = xW + b</strong></p>
+<p>Here, x is the input, W the weights, b the bias, and z the output of that affine operation. The loss compares the model output with target y. “Parameters” in this discussion referred primarily to weights and biases.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    X[&quot;Input x&quot;] --&gt; M[&quot;Matrix multiplication xW&quot;]
+    W[&quot;Weights W&quot;] --&gt; M
+    M --&gt; A[&quot;Add bias b&quot;]
+    B[&quot;Bias b&quot;] --&gt; A
+    A --&gt; Z[&quot;Output z&quot;]
+    Z --&gt; L[&quot;Loss&quot;]
+    Y[&quot;Target y&quot;] --&gt; L
+    L -. &quot;Chain rule backward&quot; .-&gt; W
+    L -. &quot;Chain rule backward&quot; .-&gt; B</pre><figcaption>Lecture diagram 4</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    X[&quot;Input x&quot;] --&gt; M[&quot;Matrix multiplication xW&quot;]
+    W[&quot;Weights W&quot;] --&gt; M
+    M --&gt; A[&quot;Add bias b&quot;]
+    B[&quot;Bias b&quot;] --&gt; A
+    A --&gt; Z[&quot;Output z&quot;]
+    Z --&gt; L[&quot;Loss&quot;]
+    Y[&quot;Target y&quot;] --&gt; L
+    L -. &quot;Chain rule backward&quot; .-&gt; W
+    L -. &quot;Chain rule backward&quot; .-&gt; B</code></pre></details></figure>
+<h3 id="what-requires-grad-enables">What requires_grad enables<a class="heading-link" href="#what-requires-grad-enables" aria-label="Link to this section">#</a></h3>
+<p>Setting <strong><code>requires_grad=True</code></strong> on relevant tensors allows PyTorch to record their differentiable computations. Trainable <code>nn.Module</code> parameters normally already have gradient tracking enabled.</p>
+<p>For a training pass, the forward computation both calculates results and builds the operation history that the later backward pass needs. Gradients are computed during backward, but <strong>the training forward pass must still be tracked</strong>. Wrapping the training forward pass in <code>no_grad</code> would remove the history required to differentiate it. <a href="https://docs.pytorch.org/tutorials/beginner/basics/autogradqs_tutorial.html" rel="noopener">Autograd tutorial</a></p>
+<p>This is the precise distinction behind the class’s discussion of “gradients during backward” and “no gradients for prediction.”</p>
+<h3 id="grad-fn-backward-and-grad">grad_fn, backward, and grad<a class="heading-link" href="#grad-fn-backward-and-grad" aria-label="Link to this section">#</a></h3>
+<p>The session inspected gradient-related objects and then called <code>loss.backward()</code>. The computation graph records how results were obtained, allowing the chain rule to propagate derivatives backward.</p>
+<ul>
+<li><strong><code>grad_fn</code></strong> identifies the tracked operation that produced a non-leaf result.</li>
+<li><strong><code>backward()</code></strong> initiates derivative computation.</li>
+<li><strong><code>W.grad</code> and <code>b.grad</code></strong> hold gradients for relevant leaf parameters after backward.</li>
+<li>The optimizer then uses those values to update the parameters.</li>
+</ul>
+<p>PyTorch creates these graphs dynamically as operations run. The computation graph is a record of a particular computation; it is related to the model’s implementation, but it is not simply another name for every persistent model object.</p>
+<h3 id="disable-tracking-when-the-task-calls-for-it">Disable tracking when the task calls for it<a class="heading-link" href="#disable-tracking-when-the-task-calls-for-it" aria-label="Link to this section">#</a></h3>
+<p>The class introduced three related ideas:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Mechanism</th><th>Intended meaning</th></tr></thead><tbody><tr><td><code>requires_grad</code></td><td>Whether a tensor participates in gradient tracking</td></tr><tr><td><code>torch.no_grad()</code></td><td>Disable tracking for operations within a block</td></tr><tr><td><code>detach()</code></td><td>Obtain a tensor detached from the existing autograd history</td></tr></tbody></table></div>
+<p>Paul demonstrated no-grad use for evaluation and mentioned detach without developing a practical use case. The deeper Jacobian-product material was explicitly skipped.</p>
+<p>Autograd saves substantial implementation work, but understanding the chain rule still helps diagnose training. The instructor’s expectation was that participants should be able to explain a small forward pass, loss calculation, derivative, and weight update rather than treat a training call as an unexplained event.</p>
+<hr>
+<h2 id="the-open-floor-discussion-slms-rag-and-production-scale">🏗️ The Open-Floor Discussion: SLMs, RAG, and Production Scale<a class="heading-link" href="#the-open-floor-discussion-slms-rag-and-production-scale" aria-label="Link to this section">#</a></h2>
+<p>The dedicated Q&amp;A expanded beyond PyTorch into why the course emphasizes model engineering.</p>
+<h3 id="specialized-models-and-hybrid-systems">Specialized models and hybrid systems<a class="heading-link" href="#specialized-models-and-hybrid-systems" aria-label="Link to this section">#</a></h3>
+<p>Paul described adapting an existing model to a <strong>domain-specific task</strong>, including specialized tool calling. Good task data is a prerequisite: for a tool-selection model, examples need to connect queries with the appropriate tool or response.</p>
+<p>He argued that a specialized model can sometimes reduce repeated use of a general-purpose model and simplify part of a system. Those benefits need to be established for the actual workload. Small-model size does not automatically guarantee adequate quality, low total cost, or fewer reasoning tokens.</p>
+<p>The conversation also explicitly included <strong>hybrid systems</strong>: a RAG pipeline can retrieve information and call a self-hosted specialized model. An SLM and RAG do not have to be alternatives.</p>
+<p>The model families mentioned for future practical work included Qwen, Llama, and Microsoft Phi. The instructor intended to use models that fit the available compute, rather than train a frontier-scale model from scratch. Parameter-count and dollar figures in the discussion were rough illustrations, not hardware-sizing formulas.</p>
+<h3 id="retrieval-quality-and-dependency-bottlenecks">Retrieval quality and dependency bottlenecks<a class="heading-link" href="#retrieval-quality-and-dependency-bottlenecks" aria-label="Link to this section">#</a></h3>
+<p>Shashank, Amit, and Nilesh explored the limits of RAG. Paul’s useful systems point was that a RAG application involves several components: retrieval/storage, embedding, optional reranking, generation, and possibly extra validation.</p>
+<p>If retrieval returns the wrong context, a larger generator alone may not repair the answer. More processing stages can also add latency. The instructor described metadata filtering and tenant separation as ways he had seen larger document collections managed; he did not give a universal document-count limit.</p>
+<p>Anuragh then asked what production-grade means beyond deploying to a cloud. Paul emphasized testing the <strong>whole dependency chain</strong>.</p>
+<figure class="diagram"><pre class="mermaid">flowchart LR
+    A[&quot;Concurrent users&quot;] --&gt; B[&quot;Application API&quot;]
+    B --&gt; C[&quot;Embedding service&quot;]
+    C --&gt; D[&quot;Retrieval&quot;]
+    D --&gt; E[&quot;Reranking service&quot;]
+    E --&gt; F[&quot;Generation service&quot;]
+    F --&gt; G[&quot;Response&quot;]
+    H[&quot;Dependency limits and latency&quot;] -. &quot;Constrain throughput&quot; .-&gt; C
+    H -. &quot;Constrain throughput&quot; .-&gt; E
+    H -. &quot;Constrain throughput&quot; .-&gt; F</pre><figcaption>Lecture diagram 5</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart LR
+    A[&quot;Concurrent users&quot;] --&gt; B[&quot;Application API&quot;]
+    B --&gt; C[&quot;Embedding service&quot;]
+    C --&gt; D[&quot;Retrieval&quot;]
+    D --&gt; E[&quot;Reranking service&quot;]
+    E --&gt; F[&quot;Generation service&quot;]
+    F --&gt; G[&quot;Response&quot;]
+    H[&quot;Dependency limits and latency&quot;] -. &quot;Constrain throughput&quot; .-&gt; C
+    H -. &quot;Constrain throughput&quot; .-&gt; E
+    H -. &quot;Constrain throughput&quot; .-&gt; F</code></pre></details></figure>
+<p>An application accepting 10,000 concurrent requests is not sufficient if a downstream service only permits a fraction of that traffic. Load tests must operate within actual capacity and rate limits. Locust was mentioned as a testing tool; caching and semantic caching were acknowledged, but not implemented.</p>
+<h3 id="continual-updates-freezing-and-retained-capability">Continual updates, freezing, and retained capability<a class="heading-link" href="#continual-updates-freezing-and-retained-capability" aria-label="Link to this section">#</a></h3>
+<p>Vijayadevan asked how an enterprise model stays current and whether fine-tuning can damage its existing language ability. Paul proposed periodic retraining and freezing some parameters while updating others.</p>
+<p>Freezing is a real mechanism, but <strong>there is no universal 80:20 layer rule</strong> and no guarantee that fine-tuning preserves all previous capabilities. Catastrophic forgetting has been observed during continual fine-tuning, so evaluate both the new domain behavior and capabilities you need to retain. <a href="https://arxiv.org/abs/2308.08747" rel="noopener">Empirical study of forgetting during continual fine-tuning</a></p>
+<p>His follow-up asked whether a layer can be identified as containing “sports knowledge” and then selectively excluded when training a finance model. The practical answer is that layers are not a neat catalog of domains. However, locating and editing factual associations is an existing research area, so this is a nuanced interpretability question rather than an unexplored impossibility. <a href="https://rome.baulab.info/" rel="noopener">ROME research project</a></p>
+<p>These were conceptual Q&amp;A discussions. The session did not train an SLM, build RAG, implement load balancing, or demonstrate continual learning.</p>
+<hr>
+<h2 id="what-39-s-next">🗺️ What&#39;s Next<a class="heading-link" href="#what-39-s-next" aria-label="Link to this section">#</a></h2>
+<p>Paul said the <strong>following week would begin Transformer theory</strong>, with the theoretical explanation likely taking at least two sessions. Coding would follow after that theory.</p>
+<p>Participants were encouraged to read <strong>Attention Is All You Need</strong> ahead of time and strengthen PyTorch and deep-learning fundamentals during the interval.</p>
+<p>The broader roadmap he described was an initial emphasis on model/LLM engineering, followed by consumption through RAG, agentic RAG, agents, and security. These were future course topics, not work completed in this class.</p>
+<hr>
+<h2 id="live-q-amp-a-highlights">💬 Live Q&amp;A Highlights<a class="heading-link" href="#live-q-amp-a-highlights" aria-label="Link to this section">#</a></h2>
+<p>The table includes in-flow clarifications and the extended open-floor discussion. Closely related questions are combined. One speaker labeled “Vidyasagar Sasumana” later introduced themselves as “Ritika”; the attribution below preserves that uncertainty.</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td><strong>Abhishek: What is inference?</strong></td><td>Running a model to obtain predictions. It does not require deployment and can process one sample or a batch.</td></tr><tr><td><strong>Kalyan: Is TorchVision connected to OpenCV?</strong></td><td>They have overlapping vision capabilities, but TorchVision is its own package. The class also discussed Pillow/PIL image handling.</td></tr><tr><td><strong>Abhilash: What does scale=True do?</strong></td><td>In the demonstrated uint8-to-float image conversion, it rescales pixels from 0–255 to 0–1. It is distinct from fitting a statistical scaler.</td></tr><tr><td><strong>Salman: Does train=False disable gradients?</strong></td><td>It selects the dataset’s test split. Model mode and autograd controls are separate.</td></tr><tr><td><strong>Chat: What does [64, 1, 28, 28] mean?</strong></td><td>Batch size, channels, height, and width. Labels have shape [64] because each image has one target; the dataset still has ten categories.</td></tr><tr><td><strong>Priya: How do input size and batch size differ?</strong></td><td>Input size reflects each example and the architecture’s expected features. Batch size specifies how many examples are processed together.</td></tr><tr><td><strong>Chat: Why flatten before the linear stack?</strong></td><td>This model takes each 28 × 28 grayscale image as 784 features, while preserving the batch axis. Unsqueeze does not perform the same operation.</td></tr><tr><td><strong>Chat: Why 512 and why ten outputs?</strong></td><td>512 is a tunable hidden width. Ten outputs correspond to ten target categories. Adjacent feature widths must match.</td></tr><tr><td><strong>Rushi: Why no pooling?</strong></td><td>The example is a fully connected baseline. Pooling is not required to demonstrate this workflow; a CNN would be a separate architecture.</td></tr><tr><td><strong>Sumanth K: Why is forward not called explicitly?</strong></td><td>Calling model(X) invokes nn.Module’s forward machinery. Use the module instance so PyTorch also handles its hooks.</td></tr><tr><td><strong>sunny: Can we cover vanishing/exploding gradients?</strong></td><td>Paul deferred these to deep-learning prerequisite study; they were raised but not explained in this session.</td></tr><tr><td><strong>Thomas: Why multiple losses per epoch and a modulo condition?</strong></td><td>An epoch contains many batch steps. The modulo condition selects which steps print progress; it does not define the number of epochs.</td></tr><tr><td><strong>Vidyasagar: Why zero_grad during training, and are learned weights retained?</strong></td><td>Clear stored derivatives between fresh optimizer updates. It does not erase weights, so continuing with the existing model retains learning; restarting the runtime can lose in-memory state.</td></tr><tr><td><strong>Abhilash / Rushi: zero_grad versus no_grad?</strong></td><td>zero_grad clears stored gradients for subsequent training updates. no_grad prevents recording operations in a block, typically for inference/evaluation.</td></tr><tr><td><strong>Gaurav: What if accuracy plateaus or loss becomes unstable?</strong></td><td>Inspect the loss behavior, learning rate, data, labels, and affected batches before changing settings. Switching an activation is an experiment, not an automatic remedy.</td></tr><tr><td><strong>Chat: Why do participants get different results?</strong></td><td>Paul had not fixed a random seed. Random initialization and other randomness can produce different metrics.</td></tr><tr><td><strong>Himani Dadem: Why PyTorch in a production LLM course?</strong></td><td>Transformer implementations and training need a framework for tensors and parameters. The initial modules expose these mechanics; later higher-level tooling builds on them.</td></tr><tr><td><strong>Raj: What is autograd?</strong></td><td>Automatic differentiation computes derivatives through the recorded operations using the chain rule. Other major deep-learning frameworks also provide automatic differentiation.</td></tr><tr><td><strong>Akhil: Can architecture be saved too?</strong></td><td>Yes, there are multiple persistence/export workflows. The demonstrated state-dictionary approach keeps the architecture definition and learned state separate.</td></tr><tr><td><strong>Ajinkya: When use from_numpy?</strong></td><td>When the starting data is a NumPy array. If data is created directly as tensors, that conversion may not be needed.</td></tr><tr><td><strong>Raj Raghur: tensor versus as_tensor?</strong></td><td>tensor constructs a copy; as_tensor reuses storage or the existing tensor when possible, subject to dtype/device requirements.</td></tr><tr><td><strong>MBI Pramod Kumar: Will these concepts help train/debug LLMs?</strong></td><td>Yes. Transformers are neural networks, and the tensor, training, and debugging foundations carry into LLM work.</td></tr><tr><td><strong>Gaurav Garg: Transformer theory or implementation next?</strong></td><td>Theory first, expected to take at least two sessions, followed by coding. Paul recommended using the intervening time to strengthen fundamentals.</td></tr><tr><td><strong>S Anoop: Are GPU and VRAM the same, and is 80 GB always needed?</strong></td><td>A GPU is the processor; VRAM is its device memory. The amount needed depends on the model and task, not a universal 80 GB requirement.</td></tr><tr><td><strong>Nilan Electronicist: Why local VS Code/UV if today uses Colab?</strong></td><td>Both routes are useful. The repository can run locally or in Colab, and later remote-GPU workflows may use SSH.</td></tr><tr><td><strong>Vikki: Can interrupted training resume, and how often save?</strong></td><td>Use checkpoints at a chosen frequency. Save appropriate training state and retain checkpoints according to storage/recovery needs; saving every epoch is possible but costs resources.</td></tr><tr><td><strong>Vidyasagar / self-identified Ritika: Are dropout, normalization, and skip connections available?</strong></td><td>Yes. PyTorch provides common layers and supports residual connections. LocalResponseNorm also remains available, even though it was not used here. <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.LocalResponseNorm.html" rel="noopener">LocalResponseNorm</a></td></tr><tr><td><strong>Vidyasagar / Ritika: Why researchers choose PyTorch despite extra code?</strong></td><td>Paul emphasized control over blocks, tensor operations, and the training process. Modern Keras also supports customization, so assess the concrete workflow.</td></tr><tr><td><strong>Shashank Gajawada: What can model engineering add beyond RAG?</strong></td><td>Specialized models may improve parts of a domain workload or reduce dependencies. Paul emphasized retrieval latency and scaling costs; actual quality/cost gains need experiments.</td></tr><tr><td><strong>Shashank: Can a custom model replace GPT in a RAG pipeline?</strong></td><td>A suitable specialized model can be the generator, and hybrid RAG-plus-SLM designs are possible. Match the model to the task rather than assume parity.</td></tr><tr><td><strong>Shashank: How much RAG is in the course?</strong></td><td>The roadmap includes both model engineering and RAG, with model foundations/fine-tuning prioritized first. Complex document structure affects RAG implementation difficulty.</td></tr><tr><td><strong>Shashank: Which open models will be fine-tuned?</strong></td><td>Paul mentioned Qwen, Llama, and Phi families within practical compute limits. The session did not establish a benchmark-matched substitute for any proprietary frontier model.</td></tr><tr><td><strong>Sai Kiran Akula: How are initial weights/biases chosen?</strong></td><td>Initialization schemes supply initial parameter values; Xavier and He/Kaiming were mentioned. Consult the layer’s actual initialization and test relevant choices.</td></tr><tr><td><strong>Sai Kiran: Where are initialization references?</strong></td><td>Paul shared a resource on initialization techniques. The precise paper/link is not recoverable from the transcript.</td></tr><tr><td><strong>Nilesh: How build deeper understanding with an application background?</strong></td><td>Combine theory with repeatedly training models and resolving actual failures. Paul suggested prerequisite material, MIT deep-learning resources, and Hands-On Machine Learning.</td></tr><tr><td><strong>Nilesh: Is autonomous-vehicle work the same stack?</strong></td><td>It includes vision/sensor pipelines and multiple engineering units. Deep-learning foundations carry over, but prepare for the specific role’s visual-computing and systems needs.</td></tr><tr><td><strong>Nilesh: What about physical AI and hardware-level roles?</strong></td><td>Hardware/robotics requirements can differ substantially from application work. Inspect the responsibilities in the job description rather than infer them from a broad title.</td></tr><tr><td><strong>Nilesh: What is a forward-deployed engineer?</strong></td><td>The discussion framed it around helping customers adopt and scale solutions. Paul emphasized that the actual job description matters more than the title.</td></tr><tr><td><strong>Kalyan Rad: Are vision Transformers simply the next CNN?</strong></td><td>They are another architecture family and were identified as a future syllabus topic. This class did not teach either architecture in detail or establish that CNN research has ended.</td></tr><tr><td><strong>Kalyan: Where start with LiDAR/point-cloud work?</strong></td><td>Paul suggested visual-computing foundations and resources such as Stanford CS231n, then more specialized courses. No point-cloud dimensionality lesson was developed.</td></tr><tr><td><strong>Kalyan: Why export for a CPU deployment/container?</strong></td><td>ONNX was discussed as a deployment option. ONNX Runtime supports CPU, GPU, and other providers; an export is not automatically faster, so benchmark the actual configuration. <a href="https://onnxruntime.ai/docs/execution-providers/" rel="noopener">Execution providers</a></td></tr><tr><td><strong>Kalyan: Can inference be accessed outside Python, including JavaScript?</strong></td><td>The answer acknowledged deployment/inference tooling but did not demonstrate a JavaScript implementation. The exact integration remained unspecified in the session.</td></tr><tr><td><strong>Kalyan: How does LLM engineering relate to complex agents?</strong></td><td>The course emphasizes building/adapting models as well as consuming them. A specialized tool-calling model can become an agent component; voice agents also have interruption/context-handling problems.</td></tr><tr><td><strong>Amit Kumar: What should an organization consider before choosing an SLM?</strong></td><td>Start with usable task data, then evaluate quality, hosting/training cost, maintenance, and the intended time horizon. Paul favored a long-term view; savings are workload-dependent.</td></tr><tr><td><strong>Amit: Can SLM hosting be on-premises or private cloud?</strong></td><td>Yes, those are possible deployment choices. The discussion’s SLM examples concerned self-hosted models.</td></tr><tr><td><strong>Amit / Nilesh: Can RAG and a specialized model be combined?</strong></td><td>Yes. A retrieval pipeline can call the specialized model; complex or broader tasks may still need a larger model or additional components.</td></tr><tr><td><strong>Nilesh: Why did small local models fail at routing/tool calls?</strong></td><td>Task-specific training data and evaluation matter. A small pretrained model does not automatically know the organization’s tools or routing rules.</td></tr><tr><td><strong>Nilesh: Is RAG limited to a few hundred PDFs?</strong></td><td>No universal limit was given. Paul described much larger systems using tenancy and metadata filtering, while noting growing retrieval/correctness/latency challenges.</td></tr><tr><td><strong>Amit: How choose a generator for RAG?</strong></td><td>Run experiments against the use case. Paul offered rough parameter-count heuristics, but retrieval correctness, context handling, output quality, and measured constraints should drive selection.</td></tr><tr><td><strong>AG / Anuragh: What is an efficient route to model-engineering intuition?</strong></td><td>Implement several important papers or models, understand training and inference, then choose one to scale and deploy. Select the NLP or vision direction that matches the intended work.</td></tr><tr><td><strong>AG / Anuragh: How does Paul learn new technology?</strong></td><td>Track relevant papers and releases, test promising GitHub projects, and assess their specific benefit to an existing solution rather than adopt them solely because they trend.</td></tr><tr><td><strong>AG / Anuragh: Does production mean scaling and load testing too?</strong></td><td>Yes. Tests must cover real dependencies and their quotas. Locust can generate load, but it cannot remove service limits or infrastructure bottlenecks.</td></tr><tr><td><strong>AG / Anuragh: Can caching solve scale, and how describe projects in interviews?</strong></td><td>Caching can help some requests, but the full pipeline still needs measured capacity. State the concurrency tested, subscriptions/limits, and actual user requirements rather than claim unsupported scale.</td></tr><tr><td><strong>Nilesh: GPU alternatives to free Colab?</strong></td><td>Paul mentioned Kaggle. The session did not compare current quotas or pricing.</td></tr><tr><td><strong>Vijayadevan Rajendiran: How keep a specialized model’s knowledge current?</strong></td><td>Paul proposed periodic continual training on a chosen schedule. The appropriate update strategy depends on the use case and must be evaluated.</td></tr><tr><td><strong>Vijayadevan: Can fine-tuning harm grammar or earlier capability?</strong></td><td>Freezing some parameters can constrain updates, but retained capability is not guaranteed. Evaluate for catastrophic forgetting as well as domain improvement.</td></tr><tr><td><strong>Vijayadevan: Can we isolate a layer’s sports/finance knowledge?</strong></td><td>There is no simple one-domain-per-layer map. Interpretability and model-editing research exists, but selecting layers and measuring effects remains more nuanced than reading a layer’s label.</td></tr></tbody></table></div>
+<p>Komal and Sanket did not contribute a separate substantive unanswered question. LD McCoy’s dashboard/resource-access question is reflected in Quick Updates; audio checks and repeated requests to be unmuted are omitted.</p>
+<hr>
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="heading-link" href="#key-pointers-to-remember" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>Understand the full path: dataset → transform → batch → model → loss → backward → optimizer → evaluation.</li>
+<li>FashionMNIST uses 28 × 28 grayscale images, ten categories, 60,000 training examples, and 10,000 test examples.</li>
+<li>N, C, H, W describes the image batch; label count and unique class count are different.</li>
+<li>Batch size, learning rate, epoch count, and hidden widths are choices to test.</li>
+<li>The class’s fully connected model flattens each image to 784 features and returns ten logits.</li>
+<li>Default nn.Flatten preserves the batch dimension; unsqueeze adds an axis instead.</li>
+<li>Cross entropy accepts logits; integer class-index targets require long/int64.</li>
+<li>Backward computes gradients, the optimizer updates parameters, and zero_grad clears stored derivatives.</li>
+<li>Clear gradients for fresh optimizer updates; deliberate accumulation is a separate strategy.</li>
+<li>The training forward pass records the history needed by backward.</li>
+<li>eval controls layer behavior; no_grad controls autograd recording.</li>
+<li>Argmax returns an index, which is then mapped to a class.</li>
+<li>More epochs or a single correct prediction does not establish generalization.</li>
+<li>A saved state dictionary needs a compatible receiving architecture.</li>
+<li>Training recovery needs appropriate checkpoint state, including the optimizer when resuming its trajectory.</li>
+<li>Tensor dtype numbers describe bits, not decimal places.</li>
+<li>CPU NumPy/tensor memory sharing does not remove CPU-to-GPU transfer costs.</li>
+<li>Inspect shape, dtype, device, labels, and data quality before guessing at a training error.</li>
+<li>RAG and specialized models can be combined; benchmark the complete workload.</li>
+<li>Production throughput depends on the whole service chain, including downstream limits.</li>
+<li>Fine-tuning quality includes retained capabilities as well as newly learned behavior.</li>
+</ul>
+<hr>
+<h2 id="action-items-after-class-3">✅ Action Items After Class 3<a class="heading-link" href="#action-items-after-class-3" aria-label="Link to this section">#</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"> Run the official Quickstart or the matching course repository notebook from beginning to end.</li>
+<li><input disabled="" type="checkbox"> Verify your environment, package availability, and detected device.</li>
+<li><input disabled="" type="checkbox"> Print a feature batch and label batch; explain every axis, their dtypes, and their devices.</li>
+<li><input disabled="" type="checkbox"> Trace 28 × 28 → 784 → 512 → 512 → ten outputs through the demonstrated model.</li>
+<li><input disabled="" type="checkbox"> Explain model(X), loss.backward(), optimizer.step(), and optimizer.zero_grad() in your own words.</li>
+<li><input disabled="" type="checkbox"> Build at least <strong>five small network variants</strong>, as Paul suggested, while keeping layer dimensions compatible.</li>
+<li><input disabled="" type="checkbox"> Experiment with a few hidden widths, batch sizes, learning rates, or epoch counts and record observations.</li>
+<li><input disabled="" type="checkbox"> Use a validation split for choosing settings and retain a final test split for evaluation.</li>
+<li><input disabled="" type="checkbox"> Save a state dictionary, recreate its architecture, reload it, and predict several samples.</li>
+<li><input disabled="" type="checkbox"> Inspect the custom dataset example using your own file paths before attempting to run it.</li>
+<li><input disabled="" type="checkbox"> Work through one small forward/backward calculation on paper.</li>
+<li><input disabled="" type="checkbox"> Review Python classes, indexing, iterators, generators/yield, NumPy basics, and deep-learning prerequisites where needed.</li>
+<li><input disabled="" type="checkbox"> Revisit the notebooks two or three times during the week; prioritize repetition and experiments.</li>
+<li><input disabled="" type="checkbox"> Read Attention Is All You Need before the upcoming Transformer theory sessions.</li>
+</ul>
+<hr>
+<p><em>📝 Notes compiled from the full Class 3 transcript — “26 July PyTorch Fundamentals,” Production AI / LLM Engineering, Krish Naik Academy — and matching companion notebooks in Sourangshu Pal’s PyTorch primer repository. Original transcript: <code>GMT20260726-143017_Recording.transcript.vtt</code>. No supplementary PDF was supplied for this class. Official documentation and research links clarify technical nuances; examples added from repository companions are identified in place.</em></p>
+</article><nav class="chapter-pagination" aria-label="Adjacent classes"><a href="class-02.html"><span>← PREVIOUS CLASS</span><strong>Software Setup and the Engineering Workflow</strong></a><a href="class-04.html"><span>NEXT CLASS →</span><strong>Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition</strong></a></nav><footer class="site-footer"><p>Independent study notes from the Krish Naik Academy course.</p><p>Released sessions: 19 July–4 October 2026. Instructor sources and verification references are linked in each chapter.</p><div><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128">Course dashboard ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes">Source repository ↗</a></div></footer></div><aside class="page-toc"><p>ON THIS PAGE</p><nav aria-label="Page sections"><a href="#quick-updates">📰 Quick Updates</a><a href="#why-this-course-starts-with-pytorch">🧭 Why This Course Starts With PyTorch</a><a href="#setting-up-a-working-environment">🛠️ Setting Up a Working Environment</a><a href="#the-first-full-example-fashionmnist">🧺 The First Full Example: FashionMNIST</a><a href="#batches-labels-and-the-shape-you-must-understand">📐 Batches, Labels, and the Shape You Must Understand</a><a href="#defining-the-neural-network">🧱 Defining the Neural Network</a><a href="#training-loss-backpropagation-and-parameter-updates">🔁 Training: Loss, Backpropagation, and Parameter Updates</a><a href="#evaluation-argmax-and-reading-results">🧪 Evaluation, Argmax, and Reading Results</a><a href="#saving-loading-and-resuming-a-model">💾 Saving, Loading, and Resuming a Model</a><a href="#returning-to-tensor-fundamentals">🧮 Returning to Tensor Fundamentals</a><a href="#dataset-and-dataloader-two-different-responsibilities">🗃️ Dataset and DataLoader: Two Different Responsibilities</a><a href="#transforms-prepare-features-and-targets-deliberately">🎨 Transforms: Prepare Features and Targets Deliberately</a><a href="#autograd-and-the-computational-graph">🧠 Autograd and the Computational Graph</a><a href="#the-open-floor-discussion-slms-rag-and-production-scale">🏗️ The Open-Floor Discussion: SLMs, RAG, and Production Scale</a><a href="#what-39-s-next">🗺️ What&#39;s Next</a><a href="#live-q-amp-a-highlights">💬 Live Q&amp;A Highlights</a><a href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a><a href="#action-items-after-class-3">✅ Action Items After Class 3</a></nav><a class="back-to-top" href="#top">Back to top ↑</a></aside></main>
+<dialog class="search-dialog" aria-labelledby="search-title"><div class="search-heading"><h2 id="search-title">Search all 21 classes</h2><button class="search-close icon-button" aria-label="Close search">×</button></div><label class="sr-only" for="search-input">Search notes</label><input id="search-input" type="search" placeholder="Try KV cache, tokenization, or fine-tuning…" autocomplete="off"><p class="search-status" role="status">Search titles, explanations, code, and Q&A.</p><div class="search-results"></div></dialog>
+<script src="assets/vendor/mermaid/mermaid.min.js" defer></script><script src="assets/site.js" defer></script></body></html>

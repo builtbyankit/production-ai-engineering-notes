@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Class 18: DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution · Production AI Engineering Notes</title><meta name="description" content="Class 18 notes on DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution, with supplied code, diagrams, 33 live Q&amp;A entries and practice actions."/><meta name="theme-color" content="#f7f8fb"><link rel="icon" href="assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/styles.css"><link rel="stylesheet" href="assets/vendor/katex/katex.min.css"><script>try{document.documentElement.dataset.theme=localStorage.getItem('pai-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light')}catch{}</script></head>
+<body id="top" data-class="18"><a class="skip-link" href="#main">Skip to content</a>
+<header class="topbar"><button class="nav-toggle icon-button" aria-label="Open course navigation" aria-controls="course-nav" aria-expanded="false">☰</button><a href="index.html" class="brand"><span class="brand-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4.5h6a3 3 0 0 1 3 3V21a3 3 0 0 0-3-3H4V4.5Z"/><path d="M13 7.5a3 3 0 0 1 3-3h4V18h-4a3 3 0 0 0-3 3"/></svg></span><span>Production AI<span class="brand-sub">ENGINEERING NOTES</span></span></a><div class="top-actions"><button class="search-open" type="button"><span aria-hidden="true">⌕</span><span>Search all notes</span><kbd>/</kbd></button><button class="theme-toggle icon-button" type="button" aria-label="Toggle dark theme">◐</button><a class="github-link" href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub ↗</a></div></header>
+<aside class="sidebar" id="course-nav"><a class="nav-home " href="index.html">Course overview</a><a class="nav-home " href="revision.html">Quick revision</a><div class="reading-progress"><span>Your progress</span><strong data-progress-label>0 / 21</strong><progress data-progress-bar max="21" value="0" aria-label="Completed classes"></progress></div><div class="nav-group"><h2>Onboarding &amp; foundations</h2><a class="nav-class "  href="class-01.html" data-nav-class="1"><span class="nav-number">01</span><span>Induction and the Research-to-Production Roadmap</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-02.html" data-nav-class="2"><span class="nav-number">02</span><span>Software Setup and the Engineering Workflow</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-03.html" data-nav-class="3"><span class="nav-number">03</span><span>PyTorch Fundamentals — From Data to a Trained Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Transformers</h2><a class="nav-class "  href="class-04.html" data-nav-class="4"><span class="nav-number">04</span><span>Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-05.html" data-nav-class="5"><span class="nav-number">05</span><span>Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-06.html" data-nav-class="6"><span class="nav-number">06</span><span>Multi-Head Attention and the Transformer Encoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-07.html" data-nav-class="7"><span class="nav-number">07</span><span>Decoder Masking, Positional Encoding, and Cross-Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-08.html" data-nav-class="8"><span class="nav-number">08</span><span>Annotated Transformer Implementation — Designing the Encoder and Decoder</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-09.html" data-nav-class="9"><span class="nav-number">09</span><span>Assembling and Training a Transformer from Scratch</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-10.html" data-nav-class="10"><span class="nav-number">10</span><span>Training and Evaluating the Transformer Translation Model</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Tokenization</h2><a class="nav-class "  href="class-11.html" data-nav-class="11"><span class="nav-number">11</span><span>Tokenization Foundations — BPE, Bytes, and Model Compatibility</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-12.html" data-nav-class="12"><span class="nav-number">12</span><span>Byte-Level BPE, WordPiece, and SentencePiece</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-13.html" data-nav-class="13"><span class="nav-number">13</span><span>Custom Domain Tokenization and Vocabulary Trade-offs</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-14.html" data-nav-class="14"><span class="nav-number">14</span><span>Offset Mapping, Custom BPE Decisions, and Prompting Foundations</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Prompting &amp; structured output</h2><a class="nav-class "  href="class-15.html" data-nav-class="15"><span class="nav-number">15</span><span>Prompt Engineering — Reasoning, Structured Outputs, and Evaluation</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-16.html" data-nav-class="16"><span class="nav-number">16</span><span>Structured Generation with Instructor and Outlines</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>DSPy</h2><a class="nav-class "  href="class-17.html" data-nav-class="17"><span class="nav-number">17</span><span>DSPy Part 1 — Signatures, Modules, and Code Execution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class active" aria-current="page" href="class-18.html" data-nav-class="18"><span class="nav-number">18</span><span>DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Fine-tuning</h2><a class="nav-class "  href="class-19.html" data-nav-class="19"><span class="nav-number">19</span><span>Fine-Tuning Encoder, Decoder, and Encoder-Decoder Models</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="nav-group"><h2>Cache &amp; attention variants</h2><a class="nav-class "  href="class-20.html" data-nav-class="20"><span class="nav-number">20</span><span>KV Cache — Inference, Memory Math, and Multi-Query Attention</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a><a class="nav-class "  href="class-21.html" data-nav-class="21"><span class="nav-number">21</span><span>Attention Variants — GQA, PagedAttention, and the MLA Introduction</span><span class="done-indicator" aria-label="Completed" hidden>✓</span></a></div><div class="sidebar-bottom"><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128" rel="noopener">Original course ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes" rel="noopener">GitHub repository ↗</a></div></aside><div class="nav-scrim" hidden></div><main id="main" class="main with-toc"><div class="main-column"><header class="chapter-header"><p class="eyebrow">CLASS 18 <span>·</span> 20 September 2026</p><h1>DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution</h1><div class="chapter-meta"><span>4hr 11min 16s</span><span>33 Q&A entries</span><span>4 diagrams</span></div><div class="chapter-actions"><a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ab0bf36a7be26461cd03267" class="text-link">Class recording ↗</a><a href="downloads/Class_18_DSPy_Part_2_Notes.md" class="text-link" download>Download Markdown ↓</a><button class="mark-complete" data-mark-class="18">Mark as read</button></div></header><article class="prose"><p><strong>🎙️ Mentor:</strong> Sourangshu Pal (Paul)<br><strong>🔗 Recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ab0bf36a7be26461cd03267" rel="noopener">20 Sept DSPY Part - 2</a></p>
+<hr>
+<h2 id="quick-updates">📰 Quick Updates<a class="heading-link" href="#quick-updates" aria-label="Link to this section">#</a></h2>
+<p>The class continued the <a href="https://github.com/sourangshupal/structured-llm-notebooks/tree/main" rel="noopener">structured-llm-notebooks repository</a>. The practical core was Notebook 2&#39;s comparison of BootstrapFewShot and MIPROv2. Paul expanded the session into GEPA&#39;s research motivation, Pareto examples, and reflection workflow, then previewed other notebooks for independent exploration.</p>
+<p>A feedback survey was shared to identify topics needing revision and possible extra sessions. Paul proposed a later poll for an additional DSPy session; this was a tentative plan rather than a confirmed weekday class.</p>
+<p>The first major project discussed was MedScript AI, after the relevant fine-tuning module. SageMaker was being considered, but a final deployment choice was not made here. The next regular technical work would begin Transformer fine-tuning practice, followed by attention variants and KV cache.</p>
+<p>The companion materials include the 13-page whiteboard PDF <strong>Note (1).pdf</strong> and the separately linked <strong>Dspy2.pdf</strong>. Their rendered pages contain the same diagrams. The figures below reconstruct those sketches, with implementation details clarified from the actual notebook sources and official references.</p>
+<hr>
+<h2 id="what-dspy-optimization-changes">🎯 What DSPy Optimization Changes<a class="heading-link" href="#what-dspy-optimization-changes" aria-label="Link to this section">#</a></h2>
+<p>The previous class established signatures and modules. This session asked what can improve <strong>after the program structure is defined</strong>.</p>
+<p>A signature specifies inputs, outputs, and an instruction. In a class-based signature, the docstring provides the task instruction. Demonstrations supply examples of inputs and desired outputs, sometimes including the intermediate fields generated by a module.</p>
+<p>Paul used a simple decomposition throughout:</p>
+<div class="math-block" data-math="
+\text{prompt content} \approx \text{instruction} + \text{demonstrations}.
+">
+\text{prompt content} \approx \text{instruction} + \text{demonstrations}.
+</div>
+
+
+<p>This is a useful classroom model of the optimizable content. The actual adapter also renders input values, field descriptions, separators, and other formatting into the model request.</p>
+<p>Different optimizers change different parts. BootstrapFewShot gathers demonstrations without rewriting the instruction. MIPROv2 searches over instructions and demonstration sets. GEPA uses feedback from execution traces to propose instruction changes and retain complementary candidates during search.</p>
+<p>“Replace prompts with programs” therefore means expressing a task and workflow declaratively, then letting an optimizer manage some of the instruction and example choices. A language model still receives prompts. DSPy does not eliminate context, model calls, evaluation, or application design.</p>
+<p>Optimization also assumes a task definition. If a mathematics system suddenly becomes a genetic-engineering system, its old examples and metric may no longer describe the intended behavior. Gaurav&#39;s early question brought out this boundary: an optimizer improves a specified task; it does not infer an entirely new specification merely because the surrounding business changes.</p>
+<hr>
+<h2 id="compilation-a-search-procedure-with-inputs-and-a-budget">🏗️ Compilation: A Search Procedure With Inputs and a Budget<a class="heading-link" href="#compilation-a-search-procedure-with-inputs-and-a-budget" aria-label="Link to this section">#</a></h2>
+<p>DSPy calls optimizer-driven program preparation <strong>compilation</strong>. For the prompt optimizers discussed here, compilation searches for better instructions or demonstrations while using the selected language model to run candidate programs.</p>
+<p>Paul broke the process into six concrete ingredients:</p>
+<ol>
+<li>Define a signature and module.</li>
+<li>Prepare task examples.</li>
+<li>Define what counts as a good prediction.</li>
+<li>Measure the unoptimized baseline.</li>
+<li>Compile with an optimizer.</li>
+<li>Evaluate the compiled program and inspect what changed.</li>
+</ol>
+<p>This is not the same as compiling Python source into machine code. It also is not neural-network training for these three prompt optimizers. Their ordinary runs change prompt-related program state while the underlying LM weights stay fixed.</p>
+<p>The signature remains the task contract. The program remains the workflow. The dataset gives the search observations, and the metric supplies its objective. If the metric rewards the wrong thing, the optimizer can become better at the wrong thing.</p>
+<p>Paul emphasized that a small API call can hide an extensive algorithm. A one-line <code>compile</code> invocation may make many model calls, collect traces, evaluate candidates, and consume a meaningful budget. Understanding the algorithm is necessary to interpret both the result and its cost.</p>
+<p>The session&#39;s “run the program” language referred to calling the DSPy workflow and receiving model predictions. Python executes the orchestration and metric functions. The basic QA program does not execute arbitrary Python generated by the LM; that would require a different module or an attached execution tool.</p>
+<hr>
+<h2 id="dataset-preparation-inspect-the-generator-before-trusting-its-labels">🗃️ Dataset Preparation: Inspect the Generator Before Trusting Its Labels<a class="heading-link" href="#dataset-preparation-inspect-the-generator-before-trusting-its-labels" aria-label="Link to this section">#</a></h2>
+<p>The optimizer notebook requests 40 QA records, converts them to DSPy examples, and splits them into 28 training examples and 12 development examples:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">qa_data = generate_qa_pairs(40)
+
+examples = [
+    dspy.Example(question=d[&quot;question&quot;], answer=d[&quot;expected&quot;]).with_inputs(&quot;question&quot;)
+    for d in qa_data
+]
+
+# Split: 70% train, 30% dev
+split = int(len(examples) * 0.7)
+trainset = examples[:split]
+devset = examples[split:]</code></pre></div>
+<p><code>with_inputs(&quot;question&quot;)</code> marks the question as the input. The answer stays in the record as the expected output for evaluation. Without distinguishing inputs from labels, an evaluator or optimizer cannot reliably know which fields to pass to the program.</p>
+<p>The transcript sometimes described these records as LLM-generated. The shared source resolves the implementation: <strong>this particular generator uses seeded Python sampling from fixed topic–definition pairs</strong>. It makes no LLM call. The eight topics include RAG, DSPy, prompt engineering, fine-tuning, vector databases, chain-of-thought, attention, and Transformers.</p>
+<p>Its central construction is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">topic, context = random.choice(topics)
+qa_pairs.append(
+    {
+        &quot;id&quot;: i,
+        &quot;question&quot;: f&quot;What is {topic}?&quot;,
+        &quot;context&quot;: context,
+        &quot;expected&quot;: context,
+        &quot;category&quot;: topic.lower().replace(&quot; &quot;, &quot;_&quot;),
+        &quot;difficulty&quot;: random.choice([&quot;easy&quot;, &quot;medium&quot;, &quot;hard&quot;]),
+    }
+)</code></pre></div>
+<p>Repeated topics produce repeated questions and answers. More generated rows therefore do not mean more distinct knowledge. The randomly assigned difficulty label does not turn the same definition question into a genuinely harder problem.</p>
+<p>The live split is suitable for showing the mechanics, but duplicates can cross the train/development boundary. That limits what the resulting score says about unseen tasks. For a realistic evaluation, deduplicate or group related examples before splitting and include genuinely new cases.</p>
+<p>Paul&#39;s practical advice was to validate expected answers, including when an LLM really is used to generate them. Human review, a reliable task checker, or a carefully evaluated judge can contribute. Synthetic generation is an economical starting point, not automatic ground truth.</p>
+<hr>
+<h2 id="the-custom-metric-word-coverage-with-a-pass-threshold">📏 The Custom Metric: Word Coverage With a Pass Threshold<a class="heading-link" href="#the-custom-metric-word-coverage-with-a-pass-threshold" aria-label="Link to this section">#</a></h2>
+<p>The metric receives an expected example and a prediction, normalizes both answers, and compares their word sets. The denominator is the number of unique expected words:</p>
+<div class="math-block" data-math="
+\text{coverage} =
+\frac{|\text{expected words} \cap \text{predicted words}|}
+{|\text{expected words}|}.
+">
+\text{coverage} =
+\frac{|\text{expected words} \cap \text{predicted words}|}
+{|\text{expected words}|}.
+</div>
+
+
+<p>The exact current optimizer-notebook source is:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def answer_metric(example, prediction, trace=None):
+    &quot;&quot;&quot;Check if predicted answer covers the expected answer&#39;s content.
+
+    Word-overlap ratio (expected words found in prediction). A plain substring
+    check scores 0 on paraphrases, which leaves optimizers with nothing to
+    bootstrap from.
+    &quot;&quot;&quot;
+    expected = set(example.answer.lower().split())
+    predicted = set(prediction.answer.lower().split())
+    if not expected:
+        return 0.0
+    return 1.0 if len(expected &amp; predicted) / len(expected) &gt;= 0.3 else 0.0</code></pre></div>
+<p>Paul discussed a <strong>0.5</strong> threshold during the session. The repository version above uses <strong>0.3</strong>; the later optimizer catalog still illustrates 0.5. Keep that difference visible when reproducing scores. A changed threshold changes the meaning of “pass,” even if the rest of the code is unchanged.</p>
+<p>This metric checks overlap, not semantic correctness. It ignores word order and repeated words, treats punctuation-attached strings literally, and can reward shared function words. It can reject a correct paraphrase while accepting an incorrect statement containing enough reference words.</p>
+<p>The stored optimizer output makes that limitation unusually concrete: a bootstrapped answer described DSPy as “tailored PyTorch for specific domain applications.” That is not the framework definition intended by the source label, yet the weak overlap criterion admitted it as a demonstration. <strong>Metric success is not necessarily factual success.</strong></p>
+<p>Paul stressed using a task-appropriate scoring function, possibly combining several checks. Code tasks may need syntax, runtime tests, and specification coverage. RAG tasks may need supported claims and completeness. Classification may need exact labels and balanced coverage.</p>
+<p>Changing a threshold is valid when the acceptance rule is demonstrably miscalibrated. Lowering it merely to display improvement changes the target rather than proving better behavior. A strict metric can also be inappropriate if it penalizes valid paraphrases. The goal is a trustworthy objective, not maximum strictness or a pleasing percentage.</p>
+<hr>
+<h2 id="testing-the-metric-is-different-from-evaluating-the-model">🧪 Testing the Metric Is Different From Evaluating the Model<a class="heading-link" href="#testing-the-metric-is-different-from-evaluating-the-model" aria-label="Link to this section">#</a></h2>
+<p>Before optimization, Paul fabricated an example and a prediction to show that the metric function could be called. This triggered several questions about why a prediction was supplied manually.</p>
+<p>A fabricated prediction tests <strong>the checker</strong>. If the expected answer and supplied answer agree, the score should reflect that. Changing the supplied answer tests whether the checker notices the change. No model needs to be called in this step.</p>
+<p>A model evaluation does something additional: it passes each example&#39;s input to the program, receives a real prediction, and then calls the checker on that prediction.</p>
+<p>These two activities answer different questions:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Activity</th><th>Main question</th></tr></thead><tbody><tr><td>Metric self-test</td><td>Does this scoring function behave as intended on known cases?</td></tr><tr><td>Baseline evaluation</td><td>How does the unoptimized program score on the chosen data?</td></tr><tr><td>Candidate evaluation</td><td>Does a proposed optimized program improve the objective?</td></tr><tr><td>Independent test</td><td>Does the selected program generalize to cases not used for selection?</td></tr></tbody></table></div>
+<p>The class&#39;s simple self-test was useful but insufficient to validate the metric broadly. Include both valid and invalid answers, paraphrases, contradictions, and empty responses when testing a real checker.</p>
+<p>A continuous score can be used instead of a binary result where the optimizer supports it. Cosine similarity, F1, programmatic constraints, and judge scores were discussed as possibilities. Applying sigmoid or softmax to a number does not itself make the result a calibrated probability of correctness; the semantics of the score still need defining.</p>
+<hr>
+<h2 id="the-baseline-program-and-its-evaluation">🧩 The Baseline Program and Its Evaluation<a class="heading-link" href="#the-baseline-program-and-its-evaluation" aria-label="Link to this section">#</a></h2>
+<p>The QA signature asks for a short factual answer. A custom <code>Module</code> contains a <code>ChainOfThought</code> predictor and forwards the incoming question to it:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">class QA(dspy.Signature):
+    &quot;&quot;&quot;Answer questions with short factual responses.&quot;&quot;&quot;
+
+    question: str = dspy.InputField()
+    answer: str = dspy.OutputField()
+
+
+class SimpleQA(dspy.Module):
+    def __init__(self):
+        super().__init__()
+        self.generate = dspy.ChainOfThought(QA)
+
+    def forward(self, question):
+        return self.generate(question=question)</code></pre></div>
+<p>Paul related this syntax to PyTorch&#39;s module pattern. The analogy helps explain composition and <code>forward</code>, but this module&#39;s body orchestrates an LM call rather than a differentiable tensor computation. Calling the module invokes its forward behavior through the framework; constructing an object alone does not evaluate the dataset.</p>
+<p>The evaluator receives the development set, the custom metric, and a concurrency setting:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">evaluator = Evaluate(devset=devset, metric=answer_metric, num_threads=4, display_progress=True)
+baseline_score = evaluator(baseline).score</code></pre></div>
+<p>The live baseline was <strong>58.33</strong>, corresponding to approximately 7 passes out of 12 with the binary checker. That is the starting measurement, not a theoretical lower bound on the program&#39;s performance.</p>
+<p>Students reported different scores. Provider/model choices, generated output variation, caching, source revisions, and metric settings can affect the comparison. Record those details before interpreting differences.</p>
+<p>The thread count controls concurrent work in the evaluator. It should respect the provider&#39;s limits and the environment&#39;s practical capacity; more threads do not increase answer quality.</p>
+<hr>
+<h2 id="bootstrapfewshot-add-successful-traces-without-rewriting-instructions">🌱 BootstrapFewShot: Add Successful Traces Without Rewriting Instructions<a class="heading-link" href="#bootstrapfewshot-add-successful-traces-without-rewriting-instructions" aria-label="Link to this section">#</a></h2>
+<p>The first whiteboard sketch separates an unchanged instruction from examples added underneath it. Paul contrasted this with the normal query → prompt → LLM → answer path.</p>
+<p>His English-to-French illustration uses training pairs E1→F1, E2→F2, and E3→F3. The program predicts translations, the metric accepts the first two and rejects the third, and accepted traces become demonstrations.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    T[&quot;Training examples: E1, E2, E3&quot;] --&gt; P[&quot;Run original DSPy program / LM&quot;]
+    P --&gt; O[&quot;Collect predicted French outputs&quot;]
+    O --&gt; M{&quot;Pass the metric?&quot;}
+    M -- yes --&gt; S[&quot;Retain successful traces&quot;]
+    M -- no --&gt; R[&quot;Reject these candidate traces&quot;]
+    S --&gt; N[&quot;Select up to the requested demo count&quot;]
+    N --&gt; I[&quot;Attach demos to unchanged instruction&quot;]
+    I --&gt; C[&quot;Compiled program&quot;]</pre><figcaption>Lecture diagram 1</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart TD
+    T[&quot;Training examples: E1, E2, E3&quot;] --&gt; P[&quot;Run original DSPy program / LM&quot;]
+    P --&gt; O[&quot;Collect predicted French outputs&quot;]
+    O --&gt; M{&quot;Pass the metric?&quot;}
+    M -- yes --&gt; S[&quot;Retain successful traces&quot;]
+    M -- no --&gt; R[&quot;Reject these candidate traces&quot;]
+    S --&gt; N[&quot;Select up to the requested demo count&quot;]
+    N --&gt; I[&quot;Attach demos to unchanged instruction&quot;]
+    I --&gt; C[&quot;Compiled program&quot;]</code></pre></details></figure>
+<p>This preserves the actual structure of PDF pages 2–4. “Successful” means accepted by the supplied metric. It should be read with the earlier warning about metric quality.</p>
+<p>The source initializes and compiles the optimizer as follows:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">teleprompter = BootstrapFewShot(metric=answer_metric, max_bootstrapped_demos=4)
+
+optimized_bootstrap = teleprompter.compile(SimpleQA(), trainset=trainset)</code></pre></div>
+<p><code>teleprompter</code> reflects the framework&#39;s historical terminology for an optimizer. The variable name does not add a separate component to the algorithm.</p>
+<p>The transcript initially described stopping after the dataset had been processed, then Jatindra correctly noted that the run stopped early after reaching its demonstration target. Budget, rounds, successful-demo limits, errors, and dataset exhaustion all matter; it is not necessary to consume every example.</p>
+<p>The basic BootstrapFewShot procedure is not a global ranking algorithm that evaluates every successful trace and sorts a top-N leaderboard. Its purpose is to gather acceptable demonstrations within configured limits. Random-search variants add a different search over candidate programs.</p>
+<hr>
+<h2 id="demo-limits-and-inspecting-the-actual-prompt">🔍 Demo Limits and Inspecting the Actual Prompt<a class="heading-link" href="#demo-limits-and-inspecting-the-actual-prompt" aria-label="Link to this section">#</a></h2>
+<p>The classroom parameter <code>max_bootstrapped_demos=4</code> limits <strong>bootstrapped</strong> demonstrations. It is not necessarily a four-example cap on the complete prompt.</p>
+<p>The API also has <code>max_labeled_demos</code>, and it can combine labelled training examples with accepted bootstrapped traces. The official defaults shown in the reference are four bootstrapped and sixteen labelled demonstrations. The current notebook explicitly prints both categories. <a href="https://dspy.ai/current/api/optimizers/BootstrapFewShot/" rel="noopener">BootstrapFewShot API</a>.</p>
+<p>The supplied stored output reports <strong>16 attached demonstrations</strong>, including repeated topics. This does not contradict the four-bootstrap limit. It illustrates why inspecting the compiled artifact matters more than inferring its size from one constructor argument.</p>
+<p>The demonstrations live on the inner <code>Predict</code> wrapped by <code>ChainOfThought</code>. The source retrieves them with:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">demos = optimized_bootstrap.generate.predict.demos</code></pre></div>
+<p>The unchanged instruction is accessible on that predictor&#39;s signature. To inspect what the LM actually sees, the notebook first invokes the compiled program and then prints recent history:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">optimized_bootstrap(question=&quot;What is Attention?&quot;)
+dspy.inspect_history(n=1)</code></pre></div>
+<p>The history shows rendered field markers, examples, and the final query. It helps answer the recurring question “Where is the prompt?” The program state and adapter create it; a separate hand-written <code>prompt.py</code> file is not required.</p>
+<p>The displayed <code>augmented=True</code> marker identifies a bootstrapped/augmented example. It is metadata about its origin, not an independent guarantee that its answer is correct or that instructions were rewritten.</p>
+<p>Compilation is an explicit operation. The program does not automatically continue learning from every later production request. Save the compiled state and recompile deliberately when the task data or requirements justify it.</p>
+<hr>
+<h2 id="bootstrap-39-s-live-improvement-and-what-it-establishes">📈 Bootstrap&#39;s Live Improvement and What It Establishes<a class="heading-link" href="#bootstrap-39-s-live-improvement-and-what-it-establishes" aria-label="Link to this section">#</a></h2>
+<p>The notebook evaluated the compiled bootstrap program with the same evaluator used for the baseline. The live score rose from <strong>58.33 to 83.33</strong>, or approximately 7/12 to 10/12.</p>
+<p>That is an improvement of <strong>25 percentage points</strong> on this development set. It is not a 25% relative improvement, and it is not a measured improvement on a large independent benchmark.</p>
+<p>Paul demonstrated the accepted examples and saved state to show that the change was inspectable. The improvement came from demonstrations, while the initial instruction stayed the same.</p>
+<p>There are several practical limits:</p>
+<ul>
+<li>The dataset contains repeated topic–definition pairs.</li>
+<li>Train and development slices can share equivalent questions.</li>
+<li>The checker rewards word overlap rather than establishing truth.</li>
+<li>Only twelve development rows determine the score.</li>
+<li>The compiled prompt may include more examples than the bootstrap-only parameter suggests.</li>
+</ul>
+<p>These limitations do not erase the lesson. They define it: DSPy can automatically assemble a different prompt state, and the provided evaluator can measure its effect. Production claims require a stronger dataset, checker, and independent evaluation.</p>
+<p>Paul recommended starting with bootstrap because it offers a simple, relatively economical entry point. More demonstrations can help explain the task, but they can also add irrelevant context, repeat errors, or increase inference tokens. “Few-shot” is a strategy, not a universal maximum number of examples mandated by the framework.</p>
+<hr>
+<h2 id="miprov2-jointly-search-instructions-and-demonstration-sets">🔎 MIPROv2: Jointly Search Instructions and Demonstration Sets<a class="heading-link" href="#miprov2-jointly-search-instructions-and-demonstration-sets" aria-label="Link to this section">#</a></h2>
+<p>The second optimizer changes the question from “Which examples should I include?” to “Which instruction and example combination works best?”</p>
+<p>Paul read the MIPRO research motivation and emphasized downstream tasks such as classification, question answering, and summarization. The optimizer seeks better end-to-end behavior without requiring gradient access to the LM or labels for every intermediate module.</p>
+<p>The paper separates free-form instructions and few-shot demonstrations and uses program/data-aware proposals plus a statistical search. Its reported results concern the paper&#39;s evaluated tasks and models; they do not promise that MIPROv2 will beat bootstrap on every application. The original paper used Llama-3-8B and reported wins on five of seven programs. <a href="https://arxiv.org/abs/2406.11695" rel="noopener">MIPRO paper</a>.</p>
+<p>The PDF divides the process into stages:</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    T[&quot;Training examples&quot;] --&gt; D[&quot;Stage 1: bootstrap candidate demo sets&quot;]
+    D --&gt; I[&quot;Stage 2: propose candidate instructions&quot;]
+    I --&gt; X[&quot;Stage 3: instruction × demo-set search space&quot;]
+    X --&gt; B[&quot;Stage 4: Bayesian optimization trials&quot;]
+    B --&gt; E[&quot;Evaluate proposed combinations&quot;]
+    E --&gt; B
+    E --&gt; F[&quot;Select best evaluated instruction + demos&quot;]</pre><figcaption>Lecture diagram 2</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart TD
+    T[&quot;Training examples&quot;] --&gt; D[&quot;Stage 1: bootstrap candidate demo sets&quot;]
+    D --&gt; I[&quot;Stage 2: propose candidate instructions&quot;]
+    I --&gt; X[&quot;Stage 3: instruction × demo-set search space&quot;]
+    X --&gt; B[&quot;Stage 4: Bayesian optimization trials&quot;]
+    B --&gt; E[&quot;Evaluate proposed combinations&quot;]
+    E --&gt; B
+    E --&gt; F[&quot;Select best evaluated instruction + demos&quot;]</code></pre></details></figure>
+<p>Different demo sets may contain different accepted examples. A proposal model writes multiple instruction variants using the task, program, and data context. The joint search then chooses combinations to evaluate.</p>
+<p>The instruction proposer and task model can be configured differently. A stronger proposer may be useful, but the budget and task should guide that choice. Producing a candidate instruction does not itself prove that it is better; the subsequent evaluation supplies that evidence.</p>
+<hr>
+<h2 id="bayesian-search-and-the-surrogate-spend-calls-where-they-are-useful">🧮 Bayesian Search and the Surrogate: Spend Calls Where They Are Useful<a class="heading-link" href="#bayesian-search-and-the-surrogate-spend-calls-where-they-are-useful" aria-label="Link to this section">#</a></h2>
+<p>The whiteboard illustrates I1+D1, I1+D2, I2+D1, and other combinations. With several instruction candidates and demonstration sets, the number of possible combinations grows quickly.</p>
+<p>Paul explained why exhaustive evaluation becomes costly. An optimizer uses earlier trial results to guide later trials instead of testing every possible configuration. The illustrative board scores—78%, 80%, 81%, and a later 85%—are hypothetical explanations, not class measurements.</p>
+<p>The statistical <strong>surrogate</strong> models the relationship between configuration choices and their observed objective values. It supports choosing promising trials. It is not a second language model or merely a deep copy of the original program. Candidate programs may be copied for testing, but that operation and the search&#39;s statistical model play different roles.</p>
+<p>The conceptual search space exists even if every configuration is not explicitly materialized or evaluated. Bayesian search does not imply a guarantee of finding the global optimum. The final result is the best candidate found under the chosen procedure, objective, and budget.</p>
+<p>Separate trials are separate model requests. Their entire candidate pool is not inserted into one enormous LM context. Nevertheless, a single trial&#39;s instruction, demonstrations, input, and generated fields still need to fit the model&#39;s context constraints.</p>
+<p>The primary MIPRO explanation establishes the surrogate as an approximation of the optimization objective. This is the more precise interpretation of the classroom copy analogy. <a href="https://arxiv.org/abs/2406.11695" rel="noopener">MIPRO methodology</a>.</p>
+<hr>
+<h2 id="miprov2-parameters-and-the-actual-result">⚙️ MIPROv2 Parameters and the Actual Result<a class="heading-link" href="#miprov2-parameters-and-the-actual-result" aria-label="Link to this section">#</a></h2>
+<p>The source deliberately opts out of automatic budgeting and chooses a small manual search:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">mipro = MIPROv2(
+    metric=answer_metric,
+    auto=None,  # dspy 3.3: opt out of auto budget to set candidates/trials manually
+    num_candidates=5,  # Reduced for cost
+    init_temperature=1.0,
+)
+
+optimized_mipro = mipro.compile(
+    SimpleQA(),
+    trainset=trainset,
+    num_trials=DSPY_OPTIMIZER_TRIALS,  # Configurable via .env
+    valset=devset,
+    minibatch=False,  # Small valset (12) — default minibatch size is 35
+)</code></pre></div>
+<p>The notebook&#39;s configured trial count was ten. The candidate count bounds the proposal pools, and the initialization temperature supports proposal variation. Automatic light, medium, and heavy modes were also discussed as alternative budgeting choices.</p>
+<p><code>minibatch=False</code> fits this small twelve-example validation set. For larger validation data, minibatching can trade evaluation cost against a noisier estimate. It does not change the need for representative examples.</p>
+<p>The live result was <strong>83.33</strong>, matching bootstrap rather than improving on it:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Program</th><th>Class development score</th><th>Difference from baseline</th></tr></thead><tbody><tr><td>Unoptimized SimpleQA</td><td>58.33</td><td>—</td></tr><tr><td>BootstrapFewShot</td><td>83.33</td><td>+25.00 percentage points</td></tr><tr><td>MIPROv2</td><td>83.33</td><td>+25.00 percentage points</td></tr></tbody></table></div>
+<p>Paul explicitly retained this lack of additional gain. Students reported cases where MIPROv2 improved, tied, or underperformed bootstrap. These were informal reports using differing models, not a controlled benchmark.</p>
+<p>The optimized instruction expanded the short factual-answer instruction into a detailed workplace scenario asking for a concise informative technical response. The instruction visibly changed, but more text alone is not an improvement criterion. Its value has to come from the measured behavior.</p>
+<hr>
+<h2 id="saving-reloading-and-keeping-evaluation-honest">💾 Saving, Reloading, and Keeping Evaluation Honest<a class="heading-link" href="#saving-reloading-and-keeping-evaluation-honest" aria-label="Link to this section">#</a></h2>
+<p>The notebook inspects MIPRO&#39;s instructions and demonstrations separately, then saves the compiled state:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">optimized_mipro.save(&quot;optimized_qa.json&quot;)
+print(&quot;✅ Saved to optimized_qa.json&quot;)
+
+# Reload
+loaded = SimpleQA()
+loaded.load(&quot;optimized_qa.json&quot;)
+
+# Verify it works
+result = loaded(question=&quot;What is DSPy?&quot;)
+print(f&quot;\nReloaded program answer: {result.answer}&quot;)</code></pre></div>
+<p>Reloading restores prompt-related program state into a compatible program definition. This is different from saving newly trained language-model weights. Keep the program code, dependency versions, model configuration, metric, data split, and compiled artifact together for reproducibility.</p>
+<p>The class used “dev,” “validation,” and “test” somewhat interchangeably. The code passes <code>devset</code> to MIPRO as its validation set, so that set participates in candidate selection. Its later reported score is a development score. A separate unseen test set is needed for a final generalization claim.</p>
+<p>A baseline of 100% prompted a long discussion about weak metrics. A saturated result is a reason to examine the checker, duplicated data, task difficulty, and coverage. It is not proof that the metric must be wrong: an easy, correctly specified small task can genuinely be solved perfectly.</p>
+<p>Likewise, prompt search can overfit its evaluation examples even though it does not update neural weights. The independent-test principle still applies. Avoid making the metric harsher solely to manufacture room for improvement; identify a real requirement that the existing evaluation misses.</p>
+<hr>
+<h2 id="where-dspy-fits-in-rag-agents-and-data-generation">🧰 Where DSPy Fits in RAG, Agents, and Data Generation<a class="heading-link" href="#where-dspy-fits-in-rag-agents-and-data-generation" aria-label="Link to this section">#</a></h2>
+<p>Paul briefly toured other repository notebooks to show how the same optimization ideas extend to application workflows. These were introductions and self-study pointers, not complete live production implementations.</p>
+<p>The RAG source uses an in-memory keyword retriever. It collects passages, joins them into context, and calls a context/question→answer predictor:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">def forward(self, question):
+    passages = self.retrieve(question).passages
+    context = &quot;\n&quot;.join(passages)
+    return self.generate(context=context, question=question)</code></pre></div>
+<p>There is no vector database connection in that demonstration. A production retriever could be substituted while preserving the surrounding module contract. Paul encouraged relating DSPy to an existing retrieval stack rather than assuming an additional framework layer is mandatory.</p>
+<p>The notebook also shows multiple retrieval hops, a length warning, and a basic grounding assertion. Its word-overlap assertion is an illustrative check, not proof that every answer claim is supported. Fuller grounding metrics were deferred to the RAG work.</p>
+<p>The agent preview introduces a ReAct loop with tools. The companion source&#39;s search and weather functions return simulated strings; printing a tool definition is not the same as connecting an MCP server. Treat the notebook as a pattern for wiring capabilities, not as live current-information retrieval.</p>
+<p>The fine-tuning preview generates answers with a DSPy program and exports instruction/input/output records in an Alpaca-style format. That source really does make LM calls to produce outputs, unlike the earlier fixed QA generator. The generated samples still require validation. No GPU fine-tuning result was established in today&#39;s lecture.</p>
+<p>The additional catalogs cover modules, embeddings, adapters, evaluation, images, audio, history, and tools. Paul urged students to begin with prompt optimization before exploring the whole ecosystem. Dependency versions and experimental features should be checked before adopting later examples.</p>
+<hr>
+<h2 id="gepa-use-failure-feedback-to-evolve-instructions">🧬 GEPA: Use Failure Feedback to Evolve Instructions<a class="heading-link" href="#gepa-use-failure-feedback-to-evolve-instructions" aria-label="Link to this section">#</a></h2>
+<p>The final major topic was <strong>GEPA, Genetic-Pareto</strong>. Paul introduced it through the research paper and the idea that natural-language feedback can communicate much more than a pass/fail number.</p>
+<p>A trace can contain the input, intermediate output, tool calls, tool results, and final answer. A reflection model reads the relevant traces and feedback, diagnoses failure patterns, and proposes an instruction change. The candidate is then tested rather than accepted because its explanation sounds convincing.</p>
+<p>This differs from the earlier classroom comparison: bootstrap mainly collects acceptable examples, MIPRO searches candidate instructions and example combinations, and GEPA directly incorporates reflective feedback into proposed revisions. This is a distinction among the discussed methods, not a claim that no other optimizer uses reflection.</p>
+<p>The paper first appeared in <strong>July 2025</strong>, with a later revision. Its abstract reports GEPA outperforming the evaluated GRPO setup by six points on average across six tasks, with larger gains on some tasks and up to 35 times fewer rollouts. Those are research-specific results, not a universal replacement for reinforcement learning or a promised saving on every project. <a href="https://arxiv.org/abs/2507.19457" rel="noopener">GEPA paper</a>.</p>
+<p>Prompt evolution and reinforcement-learning weight updates are different optimization targets. A prompt optimizer can be very effective on a fixed model while leaving its weights unchanged. The paper&#39;s comparisons should be read with their tasks, model choices, budgets, and metrics.</p>
+<p>Paul recommended progressing from a baseline to bootstrap, then MIPROv2, then considering GEPA if the additional search addresses useful failure modes. This is his practical starting sequence, not a requirement to run all three before GEPA can be used.</p>
+<hr>
+<h2 id="pareto-tradeoffs-retain-complementary-strengths">⚖️ Pareto Tradeoffs: Retain Complementary Strengths<a class="heading-link" href="#pareto-tradeoffs-retain-complementary-strengths" aria-label="Link to this section">#</a></h2>
+<p>The PDF explains Pareto reasoning with four hypothetical laptops:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Laptop</th><th>Price</th><th>Performance stars</th></tr></thead><tbody><tr><td>A</td><td>50K</td><td>3</td></tr><tr><td>B</td><td>70K</td><td>5</td></tr><tr><td>C</td><td>60K</td><td>4</td></tr><tr><td>D</td><td>70K</td><td>4</td></tr></tbody></table></div>
+<p>D is dominated by B: the price is the same and performance is worse. A, B, and C each offer a tradeoff. A is cheaper, B performs best, and C lies between them.</p>
+<p>The instruction analogy then uses hypothetical math and coding scores:</p>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Prompt</th><th>Math score</th><th>Coding score</th><th>Classroom interpretation</th></tr></thead><tbody><tr><td>A</td><td>95</td><td>70</td><td>Stronger at math</td></tr><tr><td>B</td><td>80</td><td>95</td><td>Stronger at coding</td></tr><tr><td>C</td><td>90</td><td>90</td><td>Balanced</td></tr><tr><td>D</td><td>75</td><td>60</td><td>Dominated; discard</td></tr></tbody></table></div>
+<p>Keeping only the highest aggregate candidate too early can lose a useful specialist. Retaining complementary strengths gives later search more diversity.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    P[&quot;Candidates A, B, C, D&quot;] --&gt; T[&quot;Compare measured task strengths&quot;]
+    T --&gt; D[&quot;Discard dominated D&quot;]
+    T --&gt; F[&quot;Retain A, B, C as complementary candidates&quot;]
+    F --&gt; M[&quot;Select a parent to improve during search&quot;]
+    M --&gt; R[&quot;Reflection proposes a changed candidate&quot;]</pre><figcaption>Lecture diagram 3</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart TD
+    P[&quot;Candidates A, B, C, D&quot;] --&gt; T[&quot;Compare measured task strengths&quot;]
+    T --&gt; D[&quot;Discard dominated D&quot;]
+    T --&gt; F[&quot;Retain A, B, C as complementary candidates&quot;]
+    F --&gt; M[&quot;Select a parent to improve during search&quot;]
+    M --&gt; R[&quot;Reflection proposes a changed candidate&quot;]</code></pre></details></figure>
+<p>This follows PDF pages 9–10. The price/performance and math/coding numbers are teaching examples, not measurements of hardware or prompts.</p>
+<p>For GEPA&#39;s standard search, the frontier retains candidates with useful performance across evaluation instances. It is not automatically a price-versus-token-cost graph. Additional objectives can be explicitly incorporated, but the cost-quality plot in the companion GEPA notebook is labelled <strong>simulated data</strong>, not output from the class run.</p>
+<p>“Keep all solutions” should therefore mean retain useful nondominated or complementary candidates under the chosen criterion. It does not mean storing every inferior candidate as an equally good production choice.</p>
+<hr>
+<h2 id="the-reflection-workflow-and-its-stopping-budget">🔄 The Reflection Workflow and Its Stopping Budget<a class="heading-link" href="#the-reflection-workflow-and-its-stopping-budget" aria-label="Link to this section">#</a></h2>
+<p>The final whiteboard starts with a normal DSPy program, training examples, execution of the current prompt, and a metric. The reflection model then examines the current instruction, question, original model answer, and correct answer to produce feedback.</p>
+<figure class="diagram"><pre class="mermaid">flowchart TD
+    P[&quot;Current DSPy program and instruction&quot;] --&gt; R[&quot;Run examples with task LM&quot;]
+    T[&quot;Training inputs&quot;] --&gt; R
+    R --&gt; A[&quot;Task-model answers and traces&quot;]
+    A --&gt; M[&quot;Metric evaluation&quot;]
+    G[&quot;Expected answers / task checks&quot;] --&gt; M
+    I[&quot;Current instruction + question + model answer + reference&quot;] --&gt; F[&quot;Reflection LM&quot;]
+    M --&gt; F
+    F --&gt; B[&quot;Feedback and improved instruction&quot;]
+    B --&gt; E[&quot;Run proposed candidate&quot;]
+    E --&gt; V[&quot;Evaluate and update candidate pool&quot;]
+    V --&gt; Q{&quot;Optimization budget left?&quot;}
+    Q -- yes --&gt; R
+    Q -- no --&gt; S[&quot;Select compiled program&quot;]</pre><figcaption>Lecture diagram 4</figcaption><details class="diagram-source"><summary>Diagram source</summary><pre><code>flowchart TD
+    P[&quot;Current DSPy program and instruction&quot;] --&gt; R[&quot;Run examples with task LM&quot;]
+    T[&quot;Training inputs&quot;] --&gt; R
+    R --&gt; A[&quot;Task-model answers and traces&quot;]
+    A --&gt; M[&quot;Metric evaluation&quot;]
+    G[&quot;Expected answers / task checks&quot;] --&gt; M
+    I[&quot;Current instruction + question + model answer + reference&quot;] --&gt; F[&quot;Reflection LM&quot;]
+    M --&gt; F
+    F --&gt; B[&quot;Feedback and improved instruction&quot;]
+    B --&gt; E[&quot;Run proposed candidate&quot;]
+    E --&gt; V[&quot;Evaluate and update candidate pool&quot;]
+    V --&gt; Q{&quot;Optimization budget left?&quot;}
+    Q -- yes --&gt; R
+    Q -- no --&gt; S[&quot;Select compiled program&quot;]</code></pre></details></figure>
+<p>This reconstructs PDF pages 11–12. The LM used for the task and the LM used for reflection are distinct <strong>roles</strong>. They can use different models, but the source also allows the same LM configuration to serve both roles.</p>
+<p>The actual companion initialization illustrates that:</p>
+<div class="code-block"><div class="code-label">python<button class="copy-code" type="button">Copy</button></div><pre><code class="language-python">gepa = GEPA(
+    metric=math_metric,
+    auto=&quot;light&quot;,  # dspy 3.3 budget presets: &#39;light&#39; | &#39;medium&#39; | &#39;heavy&#39;
+    reflection_lm=lm,  # dspy 3.3 requires an explicit reflection LM
+)</code></pre></div>
+<p>The class explained GEPA conceptually; it did not establish a live GEPA score on this notebook. The more detailed companion notebook adds feedback-bearing metrics, explicit validation data, and recorded candidate statistics for self-study.</p>
+<p>Feedback can say what failed rather than just returning zero. A specific format mismatch or failed calculation is more actionable than an undifferentiated score. However, incorrect feedback can drive the search in the wrong direction, just as a broken answer key can.</p>
+<p>The loop stops under an explicit budget or stopping condition. Rewriting prompts over multiple iterations is not an always-running background improvement service. Light, medium, or heavy labels bound an optimization procedure; they are not universal dollar-price guarantees.</p>
+<hr>
+<h2 id="optimization-time-selection-versus-production-inference">🚦 Optimization-Time Selection Versus Production Inference<a class="heading-link" href="#optimization-time-selection-versus-production-inference" aria-label="Link to this section">#</a></h2>
+<p>Gaurav&#39;s closing question asked how GEPA chooses among prompts A, B, and C when a new request arrives. Sridhar then asked whether every simple request must pass through the refinement loop.</p>
+<p>The key implementation distinction is that <strong>GEPA selects parents from its frontier while optimizing</strong>. Standard DSPy compilation ultimately returns the candidate with the best aggregate validation performance. Invoking that compiled program does not automatically classify each unseen request and select a different frontier prompt.</p>
+<p>A production application may add a conditional router, maintain an ensemble, or deliberately perform an inference-time search. Those are separate designs with their own scoring and latency costs. They should not be inferred from the mere existence of a Pareto candidate pool.</p>
+<p>The official overview distinguishes ordinary compilation from explicitly configured batch inference-time search and identifies the final return as the best validation candidate. <a href="https://dspy.ai/current/api/optimizers/GEPA/overview/" rel="noopener">GEPA API and algorithm overview</a>.</p>
+<p>This also resolves the saving question: compile and evaluate a program, save its state, and deploy the selected artifact when appropriate. Recompiling every request is often unnecessary. A simple task with a reliable fixed workflow may need no optimizer at runtime at all.</p>
+<p>Paul&#39;s conditional-routing answer usefully emphasized proportionality: reserve expensive processing for cases that need it. The router itself must be designed; no automatic “genetic predictor” router was implemented in today&#39;s examples.</p>
+<hr>
+<h2 id="what-39-s-next">🗺️ What&#39;s Next<a class="heading-link" href="#what-39-s-next" aria-label="Link to this section">#</a></h2>
+<p>Paul planned to begin practical Transformer fine-tuning with a simpler pretrained model such as DistilBERT and NLP downstream tasks. Attention variants, KV cache, and serving concepts would follow in Module 3, before the broader fine-tuning work.</p>
+<p>RAG and agents would revisit DSPy in concrete application pipelines. The additional module, optimizer, adapter, embeddings, and primitive notebooks were shared for self-study.</p>
+<p>An extra DSPy session remained dependent on a later poll and scheduling. The class did not complete the full RAG, ReAct, GEPA implementation, or GPU fine-tuning curriculum.</p>
+<hr>
+<h2 id="live-q-amp-a-highlights">💬 Live Q&amp;A Highlights<a class="heading-link" href="#live-q-amp-a-highlights" aria-label="Link to this section">#</a></h2>
+<div class="table-scroll" tabindex="0" role="region" aria-label="Scrollable table"><table><thead><tr><th>Question</th><th>Answer</th></tr></thead><tbody><tr><td><strong>Gaurav, early chat:</strong> Does optimization adapt to an entirely changed task?</td><td>Its examples and metric describe a task. A different domain or goal may require new data, signatures, workflow, and evaluation.</td></tr><tr><td><strong>Raj / Sandeep, relayed:</strong> Where do the repeated QA examples come from?</td><td>The supplied shared generator samples fixed topic–definition templates. Repetition reflects that small pool; this generator has no LLM call.</td></tr><tr><td><strong>Urna / Sridhar / Sivas, relayed:</strong> Why supply a prediction manually to the metric?</td><td>That cell tests the metric function. Later evaluation obtains real model predictions before scoring them.</td></tr><tr><td><strong>Alok / Thomas, relayed:</strong> Can one metric combine several checks?</td><td>Yes. Define meaningful task checks and aggregate or threshold them deliberately; the optimizer needs an interpretable objective.</td></tr><tr><td><strong>Abhishek / Debajyoti, relayed:</strong> Can the metric be continuous or probabilistic?</td><td>A continuous score is possible. A transformed score is not automatically a calibrated probability of correctness.</td></tr><tr><td><strong>Rushi, relayed:</strong> Can examples include images?</td><td>DSPy has multimodal types and compatible-model paths. Today&#39;s optimizer demonstration used text.</td></tr><tr><td><strong>Thomas, relayed:</strong> Can different models generate and evaluate outputs?</td><td>Yes, model roles can be configured separately. Their quality, bias, and cost still require evaluation.</td></tr><tr><td><strong>Komal, relayed:</strong> When is <code>forward</code> called?</td><td>Calling a DSPy Module invokes its forward behavior. It wires the predictor call; constructing the module alone is different.</td></tr><tr><td><strong>Nitin, relayed:</strong> What does the baseline evaluator compare?</td><td>It calls the unoptimized program on development inputs and compares its predictions with references using the chosen metric.</td></tr><tr><td><strong>Dhruvanka, relayed:</strong> Can several optimizers be tried or chained?</td><td>Yes, compatible optimization stages or separate comparisons are possible. Compare the resulting programs with a consistent objective and independent final test.</td></tr><tr><td><strong>Vishu / Thomas, relayed:</strong> Does bootstrap improve continuously after compilation?</td><td>No. Compilation is explicit. Re-run it when new data or changed requirements justify the budget.</td></tr><tr><td><strong>Jatindra, relayed:</strong> Why did bootstrap stop before all 28 examples?</td><td>It can reach the configured successful-demo target early. Dataset exhaustion is not its only stopping condition.</td></tr><tr><td><strong>Ranjiv / Bhaskar, relayed:</strong> What if labels are wrong or no ground truth is available?</td><td>Validate data and define a trustworthy evaluator. A task checker or calibrated judge can help; a misleading label or score misdirects optimization.</td></tr><tr><td><strong>Swathi, relayed:</strong> What if no trace passes?</td><td>Inspect model failures, data, and the metric. Recalibrate a defective checker rather than relaxing it solely to obtain a higher score.</td></tr><tr><td><strong>Arun / Abhishek, relayed:</strong> Are accepted demos added to the model context, and where are they stored?</td><td>Yes, they become predictor state rendered into prompts. Inspect <code>.demos</code> and the LM history, then save compiled state if needed.</td></tr><tr><td><strong>Shantal, relayed:</strong> Why are demonstrations repeated?</td><td>The small synthetic dataset repeats topics. Duplicate rows can produce repeated demos and overlap across splits.</td></tr><tr><td><strong>Bhaskar / Sridhar, relayed:</strong> Does optimization cost additional calls and tokens?</td><td>Yes. Compilation calls the program repeatedly, and extra demonstrations can increase later inference input tokens.</td></tr><tr><td><strong>Gaurav, relayed:</strong> Does the overlap metric assess the full content meaning?</td><td>No. It is a simple coverage heuristic; the stored wrong DSPy definition shows why semantic validation matters.</td></tr><tr><td><strong>Abhishek, relayed:</strong> How is this different from manually adding few-shot examples?</td><td>The effect is still examples in the prompt. DSPy automates trace collection and selection using the supplied evaluator.</td></tr><tr><td><strong>Sandeep, relayed:</strong> Are proposed MIPRO instructions already evaluated in Stage 2?</td><td>Proposal generation creates candidates. Their joint performance with demonstration sets is measured during the search.</td></tr><tr><td><strong>Rushi, relayed:</strong> Do all combinations overflow one context window?</td><td>No. Trials are separate calls. Each individual prompt must still fit its selected model&#39;s context limit.</td></tr><tr><td><strong>Abhishek, relayed:</strong> What remains to optimize when the baseline is 100%?</td><td>Check coverage, duplicates, difficulty, and the metric. A genuinely solved easy task may need no optimization; do not change the objective merely to create improvement.</td></tr><tr><td><strong>Vivek / Sridhar, relayed:</strong> Can DSPy be integrated into existing RAG and agents?</td><td>Yes, compatible modules can sit in the workflow. The class&#39;s RAG preview used keyword retrieval, with real vector retrieval left for later work.</td></tr><tr><td><strong>Gaurav Garg:</strong> Does GEPA automatically select a frontier prompt for each new runtime question?</td><td>Standard compilation selects a program after search. Frontier parent selection occurs during optimization; per-request routing requires an explicit application design.</td></tr><tr><td><strong>Gaurav Garg:</strong> What about requests spanning two specialties?</td><td>Define routing, ensemble, or scoring behavior if that is needed. The class did not implement an automatic mixed-topic router.</td></tr><tr><td><strong>Gaurav Garg:</strong> Can a Java or other-language application use the result?</td><td>The demonstrated DSPy program is Python. An application can expose it through an integration boundary; no native Java implementation was demonstrated.</td></tr><tr><td><strong>Debajyoti Mukhopadhyay:</strong> Where is the GEPA paper?</td><td>The paper is linked from the DSPy resources and is available as arXiv:2507.19457.</td></tr><tr><td><strong>Debajyoti Mukhopadhyay:</strong> Does listing frameworks on a résumé establish project skill?</td><td>Paul emphasized explaining the problem, failed approaches, decisions, and measured outcome. Package names alone do not show that experience.</td></tr><tr><td><strong>sridhar k:</strong> Is the instruction optional in GEPA, and should it be saved?</td><td>GEPA&#39;s reflective updates target instructions; examples can be carried by the program without being its main search target. Save the compiled state and inspect instructions when deploying.</td></tr><tr><td><strong>sridhar k:</strong> Must each simple request run the whole refinement loop?</td><td>No. Invoke a saved compiled program where appropriate. Conditional routing or deliberate inference-time optimization is an additional design and cost choice.</td></tr><tr><td><strong>Arun Kumar RV:</strong> Can GEPA fit a custom harness for a small language model?</td><td>A compatible adapter and program boundary can integrate it. Define data, evaluation, tools, and the harness behavior; optimization alone does not supply missing tools.</td></tr><tr><td><strong>Arun Kumar RV:</strong> Does the harness still need tool and MCP access?</td><td>Yes, if the task needs those capabilities. They are separate from prompt optimization and should be wired explicitly.</td></tr><tr><td><strong>Arun Kumar RV:</strong> How can a statistical-analysis module improve its failing coverage target?</td><td>The project details and metric were not available in class. Paul requested details for investigation; no specific fix or performance guarantee was given.</td></tr></tbody></table></div>
+<hr>
+<h2 id="key-pointers-to-remember">🔑 Key Pointers to Remember<a class="heading-link" href="#key-pointers-to-remember" aria-label="Link to this section">#</a></h2>
+<ul>
+<li>A signature defines the task; an optimizer improves a specified program against a specified objective.</li>
+<li>Compilation can make many calls even when the invocation is one line.</li>
+<li>These prompt optimizers do not train the underlying LM&#39;s weights.</li>
+<li>Mark example inputs with <code>with_inputs</code>; keep labels available to the evaluator.</li>
+<li>The class QA generator is seeded template sampling, not LLM generation.</li>
+<li>Forty repeated rows do not equal forty distinct problems.</li>
+<li>Word overlap can admit factually wrong demonstrations.</li>
+<li>The live 0.5 threshold and current notebook&#39;s 0.3 threshold should not be silently conflated.</li>
+<li>Test the metric itself before treating its score as meaningful.</li>
+<li>Bootstrap preserves instructions and adds demonstrations.</li>
+<li>Four bootstrapped demos does not necessarily mean four total demos.</li>
+<li>Inspect the inner predictor state and the actual rendered request.</li>
+<li>Bootstrap can stop early when its target is reached.</li>
+<li>The class improvement was 25 percentage points on twelve development rows.</li>
+<li>MIPROv2 changed the instruction but did not beat bootstrap in the live run.</li>
+<li>A Bayesian surrogate models the search objective; it is not a cloned LLM.</li>
+<li>Validation data used to select candidates is not an untouched final test.</li>
+<li>Prompt optimization can overfit even with frozen neural weights.</li>
+<li>A 100% score warrants inspection, not an automatic declaration that the checker is wrong.</li>
+<li>GEPA learns from trace-grounded textual feedback while retaining complementary candidates during search.</li>
+<li>The task and reflection roles can use the same or different models.</li>
+<li>A Pareto pool does not automatically become a runtime request router.</li>
+<li>Save compiled state and re-optimize deliberately.</li>
+</ul>
+<hr>
+<h2 id="action-items-after-class-18">✅ Action Items After Class 18<a class="heading-link" href="#action-items-after-class-18" aria-label="Link to this section">#</a></h2>
+<ul>
+<li><input disabled="" type="checkbox"> Read the actual QA generator and count distinct questions before reproducing the split.</li>
+<li><input disabled="" type="checkbox"> Deduplicate or group related cases when preparing a realistic training, validation, and test split.</li>
+<li><input disabled="" type="checkbox"> Define a metric that detects the important errors in your application, including plausible wrong answers.</li>
+<li><input disabled="" type="checkbox"> Self-test that metric on correct answers, paraphrases, contradictions, and empty outputs.</li>
+<li><input disabled="" type="checkbox"> Record provider, model, dependency version, threshold, and dataset when measuring the baseline.</li>
+<li><input disabled="" type="checkbox"> Compile with BootstrapFewShot, evaluate it, and inspect both labelled and bootstrapped demos.</li>
+<li><input disabled="" type="checkbox"> Print LM history after invoking the compiled program to understand the complete rendered prompt.</li>
+<li><input disabled="" type="checkbox"> Compare MIPROv2 against the same baseline and report development changes in percentage points.</li>
+<li><input disabled="" type="checkbox"> Save and reload the compiled program, keeping the compatible code and configuration.</li>
+<li><input disabled="" type="checkbox"> Use an independent final test before claiming generalization.</li>
+<li><input disabled="" type="checkbox"> Reproduce the laptop and math/coding Pareto examples by identifying dominated choices.</li>
+<li><input disabled="" type="checkbox"> Read the MIPRO and GEPA papers with attention to their specific models, tasks, budgets, and reported results.</li>
+<li><input disabled="" type="checkbox"> Explore GEPA&#39;s companion notebooks after understanding the simpler optimizer workflow.</li>
+<li><input disabled="" type="checkbox"> Keep compilation separate from serving requests unless deliberately designing inference-time search.</li>
+<li><input disabled="" type="checkbox"> Relate DSPy to one existing workflow and identify which module, data, metric, and artifact would change.</li>
+</ul>
+<hr>
+<p><em>📝 Notes compiled from the full Class 18 transcript — “20 Sept DSPY Part - 2,” Production AI / LLM Engineering, Krish Naik Academy. Original transcript: “GMT20260920-143155_Recording.cutfile.20260921052238565.transcript.vtt.” Whiteboards: “Note (1).pdf” and <a href="https://drive.google.com/file/d/1CCcsgL_kAZy72GNtFLfTeDvVme0xgfCc/view?usp=sharing" rel="noopener">Dspy2.pdf</a>, with all 13 rendered pages reviewed. Companion code: Sourangshu Pal&#39;s <a href="https://github.com/sourangshupal/structured-llm-notebooks/tree/main" rel="noopener">structured-llm-notebooks</a>, especially the optimizer notebook, shared datasets/metrics, and the GEPA/RAG/agent/fine-tuning previews. All matching notebook source cells were read; later implementation examples are distinguished from work actually demonstrated in this class.</em></p>
+</article><nav class="chapter-pagination" aria-label="Adjacent classes"><a href="class-17.html"><span>← PREVIOUS CLASS</span><strong>DSPy Part 1 — Signatures, Modules, and Code Execution</strong></a><a href="class-19.html"><span>NEXT CLASS →</span><strong>Fine-Tuning Encoder, Decoder, and Encoder-Decoder Models</strong></a></nav><footer class="site-footer"><p>Independent study notes from the Krish Naik Academy course.</p><p>Released sessions: 19 July–4 October 2026. Instructor sources and verification references are linked in each chapter.</p><div><a href="https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128">Course dashboard ↗</a><a href="https://github.com/builtbyankit/production-ai-engineering-notes">Source repository ↗</a></div></footer></div><aside class="page-toc"><p>ON THIS PAGE</p><nav aria-label="Page sections"><a href="#quick-updates">📰 Quick Updates</a><a href="#what-dspy-optimization-changes">🎯 What DSPy Optimization Changes</a><a href="#compilation-a-search-procedure-with-inputs-and-a-budget">🏗️ Compilation: A Search Procedure With Inputs and a Budget</a><a href="#dataset-preparation-inspect-the-generator-before-trusting-its-labels">🗃️ Dataset Preparation: Inspect the Generator Before Trusting Its Labels</a><a href="#the-custom-metric-word-coverage-with-a-pass-threshold">📏 The Custom Metric: Word Coverage With a Pass Threshold</a><a href="#testing-the-metric-is-different-from-evaluating-the-model">🧪 Testing the Metric Is Different From Evaluating the Model</a><a href="#the-baseline-program-and-its-evaluation">🧩 The Baseline Program and Its Evaluation</a><a href="#bootstrapfewshot-add-successful-traces-without-rewriting-instructions">🌱 BootstrapFewShot: Add Successful Traces Without Rewriting Instructions</a><a href="#demo-limits-and-inspecting-the-actual-prompt">🔍 Demo Limits and Inspecting the Actual Prompt</a><a href="#bootstrap-39-s-live-improvement-and-what-it-establishes">📈 Bootstrap&#39;s Live Improvement and What It Establishes</a><a href="#miprov2-jointly-search-instructions-and-demonstration-sets">🔎 MIPROv2: Jointly Search Instructions and Demonstration Sets</a><a href="#bayesian-search-and-the-surrogate-spend-calls-where-they-are-useful">🧮 Bayesian Search and the Surrogate: Spend Calls Where They Are Useful</a><a href="#miprov2-parameters-and-the-actual-result">⚙️ MIPROv2 Parameters and the Actual Result</a><a href="#saving-reloading-and-keeping-evaluation-honest">💾 Saving, Reloading, and Keeping Evaluation Honest</a><a href="#where-dspy-fits-in-rag-agents-and-data-generation">🧰 Where DSPy Fits in RAG, Agents, and Data Generation</a><a href="#gepa-use-failure-feedback-to-evolve-instructions">🧬 GEPA: Use Failure Feedback to Evolve Instructions</a><a href="#pareto-tradeoffs-retain-complementary-strengths">⚖️ Pareto Tradeoffs: Retain Complementary Strengths</a><a href="#the-reflection-workflow-and-its-stopping-budget">🔄 The Reflection Workflow and Its Stopping Budget</a><a href="#optimization-time-selection-versus-production-inference">🚦 Optimization-Time Selection Versus Production Inference</a><a href="#what-39-s-next">🗺️ What&#39;s Next</a><a href="#live-q-amp-a-highlights">💬 Live Q&amp;A Highlights</a><a href="#key-pointers-to-remember">🔑 Key Pointers to Remember</a><a href="#action-items-after-class-18">✅ Action Items After Class 18</a></nav><a class="back-to-top" href="#top">Back to top ↑</a></aside></main>
+<dialog class="search-dialog" aria-labelledby="search-title"><div class="search-heading"><h2 id="search-title">Search all 21 classes</h2><button class="search-close icon-button" aria-label="Close search">×</button></div><label class="sr-only" for="search-input">Search notes</label><input id="search-input" type="search" placeholder="Try KV cache, tokenization, or fine-tuning…" autocomplete="off"><p class="search-status" role="status">Search titles, explanations, code, and Q&A.</p><div class="search-results"></div></dialog>
+<script src="assets/vendor/katex/katex.min.js" defer></script><script src="assets/vendor/mermaid/mermaid.min.js" defer></script><script src="assets/site.js" defer></script></body></html>

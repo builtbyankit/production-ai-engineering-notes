@@ -1,0 +1,555 @@
+# 🧩 Class 15: Prompt Engineering — Reasoning, Structured Outputs, and Evaluation
+### 📋 Production AI / LLM Engineering | Krish Naik Academy
+
+**🎙️ Mentor:** Sourangshu Pal (Paul)  
+**⏱️ Duration:** 3 hours 25 minutes 9 seconds | **📅 Session:** Class 15 — 12 September 2026  
+**🔗 Recording:** [12 Sept Promoting](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aa5b8f90104bbfb894b5831)
+
+---
+
+## 📰 Quick Updates
+
+The session continued the instructor's [prompt engineering notebooks](https://github.com/sourangshupal/prompt-engineering-notebooks/tree/master). Notebook 1's prompt anatomy, examples, and system instructions were recap material. The substantial new work came from Notebook 2, **Reasoning and Output Control**, and Notebook 3, **Advanced Prompting Strategies**.
+
+Students could reuse the environment from the previous session. Paul asked everyone to try the notebooks with their own permitted provider because the live results differed across models. The setup supports an OpenAI client and OpenAI-compatible endpoints, but provider support, model identifiers, quotas, and pricing need checking when running the examples.
+
+Paul reiterated that upcoming structured generation materials had already been shared. He also discussed plans to accommodate October travel and a Diwali break. These were scheduling updates; the technical commitment for the next session was Instructor, Outlines, and subsequently DSPy.
+
+---
+
+## ⚙️ Reusing the Client and Understanding What the Helpers Do
+
+The notebook separates infrastructure from experiments. Environment loading and provider selection happen first; later cells call a shared helper. This makes the experiment readable: a cell can concentrate on the instruction, input, temperature, and output rather than repeating client construction.
+
+The provider detection order in the supplied source is OpenAI, then Groq, then Gemini. If multiple keys exist, that order determines the selected branch. It is therefore possible to believe that an experiment used one provider while the environment actually selected another. The notebook prints the provider and model, and those values belong in an experiment log.
+
+This is the exact shared helper from Notebook 2:
+
+```python
+def chat(messages: list[dict], model: str = MODEL, temperature: float = 0.3,
+         response_format: dict | None = None) -> str:
+    kwargs = dict(model=model, messages=messages, temperature=temperature)
+    if response_format:
+        kwargs["response_format"] = response_format
+    response = client.chat.completions.create(**kwargs)
+    return response.choices[0].message.content
+```
+
+The helper returns the message content. It does not execute Python returned by the model, inspect a database, call a browser, or attach a sandbox. Those capabilities require application code or tools beyond this helper. Most of the class's “review,” “verify,” and “critique” stages are additional text generation calls.
+
+Paul's debugging exchange with Mohan illustrated why the full error matters. The discussion initially concerned helper definitions, notebook cells, and environment selection, but the actual blocking error was an incorrect API key. Defining a helper is also different from calling it: the assignment to a result variable occurs only after the relevant call succeeds.
+
+The Rich panels, table formatting, and syntax highlighting improve inspection. A green border is chosen by the programmer; it is not a validation result. A neatly printed answer can be incorrect, incomplete, or inconsistent with the request.
+
+---
+
+## 🧠 Reasoning Prompts: Make the Task Inspectable
+
+Paul compared a direct request with a request for intermediate steps and an explicitly labelled solution. The intent was to reduce premature answers and make mistakes visible. A generated explanation can expose a missing assumption or arithmetic error, but a convincing explanation is still generated text. It is not proof that the model's answer is correct, and it should not be treated as a faithful disclosure of private internal reasoning.
+
+The class used three broad styles:
+
+| Style | What changes | What to inspect |
+|---|---|---|
+| Direct request | Ask for the solution with little additional structure | Correctness and any unstated assumptions |
+| Stepwise request | Ask for a worked solution | Whether each stated step follows from the input |
+| Labelled solution | Specify sections such as given values, equation, calculation, and answer | Both the final result and section consistency |
+
+For learning and debugging, a concise worked explanation can be useful. For production, the requested public output should contain the facts, calculations, or justification needed by the consumer. More explanation also means more generated tokens; every extra section should serve a purpose.
+
+The examples used GPT-4o. The closing discussion distinguished this from dedicated reasoning models. OpenAI's guidance for its reasoning models recommends direct instructions and says explicit step-by-step prompts are unnecessary; examples may help when a particular output convention needs demonstrating. This is model-specific guidance, rather than a universal prohibition on explanations or a claim that few-shot prompting always beats other techniques. [Official reasoning guidance](https://developers.openai.com/api/docs/guides/reasoning-best-practices).
+
+Paul also mentioned product-specific “thinking” keywords. Such words are not a portable API control. Budget and reasoning settings should be taken from the documentation of the actual product being used.
+
+---
+
+## 🚆 The Train Problem: Correct Arithmetic Still Needs a Clear Clock
+
+The supplied problem has a train leaving Chicago at 8:00 AM at 80 mph and another leaving New York at 9:30 AM at 100 mph. They travel toward each other across 790 miles. The desired answer is a meeting time in the Chicago timezone.
+
+The classroom calculation treats both departure times as belonging to the same clock:
+
+1. The first train has a 1.5-hour head start.
+2. It covers \(80 \times 1.5 = 120\) miles.
+3. Once both are moving, their closing speed is \(80 + 100 = 180\) mph.
+4. The remaining distance is \(790 - 120 = 670\) miles.
+5. They meet \(670/180\) hours after the second departure, approximately 3 hours 43 minutes 20 seconds later.
+
+Under that assumption, the answer is approximately **1:13 PM** on the common clock.
+
+The wording is ambiguous because it names two cities with different local timezones without explicitly stating the timezone of each departure. If the New York departure means 9:30 AM local New York time, the common-clock setup changes. A reliable answer should state its clock assumption or ask for clarification. A prompt that demands a time-only answer can conceal this ambiguity.
+
+This was a useful connection to the earlier tokenization and Transformer work: the model conditions its output on the supplied text, but it cannot recover an unstated business convention with certainty. Output formatting is downstream of problem specification. Labelled steps make that specification easier to inspect; they do not supply missing facts.
+
+---
+
+## 🐟 The Pet Puzzle: Check Every Constraint Against the Answer
+
+The next demonstration used Alice, Bob, Carol, and Dan, each with one of four pets: cat, dog, rabbit, or fish. The clues include Alice not owning the fish, Bob owning the dog or rabbit, Carol owning the cat, and Dan not owning the rabbit.
+
+During the live run, an answer assigned the fish to Alice, contradicting an explicit clue. Paul noticed the contradiction rather than accepting the confidence of the explanation. Changing temperature did not provide a dependable correction.
+
+Under the intended one-to-one assignment, **Dan owns the fish**: Alice cannot, Bob has a dog or rabbit, and Carol has the cat. Other parts of the assignment may still have more than one valid arrangement, but the fish owner is determined by elimination.
+
+The error was not a JSON or parsing failure. It was a semantic failure: an output violated a rule in the input. This distinction will recur throughout the class. A schema can require an owner field to be a string, while a separate check must decide whether that owner satisfies the puzzle.
+
+Some students obtained the correct answer from other models. These observations were useful prompts for experimentation, not a controlled model ranking. Different providers, model versions, instructions, and repeated runs can change the result.
+
+Low temperature reduces sampling variation; it does not make an incorrect model correct or guarantee identical hosted responses. OpenAI's reproducibility example explicitly describes best-effort consistency and residual nondeterminism, even with matched parameters. Its archived model examples should not be taken as current model recommendations. [Official reproducibility discussion](https://developers.openai.com/cookbook/examples/reproducible_outputs_with_the_seed_parameter).
+
+---
+
+## 🔭 Step-Back Prompting: General Principles Before the Specific Case
+
+The step-back pattern begins with an abstraction. Instead of answering a detailed question immediately, the first call asks what principles govern that kind of problem. The second call includes those principles and then asks about the original case.
+
+Paul demonstrated this with a database performance question involving roughly 10,000 users, two million rows, and an eight-second query. The first response discussed scaling considerations; the specific response considered indexing, query efficiency, caching, read replicas, and sharding.
+
+```mermaid
+flowchart LR
+    G["General database-scaling question"] --> P["Call 1: relevant principles"]
+    P --> H["Include principles in message history"]
+    S["Specific slow-query case"] --> H
+    H --> A["Call 2: case-specific recommendation"]
+```
+
+The second call depends on the first, so these two stages are sequential. A separate direct answer can serve as a baseline, but it is not an upstream stage of the step-back chain.
+
+An important live detail was that the direct and step-back answers both suggested examining cheaper and simpler causes before sharding. The class initially leaned toward sharding, then accepted that the diagnosis might not support it yet. Row count alone does not establish the bottleneck. The notebook's scenario is an illustration, not a benchmark of a real database.
+
+Step-back prompting can improve organization by bringing a framework into the context. It can also repeat a misleading framework or add latency without improving the answer. Compare the final recommendation against the original constraints and available evidence. The number of calls is part of the tradeoff: here, the two-stage path spends more requests and input/output tokens than a single direct call.
+
+The debugging example similarly asked a model to review an averaging function and consider the empty-list case. Its textual diagnosis can explain division by zero. Actual execution, test coverage, and runtime behavior are separate evidence.
+
+---
+
+## 🧾 Output Contracts: Syntax, Shape, and Meaning Are Different
+
+The class then moved from how to ask a question to how to consume the answer. An application often needs stable fields rather than an essay: a job extractor needs salary and skills; a recipe needs ingredients and steps; a pull-request analyzer needs breaking changes.
+
+There are three distinct checks:
+
+| Check | Example | What it does not establish |
+|---|---|---|
+| Syntax | The text is valid JSON | That required keys are present |
+| Schema | A field is an integer and a list contains ingredient objects | That the integer or ingredients are correct |
+| Meaning | The extracted salary matches the supplied posting | That JSON was produced in the required shape |
+
+Paul's job-posting example supplied text with an employer, role, experience requirement, salary range, and deadline. The model was asked to return exact keys, then the application used JSON parsing and displayed selected fields.
+
+The central API setting was:
+
+```python
+raw = chat(
+    [{"role": "user", "content": extract_prompt}],
+    response_format={"type": "json_object"},
+    temperature=0.0
+)
+```
+
+This is **JSON mode**. It is stronger than merely saying “write JSON,” but it does not promise the exact schema described in the prompt. Applications must still handle incomplete responses, refusals, and other edge cases. The notebook comment that parsing will “NEVER fail” is too absolute. Structured Outputs provides schema adherence for supported schemas and models, while factual correctness remains separate. [Official Structured Outputs documentation](https://developers.openai.com/api/docs/guides/structured-outputs).
+
+The job posting is a supplied teaching input, not a verified current vacancy. Its salary and deadline should not become career advice or a live job listing. The same principle applies to the battery article and pull-request description later in the notebook: extraction reproduces the input; it does not authenticate it.
+
+---
+
+## 🏷️ XML Tags and Regex: Readable Boundaries Need Stable Names
+
+The XML demonstration asked for a headline, category, facts, stakeholders, timeline, and impact scores inside explicit tags. This gives a human-readable nested structure and makes the expected sections clear.
+
+The source extracted the headline with:
+
+```python
+headline = re.search(r'<headline>(.*?)</headline>', result, re.DOTALL)
+if headline:
+    print(f"\n📰 Extracted headline: {headline.group(1).strip()}")
+```
+
+The parentheses capture the text between the matching tags. `group(1)` returns that first captured subgroup; `strip()` removes surrounding whitespace. `re.DOTALL` allows the match to span line breaks.
+
+Paul pointed out the fragility: if the model changes `headline` to a plural or uses a different tag, the expression no longer matches. The parser is exact even if the output looks almost right to a person.
+
+A prompt requesting XML is not an XML-aware constrained decoder. Regex extraction of one simple section also does not validate the whole document. For the classroom's controlled example the pattern is easy to understand; more complex nested formats require a parser and appropriate validation.
+
+This stage uses ordinary local string processing rather than another LLM call. Its behavior is predictable for a given input, but the upstream generator can still vary. The battery article was demonstration text, so its statements about research, commercial timelines, and partnerships are not independently verified news.
+
+---
+
+## 🧱 Pydantic: Turn Output Shape Into Python Types
+
+Paul introduced `BaseModel` as the foundation of a typed output contract. Instead of informally naming keys in prose, the application describes the object with classes, fields, and nested types. The recipe example is useful because the outer object contains a list of inner objects.
+
+The exact source defines:
+
+```python
+class Ingredient(BaseModel):
+    name: str
+    quantity: str
+    unit: Optional[str] = None
+
+class Recipe(BaseModel):
+    name: str = Field(description="Name of the dish")
+    cuisine: str = Field(description="Cuisine type e.g. Italian, Japanese")
+    prep_time_minutes: int
+    cook_time_minutes: int
+    difficulty: str = Field(description="Easy / Medium / Hard")
+    servings: int
+    ingredients: list[Ingredient]
+    steps: list[str] = Field(description="Cooking steps in order")
+    calories_per_serving: Optional[int] = None
+```
+
+The recipe's `name` identifies the dish; each ingredient's `name` identifies an ingredient. Reusing a field name at different nesting levels is normal. The object structure supplies the context.
+
+`Optional[str] = None` means the unit may be absent or null in this model. `list[Ingredient]` means each list element is validated as an ingredient object. Once parsing succeeds, the notebook reads attributes such as `recipe.name` and iterates over `recipe.ingredients`.
+
+Descriptions help communicate meaning and customize the schema. They are not additional validation rules: `difficulty: str` with “Easy / Medium / Hard” in its description still accepts other strings as far as that annotation is concerned. Similarly, the integer fields shown here do not impose a nonnegative bound. Pydantic distinguishes descriptive schema metadata from enforceable constraints. [Official field documentation](https://pydantic.dev/docs/validation/latest/concepts/fields/).
+
+Ordinary dataclasses and TypedDict annotations should not be assumed to provide the same runtime parsing and validation behavior. The lesson's useful point is the move from an informal expectation to an explicit contract, with validation behavior understood rather than inferred from the class name.
+
+---
+
+## 🔌 Provider Branches: Similar Return Objects, Different Guarantees
+
+The notebook wraps the provider differences in `parse_pydantic`. For OpenAI, it uses the SDK's parsing helper with the Pydantic class as the response format:
+
+```python
+response = client.beta.chat.completions.parse(
+    model=MODEL,
+    messages=[{"role": "user", "content": prompt}],
+    response_format=schema,
+    temperature=0.3,
+)
+return response.choices[0].message.parsed
+```
+
+That is the exact class source, including its API spelling. Check the installed SDK and the selected model's support when reproducing it.
+
+The alternate branch serializes the model's JSON schema into the prompt, requests JSON mode, parses the returned string, and calls Pydantic validation. The relevant final source lines are:
+
+```python
+raw = chat(
+    [{"role": "user", "content": augmented_prompt}],
+    response_format={"type": "json_object"},
+    temperature=0.3,
+)
+return schema.model_validate(json.loads(raw))
+```
+
+Both successful paths can return a Pydantic object. However, **post-generation validation is different from constraining generation to a schema**. The fallback can reject a structurally unsuitable response; it has not prevented that response from being generated. The source's “same result” comment should be understood as the successful return type, not an equivalence of all failure modes.
+
+The nested pull-request extraction then requested lists of security fixes, bugs, test changes, breaking changes, deprecated endpoints, and a risk level. Its formatted JSON was easier to inspect than a free-form paragraph. Nevertheless, a risk label is a model judgment, and the supplied CVE identifier is part of demonstration text rather than a verified security advisory.
+
+This provides the bridge to the next class: declarative structure improves integration, but robust generation also needs failure handling, validation, and evaluation. This session introduced that bridge; it did not yet implement Instructor, Outlines, or DSPy.
+
+---
+
+## 🧪 Prompt Fragility: Equivalent Intent, Different Wording
+
+Paul defined prompt fragility through small wording changes that produce materially different outputs. The sentiment experiment used the same review—roughly “okay, not great, not terrible”—with different instructions for classifying its sentiment.
+
+These phrasings were variants of one task, not few-shot input/output demonstrations. Changing “sentiment” to “feeling,” altering word order, or changing the instruction's phrasing tests whether the classifier maintains the intended behavior.
+
+The class also explored a return-policy bot. Its task was to respond in English and apply a policy permitting returns within 30 days for unused items with a receipt. The user message tried to override the instructions and demand French while asking about a used item.
+
+The important live result was that the supposedly fragile prompt also resisted the attempted override. The experiment did not prove that the attack always succeeds, nor that adding repeated rules creates complete security. It showed how to compare instructions and inspect behavior on a particular attack.
+
+Positive constraints specify the desired behavior directly. In the HTTPS explanation example, the stronger prompt asked for three paragraphs, one familiar analogy, definitions of technical terms, and prose rather than bullets. Both variants produced usable output. Because the revised prompt also added specificity, the comparison cannot isolate “positive wording” as the sole cause of any difference.
+
+Prompt text changes the model's context and can change its token scores and output distribution. Temperature adjusts sampling from that distribution. Neither ordinary prompt rewriting nor temperature changes train the model's weights. This distinction matters when explaining why a synonym, an added example, or an output rule changes the response.
+
+---
+
+## 📊 The Robustness Harness: A Useful First Test With a Limited Grader
+
+The notebook turns prompt testing into a repeatable loop. It fills a template with each variant, makes a call, checks the result, and displays a table. The essential source is:
+
+```python
+results = []
+for v in variants:
+    prompt = base_prompt_template.format(input=v["input"])
+    output = chat([{"role": "user", "content": prompt}], temperature=0.0)
+    passed = expected_contains.lower() in output.lower()
+    results.append((v["label"], output.strip()[:80], passed))
+```
+
+The test checks the **full output**. Only the displayed output is shortened to 80 characters. Those are different operations: presentation truncation should not be confused with evaluation truncation.
+
+Six clearly positive reviews varied enthusiasm, formality, understatement, emojis, and a mixture of English and Spanish. The live examples passed the simple “contains Positive” check.
+
+The score means exactly that: the chosen grader passed the chosen examples. It does not establish general robustness across neutral, negative, sarcastic, adversarial, or domain-specific inputs. A substring grader can even accept text such as “not Positive,” because the expected word still appears.
+
+The price-extraction exercise makes this limitation concrete. A dollar amount, a written-out amount, a pound price with an approximate dollar equivalent, and a subscription described as “free” require a clear policy for what counts as the target price. A grader expecting the same digits for every case can itself be wrong.
+
+The practical workflow is to define the task, curate varied examples with meaningful expected outcomes, inspect failures, change the prompt, and test again. Keep a separate set of examples for evaluating improvements so a prompt does not merely become tailored to its development cases. The class's tables are the start of an evaluation process, not its completion.
+
+---
+
+## ⛓️ Sequential Chains: Decompose and Inspect the Intermediate Results
+
+Notebook 3 changed the unit of design from one prompt to a workflow. In a sequential chain, a stage's output becomes context for the next stage. This allows specialized instructions and makes intermediate results visible.
+
+Paul's business-memo example had three stages:
+
+```mermaid
+flowchart LR
+    M["Supplied Q3 memo"] --> E["Extract numerical metrics as JSON"]
+    E --> C["Identify concerning trends"]
+    C --> R["Write board summary"]
+    M --> R
+```
+
+The supplied memo included revenue of $42.3 million, acquisition cost rising to $1,847, churn moving from 4.1% to 6.2%, an enterprise tier ahead of forecast, growing engineering headcount, and margin compressing from 22% to 14%.
+
+The first call extracted metrics and parsed JSON. The second call used those metrics to identify concerns and suggest investigations. The third call used the raw memo plus the generated concerns to produce a headline, positives, risks, and board action.
+
+Although a source comment describes “verify facts,” the implemented second stage is a generated analysis of trends. It does not consult an independent data source or mechanically compare every extraction against the memo. Naming a stage “verification” does not create evidence.
+
+The chain can still be useful: if the final report misstates churn, the developer can inspect whether the extraction, interpretation, or summary introduced the error. Including the raw memo in the final step also gives the model access to the original input rather than only the transformed metrics.
+
+The cost is three calls, additional tokens, and dependency latency. Chaining is a design choice to evaluate for a task. Agent frameworks do not remove the need for instructions, data boundaries, or intermediate contracts; a fixed chain remains a legitimate workflow when its sequence is known.
+
+---
+
+## 🗂️ Map-Reduce and Conditional Routing
+
+The map-reduce example summarized four router reviews separately, then synthesized their summaries into one product assessment. The map stage captures each review's positives, negatives, and verdict. The reduce stage requests an overall rating, recurring strengths and weaknesses, and the audiences that should buy or avoid the product.
+
+Conceptually, the summaries are independent. In the supplied teaching implementation, a normal `for` loop makes them **one after another**. It demonstrates the map-reduce dependency structure without implementing asynchronous concurrency.
+
+The reducer must receive the required summaries before it can aggregate them. Joining strings with clear review labels preserves which intermediate result came from which input. The final synthesis should respect disagreement: one reviewer reporting easy setup and another reporting difficult setup are both observations, not a reason to erase one.
+
+The support-ticket example introduces a gate. A first call selects Billing, Technical Bug, Feature Request, Account Access, or Other. A dictionary then supplies category-specific instructions, and a second call generates a response.
+
+The exact routing lines are:
+
+```python
+category = chat([{"role": "user", "content": classify_prompt}], temperature=0.0).strip()
+
+# Route to specialized handler (or fallback to generic)
+system_prompt = HANDLERS.get(category, "You are a helpful customer support agent.")
+```
+
+The fallback prevents an unknown category from causing a dictionary lookup error. It does not prove that the category was correct. Exact spelling matters because the dictionary keys are exact strings.
+
+The second model call receives the selected system instruction and the original ticket. It can draft a response suitable for billing or a technical bug, but a sentence such as “add to the feedback database” is only an instruction in text here. The notebook does not attach a database-writing tool. Likewise, an account-access handler does not actually verify a customer or change their account.
+
+This distinction separates a routed text workflow from an operational agent with tools and permissions. Both can use specialized roles, but only the latter can perform external actions when the application supplies those capabilities.
+
+---
+
+## 🔀 Independent Reviewers and a Merge Stage
+
+Paul next used three perspectives on the same Python snippet: security, performance, and code quality. Each reviewer received an instruction to focus on its own scope, then a final call merged the findings, removed duplicates, and ordered them by severity.
+
+```mermaid
+flowchart LR
+    X["Same code input"] --> S["Security review"]
+    X --> P["Performance review"]
+    X --> Q["Code-quality review"]
+    S --> M["Merge and prioritize findings"]
+    P --> M
+    Q --> M
+    M --> V["Action list and ship verdict"]
+```
+
+The code illustrated issues such as logging a password hash, using an HTTP endpoint, creating a cache inside the function on every call, and fetching users sequentially. Different reviewer prompts make different concerns easier to surface.
+
+The source explicitly describes this as a synchronous demonstration of a pattern that could use concurrency in production. The three calls run through a regular loop. Its architecture is independent-then-merge; the teaching code does not measure a parallel speedup.
+
+The merge stage is another model-generated transformation, so it can omit a finding or alter its severity. Inspect the original reviews as well as the final action list. A “ship it” verdict printed by the model is a recommendation, not an approval from a human reviewer or a passed test suite.
+
+Paul discussed a possible supervisor arrangement and converting the examples to agents. Those were design extensions. No autonomous tool execution was demonstrated in this review pipeline. The concrete lesson was decomposition: independent perspectives can be generated separately, and a subsequent stage can synthesize them.
+
+---
+
+## ✍️ Meta-Prompting: A Generated Template Needs Its Own Contract
+
+Meta-prompting asks the model to write or improve a prompt. Paul started with a vague desire for help writing marketing emails. The meta-prompt requested a persona, specific task, placeholders, output structure, examples, and quality constraints, with the template enclosed in `<prompt>` tags.
+
+The notebook extracts the generated template and performs literal substitutions:
+
+```python
+generated_prompt = re.search(r'<prompt>(.*?)</prompt>', result, re.DOTALL)
+if generated_prompt:
+    print("\n✓ Prompt extracted. Testing it...")
+    test_input = generated_prompt.group(1).strip()
+    # Replace placeholders with actual values for a quick test
+    test_prompt = test_input.replace("{product}", "CloudSync Pro").replace("{audience}", "small business owners")\
+                            .replace("{goal}", "free trial signup").replace("{tone}", "professional but friendly")
+```
+
+This live example exposed a practical integration failure. The generated template introduced different placeholders and contextual details from those the replacement code expected. The test output drifted toward a course-related marketing example rather than reliably grounding itself in CloudSync Pro.
+
+The extraction succeeding only proves that a matching tagged section existed. The substitutions succeeding only prove that string replacement ran; they may replace nothing if the names differ. A green panel showing the test result proves neither correct binding nor correct business content.
+
+The meta-prompt itself asks for doubled-brace placeholder syntax, while the replacement code searches for specific single-brace names. This reinforces the need to define one binding convention and inspect the produced template before using it.
+
+A generated prompt can invent assumptions, required inputs, or examples. Treat it as a proposed artifact to evaluate. The useful automation is assistance with prompt construction; the application still needs a consistent input contract, a check for unresolved placeholders, and representative task tests.
+
+---
+
+## 🔁 Generate, Critique, Revise: Improvement at Inference Time
+
+The essay demonstration used curiosity in scientific discovery as its topic. A first call generated a draft; a second call judged it against thesis clarity, evidence, flow, originality, and conclusion; a third call revised it using the feedback.
+
+```mermaid
+flowchart LR
+    T["Topic and constraints"] --> G["Generate initial draft"]
+    G --> C["Critique against explicit criteria"]
+    C --> R["Revise using draft and critique"]
+    R --> C
+    R --> F["Final draft after chosen rounds"]
+```
+
+The supplied notebook runs **two refinement rounds**, using `range(1, 3)`. The transcript discusses multiple rounds and a later exercise asks for three. There is no special requirement for an odd number of rounds; the count should follow the task's quality and cost needs.
+
+The critique requested a specific actionable revision for criteria scoring below seven. This makes the feedback easier to apply than a generic instruction to “improve the essay.” The reviser receives both the current draft and the critique so it can change the relevant parts.
+
+Self-critique can miss the same factual error as generation. The same model in a new call is not an independent ground-truth authority. A higher self-assigned score or a more polished paragraph does not establish measured improvement.
+
+This is inference-time iteration. It does not update model weights, implement a reinforcement-learning optimizer, or train a reward model. Likewise, critiquing against a list of principles is a useful prompting pattern but does not by itself implement an entire constitutional training method.
+
+The presentation exercise asks students to run three rounds for a five-slide introduction to LLMs, checking purpose, progression, interaction, and audience level. Print each intermediate version and assess whether the specified criteria actually improve.
+
+---
+
+## 🗳️ Self-Consistency: Agreement Is a Signal, Not Ground Truth
+
+The self-consistency example makes several separate generation calls and uses Python's `Counter` to choose the most frequent extracted numerical answer. The vote is performed by program logic, not by asking another LLM to choose the winner.
+
+The key source lines are:
+
+```python
+number = re.search(r'-?\d+\.?\d*', answer.strip())
+if number:
+    answers.append(number.group())
+print(f"  Sample {i+1}: {answer.strip()[:30]}")
+```
+
+After collection, the exact aggregation is:
+
+```python
+vote_counts = Counter(answers)
+winner, count = vote_counts.most_common(1)[0]
+confidence = count / len(answers)
+return {"answer": winner, "confidence": confidence, "all_votes": dict(vote_counts)}
+```
+
+The discount problem starts at $200, applies 20% off, then 15% off the discounted price, then subtracts a $10 coupon. The arithmetic is:
+
+\[
+200 \times 0.80 \times 0.85 - 10 = 126.
+\]
+
+The live majority did not reliably recover this result. Paul discussed outputs around 136 with an 80% vote share, while Mangesh reported getting 126 consistently. This was the strongest reminder that repeated agreement can preserve a shared error.
+
+The returned “confidence” is simply the winner's fraction of successfully parsed samples. It is not a calibrated probability that the answer is true. Failed parses are excluded from the denominator; if every parse fails, the winner lookup also needs handling. Different string forms such as `126` and `126.0` can split the vote unless normalized.
+
+The regex takes the first matching number. If the model ignores the output instruction and includes numbered steps, that number may not be the final answer. Stronger parsing and an independent arithmetic check would address a different problem from sampling diversity.
+
+---
+
+## 🛠️ Prompt Optimization and Code Review: Measure the Right Outcome
+
+The urgency-classification experiment tests five supplied emails, compares the result with an expected label, and asks a model to improve the prompt. The examples include service failure, planning, minor display issues, payment failure, and a low-priority profile update.
+
+The evaluation again uses substring matching. Its displayed percentage therefore measures that local heuristic on five examples. Even a perfect score leaves questions about medium-priority cases, novel inputs, ambiguous language, and generalization.
+
+The source notebook includes a request for an improved prompt and a second evaluation even when the initial score is high. The live discussion reported a small test set already performing well. Neither observation establishes a broad accuracy improvement. Reusing the same cases to develop and assess a prompt can reward overfitting.
+
+The final code exercise requested `find_duplicates(lst)`: return repeated items once each, preserve their order of first occurrence, and handle an empty list. The chain generated code, critiqued correctness and edge cases, and produced a revision.
+
+Paul clarified in the closing Q&A that **the LLM was generating code and had no attached execution sandbox**. The supplied notebook also contains a separate local `exec` block and five Python tests. These are compatible facts: Python in the notebook can execute returned code, while the text-only model call itself has no execution tool.
+
+The source's local tests cover empty input, unique numbers, repeated numbers, repeated strings, and a singleton. They do not exhaust the specification “any comparable items,” and no execution was performed while preparing these notes. A textual critic's assurance and an actual runtime assertion are different forms of evidence.
+
+The larger engineering lesson is to define an outcome that can be checked. If a workflow needs correct calculations, evaluate calculations. If it needs working code, execute appropriate tests in a controlled environment. If it needs a valid typed object, validate the object. Each additional LLM call should have a role tied to that outcome.
+
+---
+
+## 🗺️ What's Next
+
+Paul said the next session would move into **structured generation**, beginning with Instructor, then Outlines, and finally DSPy across the upcoming work. He asked students to review Pydantic's `BaseModel`, fields, and validators.
+
+He also planned to revisit the larger prompting workflows through agent-oriented implementations. Those implementations were future work; today's examples established their prompting and orchestration patterns.
+
+---
+
+## 💬 Live Q&A Highlights
+
+| Question | Answer |
+|---|---|
+| **In-flow discussion:** Does adding worked steps guarantee the correct answer? | No. The pet puzzle contradicted a clue, and the voting example agreed on a wrong result. Check the answer against constraints or an independent calculation. |
+| **In-flow discussion:** Why use low temperature? | To reduce sampling variation for these experiments. It does not ensure correctness or absolute reproducibility. |
+| **In-flow discussion:** Should the slow database immediately be sharded? | The answers suggested examining queries, indexes, caching, and other bottlenecks first. The class accepted that the supplied counts alone did not settle the decision. |
+| **In-flow discussion:** Did the model run the averaging function while reviewing it? | The prompt asked for analysis and proposed fixes. Text generation is separate from attaching an execution tool or running tests locally. |
+| **In-flow discussion:** Does JSON mode validate all requested fields? | It primarily controls JSON syntax; schema checking and factual validation are additional layers. |
+| **In-flow discussion:** Why can regex extraction fail on a readable answer? | The pattern expects exact tags. A changed tag name prevents a match even when a person understands the answer. |
+| **In-flow discussion:** Are recipe and ingredient name fields conflicting? | No. Their nesting identifies whether the field belongs to the dish or an ingredient. |
+| **In-flow discussion:** Does a Pydantic description restrict a string to three allowed values? | No. Descriptive metadata is different from an explicit enum or validation constraint. |
+| **Mohan:** Why does the notebook fail despite selecting the environment? | The eventual error identified an incorrect API key. Check the actual authentication error and run setup/helper cells before dependent calls. |
+| **Vivek, relayed from chat:** Will DSPy be covered? | Yes. Paul placed it after the Instructor and Outlines material in the structured-generation sequence. |
+| **In-flow discussion:** Are the mapped reviews running concurrently? | The conceptual work is independent, but the teaching notebook uses synchronous loops. Concurrency would require an additional implementation. |
+| **In-flow discussion:** Does the support router act on accounts or databases? | It selects instructions and generates a response. No external action tools are attached in that example. |
+| **In-flow discussion:** What does `group(1).strip()` do? | It selects the regex's first captured subgroup and removes surrounding whitespace. |
+| **In-flow discussion:** Does a green meta-prompt test panel mean the template worked? | No. The generated placeholders and replacement names did not align reliably, so the content still needed inspection. |
+| **Mangesh, relayed from chat:** Why did my samples all produce 126 while the live run differed? | Repeated outputs differed across runs/providers. The actual problem computes to 126; a majority vote can still favor an incorrect value. |
+| **Debajyoti Mukhopadhyay:** What does prompt-to-code mean here, and is it executed by the model? | Here it means asking the model to generate code text. The model call has no attached execution tool; local execution is separate. |
+| **Debajyoti Mukhopadhyay:** Is few-shot prompting more relevant than explicit CoT for reasoning models? | Dedicated reasoning models already reason internally. Use examples when they help specify the task or output; choose based on the model and measured task behavior. |
+| **MANGESH KHANDARE:** How do multi-agent workflows control token costs? | Specify bounded outputs and the structure each stage needs; avoid unconstrained responses. Include each call and repeated context in the budget. |
+| **MANGESH KHANDARE:** Is making a repository AI-ready only a DevOps problem? | Automation still needs integration, CI, and tests. DevOps or MLOps can support the infrastructure, alongside development work. |
+| **MANGESH KHANDARE:** Will the course deploy complete solutions? | Paul said project work would include cloud deployment and the AWS services required by those projects. |
+| **MANGESH KHANDARE:** Does successful automation eliminate the whole development team? | Paul cautioned against assuming complete replacement and discussed productivity, integration, cost, and continued human engineering work. His staffing observations were experience-based opinions, not employment forecasts. |
+| **Asante Richard:** Can materials be shared early for setup and preparation? | Paul said the current and upcoming repositories had already been shared and encouraged students to inspect them before class. |
+| **sridhar k:** Can nontechnical colleagues use meta-prompting through an organizational assistant? | A technical person can prepare templates and integration. Confirm the organization's actual assistant features, licensing, permissions, and administrator setup; the product names discussed do not establish automatic entitlement. |
+| **sridhar k:** Does the suggested workplace integration require setup? | Paul described administrator enablement and connected workplace context. The exact capabilities depend on the organization's chosen product and configuration. |
+| **Praveen:** How should a banking team scope natural-language-to-SQL across several databases? | Start from actual data sources, schema context, approved tools/models, and representative golden question–SQL examples. Paul suggested an initial 20–30 useful examples as a starting point, not a sufficiency guarantee. |
+| **Praveen:** Which text-to-SQL tools and database integrations should be investigated? | Paul mentioned Vanna and database-native offerings, then explicitly asked for compatibility checks. He had not recently explored every option, so these were research leads rather than a validated stack recommendation. |
+| **Praveen:** What if open-source models are not approved in the bank's platform? | Evaluate within the organization's permitted platform and model policy. Establish database compatibility and deployment constraints before making a commitment. |
+
+---
+
+## 🔑 Key Pointers to Remember
+
+- A formatted answer, a valid schema, and a correct answer are three different outcomes.
+- Worked explanations make assumptions and contradictions visible; they do not guarantee correctness.
+- A low-temperature run can still produce a wrong answer or vary across hosted requests.
+- State the clock convention in the train example; output-only formatting can hide ambiguity.
+- JSON mode does not guarantee the exact keys and types requested in prose.
+- Pydantic descriptions communicate meaning; enforceable constraints must be represented explicitly.
+- The OpenAI parsing path and a JSON-mode-plus-validation fallback have different generation guarantees.
+- A regex subgroup is an exact match operation, not semantic understanding.
+- Measure the full output even when the displayed table truncates it.
+- A substring grader can pass an incorrect label or a negated statement.
+- A sequential chain cannot execute dependent stages simultaneously.
+- Map-reduce and reviewer decomposition can be conceptually parallel while their teaching code is synchronous.
+- A routed “agent” producing text does not automatically perform external actions.
+- Generated templates must match the application's placeholder convention.
+- Self-refinement changes prompts and outputs at inference time; it does not train weights.
+- Majority agreement is a vote share, not a calibrated truth probability.
+- The discount calculation is $126 regardless of how many samples vote otherwise.
+- Model-generated code, local Python execution, and model-accessible execution tools are separate layers.
+
+---
+
+## ✅ Action Items After Class 15
+
+- [ ] Reuse the course environment and confirm the printed provider/model before comparing runs.
+- [ ] Run Notebook 2's examples with an approved provider and record failures as well as successes.
+- [ ] Check the pet-puzzle result against every clue and state a clock assumption for the train problem.
+- [ ] Compare direct and step-back answers using the same task criteria, recording call count and latency.
+- [ ] Inspect the recipe schema and distinguish descriptions, types, optional defaults, and validation constraints.
+- [ ] Test missing tags, changed tags, incomplete JSON, and schema-validation failures in the relevant parsing paths.
+- [ ] Expand the sentiment test set to include negative, mixed, ambiguous, and adversarial cases.
+- [ ] Inspect the grader itself; use expected outcomes appropriate to each price-extraction example.
+- [ ] Trace the business chain's intermediate metrics and concerns back to the original memo.
+- [ ] Identify which stages could run independently and which must wait for upstream outputs.
+- [ ] Check a generated marketing template for unresolved or mismatched placeholders before using it.
+- [ ] Run the presentation self-refinement exercise and compare versions against the stated criteria.
+- [ ] Independently calculate the voting problem and treat vote share as agreement rather than truth.
+- [ ] Review Pydantic BaseModel, fields, and validators before the structured-generation session.
+
+---
+
+*📝 Notes compiled from the full Class 15 transcript — “12 Sept Promoting,” Production AI / LLM Engineering, Krish Naik Academy. Original transcript: “GMT20260912-143051_Recording.cutfile.20260912204049743.transcript.vtt.” Companion source: Sourangshu Pal's [prompt-engineering-notebooks](https://github.com/sourangshupal/prompt-engineering-notebooks/tree/master), with all three notebooks read and exact excerpts drawn from Notebooks 2 and 3. No companion PDF was supplied for this class. External links above clarify API and validation guarantees; the notebooks' unverified numerical improvement claims have not been adopted as class results.*

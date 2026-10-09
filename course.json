@@ -1,0 +1,240 @@
+{
+  "title": "Production AI Engineering",
+  "provider": "Krish Naik Academy",
+  "courseUrl": "https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128",
+  "repositoryUrl": "https://github.com/builtbyankit/production-ai-engineering-notes",
+  "siteUrl": "https://builtbyankit.github.io/production-ai-engineering-notes/",
+  "classes": [
+    {
+      "number": 1,
+      "title": "Induction and the Research-to-Production Roadmap",
+      "date": "20260719",
+      "duration": "5hr 14min",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a5d4b077296ab39d924f5b8",
+      "file": "Class_01_Induction_and_Course_Roadmap_Notes.md",
+      "words": 8372,
+      "qa": 70,
+      "diagrams": 4
+    },
+    {
+      "number": 2,
+      "title": "Software Setup and the Engineering Workflow",
+      "date": "20260725",
+      "duration": "3hr 41min 23s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a651ae9893a14772ed56f79",
+      "file": "Class_02_Software_Setup_Notes.md",
+      "words": 9261,
+      "qa": 70,
+      "diagrams": 4
+    },
+    {
+      "number": 3,
+      "title": "PyTorch Fundamentals \u2014 From Data to a Trained Model",
+      "date": "20260726",
+      "duration": "4hr 26min 56s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a668f79893a14772e6b1318",
+      "file": "Class_03_PyTorch_Fundamentals_Notes.md",
+      "words": 8780,
+      "qa": 57,
+      "diagrams": 5
+    },
+    {
+      "number": 4,
+      "title": "Transformers 101, Part 1 \u2014 Embeddings, Context, and Self-Attention Intuition",
+      "date": "20260801",
+      "duration": "4hr 11min 34s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6e6a8149d9f2e46cc7a3d5",
+      "file": "Class_04_Transformers_101_Part_1_Notes.md",
+      "words": 9143,
+      "qa": 56,
+      "diagrams": 6
+    },
+    {
+      "number": 5,
+      "title": "Transformers 101, Part 2 \u2014 Queries, Keys, Values, and Contextualized Vectors",
+      "date": "20260802",
+      "duration": "3hr 45min 39s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6fb7c0c43020b1fd512819",
+      "file": "Class_05_Transformers_101_Part_2_Notes.md",
+      "words": 7944,
+      "qa": 44,
+      "diagrams": 4
+    },
+    {
+      "number": 6,
+      "title": "Multi-Head Attention and the Transformer Encoder",
+      "date": "20260808",
+      "duration": "4hr 1min 50s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a77978f4c8953aff8c50efa",
+      "file": "Class_06_Multi_Head_Attention_Notes.md",
+      "words": 6487,
+      "qa": 35,
+      "diagrams": 5
+    },
+    {
+      "number": 7,
+      "title": "Decoder Masking, Positional Encoding, and Cross-Attention",
+      "date": "20260809",
+      "duration": "4hr 19min 27s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a78ef06835acfc8a5203730",
+      "file": "Class_07_Transformer_Architecture_Notes.md",
+      "words": 6126,
+      "qa": 36,
+      "diagrams": 3
+    },
+    {
+      "number": 8,
+      "title": "Annotated Transformer Implementation \u2014 Designing the Encoder and Decoder",
+      "date": "20260816",
+      "duration": "3hr 44min 8s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a828b92ec908cbc02f344c8",
+      "file": "Class_08_Annotated_Transformer_Implementation_Notes.md",
+      "words": 6809,
+      "qa": 50,
+      "diagrams": 2
+    },
+    {
+      "number": 9,
+      "title": "Assembling and Training a Transformer from Scratch",
+      "date": "20260822",
+      "duration": "3hr 21min 49s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8a82223ba992c9d997bfcd",
+      "file": "Class_09_Transformer_Training_Notes.md",
+      "words": 5175,
+      "qa": 22,
+      "diagrams": 3
+    },
+    {
+      "number": 10,
+      "title": "Training and Evaluating the Transformer Translation Model",
+      "date": "20260823",
+      "duration": "3hr 34min 57s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a8bde0020b08f689d47d6ac",
+      "file": "Class_10_Transformer_Training_and_Inference_Notes.md",
+      "words": 5939,
+      "qa": 25,
+      "diagrams": 3
+    },
+    {
+      "number": 11,
+      "title": "Tokenization Foundations \u2014 BPE, Bytes, and Model Compatibility",
+      "date": "20260829",
+      "duration": "5hr 17min 55s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a93c924568d1b8c7bf73265",
+      "file": "Class_11_Tokenization_Foundations_Notes.md",
+      "words": 7960,
+      "qa": 74,
+      "diagrams": 5
+    },
+    {
+      "number": 12,
+      "title": "Byte-Level BPE, WordPiece, and SentencePiece",
+      "date": "20260830",
+      "duration": "3hr 22min 51s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a9494ce2d26b133ba162b1d",
+      "file": "Class_12_Subword_Tokenization_Notes.md",
+      "words": 5540,
+      "qa": 22,
+      "diagrams": 3
+    },
+    {
+      "number": 13,
+      "title": "Custom Domain Tokenization and Vocabulary Trade-offs",
+      "date": "20260905",
+      "duration": "3hr 54min 16s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a9cf34c57524d8c54ee138f",
+      "file": "Class_13_Custom_Domain_Tokenization_Notes.md",
+      "words": 6633,
+      "qa": 37,
+      "diagrams": 4
+    },
+    {
+      "number": 14,
+      "title": "Offset Mapping, Custom BPE Decisions, and Prompting Foundations",
+      "date": "20260906",
+      "duration": "3hr 22min 54s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a9df1e98623f011527d222c",
+      "file": "Class_14_Offset_Mapping_and_Prompting_Notes.md",
+      "words": 7077,
+      "qa": 32,
+      "diagrams": 2
+    },
+    {
+      "number": 15,
+      "title": "Prompt Engineering \u2014 Reasoning, Structured Outputs, and Evaluation",
+      "date": "20260912",
+      "duration": "3hr 25min 9s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aa5b8f90104bbfb894b5831",
+      "file": "Class_15_Prompt_Engineering_Notes.md",
+      "words": 6707,
+      "qa": 27,
+      "diagrams": 4
+    },
+    {
+      "number": 16,
+      "title": "Structured Generation with Instructor and Outlines",
+      "date": "20260913",
+      "duration": "3hr 24min 41s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aa70820d8217ed78f434df5",
+      "file": "Class_16_Structured_Generation_Notes.md",
+      "words": 7596,
+      "qa": 51,
+      "diagrams": 6
+    },
+    {
+      "number": 17,
+      "title": "DSPy Part 1 \u2014 Signatures, Modules, and Code Execution",
+      "date": "20260919",
+      "duration": "3hr 29min 53s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aaf5841e3af737a79b8f2d1",
+      "file": "Class_17_DSPy_Part_1_Notes.md",
+      "words": 7004,
+      "qa": 42,
+      "diagrams": 2
+    },
+    {
+      "number": 18,
+      "title": "DSPy Part 2 \u2014 Bootstrap, MIPROv2, and Reflective Prompt Evolution",
+      "date": "20260920",
+      "duration": "4hr 11min 16s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ab0bf36a7be26461cd03267",
+      "file": "Class_18_DSPy_Part_2_Notes.md",
+      "words": 6703,
+      "qa": 33,
+      "diagrams": 4
+    },
+    {
+      "number": 19,
+      "title": "Fine-Tuning Encoder, Decoder, and Encoder-Decoder Models",
+      "date": "20260926",
+      "duration": "2hr 53min 19s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ab83a1981df1d0fe9bce716",
+      "file": "Class_19_Fine_Tuning_Transformer_Architectures_Notes.md",
+      "words": 8395,
+      "qa": 65,
+      "diagrams": 4
+    },
+    {
+      "number": 20,
+      "title": "KV Cache \u2014 Inference, Memory Math, and Multi-Query Attention",
+      "date": "20261003",
+      "duration": "3hr 25min 10s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ac1d6e475542d6fe935b179",
+      "file": "Class_20_KV_Cache_Notes.md",
+      "words": 7783,
+      "qa": 49,
+      "diagrams": 3
+    },
+    {
+      "number": 21,
+      "title": "Attention Variants \u2014 GQA, PagedAttention, and the MLA Introduction",
+      "date": "20261004",
+      "duration": "2hr 56min 56s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ac32d52b2a6f8546fbbdc2f",
+      "file": "Class_21_Attention_Variants_Notes.md",
+      "words": 6813,
+      "qa": 35,
+      "diagrams": 9
+    }
+  ]
+}
