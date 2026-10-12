@@ -1,6 +1,6 @@
 # Production AI Engineering — MkDocs Notes
 
-Study notes for the 21 released Krish Naik Academy classes from 19 July to 4 October 2026, covering approximately 80 hours, 932 Q&A entries, and 85 diagrams.
+Study notes for the 22 released Krish Naik Academy classes from 19 July 2026 to 10 October 2026, covering approximately 83 hours, 964 Q&A entries, and 89 diagrams.
 
 The site uses MkDocs with its standard Read the Docs theme: a sidebar, search, readable class pages, syntax-highlighted code, equations, and Mermaid diagrams.
 
@@ -26,7 +26,7 @@ mkdocs build --strict
 mkdocs serve
 ```
 
-The canonical Markdown notes live in `notes/`. The preparation step copies them into the ignored `mkdocs_docs/` folder and adds the course overview, revision links, and local rendering assets. MkDocs builds the site into `docs/`.
+The canonical Markdown notes live in `notes/`. Add each new class to `course.json`, with an optional `nav_section` and short `nav_title` for its sidebar entry. The preparation step refreshes the index, revision guide, combined book, ZIP, and totals, then copies the site inputs into the ignored `mkdocs_docs/` folder. MkDocs adds any new manifest classes to navigation and builds the site into `docs/`.
 
 After changing notes or MkDocs configuration, rebuild and commit `docs/` with the source changes. GitHub Pages publishes from the `main` branch and `/docs` directory. The CI workflow checks the strict MkDocs build on pushes and pull requests.
 

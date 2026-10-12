@@ -1,6 +1,6 @@
-# 🔑 Production AI / LLM Engineering — Quick Revision
+# Production AI / LLM Engineering — Quick Revision
 
-Key pointers extracted from 21 completed class notes. Open the linked class for the explanations, code, diagrams, Q&A, and practice checklist.
+Key pointers from all 22 documented classes. Open the linked chapter for explanations, code, diagrams, Q&A, and practice actions.
 
 [Course index](Course_Notes_Index.md)
 
@@ -551,5 +551,26 @@ Key pointers extracted from 21 completed class notes. Open the linked class for 
 - Count MLA's actual latent and positional tensors rather than blindly multiplying a joint width by two.
 - Paging and latent/head-sharing mechanisms operate on different axes.
 - RoPE's full derivation and the complete MLA integration remained next-class work.
+
+---
+
+## Class 22: Multi-Head Latent Attention and Rotary Position Embeddings
+
+[Full class notes](Class_22_MLA_and_RoPE_Notes.md)
+
+- Count scalar values per token before converting to bytes; do not confuse dimensions with token count.
+- MHA, MQA, and GQA reduce storage through different numbers of KV heads; MLA uses a compact learned latent.
+- The class's worked latent is \([3.3,2.0]\), with expanded \(K=[3.3,2.0,8.6]\) and \(V=[5.3,6.6,6.0]\).
+- Down-projection and up-projection are learned maps. Up-projection is not a general inverse of lossy compression.
+- Learned parameters are reused during inference, while token-specific activations must still be computed.
+- Persistent cache size, temporary activation memory, and runtime are separate quantities.
+- A complete MLA cache can include a positional-key component in addition to the joint latent.
+- Fixed sinusoidal PE adds no learned positional parameters and is not accurately described as random noise.
+- RoPE rotates Q and K; position zero adds no rotation but does not force a zero content direction.
+- The key identity is \(R_m^TR_n=R_{n-m}\), yielding \(q_m^TR_{n-m}k_n\).
+- Equal gaps give equal positional rotations; equal full scores also require equal underlying content vectors.
+- Fast and slow channels come from different dimension-pair frequencies, not distance-dependent changes in one pair's speed.
+- Periodic trigonometry and relative offsets do not guarantee reliable inference at arbitrary context lengths.
+- Full DeepSeek MLA–RoPE integration, FlashAttention, SDPA, and scaling laws remained future work.
 
 ---

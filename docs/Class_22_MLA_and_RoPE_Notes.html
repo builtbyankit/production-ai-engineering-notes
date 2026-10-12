@@ -1,0 +1,986 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_22_MLA_and_RoPE_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>22 · MLA and RoPE - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "22 \u00b7 MLA and RoPE";
+        var mkdocs_page_input_path = "Class_22_MLA_and_RoPE_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_22_MLA_and_RoPE_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">22 · MLA and RoPE</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#recap-count-cached-values-not-tokens">Recap: Count Cached Values, Not Tokens</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#mla-down-projection-a-learned-low-rank-representation">MLA Down-Projection: A Learned Low-Rank Representation</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#worked-compression-four-values-become-two">Worked compression: four values become two</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#why-the-class-calls-this-lossy-compression">Why the class calls this lossy compression</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#separate-up-projections-produce-keys-and-values">Separate Up-Projections Produce Keys and Values</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#key-expansion">Key expansion</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#value-expansion">Value expansion</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#persistent-cache-savings-and-inference-work">Persistent Cache Savings and Inference Work</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#learned-during-training-does-not-mean-computed-only-during-training">Learned during training does not mean computed only during training</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#exact-companion-projection-declarations">Exact companion projection declarations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-the-deepseek-v2-diagram-without-expanding-the-lessons-scope">Reading the DeepSeek-V2 Diagram Without Expanding the Lesson's Scope</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#positional-encoding-recap-why-content-alone-is-insufficient">Positional Encoding Recap: Why Content Alone Is Insufficient</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#sinecosine-pairs">Sine/cosine pairs</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#separate-the-actual-limitations">Separate the actual limitations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rope-rotate-the-projected-query-and-key">RoPE: Rotate the Projected Query and Key</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#start-with-ordinary-2d-rotation">Start with ordinary 2D rotation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-90-degree-teaching-example">The 90-degree teaching example</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#exact-companion-rotation-example">Exact companion rotation example</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#derivation-the-dot-product-exposes-relative-position">Derivation: The Dot Product Exposes Relative Position</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-transposing-a-product-reverses-its-order">Step 1: Transposing a product reverses its order</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-transpose-reverses-a-rotation">Step 2: Transpose reverses a rotation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-compose-rotations-by-adding-their-angles">Step 3: Compose rotations by adding their angles</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#worked-relative-position-examples">Worked relative-position examples</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#frequencies-periodicity-and-long-range-relationships">Frequencies, Periodicity, and Long-Range Relationships</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#longer-sequences-remain-an-empirical-challenge">Longer sequences remain an empirical challenge</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#using-the-simulators-without-confusing-content-and-position">Using the Simulators Without Confusing Content and Position</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-content-angle-slider-represents">What the content-angle slider represents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#what-to-watch-when-moving-query-and-key-positions">What to watch when moving query and key positions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#companion-code-positional-tables-and-decode-offsets">Companion Code: Positional Tables and Decode Offsets</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#limits-of-the-supplied-mla-demonstration">Limits of the supplied MLA demonstration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-22">Action Items After Class 22</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Fine-tuning and inference</li>
+      <li class="breadcrumb-item active">22 · MLA and RoPE</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-22-multi-head-latent-attention-and-rotary-position-embeddings">Class 22: Multi-Head Latent Attention and Rotary Position Embeddings<a class="headerlink" href="#class-22-multi-head-latent-attention-and-rotary-position-embeddings" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>Duration:</strong> 3 hours 8 minutes 57 seconds | <strong>Session:</strong> Class 22 — 10 October 2026<br />
+<strong>Recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6acb1140f293dfc747c00899">10 Oct Kv cache</a></p>
+<hr />
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<p>This class continues the previous session's attention variants. Its actual focus is <strong>MLA's learned latent compression and expansion</strong>, followed by <strong>RoPE's geometry and relative-position derivation</strong>. It does not complete the full DeepSeek MLA–RoPE integration.</p>
+<p>The instructor's <a href="https://krishnaikacademy.notion.site/MLA-ROPE-3f6eba9593d080189571ceade0f43c17">MLA / RoPE resource page</a> supplies the 20-page handwritten <a href="https://drive.google.com/file/d/1ZpgNtvbHywljgB5B2WeK3CjV684FB4uq/view?usp=sharing">MLA rope .pdf</a>, the DeepSeek-V2 and RoFormer papers, and two simulators. The recording's own Resources tab supplies the transcript; the PDF is linked through the course hub. The diagrams below translate the PDF's projections, encoding paths, rotation cycle, and relative-position examples into editable study diagrams.</p>
+<p>Paul confirmed that practical notebooks had already been shared with the previous class. Matching material is in the <a href="https://github.com/sourangshupal/kv-cache-attention-variants/tree/main">KV cache and attention variants repository</a>, especially <code>06_mla.ipynb</code> and <code>07_rope.ipynb</code>. These are companion resources; their saved outputs are not new results measured in this recording.</p>
+<p>A class poll ended at approximately <strong>53% for RAG and 47% for fine-tuning</strong> as the next substantial module. Paul proposed starting the RAG framework material, with Divesh handling four classes during his announced absence, then completing that module before returning to fine-tuning. The sequence remained a course plan. He also requested feedback on a separate draft application-oriented syllabus; it was not a finalized addition to this class.</p>
+<hr />
+<h2 id="recap-count-cached-values-not-tokens">Recap: Count Cached Values, Not Tokens<a class="headerlink" href="#recap-count-cached-values-not-tokens" title="Permanent link">&para;</a></h2>
+<p>The memory comparison starts with <strong>eight query heads</strong>, each with <strong>head width 64</strong>. Query-head count stays the same while the number or form of cached key/value representations changes.</p>
+<table>
+<thead>
+<tr>
+<th>Attention form</th>
+<th style="text-align: right;">Cached key values per token, per layer</th>
+<th style="text-align: right;">Cached value values per token, per layer</th>
+<th style="text-align: right;">Total cached scalar values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MHA: eight KV heads</td>
+<td style="text-align: right;">8 × 64 = 512</td>
+<td style="text-align: right;">8 × 64 = 512</td>
+<td style="text-align: right;"><strong>1,024</strong></td>
+</tr>
+<tr>
+<td>MQA: one shared KV head</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;">64</td>
+<td style="text-align: right;"><strong>128</strong></td>
+</tr>
+<tr>
+<td>GQA: four KV heads</td>
+<td style="text-align: right;">4 × 64 = 256</td>
+<td style="text-align: right;">4 × 64 = 256</td>
+<td style="text-align: right;"><strong>512</strong></td>
+</tr>
+<tr>
+<td>Simplified MLA example: latent width 64</td>
+<td style="text-align: right;">Joint latent representation</td>
+<td style="text-align: right;">Included in that same latent</td>
+<td style="text-align: right;"><strong>64</strong>, before any separate positional-key component</td>
+</tr>
+</tbody>
+</table>
+<p>These numbers are dimensions or stored scalar elements, not numbers of tokens. MHA's combined baseline is 1,024; comparing its key-only width of 512 with MQA's combined 128 would mix two accounting conventions.</p>
+<p>For GQA, each pair of query heads shares one KV head. MQA shares one KV head across all eight queries. The query projections can still differ, so sharing keys does not force identical attention scores. Paul used <strong>attention diversity</strong> to explain the expressive tradeoff: independently learned KV heads offer different representations, whereas sharing reduces that freedom.</p>
+<p>This is not an accuracy ranking that holds for every model. A cache reduction does not directly measure lost answer quality. The architecture, training procedure, task, and evaluation determine whether the tradeoff is useful.</p>
+<p>MLA changes the question. Instead of asking how many full KV heads to retain, it asks whether a compact learned vector can carry the information needed to produce the key and value representations. Many query heads can use that shared latent without storing a full key and value for every head.</p>
+<p>The class's 64-value MLA row is deliberately simplified. It explains the compression idea; it is not the complete cache layout of a production DeepSeek model.</p>
+<hr />
+<h2 id="mla-down-projection-a-learned-low-rank-representation">MLA Down-Projection: A Learned Low-Rank Representation<a class="headerlink" href="#mla-down-projection-a-learned-low-rank-representation" title="Permanent link">&para;</a></h2>
+<p>Let a token's input to an attention layer be a hidden representation <span class="arithmatex">\(x\)</span> of width <span class="arithmatex">\(d\)</span>. This is a numerical vector, not the token ID. At different layers it represents the token after the preceding computations.</p>
+<p>The class uses a <strong>row-vector convention</strong>:</p>
+<div class="arithmatex">\[
+x\in\mathbb{R}^{1\times d},\qquad
+W_{DKV}\in\mathbb{R}^{d\times d_c},\qquad
+c^{KV}=xW_{DKV}\in\mathbb{R}^{1\times d_c}.
+\]</div>
+<p>Here:</p>
+<ul>
+<li><span class="arithmatex">\(D\)</span> means <strong>down-projection</strong>.</li>
+<li><span class="arithmatex">\(KV\)</span> means the latent is used jointly for keys and values.</li>
+<li><span class="arithmatex">\(d_c\)</span> is the chosen latent width, usually much smaller than the expanded key/value width.</li>
+<li><span class="arithmatex">\(W_{DKV}\)</span> is learned through the model's training objective.</li>
+</ul>
+<p>Paul first illustrated an eight-number input compressed to three numbers. The required matrix shape is <span class="arithmatex">\(8\times3\)</span>: the inner dimensions match, and the resulting row vector has three entries.</p>
+<div class="arithmatex">\[
+(1\times8)(8\times3)=(1\times3).
+\]</div>
+<p>The output width is an architectural choice. The entries of the matrix are learned parameters. These are different decisions: training learns the values within a shape that the architecture has specified.</p>
+<h3 id="worked-compression-four-values-become-two">Worked compression: four values become two<a class="headerlink" href="#worked-compression-four-values-become-two" title="Permanent link">&para;</a></h3>
+<p>The whiteboard then uses:</p>
+<div class="arithmatex">\[
+x=[1,2,3,4],\qquad
+W_{DKV}=\begin{bmatrix}
+0.1&amp;0.2\\
+0.3&amp;0.1\\
+0.2&amp;0.4\\
+0.5&amp;0.1
+\end{bmatrix}.
+\]</div>
+<p>The shapes are <span class="arithmatex">\(1\times4\)</span> and <span class="arithmatex">\(4\times2\)</span>, so the latent contains two values. Each output entry is a dot product with one matrix column:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+c_1&amp;=1(0.1)+2(0.3)+3(0.2)+4(0.5)\\
+   &amp;=0.1+0.6+0.6+2.0=3.3,\\
+c_2&amp;=1(0.2)+2(0.1)+3(0.4)+4(0.1)\\
+   &amp;=0.2+0.2+1.2+0.4=2.0.
+\end{aligned}
+\]</div>
+<p>Therefore:</p>
+<div class="arithmatex">\[
+\boxed{c^{KV}=[3.3,2.0].}
+\]</div>
+<p>These small weights were selected to make the arithmetic visible. They are not a trained checkpoint, a measured embedding, or evidence of a particular model's compression quality.</p>
+<h3 id="why-the-class-calls-this-lossy-compression">Why the class calls this lossy compression<a class="headerlink" href="#why-the-class-calls-this-lossy-compression" title="Permanent link">&para;</a></h3>
+<p>A map from four unconstrained numbers to two generally discards information. Different inputs can produce the same latent. Increasing the number of output coordinates later cannot recover information that the latent did not retain.</p>
+<p>The useful goal is therefore not to reconstruct every original coordinate perfectly. Training should make the latent retain information that is useful for the downstream attention and language-model objective. A low-rank bottleneck limits representational capacity, but the task impact must be evaluated; it cannot be inferred by equating a percentage reduction in dimensions with the same percentage reduction in quality.</p>
+<hr />
+<h2 id="separate-up-projections-produce-keys-and-values">Separate Up-Projections Produce Keys and Values<a class="headerlink" href="#separate-up-projections-produce-keys-and-values" title="Permanent link">&para;</a></h2>
+<p>The compressed latent branches into <strong>two learned maps</strong>:</p>
+<div class="arithmatex">\[
+K=c^{KV}W_{UK},\qquad V=c^{KV}W_{UV}.
+\]</div>
+<p><span class="arithmatex">\(U\)</span> means <strong>up-projection</strong>. The notation <span class="arithmatex">\(W_{UV}\)</span> is used consistently here for the value up-projection; some live annotations used a different ordering of the letters.</p>
+<p>If the latent has two entries and an expanded vector needs three entries, each up-projection has shape <span class="arithmatex">\(2\times3\)</span>. If the required output width were ten, its shape would be <span class="arithmatex">\(2\times10\)</span>. Expanding the coordinate count is not an inverse operation that magically restores the original information.</p>
+<pre class="mermaid"><code>flowchart TD
+    X["Token hidden representation x&lt;br/&gt;1 × 4: [1, 2, 3, 4]"] --&gt; D["Learned down-projection W_DKV&lt;br/&gt;4 × 2"]
+    D --&gt; C["Joint latent c_KV&lt;br/&gt;1 × 2: [3.3, 2.0]&lt;br/&gt;Compact representation to cache"]
+    C --&gt; UK["Key up-projection W_UK&lt;br/&gt;2 × 3"]
+    C --&gt; UV["Value up-projection W_UV&lt;br/&gt;2 × 3"]
+    UK --&gt; K["K = [3.3, 2.0, 8.6]"]
+    UV --&gt; V["V = [5.3, 6.6, 6.0]"]</code></pre>
+<p>This follows the branching sketch on PDF pages 4–6. The summary page contains a down-projection shape typo; the explicit matrix and arithmetic establish <span class="arithmatex">\(4\times2\)</span>, as shown above.</p>
+<h3 id="key-expansion">Key expansion<a class="headerlink" href="#key-expansion" title="Permanent link">&para;</a></h3>
+<p>The supplied key expansion matrix is:</p>
+<div class="arithmatex">\[
+W_{UK}=\begin{bmatrix}1&amp;0&amp;2\\0&amp;1&amp;1\end{bmatrix}.
+\]</div>
+<p>Multiplying the latent by its columns gives:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+K_1&amp;=3.3(1)+2.0(0)=3.3,\\
+K_2&amp;=3.3(0)+2.0(1)=2.0,\\
+K_3&amp;=3.3(2)+2.0(1)=8.6.
+\end{aligned}
+\]</div>
+<p>Thus <span class="arithmatex">\(K=[3.3,2.0,8.6]\)</span>.</p>
+<h3 id="value-expansion">Value expansion<a class="headerlink" href="#value-expansion" title="Permanent link">&para;</a></h3>
+<p>The value matrix is separate:</p>
+<div class="arithmatex">\[
+W_{UV}=\begin{bmatrix}1&amp;2&amp;0\\1&amp;0&amp;3\end{bmatrix}.
+\]</div>
+<p>Therefore:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+V_1&amp;=3.3(1)+2.0(1)=5.3,\\
+V_2&amp;=3.3(2)+2.0(0)=6.6,\\
+V_3&amp;=3.3(0)+2.0(3)=6.0.
+\end{aligned}
+\]</div>
+<p>So <span class="arithmatex">\(V=[5.3,6.6,6.0]\)</span>, matching the final whiteboard result and the answers students supplied in chat.</p>
+<p>The zeros in these teaching matrices do not impose a zero or diagonal matrix structure on MLA. The learned matrices can be dense. Key and value projections have separate parameters; the model does not require their entries to match.</p>
+<p>The word <strong>decompression</strong> is a useful classroom analogy. More precisely, this architecture <em>defines</em> its keys and values through learned up-projections from a latent. It need not first build ordinary full MHA keys and values and then compress those already materialized tensors. Likewise, the expanded key or value width need not equal the hidden-state width in every architecture; it must match the attention design's required shapes.</p>
+<hr />
+<h2 id="persistent-cache-savings-and-inference-work">Persistent Cache Savings and Inference Work<a class="headerlink" href="#persistent-cache-savings-and-inference-work" title="Permanent link">&para;</a></h2>
+<p>Paul's next toy example stores six combined key/value scalar values per token without MLA and two latent values with MLA:</p>
+<table>
+<thead>
+<tr>
+<th>Toy representation</th>
+<th style="text-align: right;">Values per token</th>
+<th style="text-align: right;">Tokens</th>
+<th style="text-align: right;">Total stored values</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Expanded K and V</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">6,000</td>
+</tr>
+<tr>
+<td>Joint latent</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">2,000</td>
+</tr>
+</tbody>
+</table>
+<p>This is a <strong>threefold reduction</strong> in stored values, or about <strong>66.7% fewer</strong>. The six already counts the combined representation, so it should not be doubled again. It is also not an assertion that six full heads require only six scalar values.</p>
+<p>For ordinary MHA/MQA/GQA, persistent cache bytes are obtained from:</p>
+<div class="arithmatex">\[
+\text{bytes}=2BH_{KV}d_hLTs,
+\]</div>
+<p>where <span class="arithmatex">\(B\)</span> is batch size, <span class="arithmatex">\(H_{KV}\)</span> the number of cached KV heads, <span class="arithmatex">\(d_h\)</span> head width, <span class="arithmatex">\(L\)</span> layers, <span class="arithmatex">\(T\)</span> cached tokens, and <span class="arithmatex">\(s\)</span> bytes per element. The leading two counts K and V.</p>
+<p>A joint latent is already one representation used for both. It does not inherit that leading two just because its name contains “KV.” For the simplified latent-only case, the corresponding count is <span class="arithmatex">\(BTLd_cs\)</span>. A positional-key cache, when present, must be counted separately.</p>
+<h3 id="learned-during-training-does-not-mean-computed-only-during-training">Learned during training does not mean computed only during training<a class="headerlink" href="#learned-during-training-does-not-mean-computed-only-during-training" title="Permanent link">&para;</a></h3>
+<p>Several chat questions asked whether expansion consumes memory and repeated matrix multiplication undermines the savings. Distinguish three things:</p>
+<ol>
+<li><strong>Parameters:</strong> learned projection matrices, reused after training.</li>
+<li><strong>Activations:</strong> token-dependent latent, query, key, and value representations computed when processing inputs.</li>
+<li><strong>Persistent cache:</strong> the tensors retained across successive decode steps.</li>
+</ol>
+<p>MLA also operates during inference. Every new token needs its token-dependent latent representation. A straightforward implementation can reconstruct expanded keys and values at attention time, which consumes computation and temporary memory. Keeping the latent as the persistent cache still saves storage between steps.</p>
+<p>An optimized implementation can reorganize projection algebra to avoid explicitly expanding the full historical KV tensors. The DeepSeek-V2 paper describes absorbing the key up-projection into the query-side computation and the value up-projection into the output-side computation. This optimization, rather than the mere fact that weights are pretrained, explains how explicit reconstruction may be avoided. <a href="https://arxiv.org/html/2405.04434v5#S2.SS1.SSS2">DeepSeek-V2, low-rank KV compression</a>.</p>
+<p>There was no runtime or memory benchmark in this class establishing the cost of those alternatives. The dimensional examples show storage accounting, not a measured latency result.</p>
+<h3 id="exact-companion-projection-declarations">Exact companion projection declarations<a class="headerlink" href="#exact-companion-projection-declarations" title="Permanent link">&para;</a></h3>
+<p>The instructor repository's <a href="https://github.com/sourangshupal/kv-cache-attention-variants/blob/main/src/kv_cache_variants/attention/mla.py">MLA implementation</a> declares the three KV-side projections as follows. This is an exact excerpt from its class initializer, not independently reconstructed lecture code:</p>
+<div class="highlight"><pre><span></span><code><span class="bp">self</span><span class="o">.</span><span class="n">kv_down_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">d_model</span><span class="p">,</span> <span class="n">latent_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">k_up_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">latent_dim</span><span class="p">,</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">v_up_proj</span> <span class="o">=</span> <span class="n">nn</span><span class="o">.</span><span class="n">Linear</span><span class="p">(</span><span class="n">latent_dim</span><span class="p">,</span> <span class="n">num_heads</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">head_dim</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</code></pre></div>
+<p>PyTorch's linear layer expresses input and output widths through those arguments. The module additionally contains query, positional, and output projections. Thus “three matrices” describes the simplified KV compression/expansion path, not the total number of learned matrices in a complete attention layer.</p>
+<hr />
+<h2 id="reading-the-deepseek-v2-diagram-without-expanding-the-lessons-scope">Reading the DeepSeek-V2 Diagram Without Expanding the Lesson's Scope<a class="headerlink" href="#reading-the-deepseek-v2-diagram-without-expanding-the-lessons-scope" title="Permanent link">&para;</a></h2>
+<p>Paul opened <a href="https://arxiv.org/pdf/2405.04434">DeepSeek-V2</a> to connect the classroom notation to the research architecture. The key phrase is <strong>low-rank key-value joint compression</strong>.</p>
+<p>The paper uses column vectors, so its down-projection is written <span class="arithmatex">\(c_t^{KV}=W^{DKV}h_t\)</span>. This is the same shape-compatible idea as the class's row-vector <span class="arithmatex">\(xW_{DKV}\)</span>, with transposed matrix conventions. The subscript <span class="arithmatex">\(t\)</span> identifies a token position; it does not change the basic compression mechanism.</p>
+<p>The discussion also identified query compression, a separate rotary path, and MoE in the architecture diagram. Query compression can reduce training activations without reducing the historical KV cache. MoE was only pointed out, not taught. With decoupled RoPE, the paper's cache includes <strong>both the latent and a positional key</strong>, giving <span class="arithmatex">\((d_c+d_h^R)L\)</span> elements per token across layers. The latent-only whiteboard total therefore omits a real production component. <a href="https://arxiv.org/html/2405.04434v5#S2.SS1">DeepSeek-V2, MLA architecture</a>.</p>
+<p>At the end Paul explicitly postponed the full content/NoPE and rotary-path combination. “NoPE” here labels the content portion without rotary position encoding; it does not mean the complete model has no positional information. The complete branch algebra, query compression, and optimized integration belong to the announced next discussion.</p>
+<hr />
+<h2 id="positional-encoding-recap-why-content-alone-is-insufficient">Positional Encoding Recap: Why Content Alone Is Insufficient<a class="headerlink" href="#positional-encoding-recap-why-content-alone-is-insufficient" title="Permanent link">&para;</a></h2>
+<p>Before deriving RoPE, Paul returned to the original Transformer. Token order changes grammar, meaning, and programming-language structure. A content-only attention operation has no explicit position coordinate telling it where a token occurs.</p>
+<p>More precisely, self-attention without positional information or an order-dependent mask is <strong>permutation equivariant</strong>: permuting the input rows permutes the corresponding output rows. Calling it “order blind” conveys the classroom intuition, but calling the entire output permutation invariant would be imprecise. A causal mask adds ordering constraints; it is not the same mechanism as a positional representation.</p>
+<p>In the original additive approach, positional information has the same width as the token embedding:</p>
+<div class="arithmatex">\[
+z_p=e_p+PE_p.
+\]</div>
+<p>The elementwise sum keeps width <span class="arithmatex">\(d_{model}\)</span>. There is no need to append more coordinates simply to add the positional vector.</p>
+<h3 id="sinecosine-pairs">Sine/cosine pairs<a class="headerlink" href="#sinecosine-pairs" title="Permanent link">&para;</a></h3>
+<p>The formulas shown in the PDF are:</p>
+<div class="arithmatex">\[
+PE(p,2i)=\sin\left(\frac{p}{10000^{2i/d_{model}}}\right),\qquad
+PE(p,2i+1)=\cos\left(\frac{p}{10000^{2i/d_{model}}}\right).
+\]</div>
+<p><span class="arithmatex">\(p\)</span> is token position, such as 0, 1, 2, and so on. <span class="arithmatex">\(i\)</span> indexes a dimension pair; it is not another token position. Pair <span class="arithmatex">\(i=0\)</span> occupies coordinates 0 and 1, pair <span class="arithmatex">\(i=1\)</span> occupies 2 and 3, and so forth.</p>
+<p>For <span class="arithmatex">\(d_{model}=4\)</span>, the positional vector has two sine/cosine pairs. The different denominators give the pairs different frequencies. Position can continue beyond 3; the model width of four does not limit the sequence to four tokens.</p>
+<p>A unit circle makes the trigonometry concrete. The point <span class="arithmatex">\((\cos\alpha,\sin\alpha)\)</span> has unit radius, while the two coordinate values lie between −1 and 1. The sine/cosine pair in the additive encoding is related to this picture, but adding that pair to an embedding is not itself a rotation of the embedding.</p>
+<h3 id="separate-the-actual-limitations">Separate the actual limitations<a class="headerlink" href="#separate-the-actual-limitations" title="Permanent link">&para;</a></h3>
+<p>The class discussed long-context generalization, whether relative distances are explicit, extra parameters, and modification of the original embedding. Keep these distinctions clear:</p>
+<ul>
+<li><strong>Fixed sinusoidal encodings have no learned positional parameters.</strong> Learned positional embedding tables do. Their parameter cost cannot be attributed to the fixed sine/cosine formula.</li>
+<li><strong>A sinusoidal formula can be evaluated beyond the training length.</strong> That mathematical availability does not guarantee reliable model behavior on much longer inputs.</li>
+<li><strong>Relative-position structure is not wholly absent from sinusoidal encodings.</strong> The original paper describes fixed offsets as linear transformations of its encodings. RoPE gives a particularly direct relative-position form inside the query/key dot product.</li>
+<li><strong>Additive position information is structured signal.</strong> It changes the content representation, but that alone does not make it random noise or establish that it harms a model.</li>
+</ul>
+<p>These qualifications are consistent with the original paper's distinction between fixed and learned choices and its stated motivation for sinusoidal encodings. <a href="https://arxiv.org/html/1706.03762v7#S3.SS5">Attention Is All You Need, positional encoding</a>.</p>
+<p>Adding position before the query/key projections also influences their resulting values: <span class="arithmatex">\(W_Q(e+PE)\)</span> and <span class="arithmatex">\(W_K(e+PE)\)</span> both depend on <span class="arithmatex">\(PE\)</span>. RoPE changes <em>how</em> that information enters the attention score; it does not establish that additive positional information had no connection to queries and keys.</p>
+<hr />
+<h2 id="rope-rotate-the-projected-query-and-key">RoPE: Rotate the Projected Query and Key<a class="headerlink" href="#rope-rotate-the-projected-query-and-key" title="Permanent link">&para;</a></h2>
+<p><strong>RoPE</strong> means <strong>Rotary Position Embedding</strong>. The main change is from adding a positional vector at the embedding input to applying position-dependent rotations to query and key vectors.</p>
+<p>Using column vectors for the rotation derivation:</p>
+<div class="arithmatex">\[
+q_m=W_Qx_m,\qquad k_n=W_Kx_n,
+\]</div>
+<p>then:</p>
+<div class="arithmatex">\[
+q'_m=R_mq_m,\qquad k'_n=R_nk_n.
+\]</div>
+<p><span class="arithmatex">\(m\)</span> is the query's position and <span class="arithmatex">\(n\)</span> the key's position. They can differ. The prime marks the vector after rotation. Standard RoPE applies these rotations to Q and K; V is used in the weighted-value aggregation that follows score calculation.</p>
+<pre class="mermaid"><code>flowchart LR
+    E["Token representation"] --&gt; ADD["Additive positional encoding&lt;br/&gt;embedding + PE"]
+    ADD --&gt; AQ["Project to Q and K"]
+    AQ --&gt; AS["Compute attention scores"]
+    E --&gt; PROJ["RoPE path&lt;br/&gt;Project to Q and K"]
+    PROJ --&gt; ROT["Rotate Q at m and K at n&lt;br/&gt;with position-dependent matrices"]
+    ROT --&gt; RS["Compute attention scores&lt;br/&gt;relative rotation appears directly"]</code></pre>
+<p>This translates the contrast drawn on PDF pages 9–12. Both paths are ways of conveying order. RoPE also adds an operation, so its motivation is not simply removing all positional computation.</p>
+<h3 id="start-with-ordinary-2d-rotation">Start with ordinary 2D rotation<a class="headerlink" href="#start-with-ordinary-2d-rotation" title="Permanent link">&para;</a></h3>
+<p>For a column vector <span class="arithmatex">\(x=[x_1,x_2]^T\)</span>, the counterclockwise rotation matrix is:</p>
+<div class="arithmatex">\[
+R(\alpha)=\begin{bmatrix}
+\cos\alpha&amp;-\sin\alpha\\
+\sin\alpha&amp;\cos\alpha
+\end{bmatrix}.
+\]</div>
+<p>Multiplication gives:</p>
+<div class="arithmatex">\[
+\begin{aligned}
+x'_1&amp;=x_1\cos\alpha-x_2\sin\alpha,\\
+x'_2&amp;=x_1\sin\alpha+x_2\cos\alpha.
+\end{aligned}
+\]</div>
+<p>The sign pattern matters: it makes this an orthogonal rotation that preserves vector length. Arbitrarily changing entries can create a different transformation, including one that stretches the vector. Other consistent conventions, such as using the negative angle, rotate clockwise instead.</p>
+<p>In the class's shorthand, each position adds a fixed angular increment <span class="arithmatex">\(\theta\)</span>:</p>
+<div class="arithmatex">\[
+\alpha_p=p\theta,\qquad R_p=R(p\theta).
+\]</div>
+<p>Position zero gives <span class="arithmatex">\(R(0)=I\)</span>, the identity matrix. It adds no positional rotation. This does not require the original query to point along the positive x-axis.</p>
+<h3 id="the-90-degree-teaching-example">The 90-degree teaching example<a class="headerlink" href="#the-90-degree-teaching-example" title="Permanent link">&para;</a></h3>
+<p>Paul chose <span class="arithmatex">\(q=[1,0]^T\)</span> and <span class="arithmatex">\(\theta=90^\circ\)</span> to make the results easy to compute:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Position <span class="arithmatex">\(p\)</span></th>
+<th style="text-align: right;">Added angle <span class="arithmatex">\(p\theta\)</span></th>
+<th>Rotated vector <span class="arithmatex">\(R_pq\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0°</td>
+<td><span class="arithmatex">\([1,0]^T\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">90°</td>
+<td><span class="arithmatex">\([0,1]^T\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">180°</td>
+<td><span class="arithmatex">\([-1,0]^T\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">270°</td>
+<td><span class="arithmatex">\([0,-1]^T\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">360°</td>
+<td><span class="arithmatex">\([1,0]^T\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">450°</td>
+<td><span class="arithmatex">\([0,1]^T\)</span></td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    A["p = 0&lt;br/&gt;[1, 0]"] --&gt;|"+90°"| B["p = 1&lt;br/&gt;[0, 1]"]
+    B --&gt;|"+90°"| C["p = 2&lt;br/&gt;[-1, 0]"]
+    C --&gt;|"+90°"| D["p = 3&lt;br/&gt;[0, -1]"]
+    D --&gt;|"+90°"| F["p = 4&lt;br/&gt;[1, 0]&lt;br/&gt;One pair repeats"]</code></pre>
+<p>This is the sequence on PDF pages 13–15. The first token is numbered zero, the second one, and so forth. The angle is proportional to position; the integer position and the angle are not interchangeable physical quantities.</p>
+<p>For code, trigonometric functions ordinarily take <strong>radians</strong>. <span class="arithmatex">\(\pi\)</span> radians equals 180°, and <span class="arithmatex">\(\pi/2\)</span> equals 90°. Avoid mixing degrees and radians in one expression.</p>
+<h3 id="exact-companion-rotation-example">Exact companion rotation example<a class="headerlink" href="#exact-companion-rotation-example" title="Permanent link">&para;</a></h3>
+<p>Cell 3 of the instructor's <a href="https://github.com/sourangshupal/kv-cache-attention-variants/blob/main/teaching_notebooks/07_rope.ipynb">RoPE notebook</a> uses 30°, rather than the live whiteboard's 90°:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">torch</span>
+
+<span class="c1"># Hand-rotate a single 2D vector by 30 degrees, by hand, then verify with torch.</span>
+<span class="n">angle</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+<span class="n">v</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">])</span>
+<span class="n">rotation_matrix</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">tensor</span><span class="p">([</span>
+    <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">)],</span>
+    <span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">angle</span><span class="p">),</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">angle</span><span class="p">)],</span>
+<span class="p">])</span>
+<span class="n">rotated</span> <span class="o">=</span> <span class="n">rotation_matrix</span> <span class="o">@</span> <span class="n">v</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;original vector:&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;rotated 30 degrees:&quot;</span><span class="p">,</span> <span class="n">rotated</span><span class="o">.</span><span class="n">tolist</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;norm preserved:&quot;</span><span class="p">,</span> <span class="n">torch</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">norm</span><span class="p">(),</span> <span class="n">rotated</span><span class="o">.</span><span class="n">norm</span><span class="p">(),</span> <span class="n">atol</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">))</span>
+</code></pre></div>
+<p>Its saved output is approximately <span class="arithmatex">\([0.8660254,0.5]\)</span>, with <code>norm preserved: True</code>. This is a supplied notebook result, not a job rerun while preparing these notes. It illustrates the same rotation rule with an angle whose cosine is nonzero.</p>
+<hr />
+<h2 id="derivation-the-dot-product-exposes-relative-position">Derivation: The Dot Product Exposes Relative Position<a class="headerlink" href="#derivation-the-dot-product-exposes-relative-position" title="Permanent link">&para;</a></h2>
+<p>The central result comes from rotating both operands before taking their dot product. The class first omitted softmax and V to isolate this first attention operation. Retaining the usual scale factor, the score is:</p>
+<div class="arithmatex">\[
+s_{mn}=\frac{(R_mq_m)^T(R_nk_n)}{\sqrt{d_k}}.
+\]</div>
+<p>Here <span class="arithmatex">\(d_k\)</span> is the width of the participating query/key vectors. A consistent vector convention matters: <span class="arithmatex">\(q^Tk\)</span> is the scalar inner product for column vectors. For row-vector batches the corresponding matrix expression uses <span class="arithmatex">\(QK^T\)</span>.</p>
+<h3 id="step-1-transposing-a-product-reverses-its-order">Step 1: Transposing a product reverses its order<a class="headerlink" href="#step-1-transposing-a-product-reverses-its-order" title="Permanent link">&para;</a></h3>
+<div class="arithmatex">\[
+(AB)^T=B^TA^T.
+\]</div>
+<p>Thus:</p>
+<div class="arithmatex">\[
+(R_mq_m)^T=q_m^TR_m^T,
+\]</div>
+<p>and the score becomes:</p>
+<div class="arithmatex">\[
+s_{mn}=\frac{q_m^TR_m^TR_nk_n}{\sqrt{d_k}}.
+\]</div>
+<p>This is a rewrite of the same scalar, not a new approximation.</p>
+<h3 id="step-2-transpose-reverses-a-rotation">Step 2: Transpose reverses a rotation<a class="headerlink" href="#step-2-transpose-reverses-a-rotation" title="Permanent link">&para;</a></h3>
+<p>For the orthogonal planar rotation used here:</p>
+<div class="arithmatex">\[
+R(\alpha)^T=R(\alpha)^{-1}=R(-\alpha).
+\]</div>
+<p>The cosine entries remain the same and the sine entries change signs. Therefore <span class="arithmatex">\(R_m^T=R_{-m}\)</span>, where the shorthand continues to mean multiplication of the position index by the same frequency.</p>
+<p>The negative subscript is a reverse-angle rotation. It does not denote a negative token index that the model must look up.</p>
+<h3 id="step-3-compose-rotations-by-adding-their-angles">Step 3: Compose rotations by adding their angles<a class="headerlink" href="#step-3-compose-rotations-by-adding-their-angles" title="Permanent link">&para;</a></h3>
+<p>For rotations in the same 2D plane:</p>
+<div class="arithmatex">\[
+R(\alpha)R(\beta)=R(\alpha+\beta).
+\]</div>
+<p>Applying this to the two position angles:</p>
+<div class="arithmatex">\[
+R_m^TR_n=R(-m\theta)R(n\theta)=R((n-m)\theta)=R_{n-m}.
+\]</div>
+<p>Consequently:</p>
+<div class="arithmatex">\[
+\boxed{s_{mn}=\frac{q_m^TR_{n-m}k_n}{\sqrt{d_k}}.}
+\]</div>
+<p>The rotation in the score now depends on the <strong>relative offset <span class="arithmatex">\(n-m\)</span></strong>. The score still depends on query and key content. It is not simply the integer gap, and the dot product does not output a separately decoded distance field.</p>
+<p>The composition rule is for these compatible rotations, extended pair by pair with matching frequencies. It is not a claim that arbitrary matrices commute or that every 3D rotation can be combined by adding two scalar angles.</p>
+<h3 id="worked-relative-position-examples">Worked relative-position examples<a class="headerlink" href="#worked-relative-position-examples" title="Permanent link">&para;</a></h3>
+<p>The PDF gives two pairs:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Query position <span class="arithmatex">\(m\)</span></th>
+<th style="text-align: right;">Key position <span class="arithmatex">\(n\)</span></th>
+<th style="text-align: right;">Offset <span class="arithmatex">\(n-m\)</span></th>
+<th>Relative rotation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">3</td>
+<td><span class="arithmatex">\(R(3\theta)\)</span></td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">23</td>
+<td style="text-align: right;">3</td>
+<td><span class="arithmatex">\(R(3\theta)\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Both pairs are three positions apart. If their unrotated query and key content vectors are held fixed, the same relative rotation produces the same positional contribution to the score. Real tokens at those positions can have different content vectors, so their full attention scores need not be equal.</p>
+<pre class="mermaid"><code>flowchart TD
+    A["Query m = 5&lt;br/&gt;Key n = 8"] --&gt; G["n − m = 3"]
+    B["Shift both by +15&lt;br/&gt;Query m = 20&lt;br/&gt;Key n = 23"] --&gt; G
+    G --&gt; R["Same relative rotation R(3θ)"]
+    R --&gt; C["Same score only when&lt;br/&gt;unrotated Q and K are held fixed"]</code></pre>
+<p>This translates PDF pages 18–19. In a causal decoder, a key at <span class="arithmatex">\(n&gt;m\)</span> is a future token and is masked. The class examples isolate rotation algebra; they do not override causality. The same argument works for allowed past-token offsets and for bidirectional attention.</p>
+<p>At <span class="arithmatex">\(m=n\)</span>, the relative rotation is <span class="arithmatex">\(R_0=I\)</span>, leaving <span class="arithmatex">\(q_m^Tk_m/\sqrt{d_k}\)</span>. That means the positional rotation cancels for the same position. It does not require the query and key vectors to be identical, or guarantee the largest attention weight.</p>
+<p>A shared shift also preserves every gap: <span class="arithmatex">\((n+a)-(m+a)=n-m\)</span>. This is the mathematical reason a window-shift simulator can preserve a positional scoring pattern when the underlying content vectors stay fixed.</p>
+<hr />
+<h2 id="frequencies-periodicity-and-long-range-relationships">Frequencies, Periodicity, and Long-Range Relationships<a class="headerlink" href="#frequencies-periodicity-and-long-range-relationships" title="Permanent link">&para;</a></h2>
+<p>The 90° example intentionally repeats after four steps. Shantanu and Abhishek asked about repetition and overlap. A single rotating pair cannot uniquely distinguish an unlimited sequence: 90° and 450° yield the same sine and cosine.</p>
+<p>Real RoPE uses <strong>many 2D pairs with different frequencies</strong>. Each pair has its own angular increment <span class="arithmatex">\(\theta_i\)</span>, and position <span class="arithmatex">\(p\)</span> supplies angle <span class="arithmatex">\(p\theta_i\)</span>. The paper's conventional schedule is geometric, with larger pair indices rotating more slowly. These multiple angular scales mitigate the ambiguity of using only one pair. <a href="https://arxiv.org/html/2104.09864v5#S3.SS2.SSS2">RoFormer, general RoPE form</a>.</p>
+<p>The useful intuition is a clock with several hands. One hand repeats quickly; several hands together convey position over a wider range. This does not prove infinite unique positional resolution, remove finite-precision effects, or guarantee model accuracy beyond the training distribution.</p>
+<table>
+<thead>
+<tr>
+<th>Frequency within a dimension pair</th>
+<th>Change for one additional token</th>
+<th>Useful intuition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Higher frequency</td>
+<td>Larger angular change</td>
+<td>Fine distinctions among nearby offsets</td>
+</tr>
+<tr>
+<td>Lower frequency</td>
+<td>Smaller angular change</td>
+<td>Coarser variation across longer offsets</td>
+</tr>
+</tbody>
+</table>
+<p>The frequency is associated with the pair, <strong>not chosen anew because two particular tokens are far apart</strong>. At a fixed frequency, the angular increment per token is constant. A distant pair has a larger accumulated relative phase modulo a full turn; distance does not itself slow the rotation.</p>
+<p>This makes the class's “fast/local, slow/long-range” explanation precise. Both fast and slow channels coexist in the representation. They allow the network to use multiple scales when learning positional relationships.</p>
+<h3 id="longer-sequences-remain-an-empirical-challenge">Longer sequences remain an empirical challenge<a class="headerlink" href="#longer-sequences-remain-an-empirical-challenge" title="Permanent link">&para;</a></h3>
+<p>Mangesh asked how rotating a token at position 1 relative to one at 100 or 300 solves the long-sequence problem. RoPE makes relative offset enter the score directly. That does not establish that any pretrained model will handle arbitrary unseen distances well.</p>
+<p>Computing an angle at a new position and obtaining useful language-model behavior at that position are different achievements. The context-extension literature explicitly studies problems caused by extrapolating RoPE-based models beyond their trained context. Position Interpolation is one documented response; its algorithm was not taught in this recording. <a href="https://arxiv.org/abs/2306.15595">Position Interpolation paper</a>.</p>
+<p>The companion RoPE notebook goes further into linear scaling, dynamic NTK, and YaRN. Those cells are supplementary reading, not evidence that this class delivered their algorithms. Its saved plot is an illustrative cosine trace, not a quality benchmark; it labels column zero as a lowest-frequency dimension even though the supplied frequency schedule makes that the highest-frequency pair. Do not use that label to infer the wrong ordering.</p>
+<hr />
+<h2 id="using-the-simulators-without-confusing-content-and-position">Using the Simulators Without Confusing Content and Position<a class="headerlink" href="#using-the-simulators-without-confusing-content-and-position" title="Permanent link">&para;</a></h2>
+<p>Paul shared <a href="https://playplain.com/rope/">PlayPlain's playable RoPE</a> and the <a href="https://www.mysimulator.uk/ai-ml/transformer-architecture">MySimulator Transformer visualization</a>. Students used the displays to connect matrix operations with moving arrows.</p>
+<h3 id="what-the-content-angle-slider-represents">What the content-angle slider represents<a class="headerlink" href="#what-the-content-angle-slider-represents" title="Permanent link">&para;</a></h3>
+<p>Murtuza noticed that a simulator exposed both position and a <strong>content angle</strong>. He asked what controls the latter, whether it must change with position, and whether it is something a model designer must assume.</p>
+<p>The distinction is:</p>
+<ul>
+<li>The unrotated query/key pair already has a direction determined by its numerical content.</li>
+<li>Position contributes an additional rotation <span class="arithmatex">\(p\theta_i\)</span>.</li>
+<li>A simulator can expose the original direction as a content-angle slider so that both effects are visible.</li>
+</ul>
+<p>For a 2D vector whose starting direction is <span class="arithmatex">\(\phi\)</span>, the resulting direction is <span class="arithmatex">\(\phi+p\theta\)</span>. At position zero, the added rotation is zero, while the original direction can still be nonzero. In the classroom vector <span class="arithmatex">\([1,0]^T\)</span>, the content direction happened to be zero because that particular vector lies on the positive x-axis.</p>
+<p>PlayPlain explicitly describes its content slider as the direction of the original query slice and its position slider as the extra rotation. It is a visualization control, not an additional standard learned RoPE parameter. <a href="https://playplain.com/rope/">PlayPlain, one-token demonstration</a>.</p>
+<p>Paul redirected Murtuza to the other simulator, whose query/key-position controls made the intended positional comparison clearer. The practical response is to hold the content vectors fixed while changing positions, then separately vary content to see that a score depends on both.</p>
+<h3 id="what-to-watch-when-moving-query-and-key-positions">What to watch when moving query and key positions<a class="headerlink" href="#what-to-watch-when-moving-query-and-key-positions" title="Permanent link">&para;</a></h3>
+<p>Mangesh's follow-up kept sequence length constant, moved the query, then moved the key closer to it. The changing separation alters <span class="arithmatex">\(n-m\)</span>, which changes the relative rotation in the score. Two arrows becoming visually close is not, by itself, proof of a learned semantic relationship.</p>
+<p>For study, use three controlled comparisons:</p>
+<ol>
+<li>Hold content fixed and change only the key position: observe the changing offset and phase.</li>
+<li>Shift both positions by the same amount: the relative phase should stay the same.</li>
+<li>Place them at the same position: the added relative rotation becomes the identity.</li>
+</ol>
+<p>During preparation, MySimulator's landing page still listed sequence length, query token, key token, frequency band, window-shift offset, and auto-shift controls, but its embedded simulation returned a 404. Its live behavior could therefore not be reproduced during this review. The classroom demonstration described here comes from the transcript; PlayPlain remains the other supplied visualization.</p>
+<p>Changing the number of displayed tokens changes the available positions. It does not automatically retrain a model, validate a larger supported context, or measure long-document comprehension. Likewise, a display's “window shift” is a positional visualization; it should not be interpreted as a KV paging or eviction operation.</p>
+<hr />
+<h2 id="companion-code-positional-tables-and-decode-offsets">Companion Code: Positional Tables and Decode Offsets<a class="headerlink" href="#companion-code-positional-tables-and-decode-offsets" title="Permanent link">&para;</a></h2>
+<p>The instructor's <a href="https://github.com/sourangshupal/kv-cache-attention-variants/blob/main/src/kv_cache_variants/rope.py">rope.py</a> makes the frequency/position calculation concrete. This exact excerpt builds the trigonometric tables:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_rope_cache</span><span class="p">(</span>
+    <span class="n">head_dim</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_seq_len</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">base</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10000.0</span><span class="p">,</span> <span class="n">device</span><span class="p">:</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Tensor</span><span class="p">,</span> <span class="n">Tensor</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Precompute cos/sin tables, shape (max_seq_len, head_dim).&quot;&quot;&quot;</span>
+    <span class="n">inv_freq</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">base</span> <span class="o">**</span> <span class="p">(</span><span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">head_dim</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span> <span class="o">/</span> <span class="n">head_dim</span><span class="p">))</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">max_seq_len</span><span class="p">,</span> <span class="n">device</span><span class="o">=</span><span class="n">device</span><span class="p">)</span><span class="o">.</span><span class="n">float</span><span class="p">()</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">inv_freq</span><span class="p">)</span>  <span class="c1"># (seq, head_dim/2)</span>
+    <span class="n">emb</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="n">freqs</span><span class="p">,</span> <span class="n">freqs</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># (seq, head_dim)</span>
+    <span class="k">return</span> <span class="n">emb</span><span class="o">.</span><span class="n">cos</span><span class="p">(),</span> <span class="n">emb</span><span class="o">.</span><span class="n">sin</span><span class="p">()</span>
+</code></pre></div>
+<p>The cosine/sine table is sometimes called a “RoPE cache.” It is distinct from the persistent KV cache: one stores reusable positional factors, while the other stores token-dependent attention history.</p>
+<p>The companion uses a split-half layout. <code>_rotate_half</code> pairs coordinates in the first half with corresponding coordinates in the second half:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">_rotate_half</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">chunk</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">torch</span><span class="o">.</span><span class="n">cat</span><span class="p">([</span><span class="o">-</span><span class="n">x2</span><span class="p">,</span> <span class="n">x1</span><span class="p">],</span> <span class="n">dim</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+</code></pre></div>
+<p>This is equivalent to organizing 2D pairs under a consistent coordinate permutation. It differs from writing adjacent pairs on the whiteboard. The table layout and rotation layout must agree; do not mix adjacent-pair code with these split-half factors without adapting the coordinate arrangement.</p>
+<p>The rotation implementation selects position rows with an offset:</p>
+<div class="highlight"><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">apply_rotary</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">cos</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">sin</span><span class="p">:</span> <span class="n">Tensor</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tensor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;x: (batch, heads, seq, head_dim). cos/sin: (max_seq_len, head_dim) from build_rope_cache.</span>
+
+<span class="sd">    offset lets you rotate a single new decode-step token by its true position</span>
+<span class="sd">    (past_len) rather than always starting from 0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">seq</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">cos</span><span class="p">[</span><span class="n">offset</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">seq</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">sin</span><span class="p">[</span><span class="n">offset</span> <span class="p">:</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">seq</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">c</span> <span class="o">+</span> <span class="n">_rotate_half</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">s</span>
+</code></pre></div>
+<p>The notebook's saved single-token check compares <code>offset=seq_len</code> against rotating the entire extended sequence and selecting its last token. The stored result is <code>True</code>. This is a useful consistency check of positional indexing, not a language-model quality test.</p>
+<h3 id="limits-of-the-supplied-mla-demonstration">Limits of the supplied MLA demonstration<a class="headerlink" href="#limits-of-the-supplied-mla-demonstration" title="Permanent link">&para;</a></h3>
+<p>The <a href="https://github.com/sourangshupal/kv-cache-attention-variants/blob/main/teaching_notebooks/06_mla.ipynb">MLA notebook</a> uses <code>d_model=32</code>, four heads, latent width eight, and positional-key width eight. Its saved outputs show a latent of shape <code>(1, 5, 8)</code> growing to <code>(1, 6, 8)</code> after a one-token step. The cache also includes the positional-key tensor; inspecting only the first tuple entry does not count all storage.</p>
+<p>Its memory comparison passes <code>latent_dim + rope_dim</code> into the ordinary KV helper, which multiplies by two for separate K and V. That double-counts the joint latent-plus-positional-key layout. With 4,096 tokens and two bytes per element, the correct toy persistent storage for those two width-eight tensors is:</p>
+<div class="arithmatex">\[
+4096(8+8)(2)=131072\text{ bytes}=128\text{ KiB per layer}.
+\]</div>
+<p>The saved notebook prints 256 “KB” for MLA because of that extra factor. This comparison assumes two bytes per cached element; it does not inspect the tensor dtype. The uncast teaching tensors use PyTorch's ordinary float32 default, which would require four bytes per element instead. <a href="https://docs.pytorch.org/docs/stable/generated/torch.set_default_dtype.html">PyTorch default floating dtype</a>. The ordinary MHA, GQA, and MQA rows use the helper's intended K/V accounting. Its formatter divides by 1,024, so the displayed units are binary-sized even though labeled KB. This correction follows inspection of the supplied <a href="https://github.com/sourangshupal/kv-cache-attention-variants/blob/main/src/kv_cache_variants/memory_calc.py">memory helper</a> and cache tensors; it is arithmetic, not a new measurement.</p>
+<p>The current educational implementation explicitly expands the cached latent to historical content keys and values. Its token-growth assertion checks cache length, not equality with a full-sequence attention result. It also uses a simplified query projection rather than the complete query-compression path of the paper. Read it as a learning implementation; the full production integration and its optimizations remain beyond this recording's delivered scope.</p>
+<hr />
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>The closing plan prioritizes the <strong>full MLA–RoPE combination</strong>: content/NoPE and rotary portions, extra dimensions, and how DeepSeek's architecture combines them. Paul referred to subsequent DeepSeek variants while discussing that continuation.</p>
+<p>He also named <strong>FlashAttention</strong> and <strong>PyTorch SDPA</strong>, followed by the remaining module wrap-up and <strong>Kaplan/Chinchilla scaling laws</strong>. Scaling laws were initially announced as the next class, but the closing discussion left MLA–RoPE integration and attention implementation topics still pending. This recording does not teach those scaling laws.</p>
+<p>The RAG-versus-fine-tuning poll concerns the subsequent course sequence. LangChain/LlamaIndex, broader RAG work, fine-tuning algorithms, MoE, deployment, and kernel-related topics were discussed as future plans, not completed instruction here.</p>
+<hr />
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<p>The table includes substantive in-class chat clarifications and the final open floor. Where source verification adds a necessary qualification, the answer uses the accurate formulation explained above. Chat-only names are retained as transcribed when their full identity is unavailable.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viraj Kumar / Pandya:</strong> How are the compression and expansion weights determined?</td>
+<td>They are learned during model training through the task loss and backpropagation. The toy entries were chosen for illustration; the matrix shapes are architecture choices.</td>
+</tr>
+<tr>
+<td><strong>Nitin:</strong> Are K and V expanded separately?</td>
+<td>Yes. One joint latent feeds a key up-projection and a separate value up-projection. They have independent learned parameters.</td>
+</tr>
+<tr>
+<td><strong>Participant transcribed as “Abundon”:</strong> Is the key expansion a zero or diagonal matrix?</td>
+<td>No. The zeros in the numerical example do not define a required matrix structure; the learned projection can be dense.</td>
+</tr>
+<tr>
+<td><strong>Shantanu:</strong> Does MLA happen only during training?</td>
+<td>No. Its learned projections are also used in inference, and each token's latent representation is retained for subsequent decode steps.</td>
+</tr>
+<tr>
+<td><strong>Gaurav:</strong> Doesn't decompression take more memory?</td>
+<td>Explicit expansion requires temporary activations. The persistent cache can still be compact; optimized implementations may avoid materializing full historical KV tensors.</td>
+</tr>
+<tr>
+<td><strong>Nagesh, transcribed as “Nagish”:</strong> What about repeated multiplication and inference cost?</td>
+<td>Pretrained weights do not eliminate runtime matrix operations. Projection absorption can change the computation; this class did not benchmark the resulting latency.</td>
+</tr>
+<tr>
+<td><strong>Murtuza, called “Murtaza” in chat:</strong> Where do the latent values come from?</td>
+<td>They are the output of applying the down-projection to the current token's hidden representation. They are not a fixed list shared by every token.</td>
+</tr>
+<tr>
+<td><strong>Class calculation, with Thomas named:</strong> How many learned matrices were introduced?</td>
+<td>Three in the simplified KV path: one down-projection and two up-projections. The full attention module has other learned projections too.</td>
+</tr>
+<tr>
+<td><strong>Class clarification:</strong> Must expansion reproduce the input width?</td>
+<td>The up-projection's output width follows the architecture's required K/V dimensions. Increasing its width does not restore discarded information.</td>
+</tr>
+<tr>
+<td><strong>Viraj:</strong> Can aggressive latent compression damage precise long-range information?</td>
+<td>A tighter bottleneck can constrain useful information. The task impact must be evaluated; the session supplied no experiment establishing a universal quality loss or negligible impact.</td>
+</tr>
+<tr>
+<td><strong>Recap clarification following Yogesh / Rahul / Sudhir responses:</strong> Why inject position at all?</td>
+<td>Token content alone does not explicitly identify order in ordinary content-only attention. The purpose is to supply positional structure, not merely assign greater importance to selected tokens.</td>
+</tr>
+<tr>
+<td><strong>Class terminology clarification, with Rohit named:</strong> What is RoPE's full form?</td>
+<td>Rotary Position Embedding. It uses position-dependent rotations of query/key coordinates.</td>
+</tr>
+<tr>
+<td><strong>Alok:</strong> Will MLA use RoPE on top of its representation?</td>
+<td>DeepSeek combines content and positional paths, but the complete integration was left for the next lesson. The simple latent-only example is not that complete architecture.</td>
+</tr>
+<tr>
+<td><strong>Raj / Sai Maharana:</strong> Why rotate Q and K rather than V?</td>
+<td>Q and K form the attention scores, so rotating them makes positional relationships enter those scores. Values are aggregated after the weights are calculated.</td>
+</tr>
+<tr>
+<td><strong>Jatinder, in chat:</strong> Why change the earlier positional encoding approach?</td>
+<td>The discussion focused on a direct relative-position form inside the dot product and long-context behavior. Fixed sinusoidal encodings still have useful structure; RoPE is not an automatic guarantee of unlimited context.</td>
+</tr>
+<tr>
+<td><strong>Nitin:</strong> Does RoPE remove an extra positional operation?</td>
+<td>No. Rotation is itself an additional operation. The distinction is where and how position enters the score.</td>
+</tr>
+<tr>
+<td><strong>Nitin, follow-up:</strong> Were the positional-encoding issues caused by directly modifying the K/Q/V weight matrices?</td>
+<td>Additive PE changes the input representation before projection; it is separate from changing learned weight matrices. The resulting projected vectors nevertheless depend on that positional input.</td>
+</tr>
+<tr>
+<td><strong>Varsh, in chat:</strong> Don't the added matrices increase trainable parameters?</td>
+<td>Learned projection matrices do contribute parameters. That is separate from fixed sinusoidal or conventional fixed-frequency RoPE factors, which do not add learned positional tables.</td>
+</tr>
+<tr>
+<td><strong>Sudhir, during the rotation example:</strong> Why choose 90°?</td>
+<td>It makes the demonstration easy to compute. Real RoPE uses dimension-pair frequencies; it does not assign 90° to every pair.</td>
+</tr>
+<tr>
+<td><strong>Sudhir, late chat:</strong> What does the negative subscript in <span class="arithmatex">\(R_{-m}\)</span> mean?</td>
+<td>It represents inverse rotation by the negative angle. For an orthogonal rotation, transposing the matrix reverses the rotation.</td>
+</tr>
+<tr>
+<td><strong>Class clarification:</strong> Why does the transpose disappear in the final expression?</td>
+<td><span class="arithmatex">\(R_m^T\)</span> becomes <span class="arithmatex">\(R_{-m}\)</span>; composing it with <span class="arithmatex">\(R_n\)</span> gives <span class="arithmatex">\(R_{n-m}\)</span>. The query transpose remains in the scalar dot product.</td>
+</tr>
+<tr>
+<td><strong>Shantanu, transcribed as “Shantan Tala”:</strong> Do angles eventually repeat?</td>
+<td>Yes. Sine/cosine are periodic, so a single pair can repeat after a full turn. Multiple frequencies provide more positional structure than one rotating pair.</td>
+</tr>
+<tr>
+<td><strong>Abhishek:</strong> Will overlap occur, particularly with few dimensions?</td>
+<td>A single-frequency representation aliases. Multiple pairs mitigate that ambiguity; overlap is not automatically random noise, and it does not establish infinite positional uniqueness.</td>
+</tr>
+<tr>
+<td><strong>Abhishek, follow-up:</strong> What if query and key have the same position?</td>
+<td>Their relative rotary factor is the identity. Their content vectors can still differ, so the score is not necessarily maximal.</td>
+</tr>
+<tr>
+<td><strong>Murtuza Saifee, open floor:</strong> What controls the simulator's content angle?</td>
+<td>It illustrates the original direction of the unrotated query/key slice. Position adds a separate angle; the content direction is not a standard extra RoPE parameter.</td>
+</tr>
+<tr>
+<td><strong>Murtuza Saifee, follow-up:</strong> Must content angle change when the position changes?</td>
+<td>Not when isolating positional effects. Keep content fixed and vary position; the vector's initial direction and its added positional rotation are separate quantities.</td>
+</tr>
+<tr>
+<td><strong>Murtuza Saifee, further clarification:</strong> Does position zero mean content starts at zero degrees?</td>
+<td>It means zero <em>additional rotation</em>. The class's <span class="arithmatex">\([1,0]^T\)</span> has a zero-degree initial direction, but arbitrary learned content vectors need not.</td>
+</tr>
+<tr>
+<td><strong>Mangesh Khandare, open floor:</strong> How does RoPE help when tokens are 100 or 300 positions apart?</td>
+<td>Relative offset enters the dot product directly. Reliable behavior at unseen long distances still requires appropriate model training or context-extension methods and evaluation.</td>
+</tr>
+<tr>
+<td><strong>Mangesh Khandare, follow-up:</strong> Is direction relevant to the rotation?</td>
+<td>A sign convention determines clockwise versus counterclockwise rotation. The class uses the usual counterclockwise matrix; consistent Q/K conventions give the relative-offset property.</td>
+</tr>
+<tr>
+<td><strong>Mangesh Khandare, simulator follow-up:</strong> What does bringing query and key positions closer represent?</td>
+<td>It changes their positional gap and therefore their relative phase. Visual closeness of arrows is not itself proof of semantic similarity or a model quality result.</td>
+</tr>
+<tr>
+<td><strong>Mangesh Khandare, final follow-up:</strong> What do sequence length and window shift show?</td>
+<td>Sequence length determines the displayed positions. A shared window shift preserves gaps; it does not demonstrate retraining, larger validated model context, or KV-cache eviction.</td>
+</tr>
+<tr>
+<td><strong>Sudhir Varanasi, open floor:</strong> Will Colab exercises for MLA/MQA/GQA be shared?</td>
+<td>Paul said the notebooks were already linked through the previous class's Notion resources. The matching instructor repository contains those teaching notebooks.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Count scalar values per token before converting to bytes; do not confuse dimensions with token count.</li>
+<li>MHA, MQA, and GQA reduce storage through different numbers of KV heads; MLA uses a compact learned latent.</li>
+<li>The class's worked latent is <span class="arithmatex">\([3.3,2.0]\)</span>, with expanded <span class="arithmatex">\(K=[3.3,2.0,8.6]\)</span> and <span class="arithmatex">\(V=[5.3,6.6,6.0]\)</span>.</li>
+<li>Down-projection and up-projection are learned maps. Up-projection is not a general inverse of lossy compression.</li>
+<li>Learned parameters are reused during inference, while token-specific activations must still be computed.</li>
+<li>Persistent cache size, temporary activation memory, and runtime are separate quantities.</li>
+<li>A complete MLA cache can include a positional-key component in addition to the joint latent.</li>
+<li>Fixed sinusoidal PE adds no learned positional parameters and is not accurately described as random noise.</li>
+<li>RoPE rotates Q and K; position zero adds no rotation but does not force a zero content direction.</li>
+<li>The key identity is <span class="arithmatex">\(R_m^TR_n=R_{n-m}\)</span>, yielding <span class="arithmatex">\(q_m^TR_{n-m}k_n\)</span>.</li>
+<li>Equal gaps give equal positional rotations; equal full scores also require equal underlying content vectors.</li>
+<li>Fast and slow channels come from different dimension-pair frequencies, not distance-dependent changes in one pair's speed.</li>
+<li>Periodic trigonometry and relative offsets do not guarantee reliable inference at arbitrary context lengths.</li>
+<li>Full DeepSeek MLA–RoPE integration, FlashAttention, SDPA, and scaling laws remained future work.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-22">Action Items After Class 22<a class="headerlink" href="#action-items-after-class-22" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Recompute both latent entries from the four-by-two compression matrix without looking at the answer.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Expand the latent through both supplied matrices and check all six resulting K/V entries.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain why a two-coordinate latent cannot generally recover every four-coordinate input exactly.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Recalculate the 1,000-token example and distinguish stored values from bytes and head counts.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Draw the three KV projection maps and separately label parameters, activations, and persistent cache.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the MLA sections of DeepSeek-V2 and identify which components were deferred in this recording.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce the 90° rotation cycle and convert the angles to radians before comparing it with code.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Derive the relative-position identity using the product-transpose and rotation-composition rules.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Use a simulator to hold content fixed, vary one position, and then shift both positions together.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the companion notebook's stored outputs; distinguish cache-growth checks from numerical or quality validation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review the supplied memory helper's extra factor of two before using it for a joint MLA cache.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep context-extension notebook cells as supplementary reading until their algorithms are taught or independently studied.</li>
+</ul>
+<hr />
+<p><em>Compiled from the full Class 22 transcript, “10 Oct Kv cache,” Production AI / LLM Engineering, Krish Naik Academy. Original transcript: <code>GMT20261010-143237_Recording.cutfile.20261011043146773.transcript.vtt</code>; all eight parts and the final Q&amp;A were read. All 20 pages of the course-linked <code>MLA rope .pdf</code> were visually inspected. Source recording and PDF links appear above.</em></p>
+<p><em>Companion source review covered the complete current instructor-repository README, <code>06_mla.ipynb</code> (9 cells), <code>07_rope.ipynb</code> (11 cells, including saved outputs/plot), their corresponding documentation, and <code>mla.py</code>, <code>rope.py</code>, and <code>memory_calc.py</code>. Exact excerpts are labeled as companion code. The repository's current contents may differ from the live-session version; saved outputs were not independently rerun. Technical qualifications were checked against DeepSeek-V2, RoFormer, the original Transformer paper, Position Interpolation, and PlayPlain's own explanation. No model training, model API call, or GPU job was performed.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_21_Attention_Variants_Notes.html" class="btn btn-neutral float-left" title="21 · Attention variants"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Course_Quick_Revision.html" class="btn btn-neutral float-right" title="Quick revision">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_21_Attention_Variants_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Course_Quick_Revision.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

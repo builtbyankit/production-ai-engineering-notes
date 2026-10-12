@@ -29,7 +29,7 @@
     },
     {
       "number": 3,
-      "title": "PyTorch Fundamentals \u2014 From Data to a Trained Model",
+      "title": "PyTorch Fundamentals — From Data to a Trained Model",
       "date": "20260726",
       "duration": "4hr 26min 56s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a668f79893a14772e6b1318",
@@ -40,7 +40,7 @@
     },
     {
       "number": 4,
-      "title": "Transformers 101, Part 1 \u2014 Embeddings, Context, and Self-Attention Intuition",
+      "title": "Transformers 101, Part 1 — Embeddings, Context, and Self-Attention Intuition",
       "date": "20260801",
       "duration": "4hr 11min 34s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6e6a8149d9f2e46cc7a3d5",
@@ -51,7 +51,7 @@
     },
     {
       "number": 5,
-      "title": "Transformers 101, Part 2 \u2014 Queries, Keys, Values, and Contextualized Vectors",
+      "title": "Transformers 101, Part 2 — Queries, Keys, Values, and Contextualized Vectors",
       "date": "20260802",
       "duration": "3hr 45min 39s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a6fb7c0c43020b1fd512819",
@@ -84,7 +84,7 @@
     },
     {
       "number": 8,
-      "title": "Annotated Transformer Implementation \u2014 Designing the Encoder and Decoder",
+      "title": "Annotated Transformer Implementation — Designing the Encoder and Decoder",
       "date": "20260816",
       "duration": "3hr 44min 8s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a828b92ec908cbc02f344c8",
@@ -117,7 +117,7 @@
     },
     {
       "number": 11,
-      "title": "Tokenization Foundations \u2014 BPE, Bytes, and Model Compatibility",
+      "title": "Tokenization Foundations — BPE, Bytes, and Model Compatibility",
       "date": "20260829",
       "duration": "5hr 17min 55s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6a93c924568d1b8c7bf73265",
@@ -161,7 +161,7 @@
     },
     {
       "number": 15,
-      "title": "Prompt Engineering \u2014 Reasoning, Structured Outputs, and Evaluation",
+      "title": "Prompt Engineering — Reasoning, Structured Outputs, and Evaluation",
       "date": "20260912",
       "duration": "3hr 25min 9s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aa5b8f90104bbfb894b5831",
@@ -183,7 +183,7 @@
     },
     {
       "number": 17,
-      "title": "DSPy Part 1 \u2014 Signatures, Modules, and Code Execution",
+      "title": "DSPy Part 1 — Signatures, Modules, and Code Execution",
       "date": "20260919",
       "duration": "3hr 29min 53s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6aaf5841e3af737a79b8f2d1",
@@ -194,7 +194,7 @@
     },
     {
       "number": 18,
-      "title": "DSPy Part 2 \u2014 Bootstrap, MIPROv2, and Reflective Prompt Evolution",
+      "title": "DSPy Part 2 — Bootstrap, MIPROv2, and Reflective Prompt Evolution",
       "date": "20260920",
       "duration": "4hr 11min 16s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ab0bf36a7be26461cd03267",
@@ -216,7 +216,7 @@
     },
     {
       "number": 20,
-      "title": "KV Cache \u2014 Inference, Memory Math, and Multi-Query Attention",
+      "title": "KV Cache — Inference, Memory Math, and Multi-Query Attention",
       "date": "20261003",
       "duration": "3hr 25min 10s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ac1d6e475542d6fe935b179",
@@ -227,7 +227,7 @@
     },
     {
       "number": 21,
-      "title": "Attention Variants \u2014 GQA, PagedAttention, and the MLA Introduction",
+      "title": "Attention Variants — GQA, PagedAttention, and the MLA Introduction",
       "date": "20261004",
       "duration": "2hr 56min 56s",
       "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ac32d52b2a6f8546fbbdc2f",
@@ -235,6 +235,19 @@
       "words": 6813,
       "qa": 35,
       "diagrams": 9
+    },
+    {
+      "number": 22,
+      "title": "Multi-Head Latent Attention and Rotary Position Embeddings",
+      "date": "20261010",
+      "duration": "3hr 8min 57s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6acb1140f293dfc747c00899",
+      "file": "Class_22_MLA_and_RoPE_Notes.md",
+      "words": 6823,
+      "qa": 32,
+      "diagrams": 4,
+      "nav_section": "Fine-tuning and inference",
+      "nav_title": "22 · MLA and RoPE"
     }
   ]
 }
