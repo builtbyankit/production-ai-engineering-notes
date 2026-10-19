@@ -248,6 +248,32 @@
       "diagrams": 4,
       "nav_section": "Fine-tuning and inference",
       "nav_title": "22 · MLA and RoPE"
+    },
+    {
+      "number": 23,
+      "title": "FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution",
+      "date": "20261017",
+      "duration": "3hr 2min 9s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad3d4456f9687799d40e8c6",
+      "file": "Class_23_FlashAttention_and_PyTorch_SDPA_Notes.md",
+      "nav_section": "Fine-tuning and inference",
+      "nav_title": "23 · FlashAttention and SDPA",
+      "words": 6412,
+      "qa": 31,
+      "diagrams": 4
+    },
+    {
+      "number": 24,
+      "title": "LLM Scaling Laws - Model Size, Data and Compute",
+      "date": "20261018",
+      "duration": "1hr 34min 22s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad520e7b5ec8915a3134be5",
+      "file": "Class_24_LLM_Scaling_Laws_Notes.md",
+      "nav_section": "Model scaling",
+      "nav_title": "24 · Scaling laws",
+      "words": 5206,
+      "qa": 23,
+      "diagrams": 2
     }
   ]
 }

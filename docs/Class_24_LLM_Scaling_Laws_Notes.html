@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_24_LLM_Scaling_Laws_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>24 · Scaling laws - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "24 \u00b7 Scaling laws";
+        var mkdocs_page_input_path = "Class_24_LLM_Scaling_Laws_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_24_LLM_Scaling_Laws_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_22_MLA_and_RoPE_Notes.html">22 · MLA and RoPE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html">23 · FlashAttention and SDPA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model scaling</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">24 · Scaling laws</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-parameter-count-alone-cannot-rank-models">Why Parameter Count Alone Cannot Rank Models</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-three-scaling-dimensions">The Three Scaling Dimensions</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#model-size-and-the-non-embedding-convention">Model size and the non-embedding convention</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#dataset-size-means-token-count-not-vocabulary-size">Dataset size means token count, not vocabulary size</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#architecture-still-matters">Architecture still matters</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#compute-is-a-budget-not-just-a-gpu-count">Compute Is a Budget, Not Just a GPU Count</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#flops-flops-and-pf-days">FLOPs, FLOP/s and PF-days</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-a-loss-scaling-curve">Reading a Loss Scaling Curve</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#worked-example-more-parameters-and-diminishing-gains">Worked Example: More Parameters and Diminishing Gains</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#what-the-exponent-and-coefficient-change">What the Exponent and Coefficient Change</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-exponent-controls-the-decay">The exponent controls the decay</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-coefficient-sets-the-magnitude">The coefficient sets the magnitude</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#where-fitted-values-come-from">Where fitted values come from</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-chinchilla-heuristic-training-tokens-relative-to-parameters">The Chinchilla Heuristic: Training Tokens Relative to Parameters</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#kaplan-allocation-what-changes-when-compute-increases">Kaplan Allocation: What Changes When Compute Increases?</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#four-times-the-compute">Four times the compute</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#eight-times-the-compute">Eight times the compute</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#keep-the-kaplan-and-chinchilla-results-distinct">Keep the Kaplan and Chinchilla Results Distinct</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#reading-the-gopher-and-chinchilla-comparison">Reading the Gopher and Chinchilla Comparison</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#closing-clarification-who-chooses-which-weights-to-train">Closing Clarification: Who Chooses Which Weights to Train?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-24">Action Items After Class 24</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sources">Sources</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Model scaling</li>
+      <li class="breadcrumb-item active">24 · Scaling laws</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-24-llm-scaling-laws-model-size-data-and-compute">Class 24: LLM Scaling Laws - Model Size, Data and Compute<a class="headerlink" href="#class-24-llm-scaling-laws-model-size-data-and-compute" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>Mentor:</strong> Sourangshu Pal (Paul)<br />
+<strong>Duration:</strong> 1 hour 34 minutes 22 seconds | <strong>Session:</strong> Class 24 - 18 October 2026<br />
+<strong>Recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad520e7b5ec8915a3134be5">18 October class</a></p>
+<hr />
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<p>This was a shorter introduction to <strong>training scaling laws</strong>, centered on the relationship between model parameters, training tokens and compute. Paul introduced the Kaplan and Chinchilla papers, worked through simple numerical examples, and read selected model-configuration and evaluation tables. The complete papers and their remaining equations were deferred until closer to the fine-tuning module.</p>
+<p>The announced course sequence was to move into LangChain and RAG with Divesh during Paul's absence, then return to the fine-tuning material. The closing discussion referred to the Diwali break, but the transcript did not establish a reliable complete holiday calendar. Use the course announcements for the final schedule.</p>
+<p>A student also reported missing diagrams from earlier attention discussions. Paul requested a screenshot identifying the particular diagram before he could locate and upload it. No replacement resource was supplied during this recording.</p>
+<p>The accompanying seven-page handwritten PDF, <strong>Note.pdf</strong> on the dashboard, contains the examples translated below into formulas, tables and diagrams. This session did not demonstrate a notebook or executable training implementation.</p>
+<hr />
+<h2 id="why-parameter-count-alone-cannot-rank-models">Why Parameter Count Alone Cannot Rank Models<a class="headerlink" href="#why-parameter-count-alone-cannot-rank-models" title="Permanent link">&para;</a></h2>
+<p>Paul began with three hypothetical language models: <strong>100 million, 1 billion and 10 billion parameters</strong>. Asked which would perform best, the tempting answer was the largest. He then changed the scenario: the 10B model had received less training data, while the smaller models had received more.</p>
+<p>The point was to expose missing information. A parameter count describes one aspect of a model's capacity; it does not tell us how well that capacity was trained. A smaller, sufficiently trained model can outperform a larger model that received an unsuitable allocation of data and compute. The scenario does not prove that either smaller model must win: the dataset, training recipe and evaluation still have to be specified.</p>
+<p>The first PDF page captures that comparison:</p>
+<pre class="mermaid"><code>flowchart LR
+    A["100M parameters"] --&gt; A1["More training data in the example"]
+    B["1B parameters"] --&gt; B1["More training data in the example"]
+    C["10B parameters"] --&gt; C1["Less training data in the example"]
+    A1 --&gt; D["Compare measured performance&lt;br/&gt;with the training conditions known"]
+    B1 --&gt; D
+    C1 --&gt; D</code></pre>
+<p>A related question was whether increasing parameters by <strong>100 times</strong> gives <strong>100 times better performance</strong>. There is no such linear guarantee. Even the meaning of “performance” must be pinned down: a decrease in language-model loss, an increase in benchmark accuracy, and an improvement on a particular business task are different measurements.</p>
+<p>This is the motivation for scaling laws. Instead of choosing model size from an isolated label, estimate how model size, data and compute interact under a defined training objective. The relationships studied here are empirical fits to experiments, rather than proofs that every future architecture and dataset must behave identically.</p>
+<hr />
+<h2 id="the-three-scaling-dimensions">The Three Scaling Dimensions<a class="headerlink" href="#the-three-scaling-dimensions" title="Permanent link">&para;</a></h2>
+<p>The session repeatedly returned to three quantities:</p>
+<table>
+<thead>
+<tr>
+<th>Symbol</th>
+<th>Quantity</th>
+<th>What to record</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(N\)</span></td>
+<td>Model size</td>
+<td>Parameter count, with the paper's counting convention stated</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(D\)</span></td>
+<td>Training data</td>
+<td>Token count and how it is measured</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(C\)</span></td>
+<td>Training compute</td>
+<td>Total floating-point operations available or consumed</td>
+</tr>
+</tbody>
+</table>
+<p>A scaling experiment changes these quantities in a controlled way, measures loss, and fits a relationship. If one resource becomes a bottleneck, expanding another may produce less benefit than expected. More parameters do not supply missing training examples, and a larger dataset is not useful to a run unless the compute budget allows the model to process it.</p>
+<h3 id="model-size-and-the-non-embedding-convention">Model size and the non-embedding convention<a class="headerlink" href="#model-size-and-the-non-embedding-convention" title="Permanent link">&para;</a></h3>
+<p>In the Kaplan discussion, <span class="arithmatex">\(N\)</span> specifically refers to <strong>non-embedding parameters</strong>. This convention excludes vocabulary and positional embedding matrices from that paper's model-size variable. Embeddings are still real model components with parameters, storage and computational consequences. “Non-embedding” does not mean embeddings are outside the neural network or have no effect on its actual footprint.</p>
+<p>Keep the paper's definition separate from the parameter count on a model card. A model advertised as “1B parameters” may use a different accounting convention. Likewise, the total parameter count and the number currently being optimized during fine-tuning are different quantities. Freezing a weight stops its training update; it does not remove the weight from the model. The counting convention is explicit in <a href="https://arxiv.org/pdf/2001.08361">Kaplan et al., Section 1.3 and Section 2.1</a>.</p>
+<p>Paul used normalization layers to revisit trainable and non-trainable state. The useful distinction is:</p>
+<ul>
+<li><strong>Trainable parameters</strong> receive optimizer updates when enabled for training.</li>
+<li><strong>Frozen parameters</strong> remain part of the model but are excluded from those updates in the current setup.</li>
+<li><strong>Buffers and other state</strong> can be stored with the model without being optimizer-trained parameters.</li>
+</ul>
+<p>For example, BatchNorm normally has learnable scale and bias plus running mean and variance buffers. Those running statistics change during training when tracking is enabled; they are not immutable constants. LayerNorm normally computes statistics from the current input during both training and evaluation, rather than maintaining BatchNorm-style running estimates. An ordinary linear layer's bias is also normally learnable. These distinctions prevent the introductory examples from turning into incorrect general rules. See the official <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.BatchNorm1d.html">BatchNorm</a>, <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html">LayerNorm</a> and <a href="https://docs.pytorch.org/docs/2.14/generated/torch.nn.Linear.html">Linear</a> references.</p>
+<h3 id="dataset-size-means-token-count-not-vocabulary-size">Dataset size means token count, not vocabulary size<a class="headerlink" href="#dataset-size-means-token-count-not-vocabulary-size" title="Permanent link">&para;</a></h3>
+<p><span class="arithmatex">\(D\)</span> refers to the amount of training text measured in tokens. Murtaza's closing chat question made an important distinction: <strong>training tokens are token occurrences, not the number of unique token IDs in the vocabulary</strong>. A tokenizer with a vocabulary of tens of thousands of entries can process a corpus containing billions of token occurrences.</p>
+<p>Also distinguish tokens available in a corpus from tokens actually processed by a training run. Repeated passes can revisit the same corpus tokens. When using a paper's formula, keep its dataset and training-token definitions consistent instead of silently exchanging these quantities. Paul clarified that the class examples concern the training set, rather than combining training, validation and test data into the budget.</p>
+<h3 id="architecture-still-matters">Architecture still matters<a class="headerlink" href="#architecture-still-matters" title="Permanent link">&para;</a></h3>
+<p>A chat question asked whether architecture should be one of the top dimensions. Architecture helps determine <span class="arithmatex">\(N\)</span>: layer count, hidden width and feed-forward dimensions all affect the parameter budget. However, equal parameter counts do not make all architectures equivalent. These scaling relationships are being discussed within a particular family of language-model training experiments, not as a claim that architecture can always be reduced to one integer.</p>
+<hr />
+<h2 id="compute-is-a-budget-not-just-a-gpu-count">Compute Is a Budget, Not Just a GPU Count<a class="headerlink" href="#compute-is-a-budget-not-just-a-gpu-count" title="Permanent link">&para;</a></h2>
+<p>Paul emphasized that even a large organization operates under a finite budget. A cluster may contain thousands of accelerators, yet it still has a limited training duration, hardware allocation and cost. The planning question remains: <strong>how should that available compute be divided between model size and training data?</strong></p>
+<p>A GPU count is not a complete compute measure. Accelerator type, numerical precision, runtime, utilization and communication overhead affect how many useful operations a run performs. Adding accelerators can shorten a fixed run when it parallelizes well. It does not automatically improve the final model if the actual training procedure and total useful work remain the same.</p>
+<p>This addresses Deshant's chat question: isn't compute only about making training faster? Hardware throughput and total training compute are different. Faster hardware can execute the same work sooner; a larger total budget can instead enable a different choice of model, tokens or optimization steps. Scaling laws concern that resource allocation and the loss it can achieve.</p>
+<h3 id="flops-flops-and-pf-days">FLOPs, FLOP/s and PF-days<a class="headerlink" href="#flops-flops-and-pf-days" title="Permanent link">&para;</a></h3>
+<p>The terminology is easy to mix up:</p>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>FLOPs</td>
+<td>A count of floating-point operations</td>
+</tr>
+<tr>
+<td>FLOP/s</td>
+<td>A rate of floating-point operations per second</td>
+</tr>
+<tr>
+<td>PFLOP/s</td>
+<td><span class="arithmatex">\(10^{15}\)</span> floating-point operations per second</td>
+</tr>
+<tr>
+<td>PF-day</td>
+<td>The work performed at 1 PFLOP/s for one day</td>
+</tr>
+</tbody>
+</table>
+<p>Therefore:</p>
+<div class="arithmatex">\[
+1\text{ PF-day}=10^{15}\times24\times3600
+=8.64\times10^{19}\text{ operations}.
+\]</div>
+<p>There are <strong>86,400 seconds</strong> in a day. PF-days express total work, not accelerator memory capacity. They are a unit used in the Kaplan paper, rather than a metric that is meaningful only inside that paper.</p>
+<p>When making a cost estimate, use achievable sustained throughput instead of assuming an accelerator runs continuously at its advertised peak. Precision can change throughput and memory needs, but it does not by itself replace the fitted scaling exponents with a new universal value. The class's purpose was to establish an estimate before training, rather than launching a long run and discovering its cost afterward.</p>
+<hr />
+<h2 id="reading-a-loss-scaling-curve">Reading a Loss Scaling Curve<a class="headerlink" href="#reading-a-loss-scaling-curve" title="Permanent link">&para;</a></h2>
+<p>The outcome being modeled is <strong>cross-entropy loss</strong>, the familiar objective used to train next-token language models. A lower loss means the model assigns better probability to the observed continuation on the evaluated distribution. It is not an accuracy percentage, and it should not be read as a direct percentage of task success.</p>
+<p>Paul introduced the following simplified curve:</p>
+<div class="arithmatex">\[
+L(N)=L_\infty+A N^{-\alpha}
+=L_\infty+\frac{A}{N^\alpha}.
+\]</div>
+<table>
+<thead>
+<tr>
+<th>Term</th>
+<th>Interpretation in the teaching example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><span class="arithmatex">\(L(N)\)</span></td>
+<td>Loss associated with model size <span class="arithmatex">\(N\)</span>, under the conditions being modeled</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(L_\infty\)</span></td>
+<td>The asymptotic floor approached by this fitted curve</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(A\)</span></td>
+<td>A coefficient setting the size of the reducible-loss term</td>
+</tr>
+<tr>
+<td><span class="arithmatex">\(\alpha\)</span></td>
+<td>A positive scaling exponent controlling how that term decreases</td>
+</tr>
+</tbody>
+</table>
+<p>The negative exponent is the key algebraic step:</p>
+<div class="arithmatex">\[
+N^{-\alpha}=\frac{1}{N^\alpha}.
+\]</div>
+<p>For positive <span class="arithmatex">\(N\)</span> and <span class="arithmatex">\(\alpha\)</span>, a larger <span class="arithmatex">\(N\)</span> makes the denominator larger and this contribution smaller. The curve approaches its floor rather than improving by a fixed amount every time more parameters are added.</p>
+<p><strong>The floor is not an arbitrary target that a researcher chooses to make the model reach.</strong> The class set it to 1 to make the arithmetic easy. In a fitted model, the floor is inferred or justified for the data distribution and assumptions. There is no universal rule that language-model cross-entropy must approach zero, that the floor should normally be 1, or that an observed zero loss always indicates the same problem.</p>
+<p>For source fidelity, the whiteboard curve is a general teaching form. Kaplan's displayed parameter-only power law has a different written form, <span class="arithmatex">\(L(N)=(N_c/N)^{\alpha_N}\)</span>, under its stated conditions. Treat the class's <span class="arithmatex">\(1,10,0.5\)</span> choices as hypothetical values, not coefficients quoted from Kaplan's experiments.</p>
+<hr />
+<h2 id="worked-example-more-parameters-and-diminishing-gains">Worked Example: More Parameters and Diminishing Gains<a class="headerlink" href="#worked-example-more-parameters-and-diminishing-gains" title="Permanent link">&para;</a></h2>
+<p>For the main exercise, Paul chose:</p>
+<div class="arithmatex">\[
+L_\infty=1,\qquad A=10,\qquad\alpha=0.5.
+\]</div>
+<p>The formula becomes:</p>
+<div class="arithmatex">\[
+L(N)=1+\frac{10}{\sqrt N}.
+\]</div>
+<p>The PDF's completed calculation is:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Hypothetical model size <span class="arithmatex">\(N\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(\sqrt N\)</span></th>
+<th style="text-align: right;">Reducible term <span class="arithmatex">\(10/\sqrt N\)</span></th>
+<th style="text-align: right;">Total loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">2.00</td>
+</tr>
+<tr>
+<td style="text-align: right;">400</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">0.50</td>
+<td style="text-align: right;">1.50</td>
+</tr>
+<tr>
+<td style="text-align: right;">2,500</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">0.20</td>
+<td style="text-align: right;">1.20</td>
+</tr>
+<tr>
+<td style="text-align: right;">10,000</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">1.10</td>
+</tr>
+</tbody>
+</table>
+<p>The live calculation initially used 1.25 for <span class="arithmatex">\(N=2,500\)</span>, then corrected it to <strong>1.20</strong>. The arithmetic follows directly from <span class="arithmatex">\(10/50=0.20\)</span>.</p>
+<p>Compare the successive changes:</p>
+<table>
+<thead>
+<tr>
+<th>Model-size change</th>
+<th style="text-align: right;">Parameter multiplier</th>
+<th style="text-align: right;">Absolute loss reduction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>100 to 400</td>
+<td style="text-align: right;">4 times</td>
+<td style="text-align: right;"><span class="arithmatex">\(2.00-1.50=0.50\)</span></td>
+</tr>
+<tr>
+<td>400 to 2,500</td>
+<td style="text-align: right;">6.25 times</td>
+<td style="text-align: right;"><span class="arithmatex">\(1.50-1.20=0.30\)</span></td>
+</tr>
+<tr>
+<td>2,500 to 10,000</td>
+<td style="text-align: right;">4 times</td>
+<td style="text-align: right;"><span class="arithmatex">\(1.20-1.10=0.10\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>These are <strong>loss differences</strong>, not 0.5%, 0.3% or 0.1% improvements. A relative percentage reduction would require dividing by the earlier loss. The main lesson is that much larger parameter counts can buy progressively smaller absolute improvements as the curve approaches its floor.</p>
+<p>The equal fourfold changes are especially useful to compare. Going from 100 to 400 halves the excess above the floor from 1.00 to 0.50. Going from 2,500 to 10,000 also halves that excess, from 0.20 to 0.10. The proportional change in the reducible term is the same, while the absolute gain is smaller. This is more precise than treating every row as an equal increase in model size.</p>
+<hr />
+<h2 id="what-the-exponent-and-coefficient-change">What the Exponent and Coefficient Change<a class="headerlink" href="#what-the-exponent-and-coefficient-change" title="Permanent link">&para;</a></h2>
+<h3 id="the-exponent-controls-the-decay">The exponent controls the decay<a class="headerlink" href="#the-exponent-controls-the-decay" title="Permanent link">&para;</a></h3>
+<p>To make exponents concrete, Paul held <span class="arithmatex">\(N=10\)</span> and varied <span class="arithmatex">\(\alpha\)</span>:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><span class="arithmatex">\(N\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(\alpha\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(N^\alpha\)</span></th>
+<th style="text-align: right;"><span class="arithmatex">\(N^{-\alpha}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">0.1</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">0.01</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1,000</td>
+<td style="text-align: right;">0.001</td>
+</tr>
+</tbody>
+</table>
+<p>This table explains how a positive exponent in the denominator produces a decreasing term. It does <strong>not</strong> mean a researcher can simply select a larger exponent and make an actual trained model better. In an empirical law, the exponent describes the observed relationship; changing its value on paper changes the prediction, not the underlying training result.</p>
+<p>The earlier choice of <span class="arithmatex">\(\alpha=0.5\)</span> was made because it turns the denominator into a square root. It should not be confused with the later 0.73 compute-allocation exponent. Those exponents describe different relationships.</p>
+<h3 id="the-coefficient-sets-the-magnitude">The coefficient sets the magnitude<a class="headerlink" href="#the-coefficient-sets-the-magnitude" title="Permanent link">&para;</a></h3>
+<p>Next, Paul kept <span class="arithmatex">\(N=100\)</span>, <span class="arithmatex">\(\alpha=0.5\)</span>, and <span class="arithmatex">\(L_\infty=1\)</span>, but varied <span class="arithmatex">\(A\)</span>. Since <span class="arithmatex">\(\sqrt{100}=10\)</span>:</p>
+<div class="arithmatex">\[
+L(N)=1+\frac A{10}.
+\]</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;"><span class="arithmatex">\(A\)</span></th>
+<th style="text-align: right;">Predicted loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.1</td>
+</tr>
+<tr>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">1.5</td>
+</tr>
+<tr>
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">2.0</td>
+</tr>
+<tr>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">3.0</td>
+</tr>
+</tbody>
+</table>
+<p>At the same <span class="arithmatex">\(N\)</span>, increasing <span class="arithmatex">\(A\)</span> increases the reducible-loss term. This is a comparison between curves. It is not an instruction to manually lower <span class="arithmatex">\(A\)</span> to reduce the model's measured loss.</p>
+<h3 id="where-fitted-values-come-from">Where fitted values come from<a class="headerlink" href="#where-fitted-values-come-from" title="Permanent link">&para;</a></h3>
+<p>Sohil's question at the end returned to this point: given a dataset of text, how can one estimate <span class="arithmatex">\(A\)</span>? The answer is to run training experiments under different configurations, measure their losses, and fit the coefficients and exponents to those observations. Reading the text alone does not reveal an exact coefficient.</p>
+<p>The number of experiments is a design choice, not a requirement to run exactly 100 models. Nor must <span class="arithmatex">\(A\)</span> be an integer, below 5, or shared across all datasets. Its numerical value also depends on how <span class="arithmatex">\(N\)</span> is expressed: using raw parameters rather than billions of parameters changes the coefficient needed to represent the same curve. Keep units and fitted assumptions with the formula.</p>
+<p>The practical exercise is to substitute numbers until the role of each term is clear. The research task is different: collect measurements and check that the proposed relationship predicts them adequately.</p>
+<hr />
+<h2 id="the-chinchilla-heuristic-training-tokens-relative-to-parameters">The Chinchilla Heuristic: Training Tokens Relative to Parameters<a class="headerlink" href="#the-chinchilla-heuristic-training-tokens-relative-to-parameters" title="Permanent link">&para;</a></h2>
+<p>Paul then introduced the memorable approximation:</p>
+<div class="arithmatex">\[
+D\approx20N.
+\]</div>
+<p>Here <span class="arithmatex">\(N\)</span> is the parameter count used for the estimate and <span class="arithmatex">\(D\)</span> is the training-token budget. The examples on the handwritten pages are:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Parameters <span class="arithmatex">\(N\)</span></th>
+<th style="text-align: right;">Approximate tokens <span class="arithmatex">\(20N\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">1 billion</td>
+<td style="text-align: right;">20 billion</td>
+</tr>
+<tr>
+<td style="text-align: right;">7 billion</td>
+<td style="text-align: right;">140 billion</td>
+</tr>
+<tr>
+<td style="text-align: right;">70 billion</td>
+<td style="text-align: right;">1.4 trillion</td>
+</tr>
+<tr>
+<td style="text-align: right;">1 trillion</td>
+<td style="text-align: right;">20 trillion</td>
+</tr>
+</tbody>
+</table>
+<p>Keep the scale consistent. <strong>Seven billion parameters times 20 gives 140 billion tokens</strong>, not 140 million. The 70B arithmetic is a hypothetical planning example; it does not establish the actual training dataset of a particular Llama release mentioned in conversation.</p>
+<p>The ratio is a useful way to remember the Chinchilla discussion: budget for enough training data rather than spending everything on a larger parameter count. But <strong>20 tokens per parameter is an approximate compute-optimal pretraining heuristic for the studied setting, not a universal minimum dataset size, a performance guarantee, or a ceiling on useful training</strong>. It is not a rule that a pretrained 7B model requires a new 140B-token fine-tuning dataset.</p>
+<p>Sohil explicitly asked whether 20 generalizes to every LLM. Paul clarified that the relationship is empirical and depends on the lab's data and experiments. That qualification matters more than memorizing the multiplier alone. The objective being optimized, data quality, model family and training conditions determine whether a fitted relationship transfers.</p>
+<hr />
+<h2 id="kaplan-allocation-what-changes-when-compute-increases">Kaplan Allocation: What Changes When Compute Increases?<a class="headerlink" href="#kaplan-allocation-what-changes-when-compute-increases" title="Permanent link">&para;</a></h2>
+<p>The next exercise concerned the <strong>optimal allocation of a training-compute budget</strong>. The class used the Kaplan relationships:</p>
+<div class="arithmatex">\[
+N_{\mathrm{opt}}\propto C^{0.73},
+\qquad
+D_{\mathrm{opt}}\propto C^{0.27}.
+\]</div>
+<p>“Optimal” means the choice favored by the specified loss objective and resource assumptions. It does not mean the best architecture for every downstream application. Kaplan's source uses the adjusted compute quantity <span class="arithmatex">\(C_{\min}\)</span> for this result; the class shortened the notation to <span class="arithmatex">\(C\)</span>.</p>
+<p>A proportionality does not give an absolute parameter count without its fitted coefficient. It does let us compare a new budget with an old one under the same law:</p>
+<div class="arithmatex">\[
+\frac{N_{\mathrm{new}}}{N_{\mathrm{old}}}
+\approx
+\left(\frac{C_{\mathrm{new}}}{C_{\mathrm{old}}}\right)^{0.73},
+\qquad
+\frac{D_{\mathrm{new}}}{D_{\mathrm{old}}}
+\approx
+\left(\frac{C_{\mathrm{new}}}{C_{\mathrm{old}}}\right)^{0.27}.
+\]</div>
+<h3 id="four-times-the-compute">Four times the compute<a class="headerlink" href="#four-times-the-compute" title="Permanent link">&para;</a></h3>
+<p>Using the class's exponents:</p>
+<div class="arithmatex">\[
+4^{0.73}\approx2.751,
+\qquad
+4^{0.27}\approx1.454.
+\]</div>
+<p>The resulting allocation is roughly <strong>2.75 times the parameters and 1.45 times the training tokens</strong>. The whiteboard rounded these numbers to approximately 2.7-2.77 and 1.4; the values above retain the arithmetic for the stated exponents.</p>
+<p>The PDF's final comparison table can be represented as:</p>
+<pre class="mermaid"><code>flowchart LR
+    A["Original compute budget C"] --&gt; B["New budget 4C"]
+    B --&gt; N["Kaplan allocation example&lt;br/&gt;Nopt becomes about 2.75 Nopt"]
+    B --&gt; D["Kaplan allocation example&lt;br/&gt;Dopt becomes about 1.45 Dopt"]</code></pre>
+<p>A multiplier of 1.45 means the new amount is about 145% of the old amount, or about <strong>45% additional data</strong>. It does not mean a 145% increase on top of the original amount.</p>
+<h3 id="eight-times-the-compute">Eight times the compute<a class="headerlink" href="#eight-times-the-compute" title="Permanent link">&para;</a></h3>
+<p>Similarly:</p>
+<div class="arithmatex">\[
+8^{0.73}\approx4.563,
+\qquad
+8^{0.27}\approx1.753.
+\]</div>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Compute multiplier</th>
+<th style="text-align: right;">Parameter multiplier under <span class="arithmatex">\(C^{0.73}\)</span></th>
+<th style="text-align: right;">Token multiplier under <span class="arithmatex">\(C^{0.27}\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">2.751</td>
+<td style="text-align: right;">1.454</td>
+</tr>
+<tr>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">4.563</td>
+<td style="text-align: right;">1.753</td>
+</tr>
+</tbody>
+</table>
+<p>The class's 4.56 and 1.7 approximations express the same directional idea. More compute permits both resources to grow, but these exponents allocate more of that growth toward parameters.</p>
+<p>A fourfold compute budget is not automatically the same thing as four times as many GPUs. That equivalence would require comparable devices, runtime and effective utilization. The equations describe total training work, while a cluster configuration determines how efficiently and quickly that work can be delivered.</p>
+<hr />
+<h2 id="keep-the-kaplan-and-chinchilla-results-distinct">Keep the Kaplan and Chinchilla Results Distinct<a class="headerlink" href="#keep-the-kaplan-and-chinchilla-results-distinct" title="Permanent link">&para;</a></h2>
+<p>The lecture moved between the two papers to build intuition. When reviewing the equations together, preserve their different conclusions:</p>
+<table>
+<thead>
+<tr>
+<th>Result discussed</th>
+<th>Parameter allocation</th>
+<th>Token allocation</th>
+<th>Interpretation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kaplan example</td>
+<td><span class="arithmatex">\(N_{\mathrm{opt}}\propto C^{0.73}\)</span></td>
+<td><span class="arithmatex">\(D_{\mathrm{opt}}\propto C^{0.27}\)</span></td>
+<td>Parameter count grows faster than token count</td>
+</tr>
+<tr>
+<td>Chinchilla's approximate conclusion</td>
+<td>Near <span class="arithmatex">\(C^{0.5}\)</span></td>
+<td>Near <span class="arithmatex">\(C^{0.5}\)</span></td>
+<td>Parameters and tokens grow in roughly equal proportions</td>
+</tr>
+</tbody>
+</table>
+<p>Chinchilla's Table 2 contrasts its fitted approaches with Kaplan's 0.73/0.27 values. It does not present those earlier values as its own preferred allocation. Thus the class's <span class="arithmatex">\(D\approx20N\)</span> mnemonic and the 0.73/0.27 example should not be combined as simultaneous exact constraints. See <a href="https://arxiv.org/pdf/2203.15556">Hoffmann et al., Table 2</a>.</p>
+<p>Paul's broader point was that model size, data and compute must be considered together. Read the warning about growing parameters faster than data as a resource-balance warning, rather than a rule that any such growth inevitably makes absolute loss increase. A new model can still improve while using compute less effectively than another feasible allocation. Data limitation can also introduce diminishing returns and generalization problems; it should not automatically be labeled “underfitting.”</p>
+<p>The fitted exponents are tied to a regime and experimental setup. One part of the discussion compared 0.73 with 0.74, but these can belong to different relationships in the papers. Check what is on each axis before treating nearby numbers as interchangeable rounding.</p>
+<p>The class only previewed notation such as <span class="arithmatex">\(L(N,D)\)</span>, <span class="arithmatex">\(N_{\mathrm{opt}}\)</span>, <span class="arithmatex">\(D_{\mathrm{opt}}\)</span> and minimizing a loss. It did not derive the complete constrained optimization or all of either paper's equations.</p>
+<hr />
+<h2 id="reading-the-gopher-and-chinchilla-comparison">Reading the Gopher and Chinchilla Comparison<a class="headerlink" href="#reading-the-gopher-and-chinchilla-comparison" title="Permanent link">&para;</a></h2>
+<p>The final paper walkthrough returned to the opening question: can a smaller model perform better? Paul compared <strong>Gopher, at 280B parameters, with Chinchilla, at 70B</strong>, and examined the architecture and evaluation tables.</p>
+<p>The comparison's central result was a smaller model trained with a different allocation of data at a comparable training-compute budget. Chinchilla was trained on <strong>1.4 trillion tokens</strong>. Parameter count alone would not have predicted the observed ranking.</p>
+<p>The architecture table shown in the paper provides a concrete bridge to the earlier Transformer lessons:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration</th>
+<th style="text-align: right;">Gopher</th>
+<th style="text-align: right;">Chinchilla</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Transformer layers</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">80</td>
+</tr>
+<tr>
+<td>Attention heads</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">64</td>
+</tr>
+<tr>
+<td>Key/value head size</td>
+<td style="text-align: right;">128</td>
+<td style="text-align: right;">128</td>
+</tr>
+<tr>
+<td>Model width <span class="arithmatex">\(d_{\mathrm{model}}\)</span></td>
+<td style="text-align: right;">16,384</td>
+<td style="text-align: right;">8,192</td>
+</tr>
+<tr>
+<td>Maximum learning rate</td>
+<td style="text-align: right;"><span class="arithmatex">\(4\times10^{-5}\)</span></td>
+<td style="text-align: right;"><span class="arithmatex">\(1\times10^{-4}\)</span></td>
+</tr>
+<tr>
+<td>Batch size in tokens</td>
+<td style="text-align: right;">3M to 6M</td>
+<td style="text-align: right;">1.5M to 3M</td>
+</tr>
+</tbody>
+</table>
+<p>“80 layers” here means Transformer blocks, not a sum in which each attention, normalization and feed-forward subcomponent is counted as a separate one of the 80. The table also illustrates why size is not determined by depth alone: the two models have the same block count but different widths and head counts.</p>
+<p>Batch size is expressed in <strong>tokens</strong>, not three million independent documents or requests. Paul used that scale to emphasize the infrastructure involved. The paper reports TPU-based training, so its compute results should not be relabeled as measurements from a particular GPU cluster.</p>
+<p>The evaluation discussion covered language modeling, reading comprehension, question answering, common sense, MMLU and BIG-bench. The relevant habit is to read the metric and task setup alongside the score. A lower language-model loss and a higher multiple-choice accuracy are improvements in different metrics.</p>
+<p>The displayed MMLU table reports <strong>60.0% for Gopher and 67.6% for Chinchilla in the five-shot setting</strong>, a difference of <strong>7.6 percentage points</strong>. That does not mean 7.6% relative improvement, nor does an average result mean every individual subject improved. The paper also cautions about possible train/test leakage in its language-model evaluations. These details support the broad comparison without turning it into a claim that the smaller model won every task without exception. See <a href="https://arxiv.org/pdf/2203.15556">Chinchilla, Section 4 and Tables 4-6</a>.</p>
+<p>MMLU is an example of a broad benchmark, rather than sufficient evidence that a model is suitable for every domain. Paul's recommendation was to inspect the experimental configurations and results, not merely read the abstract or memorize a model's parameter label.</p>
+<hr />
+<h2 id="closing-clarification-who-chooses-which-weights-to-train">Closing Clarification: Who Chooses Which Weights to Train?<a class="headerlink" href="#closing-clarification-who-chooses-which-weights-to-train" title="Permanent link">&para;</a></h2>
+<p>Aiswarya asked whether the model provider decides which weights remain frozen, or whether the person fine-tuning chooses. Her follow-up concerned the risk of changing too much of a pretrained model's existing capability.</p>
+<p>Where the training interface permits it, the practitioner chooses the adaptation strategy and which parameters to optimize. Three possibilities should be kept separate:</p>
+<table>
+<thead>
+<tr>
+<th>Approach</th>
+<th>What is updated?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Full fine-tuning</td>
+<td>All selected base-model parameters, potentially the entire model</td>
+</tr>
+<tr>
+<td>Partial fine-tuning</td>
+<td>A chosen subset of base-model layers or parameters</td>
+</tr>
+<tr>
+<td>Parameter-efficient fine-tuning</td>
+<td>A smaller set of adaptation parameters, often while the base weights remain frozen</td>
+</tr>
+</tbody>
+</table>
+<p>Paul used unfreezing the last two layers, then four layers, as a transfer-learning example. Training more parameters generally increases optimizer-state and gradient work, although actual runtime also depends on the implementation. It does not imply a universal requirement that 60-70% remain frozen, or that updating more than the last 20-30% is prohibited. Full fine-tuning is an established alternative; the official <a href="https://huggingface.co/docs/peft/quicktour">PEFT overview and quicktour</a> explicitly distinguish it from parameter-efficient methods.</p>
+<p>The concern about losing useful pretrained behavior is valid. Evaluate both the target task and the capabilities that must be retained. The class did not conduct a forgetting experiment or establish a safe percentage of weights to change.</p>
+<p>Finally, being able to modify weights requires suitable access, tooling and applicable permissions. Calling a model “open source” is not the technical condition that determines whether its gradients can be enabled. Open weights and an open-source AI release are not interchangeable labels; the <a href="https://opensource.org/ai/open-source-ai-definition">Open Source Initiative's definition</a> includes requirements beyond access to parameter files.</p>
+<p>This was a conceptual Q&amp;A clarification. The class did not implement layer freezing, LoRA or a fine-tuning loop.</p>
+<hr />
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Paul deferred the full scaling-paper walkthrough, the remaining loss and optimization equations, and their deeper training applications until before the fine-tuning module. Students were asked to browse the papers' summaries, graphs and tables in preparation, even if all the derivations were not yet clear.</p>
+<p>The next announced teaching block was LangChain and RAG with Divesh. OCR and vision-language material were left for the multimodal stage. Mixture of experts and quantization were not started as substitutes for the planned sequence. A brief prediction about future reinforcement-learning progress was an outlook comment, not a study of RL scaling laws in this session.</p>
+<hr />
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Which is best: the 100M, 1B or 10B model?</td>
+<td>Parameter count alone is insufficient. Compare the data, training compute and actual evaluation rather than inferring a ranking from size.</td>
+</tr>
+<tr>
+<td>Does 100 times more parameters give 100 times better performance?</td>
+<td>No linear improvement follows from that change. The metric, other resources and empirical relationship matter.</td>
+</tr>
+<tr>
+<td>Which parameters does <span class="arithmatex">\(N\)</span> count?</td>
+<td>In the Kaplan discussion it counts non-embedding parameters. This is a paper-specific convention; embeddings remain real parameters and consume resources.</td>
+</tr>
+<tr>
+<td>Are frozen weights absent from model size?</td>
+<td>No. Total model parameters and currently trainable parameters are different counts. Freezing changes the optimization setup.</td>
+</tr>
+<tr>
+<td>What is the normalization example of non-trainable state?</td>
+<td>BatchNorm can maintain running mean and variance buffers. They are updated statistics rather than optimizer-trained weights; LayerNorm normally uses current-input statistics instead.</td>
+</tr>
+<tr>
+<td>Deshant: doesn't compute only make training faster?</td>
+<td>Faster hardware can shorten the same work. A larger total training budget can instead support a different model/data allocation and a different achievable loss.</td>
+</tr>
+<tr>
+<td>Deshant: where does architecture fit among the dimensions?</td>
+<td>Architecture determines much of the parameter count, but equal counts do not make every architecture equivalent. The laws apply within their experimental setting.</td>
+</tr>
+<tr>
+<td>What does <span class="arithmatex">\(L(N)\)</span> represent?</td>
+<td>The loss associated with a model size under the modeled conditions. Here the training objective is cross-entropy, not an accuracy percentage.</td>
+</tr>
+<tr>
+<td>Is <span class="arithmatex">\(L_\infty=1\)</span> a universal goal?</td>
+<td>No. One was chosen for the arithmetic example; an actual asymptotic floor depends on the fitted setting.</td>
+</tr>
+<tr>
+<td>Is the loss for 2,500 parameters 1.25?</td>
+<td>The live calculation was corrected to 1.20: <span class="arithmatex">\(1+10/50=1.20\)</span>.</td>
+</tr>
+<tr>
+<td>Are the 0.50, 0.30 and 0.10 changes percentages?</td>
+<td>They are absolute differences in the toy loss values. Relative percentages need a denominator.</td>
+</tr>
+<tr>
+<td>Can a researcher choose a higher <span class="arithmatex">\(\alpha\)</span> or lower <span class="arithmatex">\(A\)</span> to improve the model?</td>
+<td>Changing a formula changes its prediction. Real fitted values must be supported by measured training results.</td>
+</tr>
+<tr>
+<td>Sohil Sharma: how is <span class="arithmatex">\(A\)</span> estimated from a text dataset?</td>
+<td>Train configurations, measure their losses and fit the relationship. It cannot be read directly from words in the dataset, and it need not be an integer or below 5.</td>
+</tr>
+<tr>
+<td>Sohil Sharma: where does the multiplier 20 come from?</td>
+<td>It summarizes empirical compute-optimal training analysis. It is not an axiom or a universal minimum token count.</td>
+</tr>
+<tr>
+<td>Sohil Sharma's follow-up: does the same ratio apply to any LLM?</td>
+<td>No. Data, model family, training setup and the optimization objective affect the applicable relationship.</td>
+</tr>
+<tr>
+<td>Murtaza: are training tokens unique tokens?</td>
+<td>They are total token occurrences, not vocabulary entries. The class examples concern the training set; check whether a source counts corpus size or processed tokens.</td>
+</tr>
+<tr>
+<td>Why not always use <span class="arithmatex">\(D=20N\)</span> together with the 0.73/0.27 exponents?</td>
+<td>They summarize different empirical allocation results. Chinchilla contrasts its near-equal scaling conclusion with Kaplan's earlier allocation.</td>
+</tr>
+<tr>
+<td>Does FP16 affect the analysis?</td>
+<td>Precision can affect memory, throughput and numerical behavior. It does not directly turn a fitted exponent into a precision-independent universal rule.</td>
+</tr>
+<tr>
+<td>What does a fourfold compute budget imply in the Kaplan exercise?</td>
+<td>About 2.75 times the parameters and 1.45 times the tokens for the stated exponents, rather than a fourfold increase in each.</td>
+</tr>
+<tr>
+<td>Aiswarya: who chooses what is frozen during fine-tuning?</td>
+<td>The practitioner chooses the trainable subset or adaptation method where the training interface allows it. A managed provider may constrain those choices.</td>
+</tr>
+<tr>
+<td>Aiswarya's follow-up: can changing more weights damage existing capabilities?</td>
+<td>It can change retained behavior, so evaluate it. There is no universal rule limiting all fine-tuning to the last 20-30% of weights.</td>
+</tr>
+<tr>
+<td>Does weight modification require an “open-source” model?</td>
+<td>It requires suitable access and permissions. Open weights, a trainable service and an open-source AI release are distinct concepts.</td>
+</tr>
+<tr>
+<td>What about OCR, vision-language models, MoE and quantization?</td>
+<td>These were deferred to their relevant modules. The class did not establish that text-model exponents transfer unchanged to all multimodal settings.</td>
+</tr>
+</tbody>
+</table>
+<p>Mosine/Mohsin was invited to speak, but no substantive question is recorded. A briefly called name rendered as Rashmi likewise has no separate substantive exchange. These invitations do not supply additional technical answers.</p>
+<hr />
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A parameter count is a resource description, not a model-quality ranking.</li>
+<li>Scaling analysis connects model parameters, training tokens and total training compute.</li>
+<li>Keep non-embedding parameter counts, total parameters and trainable parameters distinct.</li>
+<li>Embedding matrices remain part of the model even when a paper excludes them from <span class="arithmatex">\(N\)</span>.</li>
+<li>FLOP/s is a rate; PF-days measure total work. One PF-day is <span class="arithmatex">\(8.64\times10^{19}\)</span> operations.</li>
+<li>The class's <span class="arithmatex">\(1+10/\sqrt N\)</span> curve is a hypothetical arithmetic example.</li>
+<li>Its losses are 2.00, 1.50, 1.20 and 1.10; its successive reductions are absolute loss units.</li>
+<li>Fitted coefficients and exponents describe measured behavior. They are not free controls for improving a trained model.</li>
+<li><span class="arithmatex">\(D\approx20N\)</span> is an approximate pretraining compute-allocation heuristic, not a universal minimum or a fine-tuning dataset rule.</li>
+<li>Kaplan's 0.73/0.27 allocation and Chinchilla's near-equal allocation are different results.</li>
+<li>A multiplier such as 1.45 means 45% more than the original amount.</li>
+<li>Read benchmark scores with their task, metric, prompting setup and limitations.</li>
+<li>Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-24">Action Items After Class 24<a class="headerlink" href="#action-items-after-class-24" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Recalculate <span class="arithmatex">\(1+10/\sqrt N\)</span> for all four model sizes and verify the corrected 1.20 result.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Reproduce the fixed-<span class="arithmatex">\(N\)</span> table for <span class="arithmatex">\(A=1,5,10,20\)</span>, explaining what is held constant.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Calculate fourfold and eightfold compute changes using the 0.73 and 0.27 exponents.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Explain in your own words why the <span class="arithmatex">\(20N\)</span> mnemonic and Kaplan allocation are not one simultaneous universal rule.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Browse the Kaplan paper's summary and notation, paying attention to what <span class="arithmatex">\(N\)</span>, <span class="arithmatex">\(D\)</span> and compute mean.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read Chinchilla's allocation comparison, model-configuration table and benchmark results; distinguish model size from quality.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> For a hypothetical training plan, record the parameter convention, token budget, compute units and evaluation objective before estimating resources.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review trainable parameters, frozen weights and normalization buffers before the fine-tuning module.</li>
+</ul>
+<hr />
+<h2 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">&para;</a></h2>
+<p>The primary source is the <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad520e7b5ec8915a3134be5">full Class 24 recording and transcript</a>, original transcript <strong>GMT20261018-143238_Recording.cutfile.20261018194139540.transcript.vtt</strong>. The complete accompanying seven-page <strong>Note.pdf</strong> was also inspected.</p>
+<p>The original research references discussed in class are <a href="https://arxiv.org/abs/2001.08361">Scaling Laws for Neural Language Models - Kaplan et al.</a> and <a href="https://arxiv.org/abs/2203.15556">Training Compute-Optimal Large Language Models - Hoffmann et al.</a>. Selected equations, notation and comparison tables were checked against those papers. Official framework references linked in the relevant sections clarify normalization state and fine-tuning terminology.</p>
+<p><em>Notes compiled from the full Class 24 transcript and accompanying handwritten notes - “LLM Scaling Laws - Model Size, Data and Compute,” Production AI / LLM Engineering, Krish Naik Academy. No executable code was shown in this session.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html" class="btn btn-neutral float-left" title="23 · FlashAttention and SDPA"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Course_Quick_Revision.html" class="btn btn-neutral float-right" title="Quick revision">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Course_Quick_Revision.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

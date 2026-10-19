@@ -1,6 +1,6 @@
 # Production AI / LLM Engineering — Quick Revision
 
-Key pointers from all 22 documented classes. Open the linked chapter for explanations, code, diagrams, Q&A, and practice actions.
+Key pointers from all 24 documented classes. Open the linked chapter for explanations, code, diagrams, Q&A, and practice actions.
 
 [Course index](Course_Notes_Index.md)
 
@@ -572,5 +572,46 @@ Key pointers from all 22 documented classes. Open the linked chapter for explana
 - Fast and slow channels come from different dimension-pair frequencies, not distance-dependent changes in one pair's speed.
 - Periodic trigonometry and relative offsets do not guarantee reliable inference at arbitrary context lengths.
 - Full DeepSeek MLA–RoPE integration, FlashAttention, SDPA, and scaling laws remained future work.
+
+---
+
+## Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution
+
+[Full class notes](Class_23_FlashAttention_and_PyTorch_SDPA_Notes.md)
+
+- Attention mathematics, attention architecture, cache organization, and kernel execution are different layers of design.
+- The dense score shape is `B × H × query_length × key_length`; a square full-sequence case creates the familiar quadratic storage.
+- Doubling both sequence axes quadruples the score tensor. Halving bytes per element does not remove that growth.
+- Tiling changes the working set and memory traffic while preserving the required interactions.
+- Each query's normalization must cover every allowed key, including keys in other tiles.
+- “Online” means incremental state updates; it does not by itself describe parallel scheduling.
+- Weighted contributions accumulate across key blocks; completed output rows assemble across query chunks.
+- GPU capacity, bandwidth, on-chip storage, and arithmetic throughput are different constraints.
+- SDPA can dispatch to FlashAttention; “FlashAttention versus SDPA” is not necessarily a comparison of disjoint algorithms.
+- A forced backend can fail where an automatic SDPA call succeeds through another eligible implementation.
+- The L4 sweep ranges from 1.29× to 12.46×; speedup is a measured property of a configuration.
+- Peak additional allocation is not total device memory.
+- Successful eager generation does not establish that an unexecuted FlashAttention model-loading cell succeeded.
+- The complete stable online-softmax formula walkthrough and concrete fine-tuning/runtime configuration remained next steps.
+
+---
+
+## Class 24: LLM Scaling Laws - Model Size, Data and Compute
+
+[Full class notes](Class_24_LLM_Scaling_Laws_Notes.md)
+
+- A parameter count is a resource description, not a model-quality ranking.
+- Scaling analysis connects model parameters, training tokens and total training compute.
+- Keep non-embedding parameter counts, total parameters and trainable parameters distinct.
+- Embedding matrices remain part of the model even when a paper excludes them from \(N\).
+- FLOP/s is a rate; PF-days measure total work. One PF-day is \(8.64\times10^{19}\) operations.
+- The class's \(1+10/\sqrt N\) curve is a hypothetical arithmetic example.
+- Its losses are 2.00, 1.50, 1.20 and 1.10; its successive reductions are absolute loss units.
+- Fitted coefficients and exponents describe measured behavior. They are not free controls for improving a trained model.
+- \(D\approx20N\) is an approximate pretraining compute-allocation heuristic, not a universal minimum or a fine-tuning dataset rule.
+- Kaplan's 0.73/0.27 allocation and Chinchilla's near-equal allocation are different results.
+- A multiplier such as 1.45 means 45% more than the original amount.
+- Read benchmark scores with their task, metric, prompting setup and limitations.
+- Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.
 
 ---

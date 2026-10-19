@@ -1,9 +1,9 @@
 # Production AI / LLM Engineering — Course Notes
 
 **Provider:** Krish Naik Academy
-**Released classes documented:** 22 · 19 July 2026–10 October 2026
-**Recording lengths:** approximately 83 hours 15 minutes
-**Collection:** 964 live Q&A entries · 89 diagrams
+**Released classes documented:** 24 · 19 July 2026–18 October 2026
+**Recording lengths:** approximately 87 hours 51 minutes
+**Collection:** 1018 live Q&A entries · 95 diagrams
 
 [Course dashboard](https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128) · [Instructor resource hub](https://krishnaikacademy.notion.site/Production-AI-Engineering-3a8eba9593d080d7b876e8ced7d541f1)
 
@@ -37,10 +37,12 @@ This collection covers the available recordings documented through the latest se
 | 20 | 3 Oct 2026 | [KV Cache — Inference, Memory Math, and Multi-Query Attention](Class_20_KV_Cache_Notes.md) | 3hr 25min 10s |
 | 21 | 4 Oct 2026 | [Attention Variants — GQA, PagedAttention, and the MLA Introduction](Class_21_Attention_Variants_Notes.md) | 2hr 56min 56s |
 | 22 | 10 Oct 2026 | [Multi-Head Latent Attention and Rotary Position Embeddings](Class_22_MLA_and_RoPE_Notes.md) | 3hr 8min 57s |
+| 23 | 17 Oct 2026 | [FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution](Class_23_FlashAttention_and_PyTorch_SDPA_Notes.md) | 3hr 2min 9s |
+| 24 | 18 Oct 2026 | [LLM Scaling Laws - Model Size, Data and Compute](Class_24_LLM_Scaling_Laws_Notes.md) | 1hr 34min 22s |
 
 ## Preparation resources
 
-The three prerequisite entries in the dashboard are external preparation resources. Their links are kept here alongside the 22 live-class notes.
+The three prerequisite entries in the dashboard are external preparation resources. Their links are kept here alongside the 24 live-class notes.
 
 - [Python prerequisites playlist](https://www.youtube.com/watch?v=bPrmA1SEN2k&list=PLZoTAELRMXVNUL99R4bDlVYsncUNvwUBB)
 - [Complete Machine Learning NLP One Shot](https://www.youtube.com/watch?v=ENLEjGozrio)
@@ -59,6 +61,7 @@ The three prerequisite entries in the dashboard are external preparation resourc
 - [Structured LLM and DSPy notebooks](https://github.com/sourangshupal/structured-llm-notebooks)
 - [Fine-tuning resources](https://krishnaikacademy.notion.site/Finetuning-Transformers-3e7eba9593d08030aedaeedd07002e65)
 - [KV cache and attention variants](https://github.com/sourangshupal/kv-cache-attention-variants)
+- [FlashAttention and SDPA notebooks](https://krishnaikacademy.notion.site/FLASH-SDPA-3fdeba9593d08074a0eaeba63ab676fa)
 
 Specific notebooks, original transcript filenames, PDF names, and verification references appear in the corresponding class notes. No class timestamps are included.
 

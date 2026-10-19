@@ -1,9 +1,9 @@
 # Production AI / LLM Engineering — Course Notes
 
 **Provider:** Krish Naik Academy
-**Released classes documented:** 22 · 19 July 2026–10 October 2026
-**Recording lengths:** approximately 83 hours 15 minutes
-**Collection:** 964 live Q&A entries · 89 diagrams
+**Released classes documented:** 24 · 19 July 2026–18 October 2026
+**Recording lengths:** approximately 87 hours 51 minutes
+**Collection:** 1018 live Q&A entries · 95 diagrams
 
 [Course dashboard](https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128) · [Instructor resource hub](https://krishnaikacademy.notion.site/Production-AI-Engineering-3a8eba9593d080d7b876e8ced7d541f1)
 
@@ -35,6 +35,8 @@ This collection covers the available recordings documented through the latest se
 - [Class 20: KV Cache — Inference, Memory Math, and Multi-Query Attention](#class-20)
 - [Class 21: Attention Variants — GQA, PagedAttention, and the MLA Introduction](#class-21)
 - [Class 22: Multi-Head Latent Attention and Rotary Position Embeddings](#class-22)
+- [Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution](#class-23)
+- [Class 24: LLM Scaling Laws - Model Size, Data and Compute](#class-24)
 
 ---
 
@@ -13647,6 +13649,1132 @@ The table includes substantive in-class chat clarifications and the final open f
 *Compiled from the full Class 22 transcript, “10 Oct Kv cache,” Production AI / LLM Engineering, Krish Naik Academy. Original transcript: `GMT20261010-143237_Recording.cutfile.20261011043146773.transcript.vtt`; all eight parts and the final Q&A were read. All 20 pages of the course-linked `MLA rope .pdf` were visually inspected. Source recording and PDF links appear above.*
 
 *Companion source review covered the complete current instructor-repository README, `06_mla.ipynb` (9 cells), `07_rope.ipynb` (11 cells, including saved outputs/plot), their corresponding documentation, and `mla.py`, `rope.py`, and `memory_calc.py`. Exact excerpts are labeled as companion code. The repository's current contents may differ from the live-session version; saved outputs were not independently rerun. Technical qualifications were checked against DeepSeek-V2, RoFormer, the original Transformer paper, Position Interpolation, and PlayPlain's own explanation. No model training, model API call, or GPU job was performed.*
+
+[Back to course index](Course_Notes_Index.md)
+
+---
+
+<a id="class-23"></a>
+
+# Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution
+### Production AI / LLM Engineering | Krish Naik Academy
+
+**Mentor:** Sourangshu Pal (Paul)  
+**Duration:** 3 hours 2 minutes 9 seconds | **Session:** Class 23 — 17 October 2026  
+**Recording:** [17 October class](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad3d4456f9687799d40e8c6)
+
+---
+
+## Quick Updates
+
+The class covers **FlashAttention**, GPU memory traffic, **PyTorch's scaled dot product attention API**, and practical comparisons with manually implemented attention. Its goal is to execute the attention calculation with less intermediate storage and data movement while preserving its mathematical result.
+
+The [FLASH / SDPA course resource page](https://krishnaikacademy.notion.site/FLASH-SDPA-3fdeba9593d08074a0eaeba63ab676fa) supplies the 13-page [FLASH & SDPA.pdf](https://drive.google.com/file/d/1SmAJcJad-ymfqZMXE99TUHAHVxF-tffi/view?usp=sharing) and the exact [FLASHATT notebook](https://colab.research.google.com/drive/1etkVdef6-JvnLzPBWAo1OBy22XF_3M-q?usp=sharing) and [SDPA notebook](https://colab.research.google.com/drive/1crIZV8jLxvF8uK-LvXydTmdB5g1qo0Tq?usp=sharing). Their saved cells and outputs resolve several approximate numbers spoken during the demonstration. Results below are supplied observations, not experiments rerun for these notes.
+
+Paul also pushed missing notebooks to the existing [attention variants repository](https://github.com/sourangshupal/kv-cache-attention-variants/tree/main). He distinguished PagedAttention's previously discussed idea from the complete vLLM setup, which remained for deployment. No new full DeepSeek MLA–RoPE integration was worked through in this session.
+
+Kaplan/Chinchilla scaling laws were announced for the next class. Following the earlier poll, LangChain and RAG were planned next, with Divesh teaching the initial framework classes. Fine-tuning and later modules would follow. These are the instructor's announced sequence, not topics implemented here.
+
+---
+
+## Which Problem Is Being Optimized?
+
+The opening recap separated several complementary techniques:
+
+| Technique | Main concern in this module |
+|---|---|
+| KV caching | Reuse previous token-dependent keys and values during generation |
+| PagedAttention | Organize persistent KV storage in blocks and manage sharing/allocation |
+| MQA / GQA | Reduce the number of distinct KV heads retained |
+| MLA | Represent key/value information through a compact learned latent |
+| FlashAttention | Execute attention while avoiding large materialized score/probability intermediates and reducing global-memory traffic |
+| PyTorch SDPA | Expose an attention operation through an API that can dispatch to different implementations |
+
+FlashAttention is an execution technique. It does not inherently replace a trained model's MHA with GQA, remove its learned projections, or improve its answer accuracy. Those are different design questions. It can be used alongside compatible attention architectures and caching strategies.
+
+Paul repeatedly returned to **GPU traffic management**: a processor can have substantial arithmetic capacity yet spend time waiting for data. The attention computation must move inputs, intermediate values, and outputs through a memory hierarchy. Reducing this traffic can be as consequential as reducing arithmetic.
+
+The first implementation distinction is therefore between the *mathematical operation* and the *way it is executed*. FlashAttention and an ordinary dense implementation can compute the same attention function while having very different temporary memory requirements.
+
+---
+
+## Why a Dense Attention Matrix Becomes Expensive
+
+The familiar formula is:
+
+\[
+O=\operatorname{softmax}\left(\frac{QK^T}{\sqrt{d_k}}\right)V.
+\]
+
+Softmax normalizes over the key positions for each query row. An allowed-position mask can be included before normalization. In the initial noncausal examples, every query can compare with every key.
+
+With `N` tokens, a single batch item and head produces an `N × N` score matrix. Eight tokens therefore produce 64 score entries. These are **score entries**, not a complete count of floating-point operations: forming each score also uses the query/key width.
+
+For batch size `B`, head count `H`, and equal query/key lengths `N`, one materialized score tensor has:
+
+\[
+BH N^2\quad\text{elements},\qquad
+BH N^2s\quad\text{bytes},
+\]
+
+where `s` is the number of bytes per stored element. FP16 uses two bytes; FP32 uses four.
+
+### The class's batch-two, eight-head example
+
+\[
+2\times8\times1024\times1024=16{,}777{,}216\text{ elements}.
+\]
+
+That is **32 MiB in FP16** or **64 MiB in FP32** for one score tensor. The handwritten notes round these to approximately 32/64 MB. Binary units make the accounting exact.
+
+Keeping batch and head counts fixed gives:
+
+| Sequence length | One FP16 score tensor | One FP32 score tensor |
+|---:|---:|---:|
+| 1,024 | 32 MiB | 64 MiB |
+| 2,048 | 128 MiB | 256 MiB |
+| 4,096 | 512 MiB | 1 GiB |
+| 8,192 | 2 GiB | 4 GiB |
+| 32,768 | 32 GiB | 64 GiB |
+
+Doubling the sequence length multiplies this score storage by four. The approximately 1 GiB FP32 example corresponds to length 4,096 under these settings, not length 1,024.
+
+This table counts one intermediate tensor. Q/K/V, probabilities, final outputs, model parameters, gradients, optimizer state, and other activations can add further storage. A machine with enough capacity for the score tensor alone can still run out of memory during a real workload.
+
+### Causal masking and decode are separate qualifications
+
+Darshan asked whether attention should see fewer tokens. In a causal decoder, future positions are excluded. A straightforward dense implementation can nevertheless allocate an entire square tensor and then mask it. More efficient causal kernels can skip work on masked regions, while dense causal attention remains quadratic in sequence length asymptotically.
+
+The square example describes a full sequence, as used in training or prompt processing. A single-token cached decode step has one query attending to an existing prefix, so its score shape is generally `1 × prefix_length` per head. It should not be assigned the same square score allocation as a full-sequence call.
+
+Reducing precision changes the bytes per element; it does not remove the quadratic growth of the dense score tensor. Linear-attention architectures address a different algorithmic question. FlashAttention preserves ordinary softmax attention and changes its execution.
+
+---
+
+## Tiling: All the Relevant Interactions, a Smaller Working Set
+
+Paul divided an eight-token example into two query blocks and two key/value blocks. `Q1` contains query rows 1–4 and `Q2` rows 5–8; the key and value blocks use the same token ranges.
+
+The score blocks are:
+
+\[
+S_{11}=\frac{Q_1K_1^T}{\sqrt{d_k}},\quad
+S_{12}=\frac{Q_1K_2^T}{\sqrt{d_k}},\quad
+S_{21}=\frac{Q_2K_1^T}{\sqrt{d_k}},\quad
+S_{22}=\frac{Q_2K_2^T}{\sqrt{d_k}}.
+\]
+
+Each is `4 × 4`, containing 16 scores. There are four blocks, so the total conceptual score count is still 64. Query block one must interact with both key blocks; restricting it to only `K1` would change the attention pattern.
+
+```mermaid
+flowchart TD
+    Q1["Q1: tokens 1–4"] --> S11["Q1 × K1ᵀ<br/>4 × 4 scores"]
+    Q1 --> S12["Q1 × K2ᵀ<br/>4 × 4 scores"]
+    Q2["Q2: tokens 5–8"] --> S21["Q2 × K1ᵀ<br/>4 × 4 scores"]
+    Q2 --> S22["Q2 × K2ᵀ<br/>4 × 4 scores"]
+    S11 --> A["Process blocks with shared<br/>row-normalization state"]
+    S12 --> A
+    S21 --> B["Process blocks with shared<br/>row-normalization state"]
+    S22 --> B
+    A --> O1["Output for query rows 1–4"]
+    B --> O2["Output for query rows 5–8"]
+```
+
+This follows PDF pages 4–5. The blocks are a partition of the original interactions. The benefit comes from processing manageable blocks without keeping the entire score matrix resident as a separate global-memory object.
+
+“Tiling” is not simply creating all four pieces and retaining them forever. That would preserve most of the original storage burden. A useful implementation computes a block, updates the required state, consumes its contribution to the output, and reuses its temporary space.
+
+Likewise, avoiding the full matrix does not turn exact dense attention into a linear-time algorithm. The allowed query/key interactions still have to be computed. The savings concern intermediate storage, memory traffic, and a better organization of work.
+
+---
+
+## GPU Memory: Capacity, Bandwidth, and On-Chip Storage
+
+The class used a high-level GPU diagram to explain why the location of an intermediate matters.
+
+| Component | Role relevant to the lesson |
+|---|---|
+| GPU global memory | Holds large tensors, parameters, and other long-lived allocations; may use HBM or GDDR technology |
+| SM: Streaming Multiprocessor | Executes groups of GPU threads and contains compute resources, registers, and shared-memory/cache resources |
+| Registers | Very fast storage associated with executing threads |
+| Shared memory / on-chip SRAM | Small, fast working storage used cooperatively by threads in a block |
+| L1 and L2 caches | Help serve memory accesses; capacities, sharing, and organization depend on the architecture |
+| CUDA/Tensor Core execution resources | Perform arithmetic; useful throughput also depends on supplying operands efficiently |
+
+An SM is a processing unit, not another name for GPU RAM. NVIDIA's execution model is commonly described as **SIMT**, or single instruction, multiple threads. The SIMD comparison in the discussion provides intuition, but the two terms should not be treated as an identical hardware specification.
+
+“HBM” means **high-bandwidth memory**. It is not a universal name for every GPU's VRAM. L4 uses GDDR6, while the H100 configuration discussed uses HBM. L4 is also a data-center product, so “enterprise GPU” does not by itself imply HBM.
+
+The class compared an L4 with 24 GB and roughly 300 GB/s memory bandwidth against an H100 configuration with 80 GB and bandwidth in the TB/s range. NVIDIA lists L4's capacity/bandwidth in its [product specifications](https://www.nvidia.com/en-eu/data-center/l4/) and documents H100's memory and on-chip organization in the [Hopper tuning guide](https://docs.nvidia.com/cuda/hopper-tuning-guide/index.html). Exact H100 figures depend on its variant; the approximate table generated during class should not substitute for that variant's specifications.
+
+**Capacity** says how much can be stored. **Bandwidth** says how quickly bytes can move. Neither is a direct measure of arithmetic operations per second. The purpose of the comparison was to identify a potential data-movement bottleneck, not to derive GPU speed from one number.
+
+### What FlashAttention changes in the data flow
+
+The ordinary multi-operation path can write the score tensor to global memory, read it for scaling/softmax, write probabilities, and read them again for multiplication with V. Fused tiled computation keeps smaller intermediates in fast storage and avoids these large materialized tensors.
+
+```mermaid
+flowchart TD
+    subgraph Dense["Materialized dense path"]
+        direction TB
+        D1["Q, K, V in global memory"] --> D2["Compute and store full score matrix"]
+        D2 --> D3["Read scores; normalize;<br/>store probabilities"]
+        D3 --> D4["Read probabilities and V;<br/>produce output"]
+    end
+    subgraph Tiled["FlashAttention working-set idea"]
+        direction TB
+        T1["Load a Q / K / V tile<br/>into fast working storage"] --> T2["Compute score block"]
+        T2 --> T3["Update row statistics<br/>and weighted output state"]
+        T3 --> T4{"More key/value tiles?"}
+        T4 -->|"Yes; reuse temporary storage"| T1
+        T4 -->|"No"| T5["Write completed output tile<br/>to global memory"]
+    end
+```
+
+The classroom walkthrough and companion notebook motivate this loop. It is a conceptual data-flow diagram, not a claim that every version uses one identical GPU scheduling order. Fewer global-memory transactions can help even if the full tensor would otherwise fit.
+
+This also does not mean CUDA **Unified Memory** has been enabled. The SDPA discussion's “unified” idea is an API unifying attention implementations; CUDA Unified Memory is a separate memory-management facility.
+
+---
+
+## Online Softmax: Global Normalization from Incremental Updates
+
+Tiling creates an important dependency: a query row's softmax denominator depends on **all allowed keys**, including keys in other blocks. Independently normalizing each small score block would give the wrong global probabilities.
+
+The class returned to this several times, including Jatin's question and Murtaza's final clarification. The intended operation is one global row-wise softmax evaluated incrementally. “Online” describes updating sufficient state as blocks arrive; it does not mean internet access, and it is not defined by whether the kernel runs parallel work.
+
+For one query row, the desired weighted output can be written as:
+
+\[
+o_i=\frac{\sum_j e^{s_{ij}}v_j}{\sum_j e^{s_{ij}}}.
+\]
+
+The key insight is that the implementation needs the correct normalization and weighted output, not an independently normalized probability matrix retained for every tile.
+
+A numerically stable implementation maintains a running row maximum, a normalization sum in that maximum's scale, and a correspondingly scaled weighted-value accumulator. If a later block increases the maximum, earlier contributions must be rescaled before they are combined. This is the precise qualification behind the class's “running normalization,” “K statistics,” and “running output” language. [FlashAttention paper, algorithm and recomputation](https://arxiv.org/html/2205.14135).
+
+Consequently:
+
+- Contributions across **key blocks for one query row** are accumulated with compatible normalization.
+- Completed outputs for **different query-row blocks** occupy different rows and can be assembled in order.
+- Raw values `V1 + V2 + V3 + V4` are not the attention output by themselves; the contributions must be weighted by the correctly normalized scores.
+- Discarding a temporary score block after its contribution has been incorporated is different from discarding the normalization state needed by later blocks.
+
+The running state need not be a growing Python list of all scores. The purpose is to keep a small summary and output accumulator while avoiding the full quadratic intermediate.
+
+FlashAttention and memory-efficient attention are not separated by one using correct global softmax and the other using an incorrect per-tile version. Both must preserve the chosen attention function. The lecture's tiling-versus-chunking distinction is useful for its examples, but it is not a universal definition of two different normalization functions.
+
+Paul explicitly offered to work through the online-softmax formulas in more detail in the next class. This session established the conceptual running-state requirement; it did not deliver a complete numerical derivation of the stable recurrence.
+
+### Backpropagation and parallel work
+
+Abhishek asked about backward propagation. These attention implementations support training and gradients; changing the execution strategy does not remove backpropagation. The implementation can, however, differ substantially: FlashAttention recomputes intermediate blocks during backward to avoid retaining the large attention matrix. [FlashAttention, recomputation](https://arxiv.org/html/2205.14135).
+
+Murtaza also asked whether the tiles must execute sequentially. GPUs can distribute work across batches, heads, query blocks, and other subdivisions. The original and later FlashAttention versions organize this parallel work differently. Calling the method online does not imply that the entire attention operation is a single serial loop. The [FlashAttention-2 paper](https://arxiv.org/abs/2307.08691) specifically studies better parallelism and work partitioning.
+
+---
+
+## Query Chunking: Follow the Shapes Through to the Output
+
+The second whiteboard example starts with eight tokens and width four:
+
+- Q: `8 × 4`
+- K: `8 × 4`
+- V: `8 × 4`
+
+First split only the query rows into four chunks. Each `Qi` contains two tokens and therefore has shape `2 × 4`. Every chunk still attends to all eight keys.
+
+For the first query chunk:
+
+\[
+S_1=\frac{Q_1K^T}{\sqrt{4}},\qquad
+(2\times4)(4\times8)=2\times8.
+\]
+
+After row-wise softmax, `A1` still has shape `2 × 8`. Multiplication by V gives:
+
+\[
+O_1=A_1V,\qquad (2\times8)(8\times4)=2\times4.
+\]
+
+Repeat this for each query chunk and concatenate the **output rows**:
+
+\[
+O=\operatorname{Concat}_{rows}(O_1,O_2,O_3,O_4)\in\mathbb{R}^{8\times4}.
+\]
+
+```mermaid
+flowchart LR
+    Q["Q: 8 × 4"] --> Q1["Q1: rows 1–2<br/>2 × 4"]
+    Q --> Q2["Q2: rows 3–4<br/>2 × 4"]
+    Q --> Q3["Q3: rows 5–6<br/>2 × 4"]
+    Q --> Q4["Q4: rows 7–8<br/>2 × 4"]
+    KV["All K and V<br/>8 × 4 each"] --> A["Each query chunk attends<br/>over all allowed keys"]
+    Q1 --> A
+    Q2 --> A
+    Q3 --> A
+    Q4 --> A
+    A --> O["O1, O2, O3, O4<br/>2 × 4 each"]
+    O --> C["Concatenate output rows<br/>8 × 4"]
+```
+
+This follows PDF pages 7–10. A working score block has 16 entries instead of 64, while all four chunks together still account for the original interactions. Concatenating all intermediate score blocks into a full retained matrix would undo that particular memory saving; the useful assembly is of the output rows.
+
+The next example also splits K and V into four two-token chunks. Each query/key block product then has shape:
+
+\[
+(2\times4)(4\times2)=2\times2.
+\]
+
+For `Q1`, there are four such blocks, one for each key chunk, totaling 16 conceptual scores. Across four query chunks there are 16 block pairs and 64 scores. The corresponding V chunks each contribute to the output for that query chunk, under the global normalization discussed above.
+
+PDF pages 11–12 show this `Q1 → K1/K2/K3/K4` structure and its repeated outputs. The small score blocks do not require a change in the final `8 × 4` output shape.
+
+Query-only chunking and two-axis tiled execution are related ways to understand working-set size. PyTorch's SDPA API does not require the caller to implement this exact Python chunk loop or manually choose two-token tiles.
+
+---
+
+## SDPA Is an API with Multiple Implementations
+
+The name **SDPA** is used in two ways:
+
+1. The mathematical operation, scaled dot product attention.
+2. PyTorch's `torch.nn.functional.scaled_dot_product_attention` API.
+
+The API can select among implementations of the operation. It is not a synonym for only memory-efficient attention, and it is not an algorithm that must always differ from FlashAttention.
+
+The class's main backend diagram has three branches:
+
+```mermaid
+flowchart TD
+    QKV["Projected Q, K, V<br/>plus mask / causal settings"] --> API["F.scaled_dot_product_attention"]
+    API --> SELECT["Select an eligible implementation<br/>from the enabled backends"]
+    SELECT --> M["Math implementation"]
+    SELECT --> F["FlashAttention implementation"]
+    SELECT --> E["Memory-efficient implementation"]
+    M --> OUT["Attention output<br/>same required shape"]
+    F --> OUT
+    E --> OUT
+```
+
+This translates PDF page 13. These are the three implementations emphasized in the lesson. The framework also exposes other backend options, including cuDNN in the current API; the diagram is not a timeless exhaustive enumeration.
+
+Automatic selection depends on device, dtype, shapes, masks, installed build, and backend eligibility. A forced-backend context restricts the choices. If the requested fused implementation cannot run and no suitable fallback is enabled, a call can fail; installing a Python package alone does not make unsupported hardware eligible. [PyTorch backend selection](https://docs.pytorch.org/docs/2.14/generated/torch.nn.attention.sdpa_kernel.html).
+
+The math backend is a PyTorch implementation, not Python's `math` module calculating the whole attention operation. It is useful as a general fallback and reference. Its relative speed depends on the workload, so “nobody uses it” is not a sound implementation rule.
+
+The GPU-specific CUDA FlashAttention kernel does not execute on a CPU. SDPA itself remains usable on supported non-CUDA devices through available implementations. A backend name or a successful API call should not be treated as a record that a particular CUDA kernel actually ran.
+
+### Exact API wrapper from the class notebook
+
+The supplied SDPA notebook defines:
+
+```python
+def sdpa_attention(query, key, value):
+    return F.scaled_dot_product_attention(
+        query,
+        key,
+        value,
+        dropout_p=0.0
+    )
+```
+
+This is the central practical change: pass the projected tensors to the library operation. The surrounding projection and head-combination logic still has its own role in a complete Transformer layer.
+
+For causal attention, the same notebook provides this exact wrapper:
+
+```python
+def sdpa_causal_attention(query, key, value):
+    return F.scaled_dot_product_attention(
+        query,
+        key,
+        value,
+        is_causal=True,
+        dropout_p=0.0
+    )
+```
+
+The saved square-sequence causal comparison reports `Outputs close: True`. The literal parameter is `is_causal`, rather than the transcription's occasional “casual.” For migrating custom code, match mask conventions: SDPA boolean `True` means a position participates, whereas some other attention interfaces use `True` to mean blocked. Also pass zero dropout explicitly for evaluation when appropriate; this functional API uses the supplied dropout probability. Floating-point fusion can produce small numerical differences across implementations. [PyTorch SDPA documentation](https://docs.pytorch.org/docs/2.14/generated/torch.nn.functional.scaled_dot_product_attention.html).
+
+---
+
+## Live Experiment One: Manual Attention versus Forced FlashAttention
+
+The [FLASHATT notebook](https://colab.research.google.com/drive/1etkVdef6-JvnLzPBWAo1OBy22XF_3M-q?usp=sharing) records **PyTorch 2.11.0+cu130 on NVIDIA L4**. Its principal tensor setup is batch 1, eight heads, sequence length 2,048, head width 64, and FP16.
+
+Paul initially tried the forced FlashAttention route on T4, encountered an unsupported execution, and changed the runtime to L4. That switch is part of the live debugging. The notebook's saved successful environment is L4.
+
+The actual reference function is:
+
+```python
+def manual_attention(Q, K, V):
+    scores = Q @ K.transpose(-2, -1)
+    scores = scores / math.sqrt(Q.shape[-1])
+
+    probabilities = torch.softmax(scores, dim=-1)
+
+    output = probabilities @ V
+    return output
+```
+
+The notebook also has separate scratch cells for individual operations. Those scratch cells omit the scaling division and should not be copied as a complete equivalent attention chain. The comparison uses the scaled function above.
+
+The forced backend call is:
+
+```python
+import torch.nn.functional as F
+from torch.nn.attention import sdpa_kernel, SDPBackend
+```
+
+```python
+with torch.inference_mode():
+    with sdpa_kernel(SDPBackend.FLASH_ATTENTION):
+        output_flash = F.scaled_dot_product_attention(
+            Q, K, V
+        )
+
+print("FlashAttention output:", output_flash.shape)
+```
+
+Both outputs have shape `(1, 8, 2048, 64)`. Shape equality is necessary, but does not prove numerical agreement; the next cell measures it:
+
+| Saved comparison | Value |
+|---|---:|
+| Maximum absolute difference | 0.0003662109375 |
+| Mean absolute difference | 0.0000152587890625 |
+| `torch.allclose`, absolute/relative tolerances both `1e-2` | True |
+
+These FP16 outputs agree within the chosen tolerance. They are not asserted to be bit-for-bit identical, and the chosen tolerance is part of the test's meaning.
+
+### Timing the same operation
+
+The supplied timing function warms up the callable, synchronizes CUDA before and after the measured loop, and reports milliseconds per call:
+
+```python
+def benchmark(fn, warmup=5, iterations=20):
+    with torch.inference_mode():
+        for _ in range(warmup):
+            fn()
+
+        torch.cuda.synchronize()
+        start = time.perf_counter()
+
+        for _ in range(iterations):
+            fn()
+
+        torch.cuda.synchronize()
+        end = time.perf_counter()
+
+    return (end - start) * 1000 / iterations
+```
+
+Synchronization matters because GPU work is asynchronous relative to ordinary Python timing. These are **forward attention-call timings**, not end-to-end model-generation or training-throughput measurements.
+
+| Same L4 configuration | Saved latency |
+|---|---:|
+| Manual attention | 1.759 ms |
+| Forced FlashAttention | 0.150 ms |
+| Automatic SDPA | 0.145 ms |
+
+The saved notebook reports an 11.75× manual/forced-flash speedup from its unrounded measurements. Automatic SDPA being close to the forced call does not establish which backend it selected. The small timing difference also does not demonstrate a distinct memory-efficient algorithm outperforming FlashAttention.
+
+### Sequence length changes the result
+
+The supplied sweep uses one batch item, eight heads, head width 64, and FP16:
+
+| Sequence length | Manual latency | Forced FlashAttention latency | Saved speedup |
+|---:|---:|---:|---:|
+| 512 | 0.090 ms | 0.069 ms | 1.29× |
+| 1,024 | 0.142 ms | 0.068 ms | 2.10× |
+| 2,048 | 1.772 ms | 0.153 ms | 11.61× |
+| 4,096 | 6.734 ms | 0.541 ms | 12.46× |
+
+The saved plot displays the same widening gap. This supports the lesson that workload shape affects the payoff; it contradicts treating “about 10×” as an invariant. Milliseconds remain milliseconds throughout this table.
+
+During the live session, attempting a much larger sequence produced an out-of-memory error. The transcript does not establish that the fused call itself was the failing allocation; the sweep executes the manual baseline too. The retained saved sweep ends at 4,096. That OOM is evidence of a limit encountered in the particular experiment, not a universal maximum sequence length.
+
+---
+
+## Memory Measurements: Read “Peak Additional” Literally
+
+The FlashAttention notebook measures peak allocated tensor memory above an existing baseline:
+
+```python
+def peak_extra_memory(fn):
+    torch.cuda.synchronize()
+    torch.cuda.reset_peak_memory_stats()
+
+    baseline = torch.cuda.memory_allocated()
+
+    with torch.inference_mode():
+        output = fn()
+        torch.cuda.synchronize()
+        peak = torch.cuda.max_memory_allocated()
+
+    del output
+    return (peak - baseline) / (1024 ** 2)
+```
+
+For the L4 FP16 configuration, its saved output is:
+
+| Operation | Peak additional allocated memory |
+|---|---:|
+| Manual attention | 130.00 MiB |
+| Forced FlashAttention | 2.06 MiB |
+
+Use these values rather than the approximate 138 MB/2 MB phrasing in the transcript. The difference is substantial, but the fused operation is not using only 2.06 MiB of *total GPU memory*. Inputs and other existing allocations are already in the baseline, and allocator reservations, CUDA context memory, or a real model's parameters are different quantities. [PyTorch CUDA memory management](https://docs.pytorch.org/docs/2.14/notes/cuda.html#cuda-memory-management).
+
+The output itself also takes storage. The useful result is that large temporary score/probability tensors need not dominate the additional allocation.
+
+### The separate T4 SDPA experiment
+
+The [SDPA notebook](https://colab.research.google.com/drive/1crIZV8jLxvF8uK-LvXydTmdB5g1qo0Tq?usp=sharing) records **PyTorch 2.11.0+cu130 on Tesla T4**. Its small correctness comparison uses `(2, 4, 128, 64)` tensors and reports maximum difference `5.960464477539062e-07` with `allclose` true at absolute/relative tolerance `1e-5`.
+
+The saved long-sequence experiment then uses batch 2, eight heads, length **8,000**, width 64, and ordinary default floating-point tensors, rather than the first notebook's explicit FP16 setting.
+
+| T4, long-sequence configuration | Saved result |
+|---|---:|
+| Manual latency | 162.410 ms |
+| Automatic SDPA latency | 84.444 ms |
+| Speedup | 1.92× |
+| Manual peak additional memory | 7,844.50 MiB |
+| Automatic SDPA peak additional memory | 32.00 MiB |
+
+The notebook does not log which implementation automatic SDPA chose. It establishes that the API call ran and produced these saved measurements; it does not prove that T4 ran the same forced FlashAttention backend as the L4 example.
+
+The transcript also describes earlier, shorter runs with smaller timing and memory figures. The saved notebook reflects the later 8,000-token setting. Keep these stages distinct rather than assigning a spoken short-run number to the final long-run configuration.
+
+Nor should the two notebooks be used as a direct L4-versus-T4 or FlashAttention-versus-MEA ranking: hardware, precision, batch size, sequence length, and API restrictions differ. Each comparison is meaningful within its own recorded setup.
+
+---
+
+## Hardware Compatibility and the Separate Package Installation
+
+The successful SDPA backend call and the attempted installation of the external **flash-attn** package are different integration routes. PyTorch's built-in supported implementation can run without a successful installation of that separate package.
+
+The live installation was instructive because it did not become a completed external-package demonstration. The class investigated a slow C++/CUDA build, Ninja, host RAM usage, GPU/runtime changes, package versions, and suggested wheel files. The supplied installation output stops at **Building wheels**. The later `model_flash` generation and generation-benchmark cells have no saved successful outputs.
+
+The official project gives the source-build installation command:
+
+```bash
+pip install flash-attn --no-build-isolation
+```
+
+It also documents Ninja and limiting parallel compilation jobs when host RAM is constrained. Those requirements explain why **CPU system RAM and build concurrency** matter during installation; a GPU with more VRAM does not automatically solve a host-memory-heavy compilation. This is the [official FlashAttention repository's guidance](https://github.com/Dao-AILab/flash-attention), not a claim that the interrupted class build succeeded.
+
+Version support must be checked for the specific implementation. Current official CUDA FlashAttention-2 documentation targets Ampere, Ada, and Hopper, with dtype and head-dimension constraints; Turing/T4 is directed to a separate subset implementation. FlashAttention-3 targets Hopper, and FlashAttention-4 has its own Hopper/Blackwell-focused implementation. These are version-specific routes. The spoken blanket rules about “everything except T4” or a compute requirement “above 30” should not be used as compatibility specifications. [Official installation and hardware support](https://github.com/Dao-AILab/flash-attention).
+
+CUDA toolkit versions and GPU **compute capability** are different numbering systems. Seeing CUDA 13 in the runtime does not make every GPU support every fused kernel.
+
+A wheel must also match the relevant Python/platform/framework/toolkit combination. Vignesh's suggested wheel and Alok's package experiment were troubleshooting leads, not a verified portable solution delivered by the instructor.
+
+---
+
+## Choosing an Attention Implementation in a Model
+
+Paul showed how the idea surfaces in Hugging Face Transformers through `attn_implementation`. The supplied FLASHATT notebook uses `model_id = "distilbert/distilgpt2"` and includes this exact eager-loading excerpt:
+
+```python
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    attn_implementation="eager",
+    torch_dtype=torch.float16,
+).to("cuda")
+```
+
+Its separate proposed FlashAttention-2 loading cell is:
+
+```python
+model_flash = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    attn_implementation="flash_attention_2",
+    torch_dtype=torch.float16,
+).to("cuda")
+```
+
+The eager path has a saved generated-text output. The second excerpt and the subsequent generation-speed comparison do not have saved successful results. They demonstrate the intended configuration point, not a completed eager-versus-flash model benchmark. The notebook also records a `torch_dtype` deprecation warning; these excerpts retain its original syntax.
+
+For supported models and environments, the framework can use an eager implementation, route through SDPA, or use a supported FlashAttention integration. Transformers is often itself using PyTorch, so working at the Transformers layer does not imply that PyTorch SDPA is unavailable. The [Transformers attention-backend documentation](https://huggingface.co/docs/transformers/v5.14.0/attention_interface) explains the configuration interface and its implementation choices.
+
+Sridhar's production question connects these layers:
+
+1. Determine whether the application calls a hosted service or operates the model runtime itself.
+2. For a runtime under your control, check model support, target hardware, dtype, shapes, masks, and framework/build compatibility.
+3. Select an eligible implementation through the runtime's supported configuration mechanism.
+4. Check numerical agreement and measure the actual workload before relying on a speed or capacity benefit.
+
+For a compatible exact-attention backend change, the trained weight values need not be redesigned simply to select another kernel. Architectural changes such as changing the number of KV heads are a separate matter. The class postponed the detailed framework/YAML setup to the fine-tuning module.
+
+The same reasoning applies to small models, training, and fine-tuning, although the most valuable optimization depends on their workload. A model's parameter count alone does not decide which kernel is eligible or whether a particular optimization pays off.
+
+---
+
+## What's Next
+
+Paul announced **Kaplan and Chinchilla scaling laws** for the next class and offered a more explicit **online-softmax formula walkthrough** because several students remained uncertain about incremental normalization. Those derivations were not completed here.
+
+LangChain fundamentals and the RAG module were planned next, starting from basics. Uttam was told that prior LangChain knowledge was not required. Fine-tuning, framework configuration, specialized kernels, and deployment remained subsequent work; the concrete model/kernel setup requested by Sridhar was deferred to that module.
+
+In the final follow-up, Sridhar asked whether attention efficiency research continued beyond these methods. Paul named gated-delta/Kimi Delta Attention and referred to Sebastian Raschka's attention-variants writing. A matching author-written resource is [A Visual Guide to Attention Variants in Modern LLMs](https://magazine.sebastianraschka.com/p/visual-attention-variants). These were optional reading pointers, not new algorithms taught in this class. Positional scaling methods and alternative attention architectures also address different questions, so the names should not all be treated as versions of FlashAttention.
+
+---
+
+## Live Q&A Highlights
+
+Questions come from the whole recording, including the closing open floor. Chat-only names are retained as transcribed; related follow-ups are grouped where appropriate.
+
+| Question | Answer |
+|---|---|
+| **Krishna:** What background is needed for a first session? | Know the scaled dot product attention formula and the roles of Q, K, and V. This class optimizes that computation rather than deriving attention from scratch. |
+| **Darshan:** Doesn't causal attention compare with fewer tokens? | Future-token contributions are masked in a decoder. A simple dense implementation can still allocate a square tensor; efficient causal execution can skip masked regions without changing the causal pattern. |
+| **Sanjiv:** Could linear attention solve the memory issue? | It addresses an alternative formulation. FlashAttention preserves ordinary softmax attention and reorganizes execution; it is not a linear-attention architecture. |
+| **Nitin:** Is tiling like divide and conquer? | Breaking a large computation into manageable blocks is a useful analogy. The blocks still need globally correct normalization and the complete allowed interactions. |
+| **Class clarification:** Is a separate tiling operation needed for each batch item? | Attention is evaluated for the respective batch items and heads. Parallel scheduling can distribute that work; the partitions do not merge unrelated examples into one attention row. |
+| **Sush, as transcribed:** If there is ample memory, can tiling be skipped? | A dense implementation may fit, but avoiding unnecessary global-memory traffic can still help. Capacity alone does not determine the faster execution. |
+| **Kumar:** How can online softmax proceed without the complete row? | It maintains running normalization/output state across key blocks, including the rescaling needed for numerical stability, rather than finalizing unrelated per-block probabilities. |
+| **Murtaza:** Are tiles added back into one big matrix? | A fused implementation can consume a temporary score block and retain its summarized contribution. The goal is to avoid reconstructing and storing the full score matrix. |
+| **Gaurav:** Does breaking attention lose its context? | The allowed query/key interactions remain present. Correct tiled exact attention preserves the mathematical function, subject to ordinary floating-point differences. |
+| **Abhishek:** What happens to backward propagation? | Training and gradients remain supported. The implementation can recompute blocks during backward to save retained activation memory. |
+| **Gaurav:** Where is this selected when using Transformers? | The class showed the `attn_implementation` configuration point. The supported choice still depends on model, hardware, dtype, framework version, and installation. |
+| **Rushi:** Where do model tensors and gradients reside? | Large device allocations generally live in GPU global memory. Its physical technology may be HBM or GDDR; registers and shared memory are different resources. |
+| **Sagar:** Which runtime made the forced FlashAttention call work? | Paul switched from the failing T4 experiment to L4. The successful saved FLASHATT notebook records L4. |
+| **Sudhir:** Do we manually choose how many times to process tiles? | The supported attention kernel manages its internal blocking and scheduling. The notebook's ordinary API call does not require a hand-written tile-count loop. |
+| **Shivam:** Was the out-of-memory example using manual attention too? | Yes. The sweep includes the materialized manual baseline. The transcript does not identify the OOM as a proven failure of the fused call alone. |
+| **Murtaza, parallelism follow-up:** Can tiles execute in parallel? | There are parallelism opportunities across batches, heads, and query blocks, among others. Online normalization describes the state update, not a requirement that all GPU work be serial. |
+| **Sanjit:** What comes before kernel engineering? | Paul recommended understanding GPU execution and memory first. This lesson introduces those concerns; it does not teach kernel programming. |
+| **Alok:** Does installing another package/version establish that it works? | Installation and successful execution on the target hardware are separate checks. The suggested version-four route was not a completed portable solution in the class. |
+| **Vignesh:** Can a prebuilt wheel resolve the build problem? | Potentially, if it matches the environment. The attempted wheel suggestions did not produce a verified successful path during this recording. |
+| **Jatin:** If independent block softmax is wrong, how was FlashAttention correct? | FlashAttention also uses incremental globally consistent normalization. It does not simply add separately normalized tile probabilities. |
+| **Murtaza, late clarification:** Do we apply a completed softmax separately to every tile? | No. Each tile contributes to the equivalent global row normalization and weighted output. Paul explicitly clarified this and offered the detailed formulas next class. |
+| **Uttam:** Is prior LangChain knowledge required for the upcoming module? | No. The announced framework section starts from the basics. |
+| **Nilesh:** How should someone learn when the high-level idea is clear but the mathematics is hard? | Work through small matrix examples by hand, build a simplified example, and retain notes. Paul emphasized learning the approach rather than only watching equations on screen. |
+| **Nilesh, role clarification:** How much low-level detail is needed for managed/serverless orchestration or a trust/billing layer? | Depth depends on what the role controls. Higher-level managed-service work differs from custom GPU/runtime optimization; a conceptual foundation is still useful without requiring every role to implement kernels. |
+| **Nilesh, tradeoff follow-up:** Should study focus on why an implementation helps and when? | Yes. Understand storage, speed, compatibility, and workload shape. Longer sequences often expose larger benefits, but length is not a universal eligibility rule. |
+| **Sridhar:** How should production infrastructure and model/kernel choices be connected? | Start with runtime responsibility and hardware compatibility, then model/framework support and workload measurements. A requested kernel cannot overcome missing hardware support. |
+| **Sridhar, hosted-model follow-up:** Is this only a concern for operating models ourselves? | A hosted provider generally controls its internal kernels. When you control the runtime, the implementation choice is part of setup and optimization; using a frontier model name alone does not decide that responsibility. |
+| **Sridhar:** Does the same issue apply to training, fine-tuning, and small models? | Yes, compatible optimized kernels can be relevant in each. The practical benefit depends on workload and hardware rather than a small/large label alone. |
+| **Sridhar, parameter/configuration follow-up:** Must the model's learned parameters change to use another kernel? | A compatible exact-attention execution backend can be selected through runtime/framework configuration without redesigning the learned weights. The detailed fine-tuning setup was deferred. |
+| **Sridhar, YAML follow-up:** Where will the concrete configuration be shown? | Paul pointed to the future fine-tuning module and framework configuration, including YAML-style settings. No complete production setup was delivered here. |
+| **Sridhar, final follow-up:** Is attention-efficiency research still developing beyond this material? | Yes. The class pointed to attention-variant writing and gated-delta/KDA as optional exploration. Their algorithms were not explained or benchmarked in this session. |
+
+---
+
+## Key Pointers to Remember
+
+- Attention mathematics, attention architecture, cache organization, and kernel execution are different layers of design.
+- The dense score shape is `B × H × query_length × key_length`; a square full-sequence case creates the familiar quadratic storage.
+- Doubling both sequence axes quadruples the score tensor. Halving bytes per element does not remove that growth.
+- Tiling changes the working set and memory traffic while preserving the required interactions.
+- Each query's normalization must cover every allowed key, including keys in other tiles.
+- “Online” means incremental state updates; it does not by itself describe parallel scheduling.
+- Weighted contributions accumulate across key blocks; completed output rows assemble across query chunks.
+- GPU capacity, bandwidth, on-chip storage, and arithmetic throughput are different constraints.
+- SDPA can dispatch to FlashAttention; “FlashAttention versus SDPA” is not necessarily a comparison of disjoint algorithms.
+- A forced backend can fail where an automatic SDPA call succeeds through another eligible implementation.
+- The L4 sweep ranges from 1.29× to 12.46×; speedup is a measured property of a configuration.
+- Peak additional allocation is not total device memory.
+- Successful eager generation does not establish that an unexecuted FlashAttention model-loading cell succeeded.
+- The complete stable online-softmax formula walkthrough and concrete fine-tuning/runtime configuration remained next steps.
+
+---
+
+## Action Items After Class 23
+
+- [ ] Recalculate the score-tensor memory table for a different batch size, head count, and precision.
+- [ ] Explain why full-sequence attention and one-token cached decode have different score shapes.
+- [ ] Draw the four `Q1/Q2` and `K1/K2` score blocks from the eight-token example.
+- [ ] Follow the query-only chunk shapes from `2 × 4` through `2 × 8` back to `2 × 4`.
+- [ ] Distinguish assembling output rows from retaining a concatenated full score matrix.
+- [ ] Explain why independently normalized key blocks do not give the correct global softmax.
+- [ ] Identify the running statistics needed to combine key-block contributions, then revisit the promised formula walkthrough.
+- [ ] Read the exact notebook functions and check which cells are scratch illustrations versus the benchmark reference.
+- [ ] Compare saved outputs using their actual tolerances, device, dtype, shapes, and timing units.
+- [ ] Interpret baseline-subtracted peak memory separately from reserved memory and total VRAM.
+- [ ] Check current model/backend/hardware compatibility before attempting a package build or selecting a kernel.
+- [ ] Keep the unresolved separate-package build distinct from the successful PyTorch SDPA demonstration.
+
+---
+
+*Compiled from the entire Class 23 recording transcript, Production AI / LLM Engineering, Krish Naik Academy. Original filename: `GMT20261017-143230_Recording.transcript.vtt`; all eight parts, including the final Nilesh and Sridhar exchanges, were read. All 13 pages of `FLASH & SDPA.pdf` were visually inspected. The exact supplied `FLASHATT.ipynb` (20 cells, including saved text outputs and plot) and `SDPA.ipynb` (12 cells and saved outputs) were read in full. Source recording, hub, PDF, and notebook links appear above.*
+
+*Additional source review covered the instructor repository's full README, matching teaching notebooks/documentation and backend/lesson code. Those local-device examples are distinct from the exact Colab benchmarks reported here. Technical qualifications were checked against primary FlashAttention papers/project documentation, PyTorch SDPA documentation, NVIDIA hardware documentation, and Transformers' attention interface. Code excerpts preserve supplied source; saved results were not independently rerun. No model training, model API call, package build, or GPU job was performed during note preparation.*
+
+[Back to course index](Course_Notes_Index.md)
+
+---
+
+<a id="class-24"></a>
+
+# Class 24: LLM Scaling Laws - Model Size, Data and Compute
+### Production AI / LLM Engineering | Krish Naik Academy
+
+**Mentor:** Sourangshu Pal (Paul)  
+**Duration:** 1 hour 34 minutes 22 seconds | **Session:** Class 24 - 18 October 2026  
+**Recording:** [18 October class](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad520e7b5ec8915a3134be5)
+
+---
+
+## Quick Updates
+
+This was a shorter introduction to **training scaling laws**, centered on the relationship between model parameters, training tokens and compute. Paul introduced the Kaplan and Chinchilla papers, worked through simple numerical examples, and read selected model-configuration and evaluation tables. The complete papers and their remaining equations were deferred until closer to the fine-tuning module.
+
+The announced course sequence was to move into LangChain and RAG with Divesh during Paul's absence, then return to the fine-tuning material. The closing discussion referred to the Diwali break, but the transcript did not establish a reliable complete holiday calendar. Use the course announcements for the final schedule.
+
+A student also reported missing diagrams from earlier attention discussions. Paul requested a screenshot identifying the particular diagram before he could locate and upload it. No replacement resource was supplied during this recording.
+
+The accompanying seven-page handwritten PDF, **Note.pdf** on the dashboard, contains the examples translated below into formulas, tables and diagrams. This session did not demonstrate a notebook or executable training implementation.
+
+---
+
+## Why Parameter Count Alone Cannot Rank Models
+
+Paul began with three hypothetical language models: **100 million, 1 billion and 10 billion parameters**. Asked which would perform best, the tempting answer was the largest. He then changed the scenario: the 10B model had received less training data, while the smaller models had received more.
+
+The point was to expose missing information. A parameter count describes one aspect of a model's capacity; it does not tell us how well that capacity was trained. A smaller, sufficiently trained model can outperform a larger model that received an unsuitable allocation of data and compute. The scenario does not prove that either smaller model must win: the dataset, training recipe and evaluation still have to be specified.
+
+The first PDF page captures that comparison:
+
+```mermaid
+flowchart LR
+    A["100M parameters"] --> A1["More training data in the example"]
+    B["1B parameters"] --> B1["More training data in the example"]
+    C["10B parameters"] --> C1["Less training data in the example"]
+    A1 --> D["Compare measured performance<br/>with the training conditions known"]
+    B1 --> D
+    C1 --> D
+```
+
+A related question was whether increasing parameters by **100 times** gives **100 times better performance**. There is no such linear guarantee. Even the meaning of “performance” must be pinned down: a decrease in language-model loss, an increase in benchmark accuracy, and an improvement on a particular business task are different measurements.
+
+This is the motivation for scaling laws. Instead of choosing model size from an isolated label, estimate how model size, data and compute interact under a defined training objective. The relationships studied here are empirical fits to experiments, rather than proofs that every future architecture and dataset must behave identically.
+
+---
+
+## The Three Scaling Dimensions
+
+The session repeatedly returned to three quantities:
+
+| Symbol | Quantity | What to record |
+|---|---|---|
+| \(N\) | Model size | Parameter count, with the paper's counting convention stated |
+| \(D\) | Training data | Token count and how it is measured |
+| \(C\) | Training compute | Total floating-point operations available or consumed |
+
+A scaling experiment changes these quantities in a controlled way, measures loss, and fits a relationship. If one resource becomes a bottleneck, expanding another may produce less benefit than expected. More parameters do not supply missing training examples, and a larger dataset is not useful to a run unless the compute budget allows the model to process it.
+
+### Model size and the non-embedding convention
+
+In the Kaplan discussion, \(N\) specifically refers to **non-embedding parameters**. This convention excludes vocabulary and positional embedding matrices from that paper's model-size variable. Embeddings are still real model components with parameters, storage and computational consequences. “Non-embedding” does not mean embeddings are outside the neural network or have no effect on its actual footprint.
+
+Keep the paper's definition separate from the parameter count on a model card. A model advertised as “1B parameters” may use a different accounting convention. Likewise, the total parameter count and the number currently being optimized during fine-tuning are different quantities. Freezing a weight stops its training update; it does not remove the weight from the model. The counting convention is explicit in [Kaplan et al., Section 1.3 and Section 2.1](https://arxiv.org/pdf/2001.08361).
+
+Paul used normalization layers to revisit trainable and non-trainable state. The useful distinction is:
+
+- **Trainable parameters** receive optimizer updates when enabled for training.
+- **Frozen parameters** remain part of the model but are excluded from those updates in the current setup.
+- **Buffers and other state** can be stored with the model without being optimizer-trained parameters.
+
+For example, BatchNorm normally has learnable scale and bias plus running mean and variance buffers. Those running statistics change during training when tracking is enabled; they are not immutable constants. LayerNorm normally computes statistics from the current input during both training and evaluation, rather than maintaining BatchNorm-style running estimates. An ordinary linear layer's bias is also normally learnable. These distinctions prevent the introductory examples from turning into incorrect general rules. See the official [BatchNorm](https://docs.pytorch.org/docs/2.14/generated/torch.nn.BatchNorm1d.html), [LayerNorm](https://docs.pytorch.org/docs/2.14/generated/torch.nn.LayerNorm.html) and [Linear](https://docs.pytorch.org/docs/2.14/generated/torch.nn.Linear.html) references.
+
+### Dataset size means token count, not vocabulary size
+
+\(D\) refers to the amount of training text measured in tokens. Murtaza's closing chat question made an important distinction: **training tokens are token occurrences, not the number of unique token IDs in the vocabulary**. A tokenizer with a vocabulary of tens of thousands of entries can process a corpus containing billions of token occurrences.
+
+Also distinguish tokens available in a corpus from tokens actually processed by a training run. Repeated passes can revisit the same corpus tokens. When using a paper's formula, keep its dataset and training-token definitions consistent instead of silently exchanging these quantities. Paul clarified that the class examples concern the training set, rather than combining training, validation and test data into the budget.
+
+### Architecture still matters
+
+A chat question asked whether architecture should be one of the top dimensions. Architecture helps determine \(N\): layer count, hidden width and feed-forward dimensions all affect the parameter budget. However, equal parameter counts do not make all architectures equivalent. These scaling relationships are being discussed within a particular family of language-model training experiments, not as a claim that architecture can always be reduced to one integer.
+
+---
+
+## Compute Is a Budget, Not Just a GPU Count
+
+Paul emphasized that even a large organization operates under a finite budget. A cluster may contain thousands of accelerators, yet it still has a limited training duration, hardware allocation and cost. The planning question remains: **how should that available compute be divided between model size and training data?**
+
+A GPU count is not a complete compute measure. Accelerator type, numerical precision, runtime, utilization and communication overhead affect how many useful operations a run performs. Adding accelerators can shorten a fixed run when it parallelizes well. It does not automatically improve the final model if the actual training procedure and total useful work remain the same.
+
+This addresses Deshant's chat question: isn't compute only about making training faster? Hardware throughput and total training compute are different. Faster hardware can execute the same work sooner; a larger total budget can instead enable a different choice of model, tokens or optimization steps. Scaling laws concern that resource allocation and the loss it can achieve.
+
+### FLOPs, FLOP/s and PF-days
+
+The terminology is easy to mix up:
+
+| Term | Meaning |
+|---|---|
+| FLOPs | A count of floating-point operations |
+| FLOP/s | A rate of floating-point operations per second |
+| PFLOP/s | \(10^{15}\) floating-point operations per second |
+| PF-day | The work performed at 1 PFLOP/s for one day |
+
+Therefore:
+
+\[
+1\text{ PF-day}=10^{15}\times24\times3600
+=8.64\times10^{19}\text{ operations}.
+\]
+
+There are **86,400 seconds** in a day. PF-days express total work, not accelerator memory capacity. They are a unit used in the Kaplan paper, rather than a metric that is meaningful only inside that paper.
+
+When making a cost estimate, use achievable sustained throughput instead of assuming an accelerator runs continuously at its advertised peak. Precision can change throughput and memory needs, but it does not by itself replace the fitted scaling exponents with a new universal value. The class's purpose was to establish an estimate before training, rather than launching a long run and discovering its cost afterward.
+
+---
+
+## Reading a Loss Scaling Curve
+
+The outcome being modeled is **cross-entropy loss**, the familiar objective used to train next-token language models. A lower loss means the model assigns better probability to the observed continuation on the evaluated distribution. It is not an accuracy percentage, and it should not be read as a direct percentage of task success.
+
+Paul introduced the following simplified curve:
+
+\[
+L(N)=L_\infty+A N^{-\alpha}
+=L_\infty+\frac{A}{N^\alpha}.
+\]
+
+| Term | Interpretation in the teaching example |
+|---|---|
+| \(L(N)\) | Loss associated with model size \(N\), under the conditions being modeled |
+| \(L_\infty\) | The asymptotic floor approached by this fitted curve |
+| \(A\) | A coefficient setting the size of the reducible-loss term |
+| \(\alpha\) | A positive scaling exponent controlling how that term decreases |
+
+The negative exponent is the key algebraic step:
+
+\[
+N^{-\alpha}=\frac{1}{N^\alpha}.
+\]
+
+For positive \(N\) and \(\alpha\), a larger \(N\) makes the denominator larger and this contribution smaller. The curve approaches its floor rather than improving by a fixed amount every time more parameters are added.
+
+**The floor is not an arbitrary target that a researcher chooses to make the model reach.** The class set it to 1 to make the arithmetic easy. In a fitted model, the floor is inferred or justified for the data distribution and assumptions. There is no universal rule that language-model cross-entropy must approach zero, that the floor should normally be 1, or that an observed zero loss always indicates the same problem.
+
+For source fidelity, the whiteboard curve is a general teaching form. Kaplan's displayed parameter-only power law has a different written form, \(L(N)=(N_c/N)^{\alpha_N}\), under its stated conditions. Treat the class's \(1,10,0.5\) choices as hypothetical values, not coefficients quoted from Kaplan's experiments.
+
+---
+
+## Worked Example: More Parameters and Diminishing Gains
+
+For the main exercise, Paul chose:
+
+\[
+L_\infty=1,\qquad A=10,\qquad\alpha=0.5.
+\]
+
+The formula becomes:
+
+\[
+L(N)=1+\frac{10}{\sqrt N}.
+\]
+
+The PDF's completed calculation is:
+
+| Hypothetical model size \(N\) | \(\sqrt N\) | Reducible term \(10/\sqrt N\) | Total loss |
+|---:|---:|---:|---:|
+| 100 | 10 | 1.00 | 2.00 |
+| 400 | 20 | 0.50 | 1.50 |
+| 2,500 | 50 | 0.20 | 1.20 |
+| 10,000 | 100 | 0.10 | 1.10 |
+
+The live calculation initially used 1.25 for \(N=2,500\), then corrected it to **1.20**. The arithmetic follows directly from \(10/50=0.20\).
+
+Compare the successive changes:
+
+| Model-size change | Parameter multiplier | Absolute loss reduction |
+|---|---:|---:|
+| 100 to 400 | 4 times | \(2.00-1.50=0.50\) |
+| 400 to 2,500 | 6.25 times | \(1.50-1.20=0.30\) |
+| 2,500 to 10,000 | 4 times | \(1.20-1.10=0.10\) |
+
+These are **loss differences**, not 0.5%, 0.3% or 0.1% improvements. A relative percentage reduction would require dividing by the earlier loss. The main lesson is that much larger parameter counts can buy progressively smaller absolute improvements as the curve approaches its floor.
+
+The equal fourfold changes are especially useful to compare. Going from 100 to 400 halves the excess above the floor from 1.00 to 0.50. Going from 2,500 to 10,000 also halves that excess, from 0.20 to 0.10. The proportional change in the reducible term is the same, while the absolute gain is smaller. This is more precise than treating every row as an equal increase in model size.
+
+---
+
+## What the Exponent and Coefficient Change
+
+### The exponent controls the decay
+
+To make exponents concrete, Paul held \(N=10\) and varied \(\alpha\):
+
+| \(N\) | \(\alpha\) | \(N^\alpha\) | \(N^{-\alpha}\) |
+|---:|---:|---:|---:|
+| 10 | 1 | 10 | 0.1 |
+| 10 | 2 | 100 | 0.01 |
+| 10 | 3 | 1,000 | 0.001 |
+
+This table explains how a positive exponent in the denominator produces a decreasing term. It does **not** mean a researcher can simply select a larger exponent and make an actual trained model better. In an empirical law, the exponent describes the observed relationship; changing its value on paper changes the prediction, not the underlying training result.
+
+The earlier choice of \(\alpha=0.5\) was made because it turns the denominator into a square root. It should not be confused with the later 0.73 compute-allocation exponent. Those exponents describe different relationships.
+
+### The coefficient sets the magnitude
+
+Next, Paul kept \(N=100\), \(\alpha=0.5\), and \(L_\infty=1\), but varied \(A\). Since \(\sqrt{100}=10\):
+
+\[
+L(N)=1+\frac A{10}.
+\]
+
+| \(A\) | Predicted loss |
+|---:|---:|
+| 1 | 1.1 |
+| 5 | 1.5 |
+| 10 | 2.0 |
+| 20 | 3.0 |
+
+At the same \(N\), increasing \(A\) increases the reducible-loss term. This is a comparison between curves. It is not an instruction to manually lower \(A\) to reduce the model's measured loss.
+
+### Where fitted values come from
+
+Sohil's question at the end returned to this point: given a dataset of text, how can one estimate \(A\)? The answer is to run training experiments under different configurations, measure their losses, and fit the coefficients and exponents to those observations. Reading the text alone does not reveal an exact coefficient.
+
+The number of experiments is a design choice, not a requirement to run exactly 100 models. Nor must \(A\) be an integer, below 5, or shared across all datasets. Its numerical value also depends on how \(N\) is expressed: using raw parameters rather than billions of parameters changes the coefficient needed to represent the same curve. Keep units and fitted assumptions with the formula.
+
+The practical exercise is to substitute numbers until the role of each term is clear. The research task is different: collect measurements and check that the proposed relationship predicts them adequately.
+
+---
+
+## The Chinchilla Heuristic: Training Tokens Relative to Parameters
+
+Paul then introduced the memorable approximation:
+
+\[
+D\approx20N.
+\]
+
+Here \(N\) is the parameter count used for the estimate and \(D\) is the training-token budget. The examples on the handwritten pages are:
+
+| Parameters \(N\) | Approximate tokens \(20N\) |
+|---:|---:|
+| 1 billion | 20 billion |
+| 7 billion | 140 billion |
+| 70 billion | 1.4 trillion |
+| 1 trillion | 20 trillion |
+
+Keep the scale consistent. **Seven billion parameters times 20 gives 140 billion tokens**, not 140 million. The 70B arithmetic is a hypothetical planning example; it does not establish the actual training dataset of a particular Llama release mentioned in conversation.
+
+The ratio is a useful way to remember the Chinchilla discussion: budget for enough training data rather than spending everything on a larger parameter count. But **20 tokens per parameter is an approximate compute-optimal pretraining heuristic for the studied setting, not a universal minimum dataset size, a performance guarantee, or a ceiling on useful training**. It is not a rule that a pretrained 7B model requires a new 140B-token fine-tuning dataset.
+
+Sohil explicitly asked whether 20 generalizes to every LLM. Paul clarified that the relationship is empirical and depends on the lab's data and experiments. That qualification matters more than memorizing the multiplier alone. The objective being optimized, data quality, model family and training conditions determine whether a fitted relationship transfers.
+
+---
+
+## Kaplan Allocation: What Changes When Compute Increases?
+
+The next exercise concerned the **optimal allocation of a training-compute budget**. The class used the Kaplan relationships:
+
+\[
+N_{\mathrm{opt}}\propto C^{0.73},
+\qquad
+D_{\mathrm{opt}}\propto C^{0.27}.
+\]
+
+“Optimal” means the choice favored by the specified loss objective and resource assumptions. It does not mean the best architecture for every downstream application. Kaplan's source uses the adjusted compute quantity \(C_{\min}\) for this result; the class shortened the notation to \(C\).
+
+A proportionality does not give an absolute parameter count without its fitted coefficient. It does let us compare a new budget with an old one under the same law:
+
+\[
+\frac{N_{\mathrm{new}}}{N_{\mathrm{old}}}
+\approx
+\left(\frac{C_{\mathrm{new}}}{C_{\mathrm{old}}}\right)^{0.73},
+\qquad
+\frac{D_{\mathrm{new}}}{D_{\mathrm{old}}}
+\approx
+\left(\frac{C_{\mathrm{new}}}{C_{\mathrm{old}}}\right)^{0.27}.
+\]
+
+### Four times the compute
+
+Using the class's exponents:
+
+\[
+4^{0.73}\approx2.751,
+\qquad
+4^{0.27}\approx1.454.
+\]
+
+The resulting allocation is roughly **2.75 times the parameters and 1.45 times the training tokens**. The whiteboard rounded these numbers to approximately 2.7-2.77 and 1.4; the values above retain the arithmetic for the stated exponents.
+
+The PDF's final comparison table can be represented as:
+
+```mermaid
+flowchart LR
+    A["Original compute budget C"] --> B["New budget 4C"]
+    B --> N["Kaplan allocation example<br/>Nopt becomes about 2.75 Nopt"]
+    B --> D["Kaplan allocation example<br/>Dopt becomes about 1.45 Dopt"]
+```
+
+A multiplier of 1.45 means the new amount is about 145% of the old amount, or about **45% additional data**. It does not mean a 145% increase on top of the original amount.
+
+### Eight times the compute
+
+Similarly:
+
+\[
+8^{0.73}\approx4.563,
+\qquad
+8^{0.27}\approx1.753.
+\]
+
+| Compute multiplier | Parameter multiplier under \(C^{0.73}\) | Token multiplier under \(C^{0.27}\) |
+|---:|---:|---:|
+| 4 | 2.751 | 1.454 |
+| 8 | 4.563 | 1.753 |
+
+The class's 4.56 and 1.7 approximations express the same directional idea. More compute permits both resources to grow, but these exponents allocate more of that growth toward parameters.
+
+A fourfold compute budget is not automatically the same thing as four times as many GPUs. That equivalence would require comparable devices, runtime and effective utilization. The equations describe total training work, while a cluster configuration determines how efficiently and quickly that work can be delivered.
+
+---
+
+## Keep the Kaplan and Chinchilla Results Distinct
+
+The lecture moved between the two papers to build intuition. When reviewing the equations together, preserve their different conclusions:
+
+| Result discussed | Parameter allocation | Token allocation | Interpretation |
+|---|---|---|---|
+| Kaplan example | \(N_{\mathrm{opt}}\propto C^{0.73}\) | \(D_{\mathrm{opt}}\propto C^{0.27}\) | Parameter count grows faster than token count |
+| Chinchilla's approximate conclusion | Near \(C^{0.5}\) | Near \(C^{0.5}\) | Parameters and tokens grow in roughly equal proportions |
+
+Chinchilla's Table 2 contrasts its fitted approaches with Kaplan's 0.73/0.27 values. It does not present those earlier values as its own preferred allocation. Thus the class's \(D\approx20N\) mnemonic and the 0.73/0.27 example should not be combined as simultaneous exact constraints. See [Hoffmann et al., Table 2](https://arxiv.org/pdf/2203.15556).
+
+Paul's broader point was that model size, data and compute must be considered together. Read the warning about growing parameters faster than data as a resource-balance warning, rather than a rule that any such growth inevitably makes absolute loss increase. A new model can still improve while using compute less effectively than another feasible allocation. Data limitation can also introduce diminishing returns and generalization problems; it should not automatically be labeled “underfitting.”
+
+The fitted exponents are tied to a regime and experimental setup. One part of the discussion compared 0.73 with 0.74, but these can belong to different relationships in the papers. Check what is on each axis before treating nearby numbers as interchangeable rounding.
+
+The class only previewed notation such as \(L(N,D)\), \(N_{\mathrm{opt}}\), \(D_{\mathrm{opt}}\) and minimizing a loss. It did not derive the complete constrained optimization or all of either paper's equations.
+
+---
+
+## Reading the Gopher and Chinchilla Comparison
+
+The final paper walkthrough returned to the opening question: can a smaller model perform better? Paul compared **Gopher, at 280B parameters, with Chinchilla, at 70B**, and examined the architecture and evaluation tables.
+
+The comparison's central result was a smaller model trained with a different allocation of data at a comparable training-compute budget. Chinchilla was trained on **1.4 trillion tokens**. Parameter count alone would not have predicted the observed ranking.
+
+The architecture table shown in the paper provides a concrete bridge to the earlier Transformer lessons:
+
+| Configuration | Gopher | Chinchilla |
+|---|---:|---:|
+| Transformer layers | 80 | 80 |
+| Attention heads | 128 | 64 |
+| Key/value head size | 128 | 128 |
+| Model width \(d_{\mathrm{model}}\) | 16,384 | 8,192 |
+| Maximum learning rate | \(4\times10^{-5}\) | \(1\times10^{-4}\) |
+| Batch size in tokens | 3M to 6M | 1.5M to 3M |
+
+“80 layers” here means Transformer blocks, not a sum in which each attention, normalization and feed-forward subcomponent is counted as a separate one of the 80. The table also illustrates why size is not determined by depth alone: the two models have the same block count but different widths and head counts.
+
+Batch size is expressed in **tokens**, not three million independent documents or requests. Paul used that scale to emphasize the infrastructure involved. The paper reports TPU-based training, so its compute results should not be relabeled as measurements from a particular GPU cluster.
+
+The evaluation discussion covered language modeling, reading comprehension, question answering, common sense, MMLU and BIG-bench. The relevant habit is to read the metric and task setup alongside the score. A lower language-model loss and a higher multiple-choice accuracy are improvements in different metrics.
+
+The displayed MMLU table reports **60.0% for Gopher and 67.6% for Chinchilla in the five-shot setting**, a difference of **7.6 percentage points**. That does not mean 7.6% relative improvement, nor does an average result mean every individual subject improved. The paper also cautions about possible train/test leakage in its language-model evaluations. These details support the broad comparison without turning it into a claim that the smaller model won every task without exception. See [Chinchilla, Section 4 and Tables 4-6](https://arxiv.org/pdf/2203.15556).
+
+MMLU is an example of a broad benchmark, rather than sufficient evidence that a model is suitable for every domain. Paul's recommendation was to inspect the experimental configurations and results, not merely read the abstract or memorize a model's parameter label.
+
+---
+
+## Closing Clarification: Who Chooses Which Weights to Train?
+
+Aiswarya asked whether the model provider decides which weights remain frozen, or whether the person fine-tuning chooses. Her follow-up concerned the risk of changing too much of a pretrained model's existing capability.
+
+Where the training interface permits it, the practitioner chooses the adaptation strategy and which parameters to optimize. Three possibilities should be kept separate:
+
+| Approach | What is updated? |
+|---|---|
+| Full fine-tuning | All selected base-model parameters, potentially the entire model |
+| Partial fine-tuning | A chosen subset of base-model layers or parameters |
+| Parameter-efficient fine-tuning | A smaller set of adaptation parameters, often while the base weights remain frozen |
+
+Paul used unfreezing the last two layers, then four layers, as a transfer-learning example. Training more parameters generally increases optimizer-state and gradient work, although actual runtime also depends on the implementation. It does not imply a universal requirement that 60-70% remain frozen, or that updating more than the last 20-30% is prohibited. Full fine-tuning is an established alternative; the official [PEFT overview and quicktour](https://huggingface.co/docs/peft/quicktour) explicitly distinguish it from parameter-efficient methods.
+
+The concern about losing useful pretrained behavior is valid. Evaluate both the target task and the capabilities that must be retained. The class did not conduct a forgetting experiment or establish a safe percentage of weights to change.
+
+Finally, being able to modify weights requires suitable access, tooling and applicable permissions. Calling a model “open source” is not the technical condition that determines whether its gradients can be enabled. Open weights and an open-source AI release are not interchangeable labels; the [Open Source Initiative's definition](https://opensource.org/ai/open-source-ai-definition) includes requirements beyond access to parameter files.
+
+This was a conceptual Q&A clarification. The class did not implement layer freezing, LoRA or a fine-tuning loop.
+
+---
+
+## What's Next
+
+Paul deferred the full scaling-paper walkthrough, the remaining loss and optimization equations, and their deeper training applications until before the fine-tuning module. Students were asked to browse the papers' summaries, graphs and tables in preparation, even if all the derivations were not yet clear.
+
+The next announced teaching block was LangChain and RAG with Divesh. OCR and vision-language material were left for the multimodal stage. Mixture of experts and quantization were not started as substitutes for the planned sequence. A brief prediction about future reinforcement-learning progress was an outlook comment, not a study of RL scaling laws in this session.
+
+---
+
+## Live Q&A Highlights
+
+| Question | Answer |
+|---|---|
+| Which is best: the 100M, 1B or 10B model? | Parameter count alone is insufficient. Compare the data, training compute and actual evaluation rather than inferring a ranking from size. |
+| Does 100 times more parameters give 100 times better performance? | No linear improvement follows from that change. The metric, other resources and empirical relationship matter. |
+| Which parameters does \(N\) count? | In the Kaplan discussion it counts non-embedding parameters. This is a paper-specific convention; embeddings remain real parameters and consume resources. |
+| Are frozen weights absent from model size? | No. Total model parameters and currently trainable parameters are different counts. Freezing changes the optimization setup. |
+| What is the normalization example of non-trainable state? | BatchNorm can maintain running mean and variance buffers. They are updated statistics rather than optimizer-trained weights; LayerNorm normally uses current-input statistics instead. |
+| Deshant: doesn't compute only make training faster? | Faster hardware can shorten the same work. A larger total training budget can instead support a different model/data allocation and a different achievable loss. |
+| Deshant: where does architecture fit among the dimensions? | Architecture determines much of the parameter count, but equal counts do not make every architecture equivalent. The laws apply within their experimental setting. |
+| What does \(L(N)\) represent? | The loss associated with a model size under the modeled conditions. Here the training objective is cross-entropy, not an accuracy percentage. |
+| Is \(L_\infty=1\) a universal goal? | No. One was chosen for the arithmetic example; an actual asymptotic floor depends on the fitted setting. |
+| Is the loss for 2,500 parameters 1.25? | The live calculation was corrected to 1.20: \(1+10/50=1.20\). |
+| Are the 0.50, 0.30 and 0.10 changes percentages? | They are absolute differences in the toy loss values. Relative percentages need a denominator. |
+| Can a researcher choose a higher \(\alpha\) or lower \(A\) to improve the model? | Changing a formula changes its prediction. Real fitted values must be supported by measured training results. |
+| Sohil Sharma: how is \(A\) estimated from a text dataset? | Train configurations, measure their losses and fit the relationship. It cannot be read directly from words in the dataset, and it need not be an integer or below 5. |
+| Sohil Sharma: where does the multiplier 20 come from? | It summarizes empirical compute-optimal training analysis. It is not an axiom or a universal minimum token count. |
+| Sohil Sharma's follow-up: does the same ratio apply to any LLM? | No. Data, model family, training setup and the optimization objective affect the applicable relationship. |
+| Murtaza: are training tokens unique tokens? | They are total token occurrences, not vocabulary entries. The class examples concern the training set; check whether a source counts corpus size or processed tokens. |
+| Why not always use \(D=20N\) together with the 0.73/0.27 exponents? | They summarize different empirical allocation results. Chinchilla contrasts its near-equal scaling conclusion with Kaplan's earlier allocation. |
+| Does FP16 affect the analysis? | Precision can affect memory, throughput and numerical behavior. It does not directly turn a fitted exponent into a precision-independent universal rule. |
+| What does a fourfold compute budget imply in the Kaplan exercise? | About 2.75 times the parameters and 1.45 times the tokens for the stated exponents, rather than a fourfold increase in each. |
+| Aiswarya: who chooses what is frozen during fine-tuning? | The practitioner chooses the trainable subset or adaptation method where the training interface allows it. A managed provider may constrain those choices. |
+| Aiswarya's follow-up: can changing more weights damage existing capabilities? | It can change retained behavior, so evaluate it. There is no universal rule limiting all fine-tuning to the last 20-30% of weights. |
+| Does weight modification require an “open-source” model? | It requires suitable access and permissions. Open weights, a trainable service and an open-source AI release are distinct concepts. |
+| What about OCR, vision-language models, MoE and quantization? | These were deferred to their relevant modules. The class did not establish that text-model exponents transfer unchanged to all multimodal settings. |
+
+Mosine/Mohsin was invited to speak, but no substantive question is recorded. A briefly called name rendered as Rashmi likewise has no separate substantive exchange. These invitations do not supply additional technical answers.
+
+---
+
+## Key Pointers to Remember
+
+- A parameter count is a resource description, not a model-quality ranking.
+- Scaling analysis connects model parameters, training tokens and total training compute.
+- Keep non-embedding parameter counts, total parameters and trainable parameters distinct.
+- Embedding matrices remain part of the model even when a paper excludes them from \(N\).
+- FLOP/s is a rate; PF-days measure total work. One PF-day is \(8.64\times10^{19}\) operations.
+- The class's \(1+10/\sqrt N\) curve is a hypothetical arithmetic example.
+- Its losses are 2.00, 1.50, 1.20 and 1.10; its successive reductions are absolute loss units.
+- Fitted coefficients and exponents describe measured behavior. They are not free controls for improving a trained model.
+- \(D\approx20N\) is an approximate pretraining compute-allocation heuristic, not a universal minimum or a fine-tuning dataset rule.
+- Kaplan's 0.73/0.27 allocation and Chinchilla's near-equal allocation are different results.
+- A multiplier such as 1.45 means 45% more than the original amount.
+- Read benchmark scores with their task, metric, prompting setup and limitations.
+- Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.
+
+---
+
+## Action Items After Class 24
+
+- [ ] Recalculate \(1+10/\sqrt N\) for all four model sizes and verify the corrected 1.20 result.
+- [ ] Reproduce the fixed-\(N\) table for \(A=1,5,10,20\), explaining what is held constant.
+- [ ] Calculate fourfold and eightfold compute changes using the 0.73 and 0.27 exponents.
+- [ ] Explain in your own words why the \(20N\) mnemonic and Kaplan allocation are not one simultaneous universal rule.
+- [ ] Browse the Kaplan paper's summary and notation, paying attention to what \(N\), \(D\) and compute mean.
+- [ ] Read Chinchilla's allocation comparison, model-configuration table and benchmark results; distinguish model size from quality.
+- [ ] For a hypothetical training plan, record the parameter convention, token budget, compute units and evaluation objective before estimating resources.
+- [ ] Review trainable parameters, frozen weights and normalization buffers before the fine-tuning module.
+
+---
+
+## Sources
+
+The primary source is the [full Class 24 recording and transcript](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ad520e7b5ec8915a3134be5), original transcript **GMT20261018-143238_Recording.cutfile.20261018194139540.transcript.vtt**. The complete accompanying seven-page **Note.pdf** was also inspected.
+
+The original research references discussed in class are [Scaling Laws for Neural Language Models - Kaplan et al.](https://arxiv.org/abs/2001.08361) and [Training Compute-Optimal Large Language Models - Hoffmann et al.](https://arxiv.org/abs/2203.15556). Selected equations, notation and comparison tables were checked against those papers. Official framework references linked in the relevant sections clarify normalization state and fine-tuning terminology.
+
+*Notes compiled from the full Class 24 transcript and accompanying handwritten notes - “LLM Scaling Laws - Model Size, Data and Compute,” Production AI / LLM Engineering, Krish Naik Academy. No executable code was shown in this session.*
 
 [Back to course index](Course_Notes_Index.md)
 

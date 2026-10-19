@@ -103,6 +103,13 @@
                   </li>
                   <li class="toctree-l1"><a class="reference internal" href="Class_22_MLA_and_RoPE_Notes.html">22 · MLA and RoPE</a>
                   </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html">23 · FlashAttention and SDPA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model scaling</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_24_LLM_Scaling_Laws_Notes.html">24 · Scaling laws</a>
+                  </li>
               </ul>
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick revision</a>
@@ -151,6 +158,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#class-22-multi-head-latent-attention-and-rotary-position-embeddings">Class 22: Multi-Head Latent Attention and Rotary Position Embeddings</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#class-23-flashattention-and-pytorch-sdpa-memory-efficient-attention-execution">Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#class-24-llm-scaling-laws-model-size-data-and-compute">Class 24: LLM Scaling Laws - Model Size, Data and Compute</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -182,7 +193,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="production-ai-llm-engineering-quick-revision">Production AI / LLM Engineering — Quick Revision<a class="headerlink" href="#production-ai-llm-engineering-quick-revision" title="Permanent link">&para;</a></h1>
-<p>Key pointers from all 22 documented classes. Open the linked chapter for explanations, code, diagrams, Q&amp;A, and practice actions.</p>
+<p>Key pointers from all 24 documented classes. Open the linked chapter for explanations, code, diagrams, Q&amp;A, and practice actions.</p>
 <p><a href="index.html">Course index</a></p>
 <h2 id="class-01-induction-and-the-research-to-production-roadmap">Class 01: Induction and the Research-to-Production Roadmap<a class="headerlink" href="#class-01-induction-and-the-research-to-production-roadmap" title="Permanent link">&para;</a></h2>
 <p><a href="Class_01_Induction_and_Course_Roadmap_Notes.html">Full class notes</a></p>
@@ -711,11 +722,48 @@
 <li>Full DeepSeek MLA–RoPE integration, FlashAttention, SDPA, and scaling laws remained future work.</li>
 </ul>
 <hr />
+<h2 id="class-23-flashattention-and-pytorch-sdpa-memory-efficient-attention-execution">Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution<a class="headerlink" href="#class-23-flashattention-and-pytorch-sdpa-memory-efficient-attention-execution" title="Permanent link">&para;</a></h2>
+<p><a href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html">Full class notes</a></p>
+<ul>
+<li>Attention mathematics, attention architecture, cache organization, and kernel execution are different layers of design.</li>
+<li>The dense score shape is <code>B × H × query_length × key_length</code>; a square full-sequence case creates the familiar quadratic storage.</li>
+<li>Doubling both sequence axes quadruples the score tensor. Halving bytes per element does not remove that growth.</li>
+<li>Tiling changes the working set and memory traffic while preserving the required interactions.</li>
+<li>Each query's normalization must cover every allowed key, including keys in other tiles.</li>
+<li>“Online” means incremental state updates; it does not by itself describe parallel scheduling.</li>
+<li>Weighted contributions accumulate across key blocks; completed output rows assemble across query chunks.</li>
+<li>GPU capacity, bandwidth, on-chip storage, and arithmetic throughput are different constraints.</li>
+<li>SDPA can dispatch to FlashAttention; “FlashAttention versus SDPA” is not necessarily a comparison of disjoint algorithms.</li>
+<li>A forced backend can fail where an automatic SDPA call succeeds through another eligible implementation.</li>
+<li>The L4 sweep ranges from 1.29× to 12.46×; speedup is a measured property of a configuration.</li>
+<li>Peak additional allocation is not total device memory.</li>
+<li>Successful eager generation does not establish that an unexecuted FlashAttention model-loading cell succeeded.</li>
+<li>The complete stable online-softmax formula walkthrough and concrete fine-tuning/runtime configuration remained next steps.</li>
+</ul>
+<hr />
+<h2 id="class-24-llm-scaling-laws-model-size-data-and-compute">Class 24: LLM Scaling Laws - Model Size, Data and Compute<a class="headerlink" href="#class-24-llm-scaling-laws-model-size-data-and-compute" title="Permanent link">&para;</a></h2>
+<p><a href="Class_24_LLM_Scaling_Laws_Notes.html">Full class notes</a></p>
+<ul>
+<li>A parameter count is a resource description, not a model-quality ranking.</li>
+<li>Scaling analysis connects model parameters, training tokens and total training compute.</li>
+<li>Keep non-embedding parameter counts, total parameters and trainable parameters distinct.</li>
+<li>Embedding matrices remain part of the model even when a paper excludes them from <span class="arithmatex">\(N\)</span>.</li>
+<li>FLOP/s is a rate; PF-days measure total work. One PF-day is <span class="arithmatex">\(8.64\times10^{19}\)</span> operations.</li>
+<li>The class's <span class="arithmatex">\(1+10/\sqrt N\)</span> curve is a hypothetical arithmetic example.</li>
+<li>Its losses are 2.00, 1.50, 1.20 and 1.10; its successive reductions are absolute loss units.</li>
+<li>Fitted coefficients and exponents describe measured behavior. They are not free controls for improving a trained model.</li>
+<li><span class="arithmatex">\(D\approx20N\)</span> is an approximate pretraining compute-allocation heuristic, not a universal minimum or a fine-tuning dataset rule.</li>
+<li>Kaplan's 0.73/0.27 allocation and Chinchilla's near-equal allocation are different results.</li>
+<li>A multiplier such as 1.45 means 45% more than the original amount.</li>
+<li>Read benchmark scores with their task, metric, prompting setup and limitations.</li>
+<li>Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.</li>
+</ul>
+<hr />
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="Class_22_MLA_and_RoPE_Notes.html" class="btn btn-neutral float-left" title="22 · MLA and RoPE"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_24_LLM_Scaling_Laws_Notes.html" class="btn btn-neutral float-left" title="24 · Scaling laws"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="downloads.html" class="btn btn-neutral float-right" title="Downloads">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -743,7 +791,7 @@
         </span>
     
     
-      <span><a href="Class_22_MLA_and_RoPE_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="Class_24_LLM_Scaling_Laws_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="downloads.html" style="color: #fcfcfc">Next &raquo;</a></span>
