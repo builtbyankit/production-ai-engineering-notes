@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_26_LangChain_RAG_HR_Assistant_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>26 · LangChain HR assistant - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "26 \u00b7 LangChain HR assistant";
+        var mkdocs_page_input_path = "Class_26_LangChain_RAG_HR_Assistant_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_26_LangChain_RAG_HR_Assistant_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_22_MLA_and_RoPE_Notes.html">22 · MLA and RoPE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html">23 · FlashAttention and SDPA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model scaling</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_24_LLM_Scaling_Laws_Notes.html">24 · Scaling laws</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">RAG and agents</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html">25 · Application engineering and RAG</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">26 · LangChain HR assistant</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#revisiting-fine-tuning-learn-a-behavior-or-retrieve-a-fact">Revisiting Fine-Tuning: Learn a Behavior or Retrieve a Fact?</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#from-a-chat-model-to-a-tool-using-agent">From a Chat Model to a Tool-Using Agent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#four-message-types">Four message types</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rag-has-an-ingestion-side-and-a-retrieval-side">RAG Has an Ingestion Side and a Retrieval Side</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#a-fixed-retrieval-pipeline-versus-retrieval-as-a-tool">A fixed retrieval pipeline versus retrieval as a tool</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#project-setup-and-the-roles-of-the-packages">Project Setup and the Roles of the Packages</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#credentials-and-provider-names">Credentials and provider names</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#load-the-demo-handbook-into-documents">Load the Demo Handbook into Documents</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-attempted-multiple-file-shortcut-did-not-work">The attempted multiple-file shortcut did not work</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#chunking-size-overlap-and-separator-priority">Chunking: Size, Overlap and Separator Priority</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-overlap-is-trying-to-preserve">What overlap is trying to preserve</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#choosing-a-chunk-size">Choosing a chunk size</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#embeddings-a-different-job-from-text-generation">Embeddings: A Different Job from Text Generation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#build-the-faiss-index-and-test-retrieval-before-adding-an-agent">Build the FAISS Index and Test Retrieval Before Adding an Agent</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#the-sick-leave-query">The sick-leave query</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#a-useful-failed-ranking-prediction">A useful failed ranking prediction</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#turn-retrieval-into-a-tool">Turn Retrieval into a Tool</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#initialize-groq-preserve-the-debugging-distinction">Initialize Groq: Preserve the Debugging Distinction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#inspect-the-plain-model-response-before-using-retrieval">Inspect the Plain Model Response Before Using Retrieval</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#create-the-hr-agent-and-read-its-tool-trace">Create the HR Agent and Read Its Tool Trace</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#what-the-saved-trace-shows">What the saved trace shows</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#the-visible-policy-answers">The visible policy answers</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#conversation-memory-added-in-code-unresolved-in-the-demo">Conversation Memory: Added in Code, Unresolved in the Demo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#in-memory-state-and-production-sessions">In-memory state and production sessions</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#production-questions-raised-by-the-small-demo">Production Questions Raised by the Small Demo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#token-cost-and-corpus-size">Token cost and corpus size</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#updating-only-changed-content">Updating only changed content</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#version-metadata-versus-version-enforcement">Version metadata versus version enforcement</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#long-conversations-and-summarization">Long conversations and summarization</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#authorization-and-guardrails-were-not-solved">Authorization and guardrails were not solved</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-26">Action Items After Class 26</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#sources">Sources</a>
+    </li>
+    </ul>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">RAG and agents</li>
+      <li class="breadcrumb-item active">26 · LangChain HR assistant</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-26-building-a-langchain-rag-hr-assistant">Class 26: Building a LangChain RAG HR Assistant<a class="headerlink" href="#class-26-building-a-langchain-rag-hr-assistant" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>Mentor:</strong> Divesh Jadhwani<br />
+<strong>Duration:</strong> 3 hours 17 minutes 5 seconds | <strong>Session:</strong> Class 26 - 25 October 2026<br />
+<strong>Recording:</strong> <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ade6ba859c2d21580c9c6a3">25 Oct Langchain</a></p>
+<hr />
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<p>This class turns the previous session's RAG concepts into an <strong>HR-policy question-answering notebook</strong>. After revising fine-tuning, messages and tool use, Divesh builds the ingestion pipeline, tests retrieval, wraps it as an agent tool, and generates answers grounded in a sample handbook. The final attempt to add conversation memory remained unresolved during the live demonstration; the working retrieval assistant and that unfinished extension are kept distinct below.</p>
+<p>The class repository is <a href="https://github.com/d-hackmt/adv-batch-langchain">d-hackmt/adv-batch-langchain</a>. Its main materials are <code>rag.ipynb</code>, <code>requirements.txt</code>, the demo <code>data/hr_policy.txt</code>, and the handwritten resources under <code>NOTES/</code>. The code excerpts below come from the supplied notebook, including its successful model initialization and the relevant debugging differences. Saved outputs are evidence from the instructor's run, rather than new executions performed for these notes.</p>
+<p>Divesh recommended watching the first walkthrough before reproducing it independently. He also assigned the linked <a href="https://claude.ai/artifact/ARzxd2gJcNYEKojXiDhr65">Fine-tuning, RAG and Hybrid artifact</a> as supplementary study. It is a scripted, fictional demonstration, not a live benchmark or an independently validated comparison of model accuracy.</p>
+<hr />
+<h2 id="revisiting-fine-tuning-learn-a-behavior-or-retrieve-a-fact">Revisiting Fine-Tuning: Learn a Behavior or Retrieve a Fact?<a class="headerlink" href="#revisiting-fine-tuning-learn-a-behavior-or-retrieve-a-fact" title="Permanent link">&para;</a></h2>
+<p>Divesh opened with a customer-support scenario: a company wants a chatbot that responds in the style of its employees. Historical support conversations can supply examples of questions and desired answers. In supervised fine-tuning, those examples continue the training of a pretrained model so its responses better match the desired task or behavior.</p>
+<p>The example emphasized selecting some layers to retrain. That is one adaptation strategy, rather than the definition of all fine-tuning: full fine-tuning can update the base model broadly, while partial or parameter-efficient approaches update a subset or additional adaptation parameters. The data still needs preparation and evaluation. Giving a model employee conversations does not automatically make all organizational facts accurate, current or retrievable.</p>
+<p>Two limitations motivated the return to RAG:</p>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Implication for the application</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Training and retraining require resources</td>
+<td>Frequent policy changes need an update strategy beyond repeatedly running a training job</td>
+</tr>
+<tr>
+<td>Learned facts can become stale</td>
+<td>A model does not automatically acquire information created after its training or adaptation data was collected</td>
+</tr>
+</tbody>
+</table>
+<p>The classroom story used an imagined early-LLM adoption period to introduce these choices. Treat it as a design progression, rather than a literal timeline in which RAG or model APIs first appeared in 2023. The original <a href="https://arxiv.org/abs/2005.11401">RAG research paper dates to 2020</a>.</p>
+<p>RAG supplies selected external information <strong>at inference time</strong>, without requiring a parameter update for each document change. Fine-tuning and retrieval can also be combined: one concerns learned behavior or capability, while the other supplies evidence for the current query. Neither guarantees correctness without checking the data, retrieval and generated answer.</p>
+<hr />
+<h2 id="from-a-chat-model-to-a-tool-using-agent">From a Chat Model to a Tool-Using Agent<a class="headerlink" href="#from-a-chat-model-to-a-tool-using-agent" title="Permanent link">&para;</a></h2>
+<p>Divesh's revision diagram separates three components: the model as a “brain,” memory as conversation context, and tools as ways to obtain information or perform operations. A model call takes input and returns output. An application can preserve a conversation by storing previous messages and supplying appropriate history on later calls.</p>
+<p>The shopping example made tool use concrete. A website might already have a backend function that filters products below a given price. Instead of triggering that function only from a button, an LLM can propose structured arguments based on a natural-language request. The application then validates and executes the function, receives its result, and gives the result back to the model.</p>
+<p>The model does not directly execute an arbitrary Python function merely because it can describe one. The surrounding runtime exposes a tool, interprets the model's tool call, runs the implementation and returns the result. The function's name, parameter schema and description help the model choose when and how to use it.</p>
+<p>For the HR example, “Hi” may need a direct greeting, whereas “Tell me the refund policy” needs a policy lookup. This is the reason-and-act loop represented in the revision image:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
+    U["User message"] --&gt; M["Model with system instructions&lt;br/&gt;and available tool descriptions"]
+    M --&gt; C{"Need external information?"}
+    C --&gt;|No| A["Direct answer"]
+    C --&gt;|Yes| T["Runtime executes policy lookup tool"]
+    T --&gt; R["Tool result becomes model context"]
+    R --&gt; M
+    M --&gt; F["Final answer"]</code></pre>
+<p>A model with stored chat history is not automatically an autonomous agent. In this class, the agent distinction becomes concrete when the model can request the retrieval tool and continue after observing its result.</p>
+<h3 id="four-message-types">Four message types<a class="headerlink" href="#four-message-types" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Message type</th>
+<th>Purpose in this class</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Human/user message</td>
+<td>The user's question or follow-up</td>
+</tr>
+<tr>
+<td>System message</td>
+<td>Instructions defining the assistant's role and behavior</td>
+</tr>
+<tr>
+<td>AI/assistant message</td>
+<td>A model response, including a possible tool-call request</td>
+</tr>
+<tr>
+<td>Tool message</td>
+<td>The result returned by a tool execution</td>
+</tr>
+</tbody>
+</table>
+<p>These are roles, not a mandatory four-item sequence for every turn. A tool interaction usually has an AI message requesting a tool call, a matching tool result, then another AI response. A simple reply can have no tool message. System instructions may be assembled for each model request without being stored as a new item in every conversation turn. The official <a href="https://docs.langchain.com/oss/python/langchain/messages">message guide</a> distinguishes these roles and their content and metadata fields.</p>
+<p>Memory here means application-managed context. It is distinct from caching a previous response or reusing model computations. Short-term and long-term memory were mentioned, but the implementation at the end only attempted thread-level conversation history.</p>
+<hr />
+<h2 id="rag-has-an-ingestion-side-and-a-retrieval-side">RAG Has an Ingestion Side and a Retrieval Side<a class="headerlink" href="#rag-has-an-ingestion-side-and-a-retrieval-side" title="Permanent link">&para;</a></h2>
+<p>Divesh summarized RAG as a way to ask questions about external text. The handwritten notes divide it into two workflows:</p>
+<ol>
+<li><strong>Ingestion:</strong> load source content, split it, embed the chunks and index them.</li>
+<li><strong>Retrieval and generation:</strong> find relevant content for a question, then give the question and selected evidence to the model.</li>
+</ol>
+<p>In a managed knowledge-base application, ingestion is usually a backend process. In an upload-based application, the user can trigger that process by supplying a file. The distinction concerns when and why the work happens, rather than a prohibition on users initiating ingestion.</p>
+<p>The course-site chatbot was used as a visible example: questions about courses produced links to course pages. Divesh explicitly said he had not inspected its implementation. Its observed interface illustrates the desired behavior, but does not prove whether its backend scrapes every page live, reads a prebuilt index, queries structured data or combines these approaches.</p>
+<p>The practical ingestion sketch uses this exact stack:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    T["Demo HR handbook&lt;br/&gt;text file"] --&gt; L["TextLoader&lt;br/&gt;Document objects"]
+    L --&gt; S["RecursiveCharacterTextSplitter&lt;br/&gt;smaller Documents"]
+    S --&gt; E["Jina embedding model&lt;br/&gt;vectors"]
+    E --&gt; V["FAISS index&lt;br/&gt;with chunk text and metadata mapping"]</code></pre>
+<h3 id="a-fixed-retrieval-pipeline-versus-retrieval-as-a-tool">A fixed retrieval pipeline versus retrieval as a tool<a class="headerlink" href="#a-fixed-retrieval-pipeline-versus-retrieval-as-a-tool" title="Permanent link">&para;</a></h3>
+<p>The PDF first shows a fixed flow: question, query embedding, top-k search, context plus instructions, model answer. Every query goes through retrieval in that particular design, even a greeting.</p>
+<p>Its second sketch gives retrieval to the model as a tool. The model can choose a direct response or a search, and can formulate the search query. The practical uses this second form through LangChain's <code>create_agent</code>.</p>
+<p>This is an architectural choice, rather than a strict rule that LangChain must search every time and only LangGraph can retrieve conditionally. LangChain agents support tool selection and use LangGraph infrastructure; LangGraph also permits more customized state and control flow. The official <a href="https://docs.langchain.com/oss/python/deepagents/retrieval">retrieval guide</a> distinguishes fixed two-step RAG and agentic retrieval.</p>
+<hr />
+<h2 id="project-setup-and-the-roles-of-the-packages">Project Setup and the Roles of the Packages<a class="headerlink" href="#project-setup-and-the-roles-of-the-packages" title="Permanent link">&para;</a></h2>
+<p>Divesh created a virtual environment, selected a notebook kernel, installed the requirements and kept credentials in an environment file. The repository README's installation command is:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div>
+<p>The relevant package groups are:</p>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Role in the notebook</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python-dotenv</code></td>
+<td>Load environment variables from an environment file</td>
+</tr>
+<tr>
+<td><code>langchain</code></td>
+<td>The agent-building interface, including <code>create_agent</code></td>
+</tr>
+<tr>
+<td><code>langchain-core</code></td>
+<td>Shared model, message, document and runnable interfaces</td>
+</tr>
+<tr>
+<td><code>langchain-community</code></td>
+<td>The demonstrated TextLoader, Jina and FAISS integrations</td>
+</tr>
+<tr>
+<td><code>langchain-groq</code></td>
+<td>Groq chat-model integration</td>
+</tr>
+<tr>
+<td><code>langchain-text-splitters</code></td>
+<td>Recursive character splitting</td>
+</tr>
+<tr>
+<td><code>faiss-cpu</code></td>
+<td>Local vector-search library</td>
+</tr>
+<tr>
+<td><code>jupyter</code>, <code>ipykernel</code></td>
+<td>Notebook interface and kernel support</td>
+</tr>
+</tbody>
+</table>
+<p>The imports used for ingestion are:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.document_loaders</span><span class="w"> </span><span class="kn">import</span> <span class="n">TextLoader</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_text_splitters</span><span class="w"> </span><span class="kn">import</span> <span class="n">RecursiveCharacterTextSplitter</span> 
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">JinaEmbeddings</span>
+</code></pre></div>
+<p>The requirements are <strong>unpinned</strong>, so they do not record a reproducible set of library versions. Package names and namespaces evolve. In particular, <code>langchain-classic</code> contains legacy functionality moved out of the main package; it should not be assumed to be a drop-in replacement for every direct <code>langchain-community</code> integration. Use the <a href="https://docs.langchain.com/oss/python/migrate/langchain-v1">official migration guide</a> when adapting imports rather than relying on the speculative deprecation dates mentioned during class.</p>
+<h3 id="credentials-and-provider-names">Credentials and provider names<a class="headerlink" href="#credentials-and-provider-names" title="Permanent link">&para;</a></h3>
+<p>The notebook loads variables, then reads the two key names:</p>
+<div class="highlight"><pre><span></span><code><span class="n">groq_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;GROQ_API_KEY&quot;</span><span class="p">)</span>  <span class="c1"># LLM </span>
+<span class="n">jina_key</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s2">&quot;JINA_API_KEY&quot;</span><span class="p">)</span>   <span class="c1"># EMBEDDING MODEL</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ENV VAR LOADED&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>The class also imports <code>load_dotenv</code> and calls <code>load_dotenv()</code> before these lines. The printed status is a progress message; it does not by itself prove that both keys exist or are valid.</p>
+<p>The repository excludes <code>.env</code> and the demonstrated environment directory from Git. Do not paste key values into the notebook or its saved outputs. The code excerpts here use variable names and environment lookups only.</p>
+<p>The provider is <strong>Groq</strong>, not xAI's Grok. Groq hosts the <code>gpt-oss</code> models used in the notebook; this is not access to an OpenAI-hosted proprietary GPT endpoint through the same account. <strong>Jina</strong> supplies the embedding service in this example. FAISS runs locally, but using hosted Jina and Groq APIs means the full application is not offline: document text is sent for embedding, and retrieved context is sent for generation.</p>
+<p>Free trials and account limits were the instructor's reason for choosing these services for practice. They are not a promise of unlimited use or free production deployment.</p>
+<hr />
+<h2 id="load-the-demo-handbook-into-documents">Load the Demo Handbook into Documents<a class="headerlink" href="#load-the-demo-handbook-into-documents" title="Permanent link">&para;</a></h2>
+<p>The sample file contains eight policy sections: leave, work from home, probation, notice period, reimbursement, code of conduct, holidays and exit. It is fictional demo content, not the Academy's employment policy.</p>
+<p>The path and loader appear in the notebook as:</p>
+<div class="highlight"><pre><span></span><code><span class="n">DATA_FILE_PATH</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;data&quot;</span> <span class="p">,</span> <span class="s2">&quot;hr_policy.txt&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">loader</span> <span class="o">=</span> <span class="n">TextLoader</span><span class="p">(</span><span class="n">DATA_FILE_PATH</span> <span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+<span class="n">documents</span> <span class="o">=</span> <span class="n">loader</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+</code></pre></div>
+<p>The loader <strong>decodes</strong> the file using UTF-8 and returns a list of LangChain <code>Document</code> objects. It does not return a <code>TextLoader</code> instance as the loaded data, and it is not converting the input file into UTF-8 by changing its encoding on disk.</p>
+<p>The saved output shows <strong>one loaded document containing 2,603 characters</strong>. Useful inspection points are:</p>
+<table>
+<thead>
+<tr>
+<th>Expression</th>
+<th>What it reveals</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>len(documents)</code></td>
+<td>Number of loaded document objects</td>
+</tr>
+<tr>
+<td><code>documents[0].page_content</code></td>
+<td>Text in the first document</td>
+</tr>
+<tr>
+<td><code>documents[0].metadata</code></td>
+<td>Associated information, including its source path</td>
+</tr>
+</tbody>
+</table>
+<p>Here the metadata identifies <code>data/hr_policy.txt</code>; the saved Windows output uses backslashes in that path. Different loaders can attach other metadata, such as page or source identifiers. A <code>Document</code> is a standardized container for this text-processing workflow, not a claim that every LangChain component always operates only on documents. Chat models use messages, for example.</p>
+<h3 id="the-attempted-multiple-file-shortcut-did-not-work">The attempted multiple-file shortcut did not work<a class="headerlink" href="#the-attempted-multiple-file-shortcut-did-not-work" title="Permanent link">&para;</a></h3>
+<p>During the demo, Divesh copied the text file and tried to adapt the single-file loading code to several paths. That experiment produced a problem, and he returned to the original one-file pipeline. It was not a successful demonstration of bulk loading.</p>
+<p>For multiple formats, select an appropriate loader, then standardize the extracted text and metadata. PDF and text sources can enter the same downstream document workflow, but parsing still matters: scanned pages, tables, headers and layout need suitable extraction. The class browsed alternative loaders, including web and PDF loaders; it did not implement those integrations.</p>
+<p>Source metadata helps provenance, but it is not automatically visible to the model merely because it exists in a <code>Document</code>. The retrieval tool later joins only <code>page_content</code>, so its return string omits metadata unless the tool is extended to include it.</p>
+<hr />
+<h2 id="chunking-size-overlap-and-separator-priority">Chunking: Size, Overlap and Separator Priority<a class="headerlink" href="#chunking-size-overlap-and-separator-priority" title="Permanent link">&para;</a></h2>
+<p>The next step is to make pieces that can be retrieved individually. Divesh first demonstrated a three-rule string with <code>chunk_size=60</code> and <code>chunk_overlap=10</code>. The saved result contained one chunk per rule because the newline boundaries and rule lengths permitted that division.</p>
+<p>The handbook uses:</p>
+<div class="highlight"><pre><span></span><code><span class="n">text_splitter</span> <span class="o">=</span> <span class="n">RecursiveCharacterTextSplitter</span><span class="p">(</span>
+    <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span>
+    <span class="n">chunk_overlap</span><span class="o">=</span><span class="mi">50</span>
+<span class="p">)</span>
+
+<span class="n">chunks</span> <span class="o">=</span> <span class="n">text_splitter</span><span class="o">.</span><span class="n">split_documents</span><span class="p">(</span><span class="n">documents</span><span class="p">)</span>
+</code></pre></div>
+<p>With the default character-count length function, <strong>500 means characters</strong>, not tokens or words. The splitter tries separator levels in order. The standard hierarchy is double newline, newline, space and finally an empty separator, which allows character-level splitting when necessary. This is a deterministic text-splitting heuristic, not a language model understanding paragraph meaning.</p>
+<p>The official <a href="https://docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter">recursive-splitting reference</a> describes <code>chunk_size</code> as the maximum under the selected length function and <code>chunk_overlap</code> as a target. It does not promise every split ends at a full stop. A full-stop separator is not even in the default list.</p>
+<h3 id="what-overlap-is-trying-to-preserve">What overlap is trying to preserve<a class="headerlink" href="#what-overlap-is-trying-to-preserve" title="Permanent link">&para;</a></h3>
+<p>If a useful statement crosses a chunk boundary, an overlap can carry some surrounding context into the next piece. That helps retrieval avoid receiving only half of a fact. It also repeats content, increasing storage and potentially the amount of duplicated context later retrieved.</p>
+<p>Overlap is configurable and <strong>may be zero</strong>. The actual retained overlap can be smaller than the target because the algorithm works with the selected separators and merge boundaries. Do not expect exactly 50 repeated characters between every pair of the handbook's chunks.</p>
+<p>The live parameter changes produced these counts:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: right;">Chunk size</th>
+<th style="text-align: right;">Target overlap</th>
+<th style="text-align: right;">Reported chunks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: right;">500</td>
+<td style="text-align: right;">50</td>
+<td style="text-align: right;">9</td>
+</tr>
+<tr>
+<td style="text-align: right;">600</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">6</td>
+</tr>
+<tr>
+<td style="text-align: right;">300</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">14</td>
+</tr>
+</tbody>
+</table>
+<p>These counts apply to this input and splitter configuration. They are not formulas for other corpora. Returning to 500/50 yielded nine chunks: the short handbook heading and its eight policy sections. Each result remains a <code>Document</code>, carrying its text and source metadata.</p>
+<p>Divesh inspected the heading, work-from-home and code-of-conduct chunks to show the actual boundaries. This is a useful habit: look at what a splitter produced rather than assuming the requested size guarantees meaningful pieces.</p>
+<h3 id="choosing-a-chunk-size">Choosing a chunk size<a class="headerlink" href="#choosing-a-chunk-size" title="Permanent link">&para;</a></h3>
+<p>The class treated chunk selection as experimentation informed by the content. FAQs, long prose, source code and extracted PDF text have different structures. Evaluate whether retrieved chunks contain enough evidence to answer representative questions without excessive unrelated text.</p>
+<p>The closing Q&amp;A also explicitly connected chunking to the model's context window. Earlier remarks that context size need not be considered should not be generalized. Instructions, history, tool definitions, retrieved content and room for output all consume the available budget.</p>
+<p>For example, <strong>ten chunks of 4,000 characters total about 40,000 characters</strong> before formatting and other context. That is not automatically 40,000 words or 40,000 tokens. Use the relevant tokenizer or a documented approximation when planning model requests. Processing a PDF in batches of pages is one ingestion tactic; the class's “15 pages” suggestion is not a universal chunking standard.</p>
+<p>Cleaning also remains useful. A model's ability to interpret imperfect text does not remove the need to fix broken extraction, duplicated headers, missing content or incorrect metadata before indexing.</p>
+<hr />
+<h2 id="embeddings-a-different-job-from-text-generation">Embeddings: A Different Job from Text Generation<a class="headerlink" href="#embeddings-a-different-job-from-text-generation" title="Permanent link">&para;</a></h2>
+<p>An embedding model converts text into a vector used for comparison and search. A chat model generates a response. Their roles are separate even if both are neural models.</p>
+<p>The notebook initializes the embedding model with:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.embeddings</span><span class="w"> </span><span class="kn">import</span> <span class="n">JinaEmbeddings</span>
+
+<span class="n">embeddings_model</span> <span class="o">=</span> <span class="n">JinaEmbeddings</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;jina-embeddings-v2-base-en&quot;</span><span class="p">)</span>
+</code></pre></div>
+<p>Divesh selected the English v2 model while browsing Jina's available models. The demo query is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">query_vector</span> <span class="o">=</span> <span class="n">embeddings_model</span><span class="o">.</span><span class="n">embed_query</span><span class="p">(</span><span class="s2">&quot;What is LangChain?&quot;</span><span class="p">)</span>
+
+<span class="n">query_vector</span>
+</code></pre></div>
+<p>Its saved output is a vector of <strong>768 numbers</strong>. Printing an entire vector makes the representation visible, but the useful operational checks are its dimension, type and compatibility with the index.</p>
+<p>The model's <a href="https://huggingface.co/jinaai/jina-embeddings-v2-base-en">official card</a> describes an English embedding model supporting inputs up to 8,192 tokens. That input limit and the 768-dimensional output are different properties. Neither is the model's parameter count.</p>
+<p>The handwritten examples compare vector widths from different providers. Read those as illustrations that dimensions vary, not fixed dimensions for every Google, OpenAI or Hugging Face model. A larger output vector is not sufficient evidence that an embedding model is better or more expensive. Measure retrieval quality on the intended language, domain and query types.</p>
+<p>Jina and Qdrant are also not competing layers in this specific comparison: Jina supplies embeddings, while Qdrant is a vector-database option. FAISS, Pinecone, Qdrant, Elasticsearch and other stores were mentioned as alternatives, but no comparative benchmark was performed.</p>
+<p>When changing embedding models, document and query vectors must remain compatible. A matching vector length alone does not prove they share a useful semantic space. Existing documents generally need to be re-embedded when the embedding model or its relevant configuration changes.</p>
+<hr />
+<h2 id="build-the-faiss-index-and-test-retrieval-before-adding-an-agent">Build the FAISS Index and Test Retrieval Before Adding an Agent<a class="headerlink" href="#build-the-faiss-index-and-test-retrieval-before-adding-an-agent" title="Permanent link">&para;</a></h2>
+<p>The notebook imports FAISS, then builds the store from the chunks and embedding model:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_community.vectorstores</span><span class="w"> </span><span class="kn">import</span> <span class="n">FAISS</span> 
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">vector_store</span> <span class="o">=</span> <span class="n">FAISS</span><span class="o">.</span><span class="n">from_documents</span><span class="p">(</span><span class="n">chunks</span> <span class="p">,</span> <span class="n">embeddings_model</span><span class="p">)</span>
+</code></pre></div>
+<p>This convenience call obtains document embeddings and builds the local search structure. The LangChain wrapper also maintains the mapping back to the original chunk text and metadata. The model receives text later; it does not answer a policy question by interpreting the raw floating-point array itself.</p>
+<p>The count check is:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CHUNKS ARE STORED&quot;</span> <span class="p">,</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">ntotal</span><span class="p">)</span>
+</code></pre></div>
+<p>The saved result is <strong>9</strong>. This verifies the index contains nine vectors in the demo. It does not establish that a persistent database file has been saved. The notebook creates an in-process index and does not call a disk-persistence method.</p>
+<p>FAISS is a similarity-search library. The simple local wrapper is convenient for learning, while a production store may also need persistence, concurrent access, metadata filtering, access control and update operations.</p>
+<h3 id="the-sick-leave-query">The sick-leave query<a class="headerlink" href="#the-sick-leave-query" title="Permanent link">&para;</a></h3>
+<p>The notebook's retrieval test is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">test_query</span> <span class="o">=</span> <span class="s2">&quot;How many sick leaves employees get&quot;</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="n">top_matches</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">similarity_search</span><span class="p">(</span><span class="n">test_query</span> <span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+</code></pre></div>
+<p>This embeds the query and retrieves up to three matching documents. The first saved result is the leave policy, which says employees receive <strong>10 paid sick days per year</strong>, separately from annual leave. The other saved results are holidays and notice period.</p>
+<p>This question asks for an entitlement in the demo handbook. “How many sick days do I personally have left?” would additionally require an employee-specific balance; a generic policy document cannot supply that fact.</p>
+<p>Although cosine similarity was used in the conceptual revision, the notebook does not explicitly configure cosine search. The demonstrated LangChain FAISS construction defaults to an L2 index in the <a href="https://github.com/langchain-ai/langchain-community/blob/main/libs/community/langchain_community/vectorstores/faiss.py">official implementation</a>. Cosine, inner product and L2 have relationships under appropriate normalization, but they should not be labeled interchangeably without checking the configuration. See <a href="https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances">FAISS's metric documentation</a>.</p>
+<h3 id="a-useful-failed-ranking-prediction">A useful failed ranking prediction<a class="headerlink" href="#a-useful-failed-ranking-prediction" title="Permanent link">&para;</a></h3>
+<p>Divesh inserted the word “sick” into the notice-period text to demonstrate how changed content can affect retrieval. He predicted that notice period would become the second result. It appeared <strong>third</strong> in the shown result, and the supplied file retains the phrase “last working sick day.”</p>
+<p>That sequence is more instructive than a claim that adding a keyword guarantees a rank. Dense retrieval is not simply counting occurrences of a term. Text edits can influence an embedding and ranking, but the result depends on the full query, chunk and model. A loosely related result can still enter top-k even when the most relevant chunk ranks first.</p>
+<p>After changing source text, the live notebook reloaded, split, embedded and rebuilt the store. Editing a file alone does not magically update vectors already in memory. Incremental updates were discussed later, but were not implemented here.</p>
+<p>This stage tests retrieval separately from generation. The embedding service is already a learned model; “no AI yet” in the narration means no generative chat model has yet answered the question.</p>
+<hr />
+<h2 id="turn-retrieval-into-a-tool">Turn Retrieval into a Tool<a class="headerlink" href="#turn-retrieval-into-a-tool" title="Permanent link">&para;</a></h2>
+<p>After the break, Divesh made the vector search available to the assistant. The exact notebook function is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">retriever</span> <span class="o">=</span> <span class="n">vector_store</span><span class="o">.</span><span class="n">as_retriever</span><span class="p">(</span><span class="n">search_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;k&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">})</span>  <span class="c1"># returns top 3 relevant chunks</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">search_hr_policy</span><span class="p">(</span><span class="n">question</span><span class="p">:</span><span class="nb">str</span><span class="p">)</span><span class="o">-&gt;</span><span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Search the HR policy document for information about leave, work from home,</span>
+<span class="sd">    probation, notice period, reimbursement, code of conduct, holidays, or exit process.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">matching_chunks</span> <span class="o">=</span> <span class="n">retriever</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">matching_chunks</span><span class="p">)</span>
+</code></pre></div>
+<p>The retriever is an interface around the store's search behavior. Calling it with a question produces matching <code>Document</code> objects. The function joins their contents into a string for the model to read.</p>
+<p>Three details matter:</p>
+<ul>
+<li>The type annotation describes the question input and string result.</li>
+<li>The docstring describes the knowledge the tool can search, guiding tool selection.</li>
+<li>The fixed <code>k=3</code> belongs to the retriever configuration. The model supplies the question here, rather than freely choosing <code>k</code> through this function's signature.</li>
+</ul>
+<p><code>create_agent</code> can accept a plain Python callable with a suitable schema and description, so this example does not add a decorator. The runtime turns the callable into a tool interface. A meaningful name and description improve discoverability, but do not guarantee the model always chooses or uses the tool correctly.</p>
+<p>Only chunk text is returned by this implementation. The metadata used for source inspection is not included in the joined result, and the function does not enforce document permissions, version filters or citations.</p>
+<hr />
+<h2 id="initialize-groq-preserve-the-debugging-distinction">Initialize Groq: Preserve the Debugging Distinction<a class="headerlink" href="#initialize-groq-preserve-the-debugging-distinction" title="Permanent link">&para;</a></h2>
+<p>Divesh first tried a model construction that retained the string <code>groq:openai/gpt-oss-120b</code> inside <code>ChatGroq</code>. The saved notebook also contains that early configuration with <code>temperature=0.5</code>, while the live narration initially described zero. It then reassigns <code>llm</code> with the successful direct-provider construction:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain_groq</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChatGroq</span>
+<span class="n">llm</span> <span class="o">=</span> <span class="n">ChatGroq</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="s2">&quot;openai/gpt-oss-20b&quot;</span><span class="p">)</span>
+<span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;Say hi&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">content</span>
+</code></pre></div>
+<p>The saved response is a greeting, and subsequent response metadata identifies <strong><code>openai/gpt-oss-20b</code></strong>. Therefore the working assistant should not be reported as a successful 120B run.</p>
+<p>There are two naming layers:</p>
+<table>
+<thead>
+<tr>
+<th>Interface</th>
+<th>Model-name pattern discussed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Direct <code>ChatGroq</code> constructor</td>
+<td>Groq's model identifier, such as <code>openai/gpt-oss-20b</code></td>
+</tr>
+<tr>
+<td>Provider-routing <code>init_chat_model</code> interface</td>
+<td>A provider-qualified identifier can include <code>groq:</code></td>
+</tr>
+</tbody>
+</table>
+<p>The prefix belongs to the routing interface, rather than automatically being part of the provider's own model ID. The official <a href="https://docs.langchain.com/oss/python/integrations/chat/groq">ChatGroq integration</a> and <a href="https://console.groq.com/docs/model/openai/gpt-oss-20b">Groq model documentation</a> establish the direct integration and provider identifier.</p>
+<p>The live error prompted an API-key check, a new key and changes to model initialization. A model-not-found or access error does not by itself prove the key was invalid. Check the exact provider, model ID, access and environment state before assigning one cause. Notebook cells also retain state: rerunning an earlier constructor can overwrite the working <code>llm</code> variable.</p>
+<p>A lower temperature was described as limiting variation, not as a guarantee of correctness or deterministic execution. The final successful constructor above does not explicitly set the temperature, so do not silently replace its value with the earlier spoken setting.</p>
+<hr />
+<h2 id="inspect-the-plain-model-response-before-using-retrieval">Inspect the Plain Model Response Before Using Retrieval<a class="headerlink" href="#inspect-the-plain-model-response-before-using-retrieval" title="Permanent link">&para;</a></h2>
+<p>Divesh asked the bare chat model about code of conduct before attaching the retrieval tool:</p>
+<div class="highlight"><pre><span></span><code><span class="n">answer</span> <span class="o">=</span> <span class="n">llm</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span><span class="s2">&quot;tell me about code of conduct&quot;</span><span class="p">)</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">answer</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p>The model returned a long general explanation. That is not evidence it had read the Acme handbook. This comparison establishes why the next step must supply external context rather than assuming a fluent answer is organization-specific.</p>
+<p>A chat-model invocation returns an <strong>AIMessage</strong>, not an ordinary dictionary with arbitrary attributes. The successful inspection in the notebook is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">answer</span><span class="o">.</span><span class="n">response_metadata</span>
+</code></pre></div>
+<p>The stored metadata includes the model name, token usage, timing and finish reason. Its example contains 77 prompt tokens and 1,600 completion tokens, totaling 1,677. These are details of that recorded call, not a standard cost or speed for all queries.</p>
+<p>Use the documented fields: <code>content</code> for the response content, <code>response_metadata</code> for provider response information, and <code>usage_metadata</code> when supplied for normalized token usage. The live attempts to access fields such as a top-level model name or generic <code>.metadata</code> should not be copied as working API examples. Metadata keys and availability can vary by integration.</p>
+<p>This was an inspection of available response information. Exporting it to an observability platform was mentioned, but a LangSmith tracing integration was not configured in this notebook.</p>
+<hr />
+<h2 id="create-the-hr-agent-and-read-its-tool-trace">Create the HR Agent and Read Its Tool Trace<a class="headerlink" href="#create-the-hr-agent-and-read-its-tool-trace" title="Permanent link">&para;</a></h2>
+<p>The assistant combines a model, a tool list and instructions. This is the structure drawn on the PDF's final page. The notebook's first assistant construction is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">hr_assistant</span> <span class="o">=</span> <span class="n">create_agent</span><span class="p">(</span>
+    <span class="n">model</span> <span class="o">=</span> <span class="n">llm</span><span class="p">,</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">search_hr_policy</span><span class="p">],</span>
+    <span class="n">system_prompt</span><span class="o">=</span> <span class="s2">&quot;&quot;&quot; </span>
+
+<span class="s2">    You are a friendly HR assistant working for Acme Crop. </span>
+<span class="s2">    Always use the search_hr_policy tool to look up </span>
+<span class="s2">    facts before answering. </span>
+<span class="s2">    If the answer isn&#39;t in the search results, say you don&#39;t know &quot;</span>
+<span class="s2">    instead of guessing.&quot;</span>
+
+<span class="s2">    always reply in 2 lines , if you are not clear ask a questions to clarift from user</span>
+
+<span class="s2">    Dont entertain any other questions which are off topic and if you dont understand ,</span>
+<span class="s2">    tell that mail to acmecorp.com</span>
+<span class="s2">    &quot;&quot;&quot;</span><span class="p">,</span>
+
+<span class="p">)</span>
+</code></pre></div>
+<p>The notebook imports <code>create_agent</code> from <code>langchain.agents</code> beforehand. The excerpt preserves the supplied prompt, including its spelling and punctuation. “Acme Crop” is a typo relative to the demo document's Acme Corp; the domain text is a fictional fallback, not an instruction to email anyone.</p>
+<p>The intended behaviors are to retrieve HR facts, avoid guessing, keep answers brief, clarify ambiguous questions and stay within scope. These are prompt instructions, not enforced access controls or a validated guardrail system. The saved long answers also do not demonstrate reliable compliance with the later two-line instruction: notebook outputs can remain after source edits, and this construction cell has no saved execution count.</p>
+<p>The invocation format is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">hr_assistant</span><span class="o">.</span><span class="n">invoke</span><span class="p">({</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+                            <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;tell me about code of conduct&quot;</span><span class="p">}]})</span>
+</code></pre></div>
+<p>Here the caller passes a user-role message because it is submitting the user's question. Dictionary-format messages use <code>assistant</code> for model output, while LangChain's corresponding object is <code>AIMessage</code>; system and tool messages have their own roles and requirements. They are not interchangeable labels for the same external input.</p>
+<h3 id="what-the-saved-trace-shows">What the saved trace shows<a class="headerlink" href="#what-the-saved-trace-shows" title="Permanent link">&para;</a></h3>
+<p>The returned agent state contains a <code>messages</code> list:</p>
+<ol>
+<li>A human message asking about code of conduct.</li>
+<li>An AI message with a tool call to <code>search_hr_policy</code>, using the question “code of conduct.”</li>
+<li>A tool message containing the three retrieved chunks.</li>
+<li>An AI message producing the final answer from that context.</li>
+</ol>
+<p>The returned tool call and tool result share a call identifier. The first AI message can have empty text content while still carrying a valid tool request. Two AI messages in the trace are explained by the tool-call step and the final response; they are not proof that every model's private reasoning is exposed as a separate message.</p>
+<p>The saved output includes provider-specific reasoning content, but that is specific to this model and response format. Do not assume every model or API supplies the same field.</p>
+<p>The source retrieves the final answer with:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="p">[</span><span class="s2">&quot;messages&quot;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
+</code></pre></div>
+<p>The agent invocation returns state, while the earlier bare model invocation returned an AIMessage. This is why the access patterns differ. <code>[-1]</code> selects the last message in this demonstrated response, <code>[0]</code> selects its initial user message, and another index can select an intermediate tool message. These indices describe this trace; more tool steps would change the intermediate positions.</p>
+<h3 id="the-visible-policy-answers">The visible policy answers<a class="headerlink" href="#the-visible-policy-answers" title="Permanent link">&para;</a></h3>
+<p>The grounded code-of-conduct answer covered professionalism, respect, prohibited misconduct and annual training. The probation question produced the handbook's three-month period, lack of paid-leave eligibility during probation, emergency unpaid leave with approval, and the shorter probation notice period.</p>
+<p>Those answers illustrate the completed RAG path. They are still generated answers that need checking against the retrieved text. The demo did not measure retrieval recall, groundedness, task accuracy or resistance to malicious documents across a test set.</p>
+<hr />
+<h2 id="conversation-memory-added-in-code-unresolved-in-the-demo">Conversation Memory: Added in Code, Unresolved in the Demo<a class="headerlink" href="#conversation-memory-added-in-code-unresolved-in-the-demo" title="Permanent link">&para;</a></h2>
+<p>The first helper invoked the agent with only the current question. When asked “tell me about that policy,” it requested clarification. Asked “what did I ask,” it could repeat the current question rather than recall the earlier exchange. No cross-call history had been configured in that first version.</p>
+<p>Divesh then consulted the documentation and added a LangGraph checkpointer. The notebook imports:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">langchain.agents</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_agent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">langgraph.checkpoint.memory</span><span class="w"> </span><span class="kn">import</span> <span class="n">InMemorySaver</span>
+</code></pre></div>
+<p>The later <code>create_agent</code> call retains the model, tool and HR prompt and adds the argument <code>checkpointer=InMemorySaver()</code>. Its conversation configuration is:</p>
+<div class="highlight"><pre><span></span><code><span class="n">config</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;configurable&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;thread_id&quot;</span><span class="p">:</span> <span class="s2">&quot;user-session-1&quot;</span><span class="p">}}</span>
+</code></pre></div>
+<p>A subsequent source call passes that configuration:</p>
+<div class="highlight"><pre><span></span><code><span class="n">response</span> <span class="o">=</span> <span class="n">hr_assistant</span><span class="o">.</span><span class="n">invoke</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;messages&quot;</span><span class="p">:</span> <span class="p">[{</span><span class="s2">&quot;role&quot;</span><span class="p">:</span> <span class="s2">&quot;user&quot;</span><span class="p">,</span> <span class="s2">&quot;content&quot;</span><span class="p">:</span> <span class="s2">&quot;what was my last question&quot;</span><span class="p">}]},</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span><span class="p">,</span>
+<span class="p">)</span>
+</code></pre></div>
+<p>A <strong>thread ID is a logical conversation identifier</strong>, not a Python operating-system thread that must be started. A checkpointer stores agent state associated with that identifier; later invocations reuse the same agent/checkpointer and thread ID to continue the conversation. The official <a href="https://docs.langchain.com/oss/python/langchain/short-term-memory">short-term-memory guide</a> documents that pattern.</p>
+<p>However, <strong>the live follow-up did not succeed as intended</strong>. The assistant continued to refuse the “last question” request and directed the user toward the fictional company contact. Divesh considered the off-topic instruction or possible reinitialization as causes and explicitly left the behavior for later investigation. The saved notebook retains the refusal.</p>
+<p>A refusal does not alone prove the checkpointer stored nothing: prompt behavior and state persistence are separate things to inspect. Conversely, adding the checkpointer argument is not evidence that the demonstration successfully validated memory. The later “How many days do I get?” follow-up was ambiguous after a code-of-conduct question and elicited a clarification; it is not a clean memory test either.</p>
+<h3 id="in-memory-state-and-production-sessions">In-memory state and production sessions<a class="headerlink" href="#in-memory-state-and-production-sessions" title="Permanent link">&para;</a></h3>
+<p><code>InMemorySaver</code> stores state in the current process. Restarting the kernel or process loses that storage, and constructing a fresh saver creates a separate state store. A browser interface is not what makes it durable.</p>
+<p>Nitin's closing questions connected this to saved conversations in a chat sidebar. Applications can associate multiple conversation IDs with a user and persist checkpoints in a database. A database-backed saver, together with application identity and ownership checks, can support resuming a conversation later. A hard-coded thread ID is not a user-isolation or authorization mechanism.</p>
+<p>Checkpoint storage and the document vector index are different stores with different jobs. SQL/PostgreSQL was discussed for persistent conversations; vector-database choices were discussed separately for document retrieval. Neither must contain exactly the same data as the other.</p>
+<hr />
+<h2 id="production-questions-raised-by-the-small-demo">Production Questions Raised by the Small Demo<a class="headerlink" href="#production-questions-raised-by-the-small-demo" title="Permanent link">&para;</a></h2>
+<p>The class finished with production-oriented questions. These were discussion points and future extensions, not features completed in the notebook.</p>
+<h3 id="token-cost-and-corpus-size">Token cost and corpus size<a class="headerlink" href="#token-cost-and-corpus-size" title="Permanent link">&para;</a></h3>
+<p>Gaurav Kumar asked how a very large uploaded knowledge base affects user-level token cost. The useful distinction is that the generation model normally receives the <strong>retrieved context</strong>, not every stored document. Increasing the corpus does not automatically place the full corpus in every generation prompt.</p>
+<p>But a small <code>k</code> is not a complete cost control. Account for document embedding during ingestion, query embeddings, instructions, history, tool schemas, returned tool text, output tokens and potentially multiple model calls in the agent loop. Indexing and storage also have costs. Three long chunks can exceed the desired budget just as ten short ones may fit.</p>
+<p>The implementation fixes retrieval to three chunks but adds no per-user quota, request budget or output cap. Such limits require explicit configuration and application logic.</p>
+<h3 id="updating-only-changed-content">Updating only changed content<a class="headerlink" href="#updating-only-changed-content" title="Permanent link">&para;</a></h3>
+<p>Nitin asked whether new and modified documents require re-indexing everything. Divesh proposed watching for changes, identifying the affected content and replacing the corresponding indexed data through custom functions.</p>
+<p>That is a design direction, not implemented incremental indexing. Useful update information can include source identity, version, timestamps and stable chunk IDs. If content changes, the relevant text/vector must be updated; merely changing a timestamp beside an old embedding does not update its semantic representation. A text edit can also move neighboring chunk boundaries, so “replace exactly one chunk” is not guaranteed for every splitting strategy.</p>
+<h3 id="version-metadata-versus-version-enforcement">Version metadata versus version enforcement<a class="headerlink" href="#version-metadata-versus-version-enforcement" title="Permanent link">&para;</a></h3>
+<p>Earlier, Divesh suggested storing dates and instructing the assistant to prefer the latest policy. Metadata is useful only if the retrieval or prompt path actually uses it. The current <code>search_hr_policy</code> return value contains no timestamp or version metadata.</p>
+<p>Filtering active versions, replacing stale entries and handling deletions are application/index responsibilities. A prompt saying “use the latest” cannot retrieve a missing update or guarantee an obsolete policy is excluded.</p>
+<p>LangSmith dataset versioning also came up during a documentation search. Its <a href="https://docs.langchain.com/langsmith/manage-datasets">versioned datasets</a> support evaluation examples and experiments. That is different from automatically watching a production HR folder and synchronizing its FAISS index.</p>
+<h3 id="long-conversations-and-summarization">Long conversations and summarization<a class="headerlink" href="#long-conversations-and-summarization" title="Permanent link">&para;</a></h3>
+<p>Nitin asked whether the checkpointer automatically handles growing context. It stores state; it does not automatically turn an unlimited conversation into a short prompt. Long histories can increase cost, exceed the model's context window or dilute relevant information. There is no universal failure threshold of 20 or 30 questions.</p>
+<p>Divesh introduced summarization middleware as a possible solution. It must be configured: the class's example of summarizing ten messages before an eleventh was an illustration, not an automatic behavior in the notebook. The official <a href="https://docs.langchain.com/oss/python/langchain/middleware/built-in">middleware guide</a> documents configurable summarization triggers and retained context. Trimming, summarizing and selecting relevant history also involve information tradeoffs.</p>
+<h3 id="authorization-and-guardrails-were-not-solved">Authorization and guardrails were not solved<a class="headerlink" href="#authorization-and-guardrails-were-not-solved" title="Permanent link">&para;</a></h3>
+<p>A chat question asked how one group's documents can be hidden from another group. The instructor said the question was unclear and did not implement an answer. Nitin also briefly asked about guardrails before the conversation moved to memory. That question did not receive a substantive guardrail design.</p>
+<p>The supplied agent prompt is therefore not evidence of group-based access control, injection protection or production security. These remain separate requirements to design and verify. Likewise, the vendor names mentioned in Q&amp;A are examples, not a benchmark proving one vector store is always best.</p>
+<hr />
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>Divesh said the following class would continue LangChain in more depth and add further techniques. The conversation-memory behavior was explicitly left for later checking. A versioning example was promised, but no practical implementation appeared in this session.</p>
+<p>Semantic chunking, other splitting strategies, streaming, observability, evaluations, guardrails, gateways, a different vector store and deployment were mentioned as later material or as topics in a separate playlist. They should not be counted as completed features of this notebook.</p>
+<p>The assigned <a href="https://claude.ai/artifact/ARzxd2gJcNYEKojXiDhr65">Fine-tuning, RAG and Hybrid artifact</a> illustrates simple-RAG failures and a hybrid approach through a fictional shop scenario. Its scripted examples include confusing reward coins with gift cards, retrieving conflicting return-policy versions and mixing delivery locations with partner-store locations. The hybrid view illustrates learning evidence-use and refusal behavior while still using retrieved context. Its displayed percentages are not validated experimental accuracy, and fine-tuning plus RAG does not guarantee those failures disappear.</p>
+<hr />
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What data would teach a support assistant to reply like employees?</td>
+<td>Prepared examples of customer questions and desired responses can support supervised adaptation. It does not automatically provide a complete, current organizational knowledge base.</td>
+</tr>
+<tr>
+<td>Must fine-tuning retrain only the last few layers?</td>
+<td>No. That was the revision example; full, partial and parameter-efficient adaptation are different choices.</td>
+</tr>
+<tr>
+<td>Does each conversation turn require all four message types in a fixed order?</td>
+<td>No. Roles depend on the interaction; a tool result follows the matching AI tool call, while a direct answer can use no tool.</td>
+</tr>
+<tr>
+<td>Alok: must a system message be stored again in every turn?</td>
+<td>Instructions need to be supplied appropriately to model requests, but that does not require duplicating a system-message item in every stored turn.</td>
+</tr>
+<tr>
+<td>Ramak Krishna: is agent memory caching or short-term memory?</td>
+<td>The explained buffer is conversation history. Caching and long-term memory are separate mechanisms.</td>
+</tr>
+<tr>
+<td>Ashwin: what is a tool message?</td>
+<td>It is the result returned by a tool, such as policy-search text or database results, rather than the tool-call request itself.</td>
+</tr>
+<tr>
+<td>Are human and user messages different here?</td>
+<td>They represent the same user-input role in the demonstrated workflow.</td>
+</tr>
+<tr>
+<td>Must every LangChain query search the vector store?</td>
+<td>Only in the fixed pipeline drawn for comparison. An agent can decide when to call a retrieval tool.</td>
+</tr>
+<tr>
+<td>Can the question plus top-k context exceed the model's window?</td>
+<td>Yes. Budget for instructions, history, tools, retrieved text and output; a small k alone does not guarantee fit.</td>
+</tr>
+<tr>
+<td>Can RAG use images?</td>
+<td>Multimodal RAG exists, but the practical here used a text handbook.</td>
+</tr>
+<tr>
+<td>What do Groq, Jina and FAISS each do?</td>
+<td>Groq hosts generation models, Jina supplies embeddings, and FAISS performs local vector search. They occupy different parts of the pipeline.</td>
+</tr>
+<tr>
+<td>Is Jina better than Qdrant?</td>
+<td>That compares different components: an embedding provider and a vector-database option. No head-to-head quality test was done.</td>
+</tr>
+<tr>
+<td>Does a larger embedding dimension guarantee a better model?</td>
+<td>No. Dimension is vector width, and retrieval quality depends on the model, data and task.</td>
+</tr>
+<tr>
+<td>Is overlap mandatory?</td>
+<td>No. It is a configurable target and can be zero; actual overlap depends on splitting boundaries.</td>
+</tr>
+<tr>
+<td>Do we need to clean data before chunking?</td>
+<td>Extraction and cleaning quality still matter. An LLM's tolerance for imperfect text does not repair missing or malformed indexed content automatically.</td>
+</tr>
+<tr>
+<td>How do we load several text files?</td>
+<td>The live shortcut failed and was reverted. The completed example loads one file; bulk loading was not successfully implemented.</td>
+</tr>
+<tr>
+<td>What is a LangChain Document?</td>
+<td>A standardized object containing page content and metadata for the document-processing workflow.</td>
+</tr>
+<tr>
+<td>Will source metadata automatically reach the model?</td>
+<td>No. This tool returns joined page content only; metadata must be deliberately exposed or used in retrieval filters.</td>
+</tr>
+<tr>
+<td>Rahul: will embedding all chunks cause rate-limit problems?</td>
+<td>Nine chunks worked in the demo, but provider request/token limits still apply to larger ingestion batches.</td>
+</tr>
+<tr>
+<td>Is the retrieval test keyword search?</td>
+<td>It uses dense-vector search. Editing a keyword can affect ranking, but does not guarantee a position.</td>
+</tr>
+<tr>
+<td>Prathiba: what if unrelated chunks contain the same word?</td>
+<td>Retrieval can return irrelevant or misleading context. The sick-word experiment illustrated imperfect ranking; it did not implement a remedy.</td>
+</tr>
+<tr>
+<td>Why was notice period not second after adding “sick”?</td>
+<td>It appeared third in the shown result. Dense retrieval depends on the full representations rather than a guaranteed term-count ordering.</td>
+</tr>
+<tr>
+<td>Can a policy-only document answer my remaining leave balance?</td>
+<td>It can answer entitlement rules; a personal remaining balance needs employee-specific data.</td>
+</tr>
+<tr>
+<td>Why did the Groq model call fail?</td>
+<td>The demo changed both model naming and model selection. The successful direct constructor used <code>openai/gpt-oss-20b</code>; the error did not establish that the key alone was the cause.</td>
+</tr>
+<tr>
+<td>Gaurav: can we stream instead of invoke?</td>
+<td>Streaming was acknowledged as an option, but not demonstrated as a completed implementation here.</td>
+</tr>
+<tr>
+<td>How do we read the model output and metadata?</td>
+<td>Use AIMessage fields such as <code>content</code>, <code>response_metadata</code> and available <code>usage_metadata</code>, rather than assuming it is a plain dictionary.</td>
+</tr>
+<tr>
+<td>Why are there two AI messages in the agent trace?</td>
+<td>One requests the tool and a later one gives the final answer after the tool result.</td>
+</tr>
+<tr>
+<td>Why does <code>response["messages"][-1].content</code> work?</td>
+<td>This agent call returns state with a message list; the last message is the final answer in the shown successful trace.</td>
+</tr>
+<tr>
+<td>Did the memory-enabled follow-up work?</td>
+<td>Not as intended. Refusals persisted, and the instructor left the issue for investigation.</td>
+</tr>
+<tr>
+<td>Is <code>thread_id</code> a Python thread?</td>
+<td>No. It identifies a logical conversation whose state the checkpointer stores.</td>
+</tr>
+<tr>
+<td>Does in-memory state survive a restart?</td>
+<td>No. It belongs to the running process and saver instance; durable sessions need persistent storage.</td>
+</tr>
+<tr>
+<td>Gaurav Kumar: does a huge corpus consume all its tokens on each answer?</td>
+<td>Generation usually receives retrieved snippets, not the entire corpus. Ingestion embeddings, query embeddings, history, prompts, tool calls and generated output still affect cost.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: how can we index only new or changed content?</td>
+<td>Divesh proposed a change watcher and replacement logic using source/metadata identities. No working delta-indexing pipeline was built.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: do we get automatic production versioning from LangSmith?</td>
+<td>LangSmith versions evaluation datasets; that does not itself synchronize changed source documents into the production vector store.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: what should be included as guardrails?</td>
+<td>This brief question was not substantively answered before the discussion moved to memory. The prompt alone is not a complete guardrail system.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: does the checkpointer automatically summarize long chats?</td>
+<td>No. It stores state; summarization or trimming requires explicit configuration such as middleware.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: how do saved chat threads resume later?</td>
+<td>Associate users and conversations with persisted state, then resume the correct thread. A database-backed checkpoint store and application ownership checks are needed for durable multi-user behavior.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: which database stores conversations?</td>
+<td>SQL/PostgreSQL was discussed as a persistent option. Conversation storage and vector retrieval are different responsibilities.</td>
+</tr>
+<tr>
+<td>Nitin Gupta: are Pinecone, pgvector and Elasticsearch valid options?</td>
+<td>They were discussed alongside Qdrant and other stores. The class did not evaluate a universally best production database.</td>
+</tr>
+<tr>
+<td>Mangesh Khandare: are there roles beyond <code>user</code>?</td>
+<td>Yes: system instructions, assistant/AI responses and tool results have distinct roles. The notebook uses <code>user</code> because it is supplying a user's question.</td>
+</tr>
+<tr>
+<td>Mangesh Khandare: will the linked playlist require subscriptions?</td>
+<td>The instructor described a free-friendly learning path. Actual service quotas, infrastructure and production costs still need checking.</td>
+</tr>
+<tr>
+<td>Sampath Kumar: how should chunk size and overlap be selected?</td>
+<td>Use document structure, retrieval tests and the total context budget. Suggested page batches and character counts are examples, not universal constants.</td>
+</tr>
+<tr>
+<td>Sampath Kumar: how can PDF and text sources be combined?</td>
+<td>Appropriate loaders can produce standardized Documents for downstream processing. Preserve source metadata and combine or separate indexes according to the application.</td>
+</tr>
+<tr>
+<td>Sampath Kumar: can sources be kept separate?</td>
+<td>Yes, separate stores or database-supported collections are possible. The local FAISS example does not itself implement a collection-management service.</td>
+</tr>
+<tr>
+<td>Sampath Kumar: is recursive splitting always the best production strategy?</td>
+<td>No universal winner was established. Other word, sentence, structure or semantic strategies were mentioned; the final spoken recommendation is unclear in the captions.</td>
+</tr>
+<tr>
+<td>How is one group's knowledge hidden from another?</td>
+<td>The question was raised but not resolved in the class. Retrieval permissions were not implemented.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Ingestion creates the searchable knowledge base; retrieval selects evidence for a particular question.</li>
+<li>The class's completed result is a notebook HR-policy assistant, with conversation memory still under investigation.</li>
+<li>TextLoader returns Documents with text and metadata; it does not solve arbitrary multi-file ingestion by receiving several paths at once.</li>
+<li>Recursive character splitting uses separator priorities and character lengths, not semantic understanding or token counts.</li>
+<li>A target overlap is optional and need not appear as exactly that many repeated characters at every boundary.</li>
+<li>The demonstrated 500/50 split produced nine chunks for the supplied handbook.</li>
+<li>Jina generated 768-dimensional embeddings; vector dimension is not model size or a quality guarantee.</li>
+<li>Local FAISS does not make remote embedding and generation calls local.</li>
+<li>The notebook's FAISS configuration should not be described as explicitly using cosine similarity.</li>
+<li>Top-k results can include distractors. Inspect retrieval before trusting a fluent generated answer.</li>
+<li>The successful working model variable was reassigned to Groq's <code>openai/gpt-oss-20b</code>.</li>
+<li>AIMessage output and agent state are different return types with different access patterns.</li>
+<li>A retrieval tool's docstring describes its function; the application runtime executes it.</li>
+<li>Stored metadata does not help a model unless the retrieval or prompt path actually uses it.</li>
+<li>A checkpointer stores thread state; summarization, authorization and durable multi-user storage require additional configuration.</li>
+<li>Corpus size, retrieval size, prompt size, embedding cost and output cost are related but distinct quantities.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-26">Action Items After Class 26<a class="headerlink" href="#action-items-after-class-26" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Read the repository README, requirements and demo handbook before reproducing the notebook.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep API credentials in environment variables and verify the selected notebook kernel uses the intended environment.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Inspect the loaded Document's content and metadata, then compare the 500/50 chunk boundaries with the other demonstrated settings.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Test retrieval questions directly and check that the relevant handbook section appears before adding generation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Compare a plain model response with the agent's tool-grounded answer; inspect the tool-call and tool-result messages.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review the successful Groq model identifier and avoid accidentally rerunning the earlier failed constructor over the working variable.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Treat the memory attempt as unfinished: inspect persisted state separately from refusals, reuse one thread/saver, and use an unambiguous in-scope follow-up when testing.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Estimate a full request budget, including history, tools, retrieved context and output, rather than counting chunks alone.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Study the assigned fictional fine-tuning/RAG/hybrid artifact without treating its scripted outcomes as measured accuracy.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep incremental ingestion, version enforcement, access control, guardrails and production deployment on the list of features still to implement and evaluate.</li>
+</ul>
+<hr />
+<h2 id="sources">Sources<a class="headerlink" href="#sources" title="Permanent link">&para;</a></h2>
+<p>The primary source is the <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ade6ba859c2d21580c9c6a3">complete 25 October Class 26 recording and transcript</a>, original filename <strong>GMT20261025-142043_Recording.cutfile.20261025204943202.transcript.vtt</strong>.</p>
+<p>The matching course-linked materials are the <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/README.md">repository README</a>, the complete <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/rag.ipynb">rag.ipynb</a>, <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/requirements.txt">requirements.txt</a>, <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/data/hr_policy.txt">demo handbook</a>, all five pages of <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/NOTES/Scribble%20notes.pdf">Scribble notes.pdf</a>, and the <a href="https://github.com/d-hackmt/adv-batch-langchain/blob/main/NOTES/adv%20notes%20revision.png">revision diagram</a>. Repository source was read in full for the supplied notebook; the live sequence and saved outputs are distinguished where they differ. Official documentation is linked beside the claims it clarifies.</p>
+<p><em>Notes compiled from the full Class 26 transcript, matching notebook, demo data and handwritten diagrams - “Building a LangChain RAG HR Assistant,” Production AI / LLM Engineering, Krish Naik Academy.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html" class="btn btn-neutral float-left" title="25 · Application engineering and RAG"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Course_Quick_Revision.html" class="btn btn-neutral float-right" title="Quick revision">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Course_Quick_Revision.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

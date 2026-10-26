@@ -1,6 +1,6 @@
 # Production AI / LLM Engineering — Quick Revision
 
-Key pointers from all 24 documented classes. Open the linked chapter for explanations, code, diagrams, Q&A, and practice actions.
+Key pointers from all 26 documented classes. Open the linked chapter for explanations, code, diagrams, Q&A, and practice actions.
 
 [Course index](Course_Notes_Index.md)
 
@@ -613,5 +613,49 @@ Key pointers from all 24 documented classes. Open the linked chapter for explana
 - A multiplier such as 1.45 means 45% more than the original amount.
 - Read benchmark scores with their task, metric, prompting setup and limitations.
 - Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.
+
+---
+
+## Class 25: AI Application Engineering and RAG Foundations
+
+[Full class notes](Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.md)
+
+- Model adaptation and application composition are different responsibilities that can coexist in one product.
+- A conversational UI still needs clarification, data access and a reliable workflow.
+- LangChain provides application and agent building blocks; LangGraph emphasizes orchestration; LangSmith helps inspect and evaluate execution.
+- A fixed retrieval workflow can use an LLM without becoming an autonomous agent.
+- Fine-tuning is a form of transfer learning. A frozen backbone can still feed a trainable task head.
+- Changing classifier classes concerns the output head, not the number of input image channels.
+- Distillation uses teacher supervision to train a student; the teacher is not a validation dataset.
+- Both teacher and student can produce probability distributions. KL divergence was named, but no distillation loss was derived or implemented.
+- RAG separates preparing a corpus from retrieving evidence for a question.
+- Query similarity search is an application operation; generation uses retrieved context, instructions and the user question.
+- Policy count, chunk count and vector count are different quantities.
+- Updated documents need an ingestion and invalidation process; RAG does not make stale indexes current by itself.
+- Retrieval and prompt instructions support grounded responses but do not guarantee correctness or prevent every data leak.
+- The practical, hybrid comparison and advanced RAG/security details were deferred.
+
+---
+
+## Class 26: Building a LangChain RAG HR Assistant
+
+[Full class notes](Class_26_LangChain_RAG_HR_Assistant_Notes.md)
+
+- Ingestion creates the searchable knowledge base; retrieval selects evidence for a particular question.
+- The class's completed result is a notebook HR-policy assistant, with conversation memory still under investigation.
+- TextLoader returns Documents with text and metadata; it does not solve arbitrary multi-file ingestion by receiving several paths at once.
+- Recursive character splitting uses separator priorities and character lengths, not semantic understanding or token counts.
+- A target overlap is optional and need not appear as exactly that many repeated characters at every boundary.
+- The demonstrated 500/50 split produced nine chunks for the supplied handbook.
+- Jina generated 768-dimensional embeddings; vector dimension is not model size or a quality guarantee.
+- Local FAISS does not make remote embedding and generation calls local.
+- The notebook's FAISS configuration should not be described as explicitly using cosine similarity.
+- Top-k results can include distractors. Inspect retrieval before trusting a fluent generated answer.
+- The successful working model variable was reassigned to Groq's `openai/gpt-oss-20b`.
+- AIMessage output and agent state are different return types with different access patterns.
+- A retrieval tool's docstring describes its function; the application runtime executes it.
+- Stored metadata does not help a model unless the retrieval or prompt path actually uses it.
+- A checkpointer stores thread state; summarization, authorization and durable multi-user storage require additional configuration.
+- Corpus size, retrieval size, prompt size, embedding cost and output cost are related but distinct quantities.
 
 ---

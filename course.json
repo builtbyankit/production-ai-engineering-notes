@@ -274,6 +274,32 @@
       "words": 5206,
       "qa": 23,
       "diagrams": 2
+    },
+    {
+      "number": 25,
+      "title": "AI Application Engineering and RAG Foundations",
+      "date": "20261024",
+      "duration": "2hr 48min 40s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6add1f4e1a163b792b47a02b",
+      "file": "Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.md",
+      "nav_section": "RAG and agents",
+      "nav_title": "25 · Application engineering and RAG",
+      "words": 7102,
+      "qa": 46,
+      "diagrams": 6
+    },
+    {
+      "number": 26,
+      "title": "Building a LangChain RAG HR Assistant",
+      "date": "20261025",
+      "duration": "3hr 17min 5s",
+      "recording": "https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ade6ba859c2d21580c9c6a3",
+      "file": "Class_26_LangChain_RAG_HR_Assistant_Notes.md",
+      "nav_section": "RAG and agents",
+      "nav_title": "26 · LangChain HR assistant",
+      "words": 7668,
+      "qa": 46,
+      "diagrams": 2
     }
   ]
 }

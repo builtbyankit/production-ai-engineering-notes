@@ -111,6 +111,13 @@
                   <li class="toctree-l1"><a class="reference internal" href="Class_24_LLM_Scaling_Laws_Notes.html">24 · Scaling laws</a>
                   </li>
               </ul>
+              <p class="caption"><span class="caption-text">RAG and agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html">25 · Application engineering and RAG</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_26_LangChain_RAG_HR_Assistant_Notes.html">26 · LangChain HR assistant</a>
+                  </li>
+              </ul>
               <ul class="current">
                 <li class="toctree-l1 current"><a class="reference internal current" href="#">Quick revision</a>
     <ul class="current">
@@ -162,6 +169,10 @@
     </li>
     <li class="toctree-l2"><a class="reference internal" href="#class-24-llm-scaling-laws-model-size-data-and-compute">Class 24: LLM Scaling Laws - Model Size, Data and Compute</a>
     </li>
+    <li class="toctree-l2"><a class="reference internal" href="#class-25-ai-application-engineering-and-rag-foundations">Class 25: AI Application Engineering and RAG Foundations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#class-26-building-a-langchain-rag-hr-assistant">Class 26: Building a LangChain RAG HR Assistant</a>
+    </li>
     </ul>
                 </li>
               </ul>
@@ -193,7 +204,7 @@
             <div class="section" itemprop="articleBody">
               
                 <h1 id="production-ai-llm-engineering-quick-revision">Production AI / LLM Engineering — Quick Revision<a class="headerlink" href="#production-ai-llm-engineering-quick-revision" title="Permanent link">&para;</a></h1>
-<p>Key pointers from all 24 documented classes. Open the linked chapter for explanations, code, diagrams, Q&amp;A, and practice actions.</p>
+<p>Key pointers from all 26 documented classes. Open the linked chapter for explanations, code, diagrams, Q&amp;A, and practice actions.</p>
 <p><a href="index.html">Course index</a></p>
 <h2 id="class-01-induction-and-the-research-to-production-roadmap">Class 01: Induction and the Research-to-Production Roadmap<a class="headerlink" href="#class-01-induction-and-the-research-to-production-roadmap" title="Permanent link">&para;</a></h2>
 <p><a href="Class_01_Induction_and_Course_Roadmap_Notes.html">Full class notes</a></p>
@@ -759,11 +770,51 @@
 <li>Freezing is a training choice; full, partial and parameter-efficient fine-tuning are all possible strategies.</li>
 </ul>
 <hr />
+<h2 id="class-25-ai-application-engineering-and-rag-foundations">Class 25: AI Application Engineering and RAG Foundations<a class="headerlink" href="#class-25-ai-application-engineering-and-rag-foundations" title="Permanent link">&para;</a></h2>
+<p><a href="Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html">Full class notes</a></p>
+<ul>
+<li>Model adaptation and application composition are different responsibilities that can coexist in one product.</li>
+<li>A conversational UI still needs clarification, data access and a reliable workflow.</li>
+<li>LangChain provides application and agent building blocks; LangGraph emphasizes orchestration; LangSmith helps inspect and evaluate execution.</li>
+<li>A fixed retrieval workflow can use an LLM without becoming an autonomous agent.</li>
+<li>Fine-tuning is a form of transfer learning. A frozen backbone can still feed a trainable task head.</li>
+<li>Changing classifier classes concerns the output head, not the number of input image channels.</li>
+<li>Distillation uses teacher supervision to train a student; the teacher is not a validation dataset.</li>
+<li>Both teacher and student can produce probability distributions. KL divergence was named, but no distillation loss was derived or implemented.</li>
+<li>RAG separates preparing a corpus from retrieving evidence for a question.</li>
+<li>Query similarity search is an application operation; generation uses retrieved context, instructions and the user question.</li>
+<li>Policy count, chunk count and vector count are different quantities.</li>
+<li>Updated documents need an ingestion and invalidation process; RAG does not make stale indexes current by itself.</li>
+<li>Retrieval and prompt instructions support grounded responses but do not guarantee correctness or prevent every data leak.</li>
+<li>The practical, hybrid comparison and advanced RAG/security details were deferred.</li>
+</ul>
+<hr />
+<h2 id="class-26-building-a-langchain-rag-hr-assistant">Class 26: Building a LangChain RAG HR Assistant<a class="headerlink" href="#class-26-building-a-langchain-rag-hr-assistant" title="Permanent link">&para;</a></h2>
+<p><a href="Class_26_LangChain_RAG_HR_Assistant_Notes.html">Full class notes</a></p>
+<ul>
+<li>Ingestion creates the searchable knowledge base; retrieval selects evidence for a particular question.</li>
+<li>The class's completed result is a notebook HR-policy assistant, with conversation memory still under investigation.</li>
+<li>TextLoader returns Documents with text and metadata; it does not solve arbitrary multi-file ingestion by receiving several paths at once.</li>
+<li>Recursive character splitting uses separator priorities and character lengths, not semantic understanding or token counts.</li>
+<li>A target overlap is optional and need not appear as exactly that many repeated characters at every boundary.</li>
+<li>The demonstrated 500/50 split produced nine chunks for the supplied handbook.</li>
+<li>Jina generated 768-dimensional embeddings; vector dimension is not model size or a quality guarantee.</li>
+<li>Local FAISS does not make remote embedding and generation calls local.</li>
+<li>The notebook's FAISS configuration should not be described as explicitly using cosine similarity.</li>
+<li>Top-k results can include distractors. Inspect retrieval before trusting a fluent generated answer.</li>
+<li>The successful working model variable was reassigned to Groq's <code>openai/gpt-oss-20b</code>.</li>
+<li>AIMessage output and agent state are different return types with different access patterns.</li>
+<li>A retrieval tool's docstring describes its function; the application runtime executes it.</li>
+<li>Stored metadata does not help a model unless the retrieval or prompt path actually uses it.</li>
+<li>A checkpointer stores thread state; summarization, authorization and durable multi-user storage require additional configuration.</li>
+<li>Corpus size, retrieval size, prompt size, embedding cost and output cost are related but distinct quantities.</li>
+</ul>
+<hr />
               
             </div>
           </div><footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
-        <a href="Class_24_LLM_Scaling_Laws_Notes.html" class="btn btn-neutral float-left" title="24 · Scaling laws"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_26_LangChain_RAG_HR_Assistant_Notes.html" class="btn btn-neutral float-left" title="26 · LangChain HR assistant"><span class="icon icon-circle-arrow-left"></span> Previous</a>
         <a href="downloads.html" class="btn btn-neutral float-right" title="Downloads">Next <span class="icon icon-circle-arrow-right"></span></a>
     </div>
 
@@ -791,7 +842,7 @@
         </span>
     
     
-      <span><a href="Class_24_LLM_Scaling_Laws_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+      <span><a href="Class_26_LangChain_RAG_HR_Assistant_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
     
     
       <span><a href="downloads.html" style="color: #fcfcfc">Next &raquo;</a></span>

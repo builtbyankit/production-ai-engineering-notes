@@ -1,6 +1,6 @@
 # Production AI Engineering — MkDocs Notes
 
-Study notes for the 24 released Krish Naik Academy classes from 19 July 2026 to 18 October 2026, covering approximately 87 hours, 1018 Q&A entries, and 95 diagrams.
+Study notes for the 26 released Krish Naik Academy classes from 19 July 2026 to 25 October 2026, covering approximately 93 hours, 1110 Q&A entries, and 103 diagrams.
 
 The site uses MkDocs with its standard Read the Docs theme: a sidebar, search, readable class pages, syntax-highlighted code, equations, and Mermaid diagrams.
 

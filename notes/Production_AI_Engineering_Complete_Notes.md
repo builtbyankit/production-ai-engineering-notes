@@ -1,9 +1,9 @@
 # Production AI / LLM Engineering — Course Notes
 
 **Provider:** Krish Naik Academy
-**Released classes documented:** 24 · 19 July 2026–18 October 2026
-**Recording lengths:** approximately 87 hours 51 minutes
-**Collection:** 1018 live Q&A entries · 95 diagrams
+**Released classes documented:** 26 · 19 July 2026–25 October 2026
+**Recording lengths:** approximately 93 hours 57 minutes
+**Collection:** 1110 live Q&A entries · 103 diagrams
 
 [Course dashboard](https://learn.krishnaikacademy.com/web/courses/details/6a16f8935e281281cd6b1128) · [Instructor resource hub](https://krishnaikacademy.notion.site/Production-AI-Engineering-3a8eba9593d080d7b876e8ced7d541f1)
 
@@ -37,6 +37,8 @@ This collection covers the available recordings documented through the latest se
 - [Class 22: Multi-Head Latent Attention and Rotary Position Embeddings](#class-22)
 - [Class 23: FlashAttention and PyTorch SDPA — Memory-Efficient Attention Execution](#class-23)
 - [Class 24: LLM Scaling Laws - Model Size, Data and Compute](#class-24)
+- [Class 25: AI Application Engineering and RAG Foundations](#class-25)
+- [Class 26: Building a LangChain RAG HR Assistant](#class-26)
 
 ---
 
@@ -14775,6 +14777,1138 @@ The primary source is the [full Class 24 recording and transcript](https://learn
 The original research references discussed in class are [Scaling Laws for Neural Language Models - Kaplan et al.](https://arxiv.org/abs/2001.08361) and [Training Compute-Optimal Large Language Models - Hoffmann et al.](https://arxiv.org/abs/2203.15556). Selected equations, notation and comparison tables were checked against those papers. Official framework references linked in the relevant sections clarify normalization state and fine-tuning terminology.
 
 *Notes compiled from the full Class 24 transcript and accompanying handwritten notes - “LLM Scaling Laws - Model Size, Data and Compute,” Production AI / LLM Engineering, Krish Naik Academy. No executable code was shown in this session.*
+
+[Back to course index](Course_Notes_Index.md)
+
+---
+
+<a id="class-25"></a>
+
+# Class 25: AI Application Engineering and RAG Foundations
+### Production AI / LLM Engineering | Krish Naik Academy
+
+**Mentor:** Divesh Jadhwani  
+**Duration:** 2 hours 48 minutes 40 seconds | **Session:** 24 October 2026
+
+---
+
+## Quick Updates
+
+Divesh introduced the application-building portion of the course while Sourangshu Pal was away. The session connected the earlier model architecture lessons to products that use models, then developed the conceptual pipeline for an HR-policy assistant. Although a LangChain practical was initially planned, the class finished with demonstrations, diagrams and questions; the notebook implementation moved to the following session.
+
+The mentor announced a Diwali break on **7 and 8 November**, with classes planned for **31 October and 1 November** and Pal's return planned for **14 and 15 November**. These are the arrangements announced in this recording.
+
+The dashboard supplies the [HR Policy Assistant demonstration](https://guardthisrag.streamlit.app/) and [Groq](https://groq.com/). The instructor's [application repository](https://github.com/d-hackmt/adv-batch-langchain), supplied with the following class, is a companion for the practical. Its current notebook must not be mistaken for code executed during this session.
+
+---
+
+## From Understanding Models to Building Applications
+
+Divesh opened with a useful change in perspective: earlier lessons examined what happens inside models; the next set asks how a software system can put those models to work. Knowing tokenization, attention and training helps explain the capabilities and limits of the component. Application engineering connects that component to a user interface, business data, tools and a workflow.
+
+He contrasted **making or adapting models** with **using models**. In the first group, a team might train a model, fine-tune pretrained weights or distill a model for deployment. In the second, a team might connect an existing model to a website, build a retrieval workflow or coordinate several agents. These are overlapping areas of engineering rather than an exhaustive classification of AI. A retrieval application can use a fine-tuned model, and a product team can own both its model adaptation and its orchestration.
+
+The PDF's branching sketch captures this teaching contrast:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    P[AI problem or product]
+    P --> M[Build or adapt models]
+    P --> A[Compose an application using models]
+    M --> T[Training]
+    M --> F[Fine-tuning]
+    M --> K[Knowledge distillation]
+    A --> R[Retrieval-augmented generation]
+    A --> W[Agent workflows]
+    A --> U[Website or product integration]
+```
+
+A practical implication is that using an LLM is not the same as training it. Calling a model from a chatbot, supplying documents in a prompt and routing requests between tools normally leave the base model's weights unchanged. Conversely, an application that uses an LLM is not automatically an autonomous agent: some workflows have a fixed sequence of software steps.
+
+Divesh's repeated emphasis was to identify the problem and its components. A product still needs a sensible interface, reliable access to its data and a clear response path. The model provides a capability within that system; it does not remove the need to design the surrounding software.
+
+---
+
+## Product Demonstrations: Natural Language Meets Existing Data
+
+### Flight search and an interactive interface
+
+The IndiGo example began with an informal request for a morning flight from Pune to Bangalore around Diwali. Instead of filling every field in a traditional form, the user supplied an intention in ordinary language. The assistant requested missing details, clarified that the trip was one way and produced flight-related interface elements.
+
+This demonstrated two distinct responsibilities: interpreting what the user wants, and turning that intention into an interaction with a product. A phrase such as “around Diwali” still needs to become usable dates; “I am travelling alone” still has to be reconciled with whatever fields the booking flow requires. The assistant's additional question about children illustrated that a conversational interface may ask redundant questions. The class did not establish why that particular application asked it.
+
+Divesh used **AG2UI** as classroom shorthand for an agent producing an interactive user interface, including cards and buttons. The important concept was the transition from a text-only answer to an actionable interface. No formal protocol specification or frontend-generation implementation was inspected, so the label should be understood in that classroom sense.
+
+### Product search and location-aware assistance
+
+Amazon Rufus was asked for baggy jeans under ₹2,000, then for men's options ordered from cheaper to more expensive. Google Maps examples included a nearby petrol pump and a two-day Mumbai itinerary. Travel-planning examples extended the same idea to a Goa trip.
+
+Across these examples, the common pattern was:
+
+1. Understand a request and obtain necessary clarifications.
+2. Find information relevant to that request.
+3. Present an answer, recommendation or interface that the user can use.
+
+Divesh explained these interfaces in terms of access to product, flight or location data. That is a useful architectural interpretation of the demonstrations, but the class did not inspect their private databases, API calls or source code. It therefore does not prove that any named product uses a specific model, agent framework, database or HTML-generation method. No booking or purchase was completed as part of the lesson.
+
+The examples also explain why a business application can differ from a general chat assistant. The application can place its own data and workflow close to the user: products in a shopping context, policies in an employee context, or a map in a travel context. The value comes from the complete interaction, not merely from adding a chat box.
+
+---
+
+## The LangChain Ecosystem: Components, Routing and Observability
+
+Divesh introduced LangChain, LangGraph and LangSmith as related tools with different responsibilities. Other framework names, including Pydantic AI, Google ADK and Microsoft AutoGen, appeared as alternatives; this was not a comparative implementation lesson.
+
+| Tool | Classroom emphasis | Useful distinction |
+|---|---|---|
+| LangChain | Connecting models and application components; a simple chain of steps | A convenient starting point for models, tools and agent abstractions |
+| LangGraph | Routing and coordinating more complex workflows | Explicit state and control over execution paths |
+| LangSmith | Seeing what happened during a model or workflow run | Tracing, debugging, evaluation and monitoring |
+
+The simple chain drawing was **A → B → C → D**: each step passes work to the next. The graph example used two conceptual agents in a pharmaceutical research workflow. A research agent could consult search engines or databases, while a report agent could turn material into a report. A request might need research alone, reporting alone, or research followed by reporting.
+
+The following translates the PDF's routing structure. The pharmaceutical setting is an orchestration example, not a validated drug-discovery procedure or medical recommendation.
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    Q[User request] --> Route{Which work is needed?}
+    Route -->|Research| Research[Research agent]
+    Route -->|Report from available material| Report[Report agent]
+    Research --> Sources[Search engines and databases]
+    Sources --> Findings[Research findings]
+    Findings -->|Research only| Result[Return result to user]
+    Findings -->|Research and report| Report
+    Report --> Result
+```
+
+The chain-versus-graph contrast helps introduce control flow, but it is not a rigid boundary between the libraries. Current documentation describes LangChain's agent abstractions and LangGraph's lower-level orchestration, including combinations of deterministic and model-driven steps. LangGraph can be used independently of LangChain. These frameworks compose applications; they do not inherently train new model weights. [LangChain overview](https://docs.langchain.com/oss/python/langchain/overview), [LangGraph overview](https://docs.langchain.com/oss/python/langgraph/overview).
+
+For observability, Divesh asked students to think beyond the final answer. Which prompt went to the model? Which agent or tool ran? How many tokens were used, how long did a step take, and where did cost accumulate? Those are the questions a trace can help answer. LangSmith supports tracing across frameworks as well as monitoring and evaluation; knowing the execution path makes a multi-step failure easier to investigate. [LangSmith Observability](https://docs.langchain.com/langsmith/observability).
+
+No graph, tracing integration or LangChain chain was implemented live in this session. The point was to recognize where each responsibility belongs before writing the application.
+
+---
+
+## Learning From Documentation and Directing Coding Assistants
+
+The mentor demonstrated the question-answering feature in LangChain's documentation. He asked for a short definition of LangChain and for guidance on whether a RAG system should use LangChain or LangGraph. The visible interaction involved searching documentation and returning an explanation with supporting material.
+
+This was both a product example and a learning method. Documentation can answer a current API question more directly than an old tutorial, particularly when a library changes. A coding assistant can help navigate it, but an engineer still needs enough understanding to judge the answer, inspect the generated code and connect components correctly.
+
+Divesh connected this to system design. Before asking an assistant to implement a workflow, be able to explain what information moves between its stages, what each stage does and where state is stored. Terms such as middleware, streaming and memory are not interchangeable features to request blindly; they change how a system behaves. A diagram or an API reference can make the implementation request more precise.
+
+A learning-product demonstration, referred to as Vidya AI, combined documentation, videos, an AI mentor and a highlighting interface. AI labs were described as an upcoming feature. The product was presented as a tailored learning experience rather than proof that a general assistant cannot provide useful explanations.
+
+Questions about bring-your-own-key access and local models were specific to that product demonstration. Divesh said its current integration used a Gemini key. That does not establish that LangChain or RAG cannot use local models. Similarly, a bring-your-own-key interface does not by itself establish how a service stores, transmits or deletes keys. No security or storage implementation was audited during the class. Free provider access, where available, remains subject to the provider's current quotas and terms.
+
+The study advice was to combine documentation reading, conceptual understanding and code inspection. Generating code can save effort, but accepting code that one cannot explain makes later debugging and system design harder.
+
+---
+
+## Transfer Learning and Fine-Tuning: Reusing What Was Learned
+
+### A pretrained network is a starting point
+
+Divesh used an image-classification example to explain why a team might reuse an existing model. A pretrained network has already learned useful representations from a prior task. A new task, such as distinguishing cats from dogs, may benefit from that starting point instead of learning every feature from randomly initialized weights.
+
+The classroom examples mentioned ResNet and Inception and contrasted a broad classifier with a two-class task. The class-count change belongs at the **output classification head**. It is not a change from “100 input classes” to “two input classes,” and it does not by itself change image channels or the dimensions of the input data.
+
+Two common reuse strategies make the distinction concrete:
+
+- **Frozen feature extraction:** keep the pretrained backbone fixed and train an appropriate task head on its representations.
+- **Fine-tuning:** update some or all pretrained parameters for the new task, possibly together with a new head.
+
+Fine-tuning is itself a transfer-learning method. Freezing a backbone means its parameters are not updated; it does not mean that the complete application has no training step. Nor does freezing automatically turn the backbone into a smaller network. These distinctions match the official computer-vision transfer-learning tutorial. [PyTorch transfer-learning tutorial](https://docs.pytorch.org/tutorials/beginner/transfer_learning_tutorial.html).
+
+The PDF showed a network with early layers retained and later layers adapted. Its structure can be read as follows:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    I[New task data] --> B[Pretrained backbone]
+    B --> H[Task-specific output head]
+    H --> O[Predictions for the new task]
+    Choice{Adaptation choice} -->|Frozen feature extraction| Freeze[Keep backbone weights fixed]
+    Choice -->|Fine-tuning| Tune[Update selected or all pretrained weights]
+    Freeze -.-> B
+    Tune -.-> B
+    Choice --> Head[Train the task head as needed]
+    Head -.-> H
+```
+
+Divesh used lower training effort and better reuse as the motivation. The illustrative comparison of a long pretraining run with a few adaptation epochs was not an experiment performed in class. The spoken epoch counts and accuracy percentages are not guarantees for an arbitrary dataset. The task, data distribution, initialization, trainable parameters and evaluation procedure determine whether transfer helps.
+
+### Specializing an LLM
+
+The same broad idea was applied to a general language model and a medical-domain task. A team may adapt a pretrained model to particular instructions, response formats or task examples. Divesh mentioned medical model families to make specialization tangible; the class did not inspect those models' training recipes, validate clinical performance or implement a medical fine-tune.
+
+He illustrated adaptation by unfreezing a few later layers. That is one possible arrangement, not the definition of all LLM fine-tuning. LoRA was acknowledged in response to a student, but its mechanics and parameterization were not taught here.
+
+A later question from sridhar k clarified the training data. Instruction-following examples and question-answer pairs are possible formats; the appropriate choice depends on the intended task. Merely owning a directory of documents does not specify a complete supervised training recipe. The class did not construct such a dataset or choose a fine-tuning loss, optimizer or evaluation set.
+
+---
+
+## Knowledge Distillation: Supervision From a Teacher
+
+Divesh first previewed distillation briefly, then returned to it in the final Q&A. The deployment example was a camera inspecting cans on an industrial line. A larger classifier might be inconvenient to deploy on a resource-constrained device; a smaller student is an alternative, and a teacher can provide training supervision for it.
+
+The example's model sizes and edge-device memory limits were hypothetical. The useful reasoning is to compare a model's resource requirements with the device budget. It does not follow that every smaller model must be less accurate than every larger model, or that distillation will preserve a teacher's accuracy on every task.
+
+The class contrasted **hard labels**, such as a target assigning a class a value of one, with **soft targets**, such as a teacher assigning probabilities of 0.89 and 0.11. A probability distribution can convey relationships that a single winning label does not show. The student produces its own predictions, compares them with the supervision and updates its weights.
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    X[Training example] --> T[Trained teacher]
+    X --> S[Student being trained]
+    T --> P[Teacher probability distribution]
+    S --> Q[Student probability distribution]
+    P --> L[Distribution-matching loss]
+    Q --> L
+    L --> U[Backpropagate and update student weights]
+    U --> S
+```
+
+Sridhar's follow-up asked how the student improves when its prediction disagrees with the teacher. Divesh named **KL divergence**, also called relative entropy, as a way to compare distributions. The caption's “scale divergence” refers to this term. The resulting loss supplies a training signal; backpropagation updates the student. This is a conceptual training loop, not a derivation or a completed distillation implementation.
+
+Several distinctions keep the explanation precise. Both teacher and student can produce probability distributions. The teacher supplies training targets or representations, rather than serving as the held-out validation set. A typical offline setup keeps the teacher fixed while training the student, and may combine a teacher-target loss with a true-label loss. The official tutorial demonstrates this arrangement. [PyTorch knowledge-distillation tutorial](https://docs.pytorch.org/tutorials/beginner/knowledge_distillation_tutorial.html).
+
+A larger teacher and a smaller student are the compression case discussed here, not a requirement that defines every distillation method. Likewise, reusing the teacher's original training dataset is not a universal requirement. The original distillation work discusses transferring behavior through soft targets on a transfer set. [Hinton, Vinyals and Dean, *Distilling the Knowledge in a Neural Network*](https://arxiv.org/abs/1503.02531).
+
+Finally, a predicted probability, confidence, accuracy and overfitting are different concepts. A correct prediction or a reported 100% score does not alone establish overfitting. That question requires an appropriate evaluation of generalization. No such experiment was conducted in the class.
+
+---
+
+## Why Retrieval Is Useful Alongside Model Adaptation
+
+After the break, Divesh moved from changing a model to giving an application access to information. The motivating example was an organization with its own policies or domain documents. Training a new foundation model from scratch is a different project from making those documents available to an existing model.
+
+Fine-tuning can change task behavior, style, format or domain performance, but it involves a training process and suitable data. Subject-matter expertise may be needed to prepare and evaluate that data. If the source information changes, a previously trained model does not automatically incorporate that change. A training cutoff also does not mean that the model reliably knows every fact published before that date.
+
+**Retrieval-augmented generation (RAG)** addresses a different part of the problem: find relevant external material when a question arrives, supply that material as context and ask the model to generate an answer. The application's knowledge source can therefore change without updating the base model's weights for every document edit.
+
+| Question | Fine-tuning | RAG |
+|---|---|---|
+| Where is the intervention? | In a training process that changes model parameters or adapters | In the application's retrieval and context-building workflow |
+| What did the class emphasize? | Specialization in a task or response behavior | Access to relevant organizational information |
+| How can new documents become available? | Through a suitable adaptation process, if that is the chosen route | Through updated source data and retrieval indexes |
+| What remains necessary? | Training-data quality and task evaluation | Parsing, retrieval quality, freshness and answer evaluation |
+
+Divesh emphasized retraining cost and stale knowledge as reasons to consider retrieval. The comparison is a design starting point, not an absolute rule that RAG is always cheaper or fine-tuning is always inappropriate for company data. Retrieval, embedding, storage, maintenance and repeated inference all have costs. The choice depends on workload and quality requirements.
+
+The two approaches can also be combined. Nitish asked whether company knowledge should be fine-tuned once or whether adaptation should focus on the task's foundations. The mentor explicitly deferred the fine-tuning-plus-RAG comparison to the next class. No hybrid recipe was implemented here.
+
+RAG also predates the recent application boom: the named RAG research paper was first submitted in **2020**. Its experiments included open-domain question answering, so retrieval augmentation is not restricted to private employee applications. Web search can similarly provide external material to a generation workflow; a product label alone does not determine whether retrieval augmentation is involved. [Lewis et al., *Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks*](https://arxiv.org/abs/2005.11401).
+
+---
+
+## The HR-Policy Assistant: What the Demonstration Showed
+
+The business story was deliberately ordinary. An HR team repeatedly answers questions even though the relevant information already exists in policy documents. The proposed assistant lets employees ask in natural language and receive an answer based on those documents. The company and staffing details were an illustrative problem statement, not an account of Amazon's actual HR operations.
+
+The demonstration used an **Acme Corp** policy collection with topics such as annual leave, code of conduct and performance review. Three interactions made the intended behavior visible:
+
+| Query | Observed classroom behavior | Lesson |
+|---|---|---|
+| “I want to resign. What is the process?” | The response said the supplied policy excerpts did not contain a resignation process | Missing evidence should be acknowledged rather than filled with invented policy |
+| “Tell me how my performance will be judged” | The assistant described the rating scale and review process, with relevant performance material shown | A question can be connected to the policy passages supporting its answer |
+| “How many vacation days do I get per year?” | The response used the annual-leave material and service-length distinctions | The answer depends on the selected corpus, not on a generic model's guess about company practice |
+
+Divesh also tried an off-topic coffee question to illustrate an HR assistant's scope. He described internal instructions to be polite, use the available information and decline unrelated requests. The demonstration did not establish that such instructions are an infallible security boundary or that the system will always retrieve the right policy.
+
+The companion [HR Policy Assistant](https://guardthisrag.streamlit.app/) currently identifies itself as a NeMo Guardrails and FAISS RAG application. A read-only inspection during preparation showed a bring-your-own Groq-key field and a pipeline labelled PII regex, intent guard, FAISS top-three retrieval, answer generation and output regex. That current interface corroborates the demonstration's identity; it is not proof that every component or model selection was identical in the recording. No key was entered and no runtime query was submitted during note preparation.
+
+Security and guardrails were mentioned as later discussion. A labelled guard or regex check can reduce particular risks, but the UI's claims do not establish that all sensitive-data leakage is prevented. The class did not audit its implementation or test adversarial behavior.
+
+The provider name in this demonstration is **Groq**, despite captions that sometimes render it as “Grok.” Divesh advised choosing the available OpenAI-family model options because the demo's older Llama options were no longer working. Treat that as provider- and application-specific migration advice: support and deprecation apply to particular model IDs and access tiers, not to a universal disappearance of Llama models. Check the provider's [supported models](https://console.groq.com/docs/models) and [deprecation history](https://console.groq.com/docs/deprecations). Free access is also rate-limited rather than unlimited. [Groq rate limits](https://console.groq.com/docs/rate-limits).
+
+---
+
+## RAG Phase One: Prepare Searchable Information
+
+Divesh divided the workflow into a **data-ingestion phase** and a **data-retrieval phase**. Ingestion prepares the corpus; retrieval serves the user's question. The developer-side versus user-side distinction describes their roles in this application, rather than a universal access-control rule about who may upload documents.
+
+The PDF's ingestion path is the backbone of the explanation:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    D[Source documents: text, PDF and other formats]
+    D --> Load[Load and parse usable content]
+    Load --> Split[Split into retrievable chunks]
+    Split --> Embed[Create embeddings for the chunks]
+    Embed --> Store[Store vectors with their associated content]
+    Store --> DB[Searchable vector store]
+```
+
+### Load and parse
+
+The first step is to obtain content that the downstream application can use. A text file, a PDF, a table, an image and an audio recording do not have identical extraction needs. The class placed that responsibility in loading and parsing: write or select an appropriate extraction process before assuming the content can enter the text pipeline.
+
+For the HR example, the source was policy text. Divesh did not implement a PDF-table parser, image extraction, speech transcription or video-processing pipeline. Those questions therefore remain requirements for an extended system rather than capabilities established by the demonstration.
+
+### Split into chunks
+
+A model has a finite context budget. Sending an entire large corpus with every question can be impractical and may obscure the useful material. Splitting creates units that can be retrieved individually.
+
+The mentor used a large thali as an analogy: a large amount is consumed in manageable pieces. The engineering consequence is to choose chunk boundaries that work for the data and questions. A policy boundary can be meaningful; a fixed-size segment is a different choice. The class mentioned recursive and semantic chunking but deferred their implementation and comparison.
+
+There were two descriptions of the demo's preparation: six policy-level documents, and a UI summary saying six documents were split into 500-character segments. These can describe document organization and a later splitting stage, but the transcript does not establish the exact final chunk count or overlap. Do not assume that the number of policies equals the number of vectors. The following class's notebook uses a different saved handbook and its own chunk outputs.
+
+### Embed and store
+
+An embedding turns content into a numerical vector suitable for a chosen similarity-search method. Divesh connected this step to the embeddings studied earlier in the course. The system stores the representations so it can later find material relevant to a new question.
+
+The vectors must remain associated with the corresponding content: an answer needs policy text, not merely a list of floating-point values. A vector store provides a way to store and search those representations. It is useful to distinguish the source document, the chunk and the vector so that later updates and retrieval results can be understood.
+
+The face-recognition analogy made the search intuition concrete. Store representations of known examples, represent a new input and compare it with the stored representations. The analogy does not establish a universal similarity threshold: the spoken “90%” is not a valid default threshold for every face-recognition or text-retrieval system.
+
+A student asked whether vectors could be kept in a table or CSV. Divesh said yes. The representation can be stored outside a specialized database, but storage alone does not supply the search program, indexing behavior or operational features. The class's vector database was a convenient way to organize retrieval, not a claim that a numerical vector can exist only in one kind of database.
+
+---
+
+## RAG Phase Two: Retrieve Context and Generate an Answer
+
+Once the corpus is prepared, the user can ask a question such as “Tell me about the leave policy.” The application represents the question for search, obtains relevant chunks and prepares the model input.
+
+Divesh labelled three inputs to generation: **retrieved context, instructions and the user question**. The PDF's lower pipeline and his numbered annotations become this diagram:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    Q[User question] --> QE[Create query embedding]
+    QE --> Search[Similarity search]
+    DB[Stored chunk vectors and content] --> Search
+    Search --> Top[Retrieve top-k relevant chunks]
+    Top --> Prompt[Build model input]
+    Q --> Prompt
+    Instructions[HR role, scope and response instructions] --> Prompt
+    Prompt --> LLM[Language model]
+    LLM --> Answer[Answer to the user]
+```
+
+### Search is a software operation
+
+Sagar asked who compares the question with the documents. The mentor explicitly clarified that the LLM is not performing that numerical comparison in the simple pipeline. Application code and the retrieval system perform the similarity search. Cosine similarity was the metric discussed in class; the application then selects a top-three, top-five or more generally **top-k** result set.
+
+The returned items are similar **documents or chunks**, not similar user queries. The mentor corrected that wording while explaining the flow. The aim is to narrow a large corpus to a small amount of relevant evidence, so the model can work with useful context within its input budget.
+
+### Generation uses the retrieved material
+
+The prompt combines the selected passages with the question and instructions describing the HR assistant's role and tone. The model then generates the response. This explains why the same general model can be used in different organizations: each application can supply different evidence and rules at runtime.
+
+The simple retrieve-then-generate sequence does not require the model to decide whether it should call a retriever. An agentic variant can give that decision to a model-driven tool loop. Current documentation distinguishes these two arrangements, so the word “agent” in a demo should not erase the distinction between fixed retrieval and model-controlled retrieval. [LangChain retrieval documentation](https://docs.langchain.com/oss/python/deepagents/retrieval).
+
+### Freshness requires an update process
+
+When source data changes, the searchable representation must change too. Divesh suggested scheduled ingestion or a connection to an updating data source. That avoids retraining model weights for each edit, but it does not automatically make every search result current.
+
+The final questions made this operational point sharper. If an old document is replaced, the application must know which version is authoritative and stop returning obsolete material. For a small paragraph change in a 2,000-page PDF, the mentor proposed detecting a new version, invalidating the previous material and updating the affected chunk. This was a high-level answer: no change-detection, identity-mapping or partial-reindexing algorithm was implemented. A new paragraph boundary may affect more than one chunk, depending on the splitting scheme.
+
+Likewise, grounding improves access to evidence but does not guarantee correctness. Poor parsing can lose a table, retrieval can select irrelevant passages, and generation can misread the material. The class raised accuracy measurement and advanced RAG, but did not run an evaluation or report a measured quality score.
+
+---
+
+## Architecture and Career Discussion
+
+Nilesh's extended questions moved from particular libraries to the kind of engineering work a learner might pursue. He separated application orchestration, inference infrastructure and lower-level model optimization, then asked how those relate to future leadership work and physical AI.
+
+Divesh's recommendation was to develop **AI system-design** skills. When pressed for a concrete definition, he described planning an end-to-end solution from a problem statement: which model is served, how inference is exposed, how the workflow is orchestrated, and what infrastructure supports it. The important point was understanding how the pieces fit, rather than recognizing only one tool name.
+
+Nilesh distinguished leadership responsibilities from personally coding every component. The discussion therefore included product direction, coordinating teams and understanding tradeoffs. Divesh also suggested that specialized domains, such as robotics or biological applications, require domain knowledge in addition to general AI and architecture knowledge. These were professional opinions, not guarantees about hiring demand or a claim that product management, architecture and model research are the same role.
+
+The conversation considered physical simulation, robotics and sandboxed execution. These examples motivated questions about boundaries and infrastructure; their named companies' private implementations were not inspected. Nilesh explicitly requested sandboxing in the syllabus. Divesh said it was **not currently included** and that he would ask Pal about adding it. The class did not teach a sandbox architecture or confirm a syllabus change.
+
+Sampath's question about keeping up with releases produced two suggestions: the **MTEB leaderboard** and announcements on X. MTEB is specifically a benchmark and leaderboard ecosystem for **embeddings and retrieval**, rather than a universal ranking of every generative model. Its maintainer repository describes that scope. [MTEB project](https://github.com/embeddings-benchmark/mteb), [MTEB leaderboard](https://huggingface.co/spaces/mteb/leaderboard).
+
+Divesh also acknowledged the effort involved in tracking every announcement. For the backend engineer returning to AI after a gap, the response was encouragement to build on prior ML knowledge. The class did not define a guaranteed career sequence or establish that each new technical trend replaces the previous area of work.
+
+---
+
+## What's Next
+
+The following session was planned to start with a fine-tuning-versus-RAG refresher, explain when they can be combined and build the HR-policy workflow in a notebook. Divesh promised to inspect the intermediate outputs rather than show only a finished chatbot. **No LangChain implementation was completed in Class 25.**
+
+He also listed later coverage: prompt engineering, LCEL, structured inputs and outputs, tool calling, document loaders, splitters, embeddings, RAG and text-to-SQL. LangGraph was planned for the next teaching weekend, subject to how far the preceding material progressed. Deep agents and additional agentic topics were associated with Pal's continuation.
+
+Advanced RAG, evaluation, versioning, security, guardrails and semantic caching were raised for further treatment. GraphRAG was promised as an overview, with uncertainty about a practical. Multimodal RAG was expected later, potentially in a project; audio processing was not resolved into a concrete implementation today. Scaling the assistant to 100 users was identified as an infrastructure question and left unexplained. Sandboxing was only a request to discuss with Pal.
+
+The [companion repository](https://github.com/d-hackmt/adv-batch-langchain) currently contains an HR-policy RAG notebook using LangChain, Jina embeddings, FAISS and Groq. Its full saved source and outputs were reviewed to distinguish companion material from this session. They are **not reproduced as Class 25's live code or results**. In particular, a later notebook's sample policy can contain a resignation process even though the corpus demonstrated today did not answer that question.
+
+---
+
+## Live Q&A Highlights
+
+| Question | Answer |
+|---|---|
+| **Rahul: What did AG2UI mean in the demonstration?** | Divesh used it for an agent producing an interactive UI, such as cards and buttons. No formal protocol or implementation was examined. |
+| **When is LangGraph useful rather than a simple chain?** | The research/report example needed selectable paths and coordination. The current libraries overlap; a graph is a way to control state and execution, not a requirement for every chatbot. |
+| **Can agents fill forms or register users?** | Such workflows are possible, but the class did not implement one or establish unrestricted authority to act on a user's behalf. |
+| **Why use a tailored learning application instead of a general chat assistant?** | The demonstration combined a particular learning interface, documentation, videos and an AI mentor. It illustrated product design rather than proving a general assistant cannot explain the material. |
+| **Does the learning demo support Ollama, and is a bring-your-own key private?** | Its demonstrated integration used Gemini. Other integrations are a separate product choice; key storage and privacy were not verified by the classroom demonstration. |
+| **Bhaskar: Can transfer learning be repeated?** | Reuse an already learned representation for the new task. A frozen-backbone approach trains a new head, while fine-tuning updates pretrained parameters. |
+| **MP: Is transfer learning simply making a lighter model?** | No. Weight reuse and deciding what to train are different from reducing an architecture's deployment size. |
+| **Bikash, Manish and Siddhartha: Will distillation and its fine-tuning distinction be explained in depth?** | Today supplied a preview and a longer Q&A explanation. A full method, training recipe and implementation remained outside this session. |
+| **Vivek: What about LoRA?** | It was acknowledged, but not developed into a technical explanation or practical. |
+| **Rushi: Is the teacher like a validation set?** | The useful distinction is that teacher predictions provide training supervision. A validation set is held out to assess or select the trained model. |
+| **Rajishvari: Is fine-tuning always more expensive than RAG?** | Divesh emphasized retraining cost, but the general comparison depends on data preparation, retrieval, serving, maintenance and workload. No cost experiment was shown. |
+| **Balaji: Does RAG make PEFT or fine-tuning obsolete?** | The mentor said no. Adaptation and retrieval address different needs and can be combined. |
+| **Akshay: Can a RAG application use Gemini?** | Yes in principle; the pipeline is not restricted to the provider selected for this demo. |
+| **Nikhil: What determines the chunks?** | The developer selects a strategy according to the data. Recursive and semantic approaches were mentioned; their implementation was deferred. |
+| **How are tables, images or other non-text formats loaded?** | Use an appropriate parsing and processing path. No universal parser or multimodal implementation was supplied in this class. |
+| **Can embeddings be stored in a table or CSV?** | They can be stored there; a search program is still needed. A vector store packages storage and retrieval capabilities. |
+| **Sagar: Who compares a query with the documents?** | Application/retrieval code performs similarity search. The simple RAG pipeline does not ask the generation model to compute every cosine comparison. |
+| **Sagar's follow-up: Does retrieval reduce the material sent to the LLM?** | Yes, selecting relevant chunks narrows the context and token load. Relevance still needs to be evaluated. |
+| **Sumit: Will each pipeline stage be covered in detail?** | The mentor deferred line-by-line construction and intermediate outputs to the practical. |
+| **How do we measure and improve RAG accuracy?** | Better prompting and advanced retrieval methods were raised for later coverage. No evaluation method or measured accuracy was demonstrated today. |
+| **Nitish: Should company data be fine-tuned once, or should fine-tuning focus on task knowledge?** | The mentor said a hybrid may be appropriate and explicitly postponed the decision criteria to the following class. |
+| **How are updated or deleted documents kept from producing stale results?** | Divesh proposed versioning and replacing or invalidating old material. A full update algorithm was not implemented. |
+| **A 2,000-page PDF has one changed paragraph: must everything be replaced?** | The answer suggested detecting the new version and updating affected material. Exact change detection and chunk identity were left at a conceptual level. |
+| **Can RAG be used where organizational data must stay local?** | A local system was suggested. Local model serving, embeddings, storage and other data paths must be considered together; this was not a compliance assessment. |
+| **Ashwin: Can the fine-tuning/distillation mechanisms be revisited?** | They were revisited conceptually, with the more detailed distinction appearing in sridhar's later exchange. No training notebook was run. |
+| **Raja and other students: Will guardrails, security and semantic caching be included?** | They were requested and acknowledged as later topics. Today's demo did not establish security guarantees. |
+| **Where do decision-oriented models fit in the stack?** | Divesh linked them to choosing between agents in a workflow. The captioned model name is unclear, and no specific architecture or implementation was established. |
+| **Ayesha: What about parsing PDF tables and other formats?** | LlamaIndex was suggested as a tool to investigate. No parser configuration or extraction result was shown. |
+| **Will GraphRAG and multimodal RAG receive practical coverage?** | A GraphRAG overview was promised with uncertainty about a practical; multimodal RAG was expected later, possibly in a project. |
+| **How would this RAG system handle 100 users?** | Divesh categorized it as an infrastructure and scalability question. No concurrency, capacity or serving solution was explained. |
+| **Will all LangChain, LangGraph and agentic material fit into the substitute sessions?** | Divesh expected to finish LangChain and would try to cover LangGraph. Pal was to continue from where he left off; full completion in a few classes was not promised. |
+| **Harsh: Which advanced project should a learner choose?** | Divesh said suggestions depend on the learner's current skill level. No specific advanced project was selected. |
+| **Vijay: Which of the suggested books is best?** | The mentor said he had not read the books and could not make an informed comparison. |
+| **sridhar k: How do fine-tuning and distillation differ, and when is each useful?** | Fine-tuning adapts a pretrained model to a task; distillation transfers supervision from a teacher to a student, illustrated by deploying a smaller can-inspection model on an edge device. The methods need not be mutually exclusive. |
+| **sridhar k: Are fine-tuning examples documents, questions and answers, or instructions?** | Instruction-style and question-answer fine-tuning were mentioned. The data format must follow the intended task; no single format was prescribed for every use case. |
+| **sridhar k: How does the student learn when its answer differs from the teacher's?** | Compare their distributions with a suitable loss; Divesh named KL divergence/relative entropy. Backpropagation then updates student weights. |
+| **sridhar k's final clarification: Does the difference between teacher and student drive the backward update?** | Yes, that was the intended conceptual loop. It is a training objective, rather than simply accepting the teacher as a validation score. |
+| **sampath kumar: What happens when the source is a voice note or audio?** | Divesh first discussed images and multimodal processing. Sampath explicitly returned to audio; the answer remained that a modality-specific processing technique is needed, without choosing an audio pipeline. |
+| **sampath kumar: How can I stay current with new models?** | MTEB and X were suggested. MTEB concerns embeddings/retrieval, while release announcements should be checked against the originating model or project sources. |
+| **sampath kumar: How can a backend engineer return to AI after a three-to-four-year gap?** | Build on prior ML knowledge and learn the current application components. The response was encouragement, not a detailed or guaranteed career plan. |
+| **Nilesh: Which direction connects orchestration, inference infrastructure and model optimization?** | Divesh recommended end-to-end AI system design. Future demand remains uncertain, and the named areas are useful distinctions rather than a fixed job taxonomy. |
+| **Nilesh: What if the goal is leadership rather than coding every component?** | The discussion emphasized product direction, architecture and coordinating the complete solution. Knowing how the components work still supports those decisions. |
+| **Nilesh: Is building models a different specialization from using them?** | The mentor agreed with the distinction. A team may specialize, while an architect still needs to understand dependencies across the system. |
+| **Nilesh: What changes for physical AI, simulations or biological applications?** | Domain expertise becomes relevant alongside AI and architecture skills. No specific employer implementation or future hiring outcome was established. |
+| **Nilesh: What exactly is AI system design?** | Starting from a problem, plan the end-to-end solution: serving, inference, workflow orchestration and infrastructure. |
+| **Nilesh: Where do orchestration and sandboxes fit, and can sandboxing be added?** | He raised sandboxed execution as an infrastructure concern. Divesh said sandboxing was not currently in the syllabus and would ask Pal about adding it. It was not taught or confirmed as added. |
+
+---
+
+## Key Pointers to Remember
+
+- Model adaptation and application composition are different responsibilities that can coexist in one product.
+- A conversational UI still needs clarification, data access and a reliable workflow.
+- LangChain provides application and agent building blocks; LangGraph emphasizes orchestration; LangSmith helps inspect and evaluate execution.
+- A fixed retrieval workflow can use an LLM without becoming an autonomous agent.
+- Fine-tuning is a form of transfer learning. A frozen backbone can still feed a trainable task head.
+- Changing classifier classes concerns the output head, not the number of input image channels.
+- Distillation uses teacher supervision to train a student; the teacher is not a validation dataset.
+- Both teacher and student can produce probability distributions. KL divergence was named, but no distillation loss was derived or implemented.
+- RAG separates preparing a corpus from retrieving evidence for a question.
+- Query similarity search is an application operation; generation uses retrieved context, instructions and the user question.
+- Policy count, chunk count and vector count are different quantities.
+- Updated documents need an ingestion and invalidation process; RAG does not make stale indexes current by itself.
+- Retrieval and prompt instructions support grounded responses but do not guarantee correctness or prevent every data leak.
+- The practical, hybrid comparison and advanced RAG/security details were deferred.
+
+---
+
+## Action Items After Class 25
+
+- [ ] Explain which parts of an HR-policy assistant change model weights and which supply information at runtime.
+- [ ] Recreate the ingestion and retrieval diagrams, including the three inputs passed to generation.
+- [ ] Trace the classroom performance-policy question from source material to the final answer.
+- [ ] Distinguish policy documents from chunks and embeddings before choosing a splitting strategy.
+- [ ] Review frozen feature extraction, fine-tuning and teacher-student supervision; keep their objectives separate.
+- [ ] Read the relevant LangChain documentation and identify which component performs loading, splitting, retrieval and generation.
+- [ ] Keep a list of unresolved practical questions: parsing, versioning, retrieval quality, scope control and concurrency.
+- [ ] Use the next class's actual notebook for implementation rather than reconstructing code from this overview.
+
+---
+
+*Notes compiled from the complete Class 25 recording transcript, “GMT20261024-142343_Recording.cutfile.20261024211321937.transcript.vtt,” and all 16 pages of the supplied “adv batch day 1 (1).pdf,” Production AI / LLM Engineering, Krish Naik Academy. [Class recording](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6add1f4e1a163b792b47a02b). The companion repository's README, requirements and full 71-cell RAG notebook were inspected to establish scope; later code and saved outputs were not attributed to this class. Product observations are distinguished from unverified implementation claims. No supplied code, model API call, training or deployment was executed during note preparation.*
+
+[Back to course index](Course_Notes_Index.md)
+
+---
+
+<a id="class-26"></a>
+
+# Class 26: Building a LangChain RAG HR Assistant
+### Production AI / LLM Engineering | Krish Naik Academy
+
+**Mentor:** Divesh Jadhwani  
+**Duration:** 3 hours 17 minutes 5 seconds | **Session:** Class 26 - 25 October 2026  
+**Recording:** [25 Oct Langchain](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ade6ba859c2d21580c9c6a3)
+
+---
+
+## Quick Updates
+
+This class turns the previous session's RAG concepts into an **HR-policy question-answering notebook**. After revising fine-tuning, messages and tool use, Divesh builds the ingestion pipeline, tests retrieval, wraps it as an agent tool, and generates answers grounded in a sample handbook. The final attempt to add conversation memory remained unresolved during the live demonstration; the working retrieval assistant and that unfinished extension are kept distinct below.
+
+The class repository is [d-hackmt/adv-batch-langchain](https://github.com/d-hackmt/adv-batch-langchain). Its main materials are `rag.ipynb`, `requirements.txt`, the demo `data/hr_policy.txt`, and the handwritten resources under `NOTES/`. The code excerpts below come from the supplied notebook, including its successful model initialization and the relevant debugging differences. Saved outputs are evidence from the instructor's run, rather than new executions performed for these notes.
+
+Divesh recommended watching the first walkthrough before reproducing it independently. He also assigned the linked [Fine-tuning, RAG and Hybrid artifact](https://claude.ai/artifact/ARzxd2gJcNYEKojXiDhr65) as supplementary study. It is a scripted, fictional demonstration, not a live benchmark or an independently validated comparison of model accuracy.
+
+---
+
+## Revisiting Fine-Tuning: Learn a Behavior or Retrieve a Fact?
+
+Divesh opened with a customer-support scenario: a company wants a chatbot that responds in the style of its employees. Historical support conversations can supply examples of questions and desired answers. In supervised fine-tuning, those examples continue the training of a pretrained model so its responses better match the desired task or behavior.
+
+The example emphasized selecting some layers to retrain. That is one adaptation strategy, rather than the definition of all fine-tuning: full fine-tuning can update the base model broadly, while partial or parameter-efficient approaches update a subset or additional adaptation parameters. The data still needs preparation and evaluation. Giving a model employee conversations does not automatically make all organizational facts accurate, current or retrievable.
+
+Two limitations motivated the return to RAG:
+
+| Concern | Implication for the application |
+|---|---|
+| Training and retraining require resources | Frequent policy changes need an update strategy beyond repeatedly running a training job |
+| Learned facts can become stale | A model does not automatically acquire information created after its training or adaptation data was collected |
+
+The classroom story used an imagined early-LLM adoption period to introduce these choices. Treat it as a design progression, rather than a literal timeline in which RAG or model APIs first appeared in 2023. The original [RAG research paper dates to 2020](https://arxiv.org/abs/2005.11401).
+
+RAG supplies selected external information **at inference time**, without requiring a parameter update for each document change. Fine-tuning and retrieval can also be combined: one concerns learned behavior or capability, while the other supplies evidence for the current query. Neither guarantees correctness without checking the data, retrieval and generated answer.
+
+---
+
+## From a Chat Model to a Tool-Using Agent
+
+Divesh's revision diagram separates three components: the model as a “brain,” memory as conversation context, and tools as ways to obtain information or perform operations. A model call takes input and returns output. An application can preserve a conversation by storing previous messages and supplying appropriate history on later calls.
+
+The shopping example made tool use concrete. A website might already have a backend function that filters products below a given price. Instead of triggering that function only from a button, an LLM can propose structured arguments based on a natural-language request. The application then validates and executes the function, receives its result, and gives the result back to the model.
+
+The model does not directly execute an arbitrary Python function merely because it can describe one. The surrounding runtime exposes a tool, interprets the model's tool call, runs the implementation and returns the result. The function's name, parameter schema and description help the model choose when and how to use it.
+
+For the HR example, “Hi” may need a direct greeting, whereas “Tell me the refund policy” needs a policy lookup. This is the reason-and-act loop represented in the revision image:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TD
+    U["User message"] --> M["Model with system instructions<br/>and available tool descriptions"]
+    M --> C{"Need external information?"}
+    C -->|No| A["Direct answer"]
+    C -->|Yes| T["Runtime executes policy lookup tool"]
+    T --> R["Tool result becomes model context"]
+    R --> M
+    M --> F["Final answer"]
+```
+
+A model with stored chat history is not automatically an autonomous agent. In this class, the agent distinction becomes concrete when the model can request the retrieval tool and continue after observing its result.
+
+### Four message types
+
+| Message type | Purpose in this class |
+|---|---|
+| Human/user message | The user's question or follow-up |
+| System message | Instructions defining the assistant's role and behavior |
+| AI/assistant message | A model response, including a possible tool-call request |
+| Tool message | The result returned by a tool execution |
+
+These are roles, not a mandatory four-item sequence for every turn. A tool interaction usually has an AI message requesting a tool call, a matching tool result, then another AI response. A simple reply can have no tool message. System instructions may be assembled for each model request without being stored as a new item in every conversation turn. The official [message guide](https://docs.langchain.com/oss/python/langchain/messages) distinguishes these roles and their content and metadata fields.
+
+Memory here means application-managed context. It is distinct from caching a previous response or reusing model computations. Short-term and long-term memory were mentioned, but the implementation at the end only attempted thread-level conversation history.
+
+---
+
+## RAG Has an Ingestion Side and a Retrieval Side
+
+Divesh summarized RAG as a way to ask questions about external text. The handwritten notes divide it into two workflows:
+
+1. **Ingestion:** load source content, split it, embed the chunks and index them.
+2. **Retrieval and generation:** find relevant content for a question, then give the question and selected evidence to the model.
+
+In a managed knowledge-base application, ingestion is usually a backend process. In an upload-based application, the user can trigger that process by supplying a file. The distinction concerns when and why the work happens, rather than a prohibition on users initiating ingestion.
+
+The course-site chatbot was used as a visible example: questions about courses produced links to course pages. Divesh explicitly said he had not inspected its implementation. Its observed interface illustrates the desired behavior, but does not prove whether its backend scrapes every page live, reads a prebuilt index, queries structured data or combines these approaches.
+
+The practical ingestion sketch uses this exact stack:
+
+```mermaid
+%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    T["Demo HR handbook<br/>text file"] --> L["TextLoader<br/>Document objects"]
+    L --> S["RecursiveCharacterTextSplitter<br/>smaller Documents"]
+    S --> E["Jina embedding model<br/>vectors"]
+    E --> V["FAISS index<br/>with chunk text and metadata mapping"]
+```
+
+### A fixed retrieval pipeline versus retrieval as a tool
+
+The PDF first shows a fixed flow: question, query embedding, top-k search, context plus instructions, model answer. Every query goes through retrieval in that particular design, even a greeting.
+
+Its second sketch gives retrieval to the model as a tool. The model can choose a direct response or a search, and can formulate the search query. The practical uses this second form through LangChain's `create_agent`.
+
+This is an architectural choice, rather than a strict rule that LangChain must search every time and only LangGraph can retrieve conditionally. LangChain agents support tool selection and use LangGraph infrastructure; LangGraph also permits more customized state and control flow. The official [retrieval guide](https://docs.langchain.com/oss/python/deepagents/retrieval) distinguishes fixed two-step RAG and agentic retrieval.
+
+---
+
+## Project Setup and the Roles of the Packages
+
+Divesh created a virtual environment, selected a notebook kernel, installed the requirements and kept credentials in an environment file. The repository README's installation command is:
+
+```bash
+pip install -r requirements.txt
+```
+
+The relevant package groups are:
+
+| Package | Role in the notebook |
+|---|---|
+| `python-dotenv` | Load environment variables from an environment file |
+| `langchain` | The agent-building interface, including `create_agent` |
+| `langchain-core` | Shared model, message, document and runnable interfaces |
+| `langchain-community` | The demonstrated TextLoader, Jina and FAISS integrations |
+| `langchain-groq` | Groq chat-model integration |
+| `langchain-text-splitters` | Recursive character splitting |
+| `faiss-cpu` | Local vector-search library |
+| `jupyter`, `ipykernel` | Notebook interface and kernel support |
+
+The imports used for ingestion are:
+
+```python
+from langchain_community.document_loaders import TextLoader
+
+from langchain_text_splitters import RecursiveCharacterTextSplitter 
+
+from langchain_community.embeddings import JinaEmbeddings
+```
+
+The requirements are **unpinned**, so they do not record a reproducible set of library versions. Package names and namespaces evolve. In particular, `langchain-classic` contains legacy functionality moved out of the main package; it should not be assumed to be a drop-in replacement for every direct `langchain-community` integration. Use the [official migration guide](https://docs.langchain.com/oss/python/migrate/langchain-v1) when adapting imports rather than relying on the speculative deprecation dates mentioned during class.
+
+### Credentials and provider names
+
+The notebook loads variables, then reads the two key names:
+
+```python
+groq_key = os.getenv("GROQ_API_KEY")  # LLM 
+jina_key = os.getenv("JINA_API_KEY")   # EMBEDDING MODEL
+
+print("ENV VAR LOADED")
+```
+
+The class also imports `load_dotenv` and calls `load_dotenv()` before these lines. The printed status is a progress message; it does not by itself prove that both keys exist or are valid.
+
+The repository excludes `.env` and the demonstrated environment directory from Git. Do not paste key values into the notebook or its saved outputs. The code excerpts here use variable names and environment lookups only.
+
+The provider is **Groq**, not xAI's Grok. Groq hosts the `gpt-oss` models used in the notebook; this is not access to an OpenAI-hosted proprietary GPT endpoint through the same account. **Jina** supplies the embedding service in this example. FAISS runs locally, but using hosted Jina and Groq APIs means the full application is not offline: document text is sent for embedding, and retrieved context is sent for generation.
+
+Free trials and account limits were the instructor's reason for choosing these services for practice. They are not a promise of unlimited use or free production deployment.
+
+---
+
+## Load the Demo Handbook into Documents
+
+The sample file contains eight policy sections: leave, work from home, probation, notice period, reimbursement, code of conduct, holidays and exit. It is fictional demo content, not the Academy's employment policy.
+
+The path and loader appear in the notebook as:
+
+```python
+DATA_FILE_PATH = os.path.join("data" , "hr_policy.txt")
+```
+
+```python
+loader = TextLoader(DATA_FILE_PATH , encoding="utf-8")
+documents = loader.load()
+```
+
+The loader **decodes** the file using UTF-8 and returns a list of LangChain `Document` objects. It does not return a `TextLoader` instance as the loaded data, and it is not converting the input file into UTF-8 by changing its encoding on disk.
+
+The saved output shows **one loaded document containing 2,603 characters**. Useful inspection points are:
+
+| Expression | What it reveals |
+|---|---|
+| `len(documents)` | Number of loaded document objects |
+| `documents[0].page_content` | Text in the first document |
+| `documents[0].metadata` | Associated information, including its source path |
+
+Here the metadata identifies `data/hr_policy.txt`; the saved Windows output uses backslashes in that path. Different loaders can attach other metadata, such as page or source identifiers. A `Document` is a standardized container for this text-processing workflow, not a claim that every LangChain component always operates only on documents. Chat models use messages, for example.
+
+### The attempted multiple-file shortcut did not work
+
+During the demo, Divesh copied the text file and tried to adapt the single-file loading code to several paths. That experiment produced a problem, and he returned to the original one-file pipeline. It was not a successful demonstration of bulk loading.
+
+For multiple formats, select an appropriate loader, then standardize the extracted text and metadata. PDF and text sources can enter the same downstream document workflow, but parsing still matters: scanned pages, tables, headers and layout need suitable extraction. The class browsed alternative loaders, including web and PDF loaders; it did not implement those integrations.
+
+Source metadata helps provenance, but it is not automatically visible to the model merely because it exists in a `Document`. The retrieval tool later joins only `page_content`, so its return string omits metadata unless the tool is extended to include it.
+
+---
+
+## Chunking: Size, Overlap and Separator Priority
+
+The next step is to make pieces that can be retrieved individually. Divesh first demonstrated a three-rule string with `chunk_size=60` and `chunk_overlap=10`. The saved result contained one chunk per rule because the newline boundaries and rule lengths permitted that division.
+
+The handbook uses:
+
+```python
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size = 500,
+    chunk_overlap=50
+)
+
+chunks = text_splitter.split_documents(documents)
+```
+
+With the default character-count length function, **500 means characters**, not tokens or words. The splitter tries separator levels in order. The standard hierarchy is double newline, newline, space and finally an empty separator, which allows character-level splitting when necessary. This is a deterministic text-splitting heuristic, not a language model understanding paragraph meaning.
+
+The official [recursive-splitting reference](https://docs.langchain.com/oss/python/integrations/splitters/recursive_text_splitter) describes `chunk_size` as the maximum under the selected length function and `chunk_overlap` as a target. It does not promise every split ends at a full stop. A full-stop separator is not even in the default list.
+
+### What overlap is trying to preserve
+
+If a useful statement crosses a chunk boundary, an overlap can carry some surrounding context into the next piece. That helps retrieval avoid receiving only half of a fact. It also repeats content, increasing storage and potentially the amount of duplicated context later retrieved.
+
+Overlap is configurable and **may be zero**. The actual retained overlap can be smaller than the target because the algorithm works with the selected separators and merge boundaries. Do not expect exactly 50 repeated characters between every pair of the handbook's chunks.
+
+The live parameter changes produced these counts:
+
+| Chunk size | Target overlap | Reported chunks |
+|---:|---:|---:|
+| 500 | 50 | 9 |
+| 600 | 60 | 6 |
+| 300 | 20 | 14 |
+
+These counts apply to this input and splitter configuration. They are not formulas for other corpora. Returning to 500/50 yielded nine chunks: the short handbook heading and its eight policy sections. Each result remains a `Document`, carrying its text and source metadata.
+
+Divesh inspected the heading, work-from-home and code-of-conduct chunks to show the actual boundaries. This is a useful habit: look at what a splitter produced rather than assuming the requested size guarantees meaningful pieces.
+
+### Choosing a chunk size
+
+The class treated chunk selection as experimentation informed by the content. FAQs, long prose, source code and extracted PDF text have different structures. Evaluate whether retrieved chunks contain enough evidence to answer representative questions without excessive unrelated text.
+
+The closing Q&A also explicitly connected chunking to the model's context window. Earlier remarks that context size need not be considered should not be generalized. Instructions, history, tool definitions, retrieved content and room for output all consume the available budget.
+
+For example, **ten chunks of 4,000 characters total about 40,000 characters** before formatting and other context. That is not automatically 40,000 words or 40,000 tokens. Use the relevant tokenizer or a documented approximation when planning model requests. Processing a PDF in batches of pages is one ingestion tactic; the class's “15 pages” suggestion is not a universal chunking standard.
+
+Cleaning also remains useful. A model's ability to interpret imperfect text does not remove the need to fix broken extraction, duplicated headers, missing content or incorrect metadata before indexing.
+
+---
+
+## Embeddings: A Different Job from Text Generation
+
+An embedding model converts text into a vector used for comparison and search. A chat model generates a response. Their roles are separate even if both are neural models.
+
+The notebook initializes the embedding model with:
+
+```python
+from langchain_community.embeddings import JinaEmbeddings
+
+embeddings_model = JinaEmbeddings(model_name="jina-embeddings-v2-base-en")
+```
+
+Divesh selected the English v2 model while browsing Jina's available models. The demo query is:
+
+```python
+query_vector = embeddings_model.embed_query("What is LangChain?")
+
+query_vector
+```
+
+Its saved output is a vector of **768 numbers**. Printing an entire vector makes the representation visible, but the useful operational checks are its dimension, type and compatibility with the index.
+
+The model's [official card](https://huggingface.co/jinaai/jina-embeddings-v2-base-en) describes an English embedding model supporting inputs up to 8,192 tokens. That input limit and the 768-dimensional output are different properties. Neither is the model's parameter count.
+
+The handwritten examples compare vector widths from different providers. Read those as illustrations that dimensions vary, not fixed dimensions for every Google, OpenAI or Hugging Face model. A larger output vector is not sufficient evidence that an embedding model is better or more expensive. Measure retrieval quality on the intended language, domain and query types.
+
+Jina and Qdrant are also not competing layers in this specific comparison: Jina supplies embeddings, while Qdrant is a vector-database option. FAISS, Pinecone, Qdrant, Elasticsearch and other stores were mentioned as alternatives, but no comparative benchmark was performed.
+
+When changing embedding models, document and query vectors must remain compatible. A matching vector length alone does not prove they share a useful semantic space. Existing documents generally need to be re-embedded when the embedding model or its relevant configuration changes.
+
+---
+
+## Build the FAISS Index and Test Retrieval Before Adding an Agent
+
+The notebook imports FAISS, then builds the store from the chunks and embedding model:
+
+```python
+from langchain_community.vectorstores import FAISS 
+```
+
+```python
+vector_store = FAISS.from_documents(chunks , embeddings_model)
+```
+
+This convenience call obtains document embeddings and builds the local search structure. The LangChain wrapper also maintains the mapping back to the original chunk text and metadata. The model receives text later; it does not answer a policy question by interpreting the raw floating-point array itself.
+
+The count check is:
+
+```python
+print("CHUNKS ARE STORED" , vector_store.index.ntotal)
+```
+
+The saved result is **9**. This verifies the index contains nine vectors in the demo. It does not establish that a persistent database file has been saved. The notebook creates an in-process index and does not call a disk-persistence method.
+
+FAISS is a similarity-search library. The simple local wrapper is convenient for learning, while a production store may also need persistence, concurrent access, metadata filtering, access control and update operations.
+
+### The sick-leave query
+
+The notebook's retrieval test is:
+
+```python
+test_query = "How many sick leaves employees get"
+```
+
+```python
+top_matches = vector_store.similarity_search(test_query , k=3)
+```
+
+This embeds the query and retrieves up to three matching documents. The first saved result is the leave policy, which says employees receive **10 paid sick days per year**, separately from annual leave. The other saved results are holidays and notice period.
+
+This question asks for an entitlement in the demo handbook. “How many sick days do I personally have left?” would additionally require an employee-specific balance; a generic policy document cannot supply that fact.
+
+Although cosine similarity was used in the conceptual revision, the notebook does not explicitly configure cosine search. The demonstrated LangChain FAISS construction defaults to an L2 index in the [official implementation](https://github.com/langchain-ai/langchain-community/blob/main/libs/community/langchain_community/vectorstores/faiss.py). Cosine, inner product and L2 have relationships under appropriate normalization, but they should not be labeled interchangeably without checking the configuration. See [FAISS's metric documentation](https://github.com/facebookresearch/faiss/wiki/MetricType-and-distances).
+
+### A useful failed ranking prediction
+
+Divesh inserted the word “sick” into the notice-period text to demonstrate how changed content can affect retrieval. He predicted that notice period would become the second result. It appeared **third** in the shown result, and the supplied file retains the phrase “last working sick day.”
+
+That sequence is more instructive than a claim that adding a keyword guarantees a rank. Dense retrieval is not simply counting occurrences of a term. Text edits can influence an embedding and ranking, but the result depends on the full query, chunk and model. A loosely related result can still enter top-k even when the most relevant chunk ranks first.
+
+After changing source text, the live notebook reloaded, split, embedded and rebuilt the store. Editing a file alone does not magically update vectors already in memory. Incremental updates were discussed later, but were not implemented here.
+
+This stage tests retrieval separately from generation. The embedding service is already a learned model; “no AI yet” in the narration means no generative chat model has yet answered the question.
+
+---
+
+## Turn Retrieval into a Tool
+
+After the break, Divesh made the vector search available to the assistant. The exact notebook function is:
+
+```python
+retriever = vector_store.as_retriever(search_kwargs={"k": 3})  # returns top 3 relevant chunks
+
+
+def search_hr_policy(question:str)->str:
+    """
+    Search the HR policy document for information about leave, work from home,
+    probation, notice period, reimbursement, code of conduct, holidays, or exit process.
+    
+    """
+    matching_chunks = retriever.invoke(question)
+    return "\n\n".join(chunk.page_content for chunk in matching_chunks)
+```
+
+The retriever is an interface around the store's search behavior. Calling it with a question produces matching `Document` objects. The function joins their contents into a string for the model to read.
+
+Three details matter:
+
+- The type annotation describes the question input and string result.
+- The docstring describes the knowledge the tool can search, guiding tool selection.
+- The fixed `k=3` belongs to the retriever configuration. The model supplies the question here, rather than freely choosing `k` through this function's signature.
+
+`create_agent` can accept a plain Python callable with a suitable schema and description, so this example does not add a decorator. The runtime turns the callable into a tool interface. A meaningful name and description improve discoverability, but do not guarantee the model always chooses or uses the tool correctly.
+
+Only chunk text is returned by this implementation. The metadata used for source inspection is not included in the joined result, and the function does not enforce document permissions, version filters or citations.
+
+---
+
+## Initialize Groq: Preserve the Debugging Distinction
+
+Divesh first tried a model construction that retained the string `groq:openai/gpt-oss-120b` inside `ChatGroq`. The saved notebook also contains that early configuration with `temperature=0.5`, while the live narration initially described zero. It then reassigns `llm` with the successful direct-provider construction:
+
+```python
+from langchain_groq import ChatGroq
+llm = ChatGroq(model="openai/gpt-oss-20b")
+llm.invoke("Say hi").content
+```
+
+The saved response is a greeting, and subsequent response metadata identifies **`openai/gpt-oss-20b`**. Therefore the working assistant should not be reported as a successful 120B run.
+
+There are two naming layers:
+
+| Interface | Model-name pattern discussed |
+|---|---|
+| Direct `ChatGroq` constructor | Groq's model identifier, such as `openai/gpt-oss-20b` |
+| Provider-routing `init_chat_model` interface | A provider-qualified identifier can include `groq:` |
+
+The prefix belongs to the routing interface, rather than automatically being part of the provider's own model ID. The official [ChatGroq integration](https://docs.langchain.com/oss/python/integrations/chat/groq) and [Groq model documentation](https://console.groq.com/docs/model/openai/gpt-oss-20b) establish the direct integration and provider identifier.
+
+The live error prompted an API-key check, a new key and changes to model initialization. A model-not-found or access error does not by itself prove the key was invalid. Check the exact provider, model ID, access and environment state before assigning one cause. Notebook cells also retain state: rerunning an earlier constructor can overwrite the working `llm` variable.
+
+A lower temperature was described as limiting variation, not as a guarantee of correctness or deterministic execution. The final successful constructor above does not explicitly set the temperature, so do not silently replace its value with the earlier spoken setting.
+
+---
+
+## Inspect the Plain Model Response Before Using Retrieval
+
+Divesh asked the bare chat model about code of conduct before attaching the retrieval tool:
+
+```python
+answer = llm.invoke("tell me about code of conduct")
+```
+
+```python
+print(answer.content)
+```
+
+The model returned a long general explanation. That is not evidence it had read the Acme handbook. This comparison establishes why the next step must supply external context rather than assuming a fluent answer is organization-specific.
+
+A chat-model invocation returns an **AIMessage**, not an ordinary dictionary with arbitrary attributes. The successful inspection in the notebook is:
+
+```python
+answer.response_metadata
+```
+
+The stored metadata includes the model name, token usage, timing and finish reason. Its example contains 77 prompt tokens and 1,600 completion tokens, totaling 1,677. These are details of that recorded call, not a standard cost or speed for all queries.
+
+Use the documented fields: `content` for the response content, `response_metadata` for provider response information, and `usage_metadata` when supplied for normalized token usage. The live attempts to access fields such as a top-level model name or generic `.metadata` should not be copied as working API examples. Metadata keys and availability can vary by integration.
+
+This was an inspection of available response information. Exporting it to an observability platform was mentioned, but a LangSmith tracing integration was not configured in this notebook.
+
+---
+
+## Create the HR Agent and Read Its Tool Trace
+
+The assistant combines a model, a tool list and instructions. This is the structure drawn on the PDF's final page. The notebook's first assistant construction is:
+
+```python
+hr_assistant = create_agent(
+    model = llm,
+    tools=[search_hr_policy],
+    system_prompt= """ 
+    
+    You are a friendly HR assistant working for Acme Crop. 
+    Always use the search_hr_policy tool to look up 
+    facts before answering. 
+    If the answer isn't in the search results, say you don't know "
+    instead of guessing."
+    
+    always reply in 2 lines , if you are not clear ask a questions to clarift from user
+    
+    Dont entertain any other questions which are off topic and if you dont understand ,
+    tell that mail to acmecorp.com
+    """,
+    
+)
+```
+
+The notebook imports `create_agent` from `langchain.agents` beforehand. The excerpt preserves the supplied prompt, including its spelling and punctuation. “Acme Crop” is a typo relative to the demo document's Acme Corp; the domain text is a fictional fallback, not an instruction to email anyone.
+
+The intended behaviors are to retrieve HR facts, avoid guessing, keep answers brief, clarify ambiguous questions and stay within scope. These are prompt instructions, not enforced access controls or a validated guardrail system. The saved long answers also do not demonstrate reliable compliance with the later two-line instruction: notebook outputs can remain after source edits, and this construction cell has no saved execution count.
+
+The invocation format is:
+
+```python
+response = hr_assistant.invoke({"messages": [{"role": "user",
+                            "content": "tell me about code of conduct"}]})
+```
+
+Here the caller passes a user-role message because it is submitting the user's question. Dictionary-format messages use `assistant` for model output, while LangChain's corresponding object is `AIMessage`; system and tool messages have their own roles and requirements. They are not interchangeable labels for the same external input.
+
+### What the saved trace shows
+
+The returned agent state contains a `messages` list:
+
+1. A human message asking about code of conduct.
+2. An AI message with a tool call to `search_hr_policy`, using the question “code of conduct.”
+3. A tool message containing the three retrieved chunks.
+4. An AI message producing the final answer from that context.
+
+The returned tool call and tool result share a call identifier. The first AI message can have empty text content while still carrying a valid tool request. Two AI messages in the trace are explained by the tool-call step and the final response; they are not proof that every model's private reasoning is exposed as a separate message.
+
+The saved output includes provider-specific reasoning content, but that is specific to this model and response format. Do not assume every model or API supplies the same field.
+
+The source retrieves the final answer with:
+
+```python
+print(response["messages"][-1].content)
+```
+
+The agent invocation returns state, while the earlier bare model invocation returned an AIMessage. This is why the access patterns differ. `[-1]` selects the last message in this demonstrated response, `[0]` selects its initial user message, and another index can select an intermediate tool message. These indices describe this trace; more tool steps would change the intermediate positions.
+
+### The visible policy answers
+
+The grounded code-of-conduct answer covered professionalism, respect, prohibited misconduct and annual training. The probation question produced the handbook's three-month period, lack of paid-leave eligibility during probation, emergency unpaid leave with approval, and the shorter probation notice period.
+
+Those answers illustrate the completed RAG path. They are still generated answers that need checking against the retrieved text. The demo did not measure retrieval recall, groundedness, task accuracy or resistance to malicious documents across a test set.
+
+---
+
+## Conversation Memory: Added in Code, Unresolved in the Demo
+
+The first helper invoked the agent with only the current question. When asked “tell me about that policy,” it requested clarification. Asked “what did I ask,” it could repeat the current question rather than recall the earlier exchange. No cross-call history had been configured in that first version.
+
+Divesh then consulted the documentation and added a LangGraph checkpointer. The notebook imports:
+
+```python
+from langchain.agents import create_agent
+from langgraph.checkpoint.memory import InMemorySaver
+```
+
+The later `create_agent` call retains the model, tool and HR prompt and adds the argument `checkpointer=InMemorySaver()`. Its conversation configuration is:
+
+```python
+config = {"configurable": {"thread_id": "user-session-1"}}
+```
+
+A subsequent source call passes that configuration:
+
+```python
+response = hr_assistant.invoke(
+    {"messages": [{"role": "user", "content": "what was my last question"}]},
+    config=config,
+)
+```
+
+A **thread ID is a logical conversation identifier**, not a Python operating-system thread that must be started. A checkpointer stores agent state associated with that identifier; later invocations reuse the same agent/checkpointer and thread ID to continue the conversation. The official [short-term-memory guide](https://docs.langchain.com/oss/python/langchain/short-term-memory) documents that pattern.
+
+However, **the live follow-up did not succeed as intended**. The assistant continued to refuse the “last question” request and directed the user toward the fictional company contact. Divesh considered the off-topic instruction or possible reinitialization as causes and explicitly left the behavior for later investigation. The saved notebook retains the refusal.
+
+A refusal does not alone prove the checkpointer stored nothing: prompt behavior and state persistence are separate things to inspect. Conversely, adding the checkpointer argument is not evidence that the demonstration successfully validated memory. The later “How many days do I get?” follow-up was ambiguous after a code-of-conduct question and elicited a clarification; it is not a clean memory test either.
+
+### In-memory state and production sessions
+
+`InMemorySaver` stores state in the current process. Restarting the kernel or process loses that storage, and constructing a fresh saver creates a separate state store. A browser interface is not what makes it durable.
+
+Nitin's closing questions connected this to saved conversations in a chat sidebar. Applications can associate multiple conversation IDs with a user and persist checkpoints in a database. A database-backed saver, together with application identity and ownership checks, can support resuming a conversation later. A hard-coded thread ID is not a user-isolation or authorization mechanism.
+
+Checkpoint storage and the document vector index are different stores with different jobs. SQL/PostgreSQL was discussed for persistent conversations; vector-database choices were discussed separately for document retrieval. Neither must contain exactly the same data as the other.
+
+---
+
+## Production Questions Raised by the Small Demo
+
+The class finished with production-oriented questions. These were discussion points and future extensions, not features completed in the notebook.
+
+### Token cost and corpus size
+
+Gaurav Kumar asked how a very large uploaded knowledge base affects user-level token cost. The useful distinction is that the generation model normally receives the **retrieved context**, not every stored document. Increasing the corpus does not automatically place the full corpus in every generation prompt.
+
+But a small `k` is not a complete cost control. Account for document embedding during ingestion, query embeddings, instructions, history, tool schemas, returned tool text, output tokens and potentially multiple model calls in the agent loop. Indexing and storage also have costs. Three long chunks can exceed the desired budget just as ten short ones may fit.
+
+The implementation fixes retrieval to three chunks but adds no per-user quota, request budget or output cap. Such limits require explicit configuration and application logic.
+
+### Updating only changed content
+
+Nitin asked whether new and modified documents require re-indexing everything. Divesh proposed watching for changes, identifying the affected content and replacing the corresponding indexed data through custom functions.
+
+That is a design direction, not implemented incremental indexing. Useful update information can include source identity, version, timestamps and stable chunk IDs. If content changes, the relevant text/vector must be updated; merely changing a timestamp beside an old embedding does not update its semantic representation. A text edit can also move neighboring chunk boundaries, so “replace exactly one chunk” is not guaranteed for every splitting strategy.
+
+### Version metadata versus version enforcement
+
+Earlier, Divesh suggested storing dates and instructing the assistant to prefer the latest policy. Metadata is useful only if the retrieval or prompt path actually uses it. The current `search_hr_policy` return value contains no timestamp or version metadata.
+
+Filtering active versions, replacing stale entries and handling deletions are application/index responsibilities. A prompt saying “use the latest” cannot retrieve a missing update or guarantee an obsolete policy is excluded.
+
+LangSmith dataset versioning also came up during a documentation search. Its [versioned datasets](https://docs.langchain.com/langsmith/manage-datasets) support evaluation examples and experiments. That is different from automatically watching a production HR folder and synchronizing its FAISS index.
+
+### Long conversations and summarization
+
+Nitin asked whether the checkpointer automatically handles growing context. It stores state; it does not automatically turn an unlimited conversation into a short prompt. Long histories can increase cost, exceed the model's context window or dilute relevant information. There is no universal failure threshold of 20 or 30 questions.
+
+Divesh introduced summarization middleware as a possible solution. It must be configured: the class's example of summarizing ten messages before an eleventh was an illustration, not an automatic behavior in the notebook. The official [middleware guide](https://docs.langchain.com/oss/python/langchain/middleware/built-in) documents configurable summarization triggers and retained context. Trimming, summarizing and selecting relevant history also involve information tradeoffs.
+
+### Authorization and guardrails were not solved
+
+A chat question asked how one group's documents can be hidden from another group. The instructor said the question was unclear and did not implement an answer. Nitin also briefly asked about guardrails before the conversation moved to memory. That question did not receive a substantive guardrail design.
+
+The supplied agent prompt is therefore not evidence of group-based access control, injection protection or production security. These remain separate requirements to design and verify. Likewise, the vendor names mentioned in Q&A are examples, not a benchmark proving one vector store is always best.
+
+---
+
+## What's Next
+
+Divesh said the following class would continue LangChain in more depth and add further techniques. The conversation-memory behavior was explicitly left for later checking. A versioning example was promised, but no practical implementation appeared in this session.
+
+Semantic chunking, other splitting strategies, streaming, observability, evaluations, guardrails, gateways, a different vector store and deployment were mentioned as later material or as topics in a separate playlist. They should not be counted as completed features of this notebook.
+
+The assigned [Fine-tuning, RAG and Hybrid artifact](https://claude.ai/artifact/ARzxd2gJcNYEKojXiDhr65) illustrates simple-RAG failures and a hybrid approach through a fictional shop scenario. Its scripted examples include confusing reward coins with gift cards, retrieving conflicting return-policy versions and mixing delivery locations with partner-store locations. The hybrid view illustrates learning evidence-use and refusal behavior while still using retrieved context. Its displayed percentages are not validated experimental accuracy, and fine-tuning plus RAG does not guarantee those failures disappear.
+
+---
+
+## Live Q&A Highlights
+
+| Question | Answer |
+|---|---|
+| What data would teach a support assistant to reply like employees? | Prepared examples of customer questions and desired responses can support supervised adaptation. It does not automatically provide a complete, current organizational knowledge base. |
+| Must fine-tuning retrain only the last few layers? | No. That was the revision example; full, partial and parameter-efficient adaptation are different choices. |
+| Does each conversation turn require all four message types in a fixed order? | No. Roles depend on the interaction; a tool result follows the matching AI tool call, while a direct answer can use no tool. |
+| Alok: must a system message be stored again in every turn? | Instructions need to be supplied appropriately to model requests, but that does not require duplicating a system-message item in every stored turn. |
+| Ramak Krishna: is agent memory caching or short-term memory? | The explained buffer is conversation history. Caching and long-term memory are separate mechanisms. |
+| Ashwin: what is a tool message? | It is the result returned by a tool, such as policy-search text or database results, rather than the tool-call request itself. |
+| Are human and user messages different here? | They represent the same user-input role in the demonstrated workflow. |
+| Must every LangChain query search the vector store? | Only in the fixed pipeline drawn for comparison. An agent can decide when to call a retrieval tool. |
+| Can the question plus top-k context exceed the model's window? | Yes. Budget for instructions, history, tools, retrieved text and output; a small k alone does not guarantee fit. |
+| Can RAG use images? | Multimodal RAG exists, but the practical here used a text handbook. |
+| What do Groq, Jina and FAISS each do? | Groq hosts generation models, Jina supplies embeddings, and FAISS performs local vector search. They occupy different parts of the pipeline. |
+| Is Jina better than Qdrant? | That compares different components: an embedding provider and a vector-database option. No head-to-head quality test was done. |
+| Does a larger embedding dimension guarantee a better model? | No. Dimension is vector width, and retrieval quality depends on the model, data and task. |
+| Is overlap mandatory? | No. It is a configurable target and can be zero; actual overlap depends on splitting boundaries. |
+| Do we need to clean data before chunking? | Extraction and cleaning quality still matter. An LLM's tolerance for imperfect text does not repair missing or malformed indexed content automatically. |
+| How do we load several text files? | The live shortcut failed and was reverted. The completed example loads one file; bulk loading was not successfully implemented. |
+| What is a LangChain Document? | A standardized object containing page content and metadata for the document-processing workflow. |
+| Will source metadata automatically reach the model? | No. This tool returns joined page content only; metadata must be deliberately exposed or used in retrieval filters. |
+| Rahul: will embedding all chunks cause rate-limit problems? | Nine chunks worked in the demo, but provider request/token limits still apply to larger ingestion batches. |
+| Is the retrieval test keyword search? | It uses dense-vector search. Editing a keyword can affect ranking, but does not guarantee a position. |
+| Prathiba: what if unrelated chunks contain the same word? | Retrieval can return irrelevant or misleading context. The sick-word experiment illustrated imperfect ranking; it did not implement a remedy. |
+| Why was notice period not second after adding “sick”? | It appeared third in the shown result. Dense retrieval depends on the full representations rather than a guaranteed term-count ordering. |
+| Can a policy-only document answer my remaining leave balance? | It can answer entitlement rules; a personal remaining balance needs employee-specific data. |
+| Why did the Groq model call fail? | The demo changed both model naming and model selection. The successful direct constructor used `openai/gpt-oss-20b`; the error did not establish that the key alone was the cause. |
+| Gaurav: can we stream instead of invoke? | Streaming was acknowledged as an option, but not demonstrated as a completed implementation here. |
+| How do we read the model output and metadata? | Use AIMessage fields such as `content`, `response_metadata` and available `usage_metadata`, rather than assuming it is a plain dictionary. |
+| Why are there two AI messages in the agent trace? | One requests the tool and a later one gives the final answer after the tool result. |
+| Why does `response["messages"][-1].content` work? | This agent call returns state with a message list; the last message is the final answer in the shown successful trace. |
+| Did the memory-enabled follow-up work? | Not as intended. Refusals persisted, and the instructor left the issue for investigation. |
+| Is `thread_id` a Python thread? | No. It identifies a logical conversation whose state the checkpointer stores. |
+| Does in-memory state survive a restart? | No. It belongs to the running process and saver instance; durable sessions need persistent storage. |
+| Gaurav Kumar: does a huge corpus consume all its tokens on each answer? | Generation usually receives retrieved snippets, not the entire corpus. Ingestion embeddings, query embeddings, history, prompts, tool calls and generated output still affect cost. |
+| Nitin Gupta: how can we index only new or changed content? | Divesh proposed a change watcher and replacement logic using source/metadata identities. No working delta-indexing pipeline was built. |
+| Nitin Gupta: do we get automatic production versioning from LangSmith? | LangSmith versions evaluation datasets; that does not itself synchronize changed source documents into the production vector store. |
+| Nitin Gupta: what should be included as guardrails? | This brief question was not substantively answered before the discussion moved to memory. The prompt alone is not a complete guardrail system. |
+| Nitin Gupta: does the checkpointer automatically summarize long chats? | No. It stores state; summarization or trimming requires explicit configuration such as middleware. |
+| Nitin Gupta: how do saved chat threads resume later? | Associate users and conversations with persisted state, then resume the correct thread. A database-backed checkpoint store and application ownership checks are needed for durable multi-user behavior. |
+| Nitin Gupta: which database stores conversations? | SQL/PostgreSQL was discussed as a persistent option. Conversation storage and vector retrieval are different responsibilities. |
+| Nitin Gupta: are Pinecone, pgvector and Elasticsearch valid options? | They were discussed alongside Qdrant and other stores. The class did not evaluate a universally best production database. |
+| Mangesh Khandare: are there roles beyond `user`? | Yes: system instructions, assistant/AI responses and tool results have distinct roles. The notebook uses `user` because it is supplying a user's question. |
+| Mangesh Khandare: will the linked playlist require subscriptions? | The instructor described a free-friendly learning path. Actual service quotas, infrastructure and production costs still need checking. |
+| Sampath Kumar: how should chunk size and overlap be selected? | Use document structure, retrieval tests and the total context budget. Suggested page batches and character counts are examples, not universal constants. |
+| Sampath Kumar: how can PDF and text sources be combined? | Appropriate loaders can produce standardized Documents for downstream processing. Preserve source metadata and combine or separate indexes according to the application. |
+| Sampath Kumar: can sources be kept separate? | Yes, separate stores or database-supported collections are possible. The local FAISS example does not itself implement a collection-management service. |
+| Sampath Kumar: is recursive splitting always the best production strategy? | No universal winner was established. Other word, sentence, structure or semantic strategies were mentioned; the final spoken recommendation is unclear in the captions. |
+| How is one group's knowledge hidden from another? | The question was raised but not resolved in the class. Retrieval permissions were not implemented. |
+
+---
+
+## Key Pointers to Remember
+
+- Ingestion creates the searchable knowledge base; retrieval selects evidence for a particular question.
+- The class's completed result is a notebook HR-policy assistant, with conversation memory still under investigation.
+- TextLoader returns Documents with text and metadata; it does not solve arbitrary multi-file ingestion by receiving several paths at once.
+- Recursive character splitting uses separator priorities and character lengths, not semantic understanding or token counts.
+- A target overlap is optional and need not appear as exactly that many repeated characters at every boundary.
+- The demonstrated 500/50 split produced nine chunks for the supplied handbook.
+- Jina generated 768-dimensional embeddings; vector dimension is not model size or a quality guarantee.
+- Local FAISS does not make remote embedding and generation calls local.
+- The notebook's FAISS configuration should not be described as explicitly using cosine similarity.
+- Top-k results can include distractors. Inspect retrieval before trusting a fluent generated answer.
+- The successful working model variable was reassigned to Groq's `openai/gpt-oss-20b`.
+- AIMessage output and agent state are different return types with different access patterns.
+- A retrieval tool's docstring describes its function; the application runtime executes it.
+- Stored metadata does not help a model unless the retrieval or prompt path actually uses it.
+- A checkpointer stores thread state; summarization, authorization and durable multi-user storage require additional configuration.
+- Corpus size, retrieval size, prompt size, embedding cost and output cost are related but distinct quantities.
+
+---
+
+## Action Items After Class 26
+
+- [ ] Read the repository README, requirements and demo handbook before reproducing the notebook.
+- [ ] Keep API credentials in environment variables and verify the selected notebook kernel uses the intended environment.
+- [ ] Inspect the loaded Document's content and metadata, then compare the 500/50 chunk boundaries with the other demonstrated settings.
+- [ ] Test retrieval questions directly and check that the relevant handbook section appears before adding generation.
+- [ ] Compare a plain model response with the agent's tool-grounded answer; inspect the tool-call and tool-result messages.
+- [ ] Review the successful Groq model identifier and avoid accidentally rerunning the earlier failed constructor over the working variable.
+- [ ] Treat the memory attempt as unfinished: inspect persisted state separately from refusals, reuse one thread/saver, and use an unambiguous in-scope follow-up when testing.
+- [ ] Estimate a full request budget, including history, tools, retrieved context and output, rather than counting chunks alone.
+- [ ] Study the assigned fictional fine-tuning/RAG/hybrid artifact without treating its scripted outcomes as measured accuracy.
+- [ ] Keep incremental ingestion, version enforcement, access control, guardrails and production deployment on the list of features still to implement and evaluate.
+
+---
+
+## Sources
+
+The primary source is the [complete 25 October Class 26 recording and transcript](https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6ade6ba859c2d21580c9c6a3), original filename **GMT20261025-142043_Recording.cutfile.20261025204943202.transcript.vtt**.
+
+The matching course-linked materials are the [repository README](https://github.com/d-hackmt/adv-batch-langchain/blob/main/README.md), the complete [rag.ipynb](https://github.com/d-hackmt/adv-batch-langchain/blob/main/rag.ipynb), [requirements.txt](https://github.com/d-hackmt/adv-batch-langchain/blob/main/requirements.txt), [demo handbook](https://github.com/d-hackmt/adv-batch-langchain/blob/main/data/hr_policy.txt), all five pages of [Scribble notes.pdf](https://github.com/d-hackmt/adv-batch-langchain/blob/main/NOTES/Scribble%20notes.pdf), and the [revision diagram](https://github.com/d-hackmt/adv-batch-langchain/blob/main/NOTES/adv%20notes%20revision.png). Repository source was read in full for the supplied notebook; the live sequence and saved outputs are distinguished where they differ. Official documentation is linked beside the claims it clarifies.
+
+*Notes compiled from the full Class 26 transcript, matching notebook, demo data and handwritten diagrams - “Building a LangChain RAG HR Assistant,” Production AI / LLM Engineering, Krish Naik Academy.*
 
 [Back to course index](Course_Notes_Index.md)
 

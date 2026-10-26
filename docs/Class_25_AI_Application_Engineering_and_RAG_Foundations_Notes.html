@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><link rel="canonical" href="https://builtbyankit.github.io/production-ai-engineering-notes/Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>25 · Application engineering and RAG - Production AI Engineering Notes</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link href="assets/vendor/katex/katex.min.css" rel="stylesheet" />
+        <link href="stylesheets/extra.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "25 \u00b7 Application engineering and RAG";
+        var mkdocs_page_input_path = "Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.md";
+        var mkdocs_page_url = "/production-ai-engineering-notes/Class_25_AI_Application_Engineering_and_RAG_Foundations_Notes.html";
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]--> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="index.html" class="icon icon-home"> Production AI Engineering Notes
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="index.html">Course overview</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Foundations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_01_Induction_and_Course_Roadmap_Notes.html">01 · Induction and course roadmap</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_02_Software_Setup_Notes.html">02 · Software setup</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_03_PyTorch_Fundamentals_Notes.html">03 · PyTorch fundamentals</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Transformers</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_04_Transformers_101_Part_1_Notes.html">04 · Transformers 101, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_05_Transformers_101_Part_2_Notes.html">05 · Transformers 101, part 2</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_06_Multi_Head_Attention_Notes.html">06 · Multi-head attention</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_07_Transformer_Architecture_Notes.html">07 · Transformer architecture</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_08_Annotated_Transformer_Implementation_Notes.html">08 · Transformer implementation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_09_Transformer_Training_Notes.html">09 · Transformer training</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_10_Transformer_Training_and_Inference_Notes.html">10 · Training and inference</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Tokenization</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_11_Tokenization_Foundations_Notes.html">11 · Tokenization foundations</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_12_Subword_Tokenization_Notes.html">12 · Subword tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_13_Custom_Domain_Tokenization_Notes.html">13 · Custom domain tokenization</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_14_Offset_Mapping_and_Prompting_Notes.html">14 · Offset mapping and prompting</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompting and structure</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_15_Prompt_Engineering_Notes.html">15 · Prompt engineering</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_16_Structured_Generation_Notes.html">16 · Structured generation</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">DSPy</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_17_DSPy_Part_1_Notes.html">17 · DSPy, part 1</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_18_DSPy_Part_2_Notes.html">18 · DSPy, part 2</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Fine-tuning and inference</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_19_Fine_Tuning_Transformer_Architectures_Notes.html">19 · Fine-tuning architectures</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_20_KV_Cache_Notes.html">20 · KV cache</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_21_Attention_Variants_Notes.html">21 · Attention variants</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_22_MLA_and_RoPE_Notes.html">22 · MLA and RoPE</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_23_FlashAttention_and_PyTorch_SDPA_Notes.html">23 · FlashAttention and SDPA</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Model scaling</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_24_LLM_Scaling_Laws_Notes.html">24 · Scaling laws</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">RAG and agents</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">25 · Application engineering and RAG</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-updates">Quick Updates</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#from-understanding-models-to-building-applications">From Understanding Models to Building Applications</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#product-demonstrations-natural-language-meets-existing-data">Product Demonstrations: Natural Language Meets Existing Data</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#flight-search-and-an-interactive-interface">Flight search and an interactive interface</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#product-search-and-location-aware-assistance">Product search and location-aware assistance</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-langchain-ecosystem-components-routing-and-observability">The LangChain Ecosystem: Components, Routing and Observability</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#learning-from-documentation-and-directing-coding-assistants">Learning From Documentation and Directing Coding Assistants</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#transfer-learning-and-fine-tuning-reusing-what-was-learned">Transfer Learning and Fine-Tuning: Reusing What Was Learned</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#a-pretrained-network-is-a-starting-point">A pretrained network is a starting point</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#specializing-an-llm">Specializing an LLM</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#knowledge-distillation-supervision-from-a-teacher">Knowledge Distillation: Supervision From a Teacher</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#why-retrieval-is-useful-alongside-model-adaptation">Why Retrieval Is Useful Alongside Model Adaptation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#the-hr-policy-assistant-what-the-demonstration-showed">The HR-Policy Assistant: What the Demonstration Showed</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rag-phase-one-prepare-searchable-information">RAG Phase One: Prepare Searchable Information</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#load-and-parse">Load and parse</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#split-into-chunks">Split into chunks</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#embed-and-store">Embed and store</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#rag-phase-two-retrieve-context-and-generate-an-answer">RAG Phase Two: Retrieve Context and Generate an Answer</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#search-is-a-software-operation">Search is a software operation</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#generation-uses-the-retrieved-material">Generation uses the retrieved material</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#freshness-requires-an-update-process">Freshness requires an update process</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture-and-career-discussion">Architecture and Career Discussion</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#whats-next">What's Next</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#live-qa-highlights">Live Q&amp;A Highlights</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-pointers-to-remember">Key Pointers to Remember</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#action-items-after-class-25">Action Items After Class 25</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="Class_26_LangChain_RAG_HR_Assistant_Notes.html">26 · LangChain HR assistant</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="Course_Quick_Revision.html">Quick revision</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="downloads.html">Downloads</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Production AI Engineering Notes</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html" class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">RAG and agents</li>
+      <li class="breadcrumb-item active">25 · Application engineering and RAG</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="class-25-ai-application-engineering-and-rag-foundations">Class 25: AI Application Engineering and RAG Foundations<a class="headerlink" href="#class-25-ai-application-engineering-and-rag-foundations" title="Permanent link">&para;</a></h1>
+<h3 id="production-ai-llm-engineering-krish-naik-academy">Production AI / LLM Engineering | Krish Naik Academy<a class="headerlink" href="#production-ai-llm-engineering-krish-naik-academy" title="Permanent link">&para;</a></h3>
+<p><strong>Mentor:</strong> Divesh Jadhwani<br />
+<strong>Duration:</strong> 2 hours 48 minutes 40 seconds | <strong>Session:</strong> 24 October 2026</p>
+<hr />
+<h2 id="quick-updates">Quick Updates<a class="headerlink" href="#quick-updates" title="Permanent link">&para;</a></h2>
+<p>Divesh introduced the application-building portion of the course while Sourangshu Pal was away. The session connected the earlier model architecture lessons to products that use models, then developed the conceptual pipeline for an HR-policy assistant. Although a LangChain practical was initially planned, the class finished with demonstrations, diagrams and questions; the notebook implementation moved to the following session.</p>
+<p>The mentor announced a Diwali break on <strong>7 and 8 November</strong>, with classes planned for <strong>31 October and 1 November</strong> and Pal's return planned for <strong>14 and 15 November</strong>. These are the arrangements announced in this recording.</p>
+<p>The dashboard supplies the <a href="https://guardthisrag.streamlit.app/">HR Policy Assistant demonstration</a> and <a href="https://groq.com/">Groq</a>. The instructor's <a href="https://github.com/d-hackmt/adv-batch-langchain">application repository</a>, supplied with the following class, is a companion for the practical. Its current notebook must not be mistaken for code executed during this session.</p>
+<hr />
+<h2 id="from-understanding-models-to-building-applications">From Understanding Models to Building Applications<a class="headerlink" href="#from-understanding-models-to-building-applications" title="Permanent link">&para;</a></h2>
+<p>Divesh opened with a useful change in perspective: earlier lessons examined what happens inside models; the next set asks how a software system can put those models to work. Knowing tokenization, attention and training helps explain the capabilities and limits of the component. Application engineering connects that component to a user interface, business data, tools and a workflow.</p>
+<p>He contrasted <strong>making or adapting models</strong> with <strong>using models</strong>. In the first group, a team might train a model, fine-tune pretrained weights or distill a model for deployment. In the second, a team might connect an existing model to a website, build a retrieval workflow or coordinate several agents. These are overlapping areas of engineering rather than an exhaustive classification of AI. A retrieval application can use a fine-tuned model, and a product team can own both its model adaptation and its orchestration.</p>
+<p>The PDF's branching sketch captures this teaching contrast:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    P[AI problem or product]
+    P --&gt; M[Build or adapt models]
+    P --&gt; A[Compose an application using models]
+    M --&gt; T[Training]
+    M --&gt; F[Fine-tuning]
+    M --&gt; K[Knowledge distillation]
+    A --&gt; R[Retrieval-augmented generation]
+    A --&gt; W[Agent workflows]
+    A --&gt; U[Website or product integration]</code></pre>
+<p>A practical implication is that using an LLM is not the same as training it. Calling a model from a chatbot, supplying documents in a prompt and routing requests between tools normally leave the base model's weights unchanged. Conversely, an application that uses an LLM is not automatically an autonomous agent: some workflows have a fixed sequence of software steps.</p>
+<p>Divesh's repeated emphasis was to identify the problem and its components. A product still needs a sensible interface, reliable access to its data and a clear response path. The model provides a capability within that system; it does not remove the need to design the surrounding software.</p>
+<hr />
+<h2 id="product-demonstrations-natural-language-meets-existing-data">Product Demonstrations: Natural Language Meets Existing Data<a class="headerlink" href="#product-demonstrations-natural-language-meets-existing-data" title="Permanent link">&para;</a></h2>
+<h3 id="flight-search-and-an-interactive-interface">Flight search and an interactive interface<a class="headerlink" href="#flight-search-and-an-interactive-interface" title="Permanent link">&para;</a></h3>
+<p>The IndiGo example began with an informal request for a morning flight from Pune to Bangalore around Diwali. Instead of filling every field in a traditional form, the user supplied an intention in ordinary language. The assistant requested missing details, clarified that the trip was one way and produced flight-related interface elements.</p>
+<p>This demonstrated two distinct responsibilities: interpreting what the user wants, and turning that intention into an interaction with a product. A phrase such as “around Diwali” still needs to become usable dates; “I am travelling alone” still has to be reconciled with whatever fields the booking flow requires. The assistant's additional question about children illustrated that a conversational interface may ask redundant questions. The class did not establish why that particular application asked it.</p>
+<p>Divesh used <strong>AG2UI</strong> as classroom shorthand for an agent producing an interactive user interface, including cards and buttons. The important concept was the transition from a text-only answer to an actionable interface. No formal protocol specification or frontend-generation implementation was inspected, so the label should be understood in that classroom sense.</p>
+<h3 id="product-search-and-location-aware-assistance">Product search and location-aware assistance<a class="headerlink" href="#product-search-and-location-aware-assistance" title="Permanent link">&para;</a></h3>
+<p>Amazon Rufus was asked for baggy jeans under ₹2,000, then for men's options ordered from cheaper to more expensive. Google Maps examples included a nearby petrol pump and a two-day Mumbai itinerary. Travel-planning examples extended the same idea to a Goa trip.</p>
+<p>Across these examples, the common pattern was:</p>
+<ol>
+<li>Understand a request and obtain necessary clarifications.</li>
+<li>Find information relevant to that request.</li>
+<li>Present an answer, recommendation or interface that the user can use.</li>
+</ol>
+<p>Divesh explained these interfaces in terms of access to product, flight or location data. That is a useful architectural interpretation of the demonstrations, but the class did not inspect their private databases, API calls or source code. It therefore does not prove that any named product uses a specific model, agent framework, database or HTML-generation method. No booking or purchase was completed as part of the lesson.</p>
+<p>The examples also explain why a business application can differ from a general chat assistant. The application can place its own data and workflow close to the user: products in a shopping context, policies in an employee context, or a map in a travel context. The value comes from the complete interaction, not merely from adding a chat box.</p>
+<hr />
+<h2 id="the-langchain-ecosystem-components-routing-and-observability">The LangChain Ecosystem: Components, Routing and Observability<a class="headerlink" href="#the-langchain-ecosystem-components-routing-and-observability" title="Permanent link">&para;</a></h2>
+<p>Divesh introduced LangChain, LangGraph and LangSmith as related tools with different responsibilities. Other framework names, including Pydantic AI, Google ADK and Microsoft AutoGen, appeared as alternatives; this was not a comparative implementation lesson.</p>
+<table>
+<thead>
+<tr>
+<th>Tool</th>
+<th>Classroom emphasis</th>
+<th>Useful distinction</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>LangChain</td>
+<td>Connecting models and application components; a simple chain of steps</td>
+<td>A convenient starting point for models, tools and agent abstractions</td>
+</tr>
+<tr>
+<td>LangGraph</td>
+<td>Routing and coordinating more complex workflows</td>
+<td>Explicit state and control over execution paths</td>
+</tr>
+<tr>
+<td>LangSmith</td>
+<td>Seeing what happened during a model or workflow run</td>
+<td>Tracing, debugging, evaluation and monitoring</td>
+</tr>
+</tbody>
+</table>
+<p>The simple chain drawing was <strong>A → B → C → D</strong>: each step passes work to the next. The graph example used two conceptual agents in a pharmaceutical research workflow. A research agent could consult search engines or databases, while a report agent could turn material into a report. A request might need research alone, reporting alone, or research followed by reporting.</p>
+<p>The following translates the PDF's routing structure. The pharmaceutical setting is an orchestration example, not a validated drug-discovery procedure or medical recommendation.</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    Q[User request] --&gt; Route{Which work is needed?}
+    Route --&gt;|Research| Research[Research agent]
+    Route --&gt;|Report from available material| Report[Report agent]
+    Research --&gt; Sources[Search engines and databases]
+    Sources --&gt; Findings[Research findings]
+    Findings --&gt;|Research only| Result[Return result to user]
+    Findings --&gt;|Research and report| Report
+    Report --&gt; Result</code></pre>
+<p>The chain-versus-graph contrast helps introduce control flow, but it is not a rigid boundary between the libraries. Current documentation describes LangChain's agent abstractions and LangGraph's lower-level orchestration, including combinations of deterministic and model-driven steps. LangGraph can be used independently of LangChain. These frameworks compose applications; they do not inherently train new model weights. <a href="https://docs.langchain.com/oss/python/langchain/overview">LangChain overview</a>, <a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph overview</a>.</p>
+<p>For observability, Divesh asked students to think beyond the final answer. Which prompt went to the model? Which agent or tool ran? How many tokens were used, how long did a step take, and where did cost accumulate? Those are the questions a trace can help answer. LangSmith supports tracing across frameworks as well as monitoring and evaluation; knowing the execution path makes a multi-step failure easier to investigate. <a href="https://docs.langchain.com/langsmith/observability">LangSmith Observability</a>.</p>
+<p>No graph, tracing integration or LangChain chain was implemented live in this session. The point was to recognize where each responsibility belongs before writing the application.</p>
+<hr />
+<h2 id="learning-from-documentation-and-directing-coding-assistants">Learning From Documentation and Directing Coding Assistants<a class="headerlink" href="#learning-from-documentation-and-directing-coding-assistants" title="Permanent link">&para;</a></h2>
+<p>The mentor demonstrated the question-answering feature in LangChain's documentation. He asked for a short definition of LangChain and for guidance on whether a RAG system should use LangChain or LangGraph. The visible interaction involved searching documentation and returning an explanation with supporting material.</p>
+<p>This was both a product example and a learning method. Documentation can answer a current API question more directly than an old tutorial, particularly when a library changes. A coding assistant can help navigate it, but an engineer still needs enough understanding to judge the answer, inspect the generated code and connect components correctly.</p>
+<p>Divesh connected this to system design. Before asking an assistant to implement a workflow, be able to explain what information moves between its stages, what each stage does and where state is stored. Terms such as middleware, streaming and memory are not interchangeable features to request blindly; they change how a system behaves. A diagram or an API reference can make the implementation request more precise.</p>
+<p>A learning-product demonstration, referred to as Vidya AI, combined documentation, videos, an AI mentor and a highlighting interface. AI labs were described as an upcoming feature. The product was presented as a tailored learning experience rather than proof that a general assistant cannot provide useful explanations.</p>
+<p>Questions about bring-your-own-key access and local models were specific to that product demonstration. Divesh said its current integration used a Gemini key. That does not establish that LangChain or RAG cannot use local models. Similarly, a bring-your-own-key interface does not by itself establish how a service stores, transmits or deletes keys. No security or storage implementation was audited during the class. Free provider access, where available, remains subject to the provider's current quotas and terms.</p>
+<p>The study advice was to combine documentation reading, conceptual understanding and code inspection. Generating code can save effort, but accepting code that one cannot explain makes later debugging and system design harder.</p>
+<hr />
+<h2 id="transfer-learning-and-fine-tuning-reusing-what-was-learned">Transfer Learning and Fine-Tuning: Reusing What Was Learned<a class="headerlink" href="#transfer-learning-and-fine-tuning-reusing-what-was-learned" title="Permanent link">&para;</a></h2>
+<h3 id="a-pretrained-network-is-a-starting-point">A pretrained network is a starting point<a class="headerlink" href="#a-pretrained-network-is-a-starting-point" title="Permanent link">&para;</a></h3>
+<p>Divesh used an image-classification example to explain why a team might reuse an existing model. A pretrained network has already learned useful representations from a prior task. A new task, such as distinguishing cats from dogs, may benefit from that starting point instead of learning every feature from randomly initialized weights.</p>
+<p>The classroom examples mentioned ResNet and Inception and contrasted a broad classifier with a two-class task. The class-count change belongs at the <strong>output classification head</strong>. It is not a change from “100 input classes” to “two input classes,” and it does not by itself change image channels or the dimensions of the input data.</p>
+<p>Two common reuse strategies make the distinction concrete:</p>
+<ul>
+<li><strong>Frozen feature extraction:</strong> keep the pretrained backbone fixed and train an appropriate task head on its representations.</li>
+<li><strong>Fine-tuning:</strong> update some or all pretrained parameters for the new task, possibly together with a new head.</li>
+</ul>
+<p>Fine-tuning is itself a transfer-learning method. Freezing a backbone means its parameters are not updated; it does not mean that the complete application has no training step. Nor does freezing automatically turn the backbone into a smaller network. These distinctions match the official computer-vision transfer-learning tutorial. <a href="https://docs.pytorch.org/tutorials/beginner/transfer_learning_tutorial.html">PyTorch transfer-learning tutorial</a>.</p>
+<p>The PDF showed a network with early layers retained and later layers adapted. Its structure can be read as follows:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    I[New task data] --&gt; B[Pretrained backbone]
+    B --&gt; H[Task-specific output head]
+    H --&gt; O[Predictions for the new task]
+    Choice{Adaptation choice} --&gt;|Frozen feature extraction| Freeze[Keep backbone weights fixed]
+    Choice --&gt;|Fine-tuning| Tune[Update selected or all pretrained weights]
+    Freeze -.-&gt; B
+    Tune -.-&gt; B
+    Choice --&gt; Head[Train the task head as needed]
+    Head -.-&gt; H</code></pre>
+<p>Divesh used lower training effort and better reuse as the motivation. The illustrative comparison of a long pretraining run with a few adaptation epochs was not an experiment performed in class. The spoken epoch counts and accuracy percentages are not guarantees for an arbitrary dataset. The task, data distribution, initialization, trainable parameters and evaluation procedure determine whether transfer helps.</p>
+<h3 id="specializing-an-llm">Specializing an LLM<a class="headerlink" href="#specializing-an-llm" title="Permanent link">&para;</a></h3>
+<p>The same broad idea was applied to a general language model and a medical-domain task. A team may adapt a pretrained model to particular instructions, response formats or task examples. Divesh mentioned medical model families to make specialization tangible; the class did not inspect those models' training recipes, validate clinical performance or implement a medical fine-tune.</p>
+<p>He illustrated adaptation by unfreezing a few later layers. That is one possible arrangement, not the definition of all LLM fine-tuning. LoRA was acknowledged in response to a student, but its mechanics and parameterization were not taught here.</p>
+<p>A later question from sridhar k clarified the training data. Instruction-following examples and question-answer pairs are possible formats; the appropriate choice depends on the intended task. Merely owning a directory of documents does not specify a complete supervised training recipe. The class did not construct such a dataset or choose a fine-tuning loss, optimizer or evaluation set.</p>
+<hr />
+<h2 id="knowledge-distillation-supervision-from-a-teacher">Knowledge Distillation: Supervision From a Teacher<a class="headerlink" href="#knowledge-distillation-supervision-from-a-teacher" title="Permanent link">&para;</a></h2>
+<p>Divesh first previewed distillation briefly, then returned to it in the final Q&amp;A. The deployment example was a camera inspecting cans on an industrial line. A larger classifier might be inconvenient to deploy on a resource-constrained device; a smaller student is an alternative, and a teacher can provide training supervision for it.</p>
+<p>The example's model sizes and edge-device memory limits were hypothetical. The useful reasoning is to compare a model's resource requirements with the device budget. It does not follow that every smaller model must be less accurate than every larger model, or that distillation will preserve a teacher's accuracy on every task.</p>
+<p>The class contrasted <strong>hard labels</strong>, such as a target assigning a class a value of one, with <strong>soft targets</strong>, such as a teacher assigning probabilities of 0.89 and 0.11. A probability distribution can convey relationships that a single winning label does not show. The student produces its own predictions, compares them with the supervision and updates its weights.</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    X[Training example] --&gt; T[Trained teacher]
+    X --&gt; S[Student being trained]
+    T --&gt; P[Teacher probability distribution]
+    S --&gt; Q[Student probability distribution]
+    P --&gt; L[Distribution-matching loss]
+    Q --&gt; L
+    L --&gt; U[Backpropagate and update student weights]
+    U --&gt; S</code></pre>
+<p>Sridhar's follow-up asked how the student improves when its prediction disagrees with the teacher. Divesh named <strong>KL divergence</strong>, also called relative entropy, as a way to compare distributions. The caption's “scale divergence” refers to this term. The resulting loss supplies a training signal; backpropagation updates the student. This is a conceptual training loop, not a derivation or a completed distillation implementation.</p>
+<p>Several distinctions keep the explanation precise. Both teacher and student can produce probability distributions. The teacher supplies training targets or representations, rather than serving as the held-out validation set. A typical offline setup keeps the teacher fixed while training the student, and may combine a teacher-target loss with a true-label loss. The official tutorial demonstrates this arrangement. <a href="https://docs.pytorch.org/tutorials/beginner/knowledge_distillation_tutorial.html">PyTorch knowledge-distillation tutorial</a>.</p>
+<p>A larger teacher and a smaller student are the compression case discussed here, not a requirement that defines every distillation method. Likewise, reusing the teacher's original training dataset is not a universal requirement. The original distillation work discusses transferring behavior through soft targets on a transfer set. <a href="https://arxiv.org/abs/1503.02531">Hinton, Vinyals and Dean, <em>Distilling the Knowledge in a Neural Network</em></a>.</p>
+<p>Finally, a predicted probability, confidence, accuracy and overfitting are different concepts. A correct prediction or a reported 100% score does not alone establish overfitting. That question requires an appropriate evaluation of generalization. No such experiment was conducted in the class.</p>
+<hr />
+<h2 id="why-retrieval-is-useful-alongside-model-adaptation">Why Retrieval Is Useful Alongside Model Adaptation<a class="headerlink" href="#why-retrieval-is-useful-alongside-model-adaptation" title="Permanent link">&para;</a></h2>
+<p>After the break, Divesh moved from changing a model to giving an application access to information. The motivating example was an organization with its own policies or domain documents. Training a new foundation model from scratch is a different project from making those documents available to an existing model.</p>
+<p>Fine-tuning can change task behavior, style, format or domain performance, but it involves a training process and suitable data. Subject-matter expertise may be needed to prepare and evaluate that data. If the source information changes, a previously trained model does not automatically incorporate that change. A training cutoff also does not mean that the model reliably knows every fact published before that date.</p>
+<p><strong>Retrieval-augmented generation (RAG)</strong> addresses a different part of the problem: find relevant external material when a question arrives, supply that material as context and ask the model to generate an answer. The application's knowledge source can therefore change without updating the base model's weights for every document edit.</p>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Fine-tuning</th>
+<th>RAG</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where is the intervention?</td>
+<td>In a training process that changes model parameters or adapters</td>
+<td>In the application's retrieval and context-building workflow</td>
+</tr>
+<tr>
+<td>What did the class emphasize?</td>
+<td>Specialization in a task or response behavior</td>
+<td>Access to relevant organizational information</td>
+</tr>
+<tr>
+<td>How can new documents become available?</td>
+<td>Through a suitable adaptation process, if that is the chosen route</td>
+<td>Through updated source data and retrieval indexes</td>
+</tr>
+<tr>
+<td>What remains necessary?</td>
+<td>Training-data quality and task evaluation</td>
+<td>Parsing, retrieval quality, freshness and answer evaluation</td>
+</tr>
+</tbody>
+</table>
+<p>Divesh emphasized retraining cost and stale knowledge as reasons to consider retrieval. The comparison is a design starting point, not an absolute rule that RAG is always cheaper or fine-tuning is always inappropriate for company data. Retrieval, embedding, storage, maintenance and repeated inference all have costs. The choice depends on workload and quality requirements.</p>
+<p>The two approaches can also be combined. Nitish asked whether company knowledge should be fine-tuned once or whether adaptation should focus on the task's foundations. The mentor explicitly deferred the fine-tuning-plus-RAG comparison to the next class. No hybrid recipe was implemented here.</p>
+<p>RAG also predates the recent application boom: the named RAG research paper was first submitted in <strong>2020</strong>. Its experiments included open-domain question answering, so retrieval augmentation is not restricted to private employee applications. Web search can similarly provide external material to a generation workflow; a product label alone does not determine whether retrieval augmentation is involved. <a href="https://arxiv.org/abs/2005.11401">Lewis et al., <em>Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks</em></a>.</p>
+<hr />
+<h2 id="the-hr-policy-assistant-what-the-demonstration-showed">The HR-Policy Assistant: What the Demonstration Showed<a class="headerlink" href="#the-hr-policy-assistant-what-the-demonstration-showed" title="Permanent link">&para;</a></h2>
+<p>The business story was deliberately ordinary. An HR team repeatedly answers questions even though the relevant information already exists in policy documents. The proposed assistant lets employees ask in natural language and receive an answer based on those documents. The company and staffing details were an illustrative problem statement, not an account of Amazon's actual HR operations.</p>
+<p>The demonstration used an <strong>Acme Corp</strong> policy collection with topics such as annual leave, code of conduct and performance review. Three interactions made the intended behavior visible:</p>
+<table>
+<thead>
+<tr>
+<th>Query</th>
+<th>Observed classroom behavior</th>
+<th>Lesson</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>“I want to resign. What is the process?”</td>
+<td>The response said the supplied policy excerpts did not contain a resignation process</td>
+<td>Missing evidence should be acknowledged rather than filled with invented policy</td>
+</tr>
+<tr>
+<td>“Tell me how my performance will be judged”</td>
+<td>The assistant described the rating scale and review process, with relevant performance material shown</td>
+<td>A question can be connected to the policy passages supporting its answer</td>
+</tr>
+<tr>
+<td>“How many vacation days do I get per year?”</td>
+<td>The response used the annual-leave material and service-length distinctions</td>
+<td>The answer depends on the selected corpus, not on a generic model's guess about company practice</td>
+</tr>
+</tbody>
+</table>
+<p>Divesh also tried an off-topic coffee question to illustrate an HR assistant's scope. He described internal instructions to be polite, use the available information and decline unrelated requests. The demonstration did not establish that such instructions are an infallible security boundary or that the system will always retrieve the right policy.</p>
+<p>The companion <a href="https://guardthisrag.streamlit.app/">HR Policy Assistant</a> currently identifies itself as a NeMo Guardrails and FAISS RAG application. A read-only inspection during preparation showed a bring-your-own Groq-key field and a pipeline labelled PII regex, intent guard, FAISS top-three retrieval, answer generation and output regex. That current interface corroborates the demonstration's identity; it is not proof that every component or model selection was identical in the recording. No key was entered and no runtime query was submitted during note preparation.</p>
+<p>Security and guardrails were mentioned as later discussion. A labelled guard or regex check can reduce particular risks, but the UI's claims do not establish that all sensitive-data leakage is prevented. The class did not audit its implementation or test adversarial behavior.</p>
+<p>The provider name in this demonstration is <strong>Groq</strong>, despite captions that sometimes render it as “Grok.” Divesh advised choosing the available OpenAI-family model options because the demo's older Llama options were no longer working. Treat that as provider- and application-specific migration advice: support and deprecation apply to particular model IDs and access tiers, not to a universal disappearance of Llama models. Check the provider's <a href="https://console.groq.com/docs/models">supported models</a> and <a href="https://console.groq.com/docs/deprecations">deprecation history</a>. Free access is also rate-limited rather than unlimited. <a href="https://console.groq.com/docs/rate-limits">Groq rate limits</a>.</p>
+<hr />
+<h2 id="rag-phase-one-prepare-searchable-information">RAG Phase One: Prepare Searchable Information<a class="headerlink" href="#rag-phase-one-prepare-searchable-information" title="Permanent link">&para;</a></h2>
+<p>Divesh divided the workflow into a <strong>data-ingestion phase</strong> and a <strong>data-retrieval phase</strong>. Ingestion prepares the corpus; retrieval serves the user's question. The developer-side versus user-side distinction describes their roles in this application, rather than a universal access-control rule about who may upload documents.</p>
+<p>The PDF's ingestion path is the backbone of the explanation:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    D[Source documents: text, PDF and other formats]
+    D --&gt; Load[Load and parse usable content]
+    Load --&gt; Split[Split into retrievable chunks]
+    Split --&gt; Embed[Create embeddings for the chunks]
+    Embed --&gt; Store[Store vectors with their associated content]
+    Store --&gt; DB[Searchable vector store]</code></pre>
+<h3 id="load-and-parse">Load and parse<a class="headerlink" href="#load-and-parse" title="Permanent link">&para;</a></h3>
+<p>The first step is to obtain content that the downstream application can use. A text file, a PDF, a table, an image and an audio recording do not have identical extraction needs. The class placed that responsibility in loading and parsing: write or select an appropriate extraction process before assuming the content can enter the text pipeline.</p>
+<p>For the HR example, the source was policy text. Divesh did not implement a PDF-table parser, image extraction, speech transcription or video-processing pipeline. Those questions therefore remain requirements for an extended system rather than capabilities established by the demonstration.</p>
+<h3 id="split-into-chunks">Split into chunks<a class="headerlink" href="#split-into-chunks" title="Permanent link">&para;</a></h3>
+<p>A model has a finite context budget. Sending an entire large corpus with every question can be impractical and may obscure the useful material. Splitting creates units that can be retrieved individually.</p>
+<p>The mentor used a large thali as an analogy: a large amount is consumed in manageable pieces. The engineering consequence is to choose chunk boundaries that work for the data and questions. A policy boundary can be meaningful; a fixed-size segment is a different choice. The class mentioned recursive and semantic chunking but deferred their implementation and comparison.</p>
+<p>There were two descriptions of the demo's preparation: six policy-level documents, and a UI summary saying six documents were split into 500-character segments. These can describe document organization and a later splitting stage, but the transcript does not establish the exact final chunk count or overlap. Do not assume that the number of policies equals the number of vectors. The following class's notebook uses a different saved handbook and its own chunk outputs.</p>
+<h3 id="embed-and-store">Embed and store<a class="headerlink" href="#embed-and-store" title="Permanent link">&para;</a></h3>
+<p>An embedding turns content into a numerical vector suitable for a chosen similarity-search method. Divesh connected this step to the embeddings studied earlier in the course. The system stores the representations so it can later find material relevant to a new question.</p>
+<p>The vectors must remain associated with the corresponding content: an answer needs policy text, not merely a list of floating-point values. A vector store provides a way to store and search those representations. It is useful to distinguish the source document, the chunk and the vector so that later updates and retrieval results can be understood.</p>
+<p>The face-recognition analogy made the search intuition concrete. Store representations of known examples, represent a new input and compare it with the stored representations. The analogy does not establish a universal similarity threshold: the spoken “90%” is not a valid default threshold for every face-recognition or text-retrieval system.</p>
+<p>A student asked whether vectors could be kept in a table or CSV. Divesh said yes. The representation can be stored outside a specialized database, but storage alone does not supply the search program, indexing behavior or operational features. The class's vector database was a convenient way to organize retrieval, not a claim that a numerical vector can exist only in one kind of database.</p>
+<hr />
+<h2 id="rag-phase-two-retrieve-context-and-generate-an-answer">RAG Phase Two: Retrieve Context and Generate an Answer<a class="headerlink" href="#rag-phase-two-retrieve-context-and-generate-an-answer" title="Permanent link">&para;</a></h2>
+<p>Once the corpus is prepared, the user can ask a question such as “Tell me about the leave policy.” The application represents the question for search, obtains relevant chunks and prepares the model input.</p>
+<p>Divesh labelled three inputs to generation: <strong>retrieved context, instructions and the user question</strong>. The PDF's lower pipeline and his numbered annotations become this diagram:</p>
+<pre class="mermaid"><code>%%{init: {"flowchart": {"useMaxWidth": false}}}%%
+flowchart TB
+    Q[User question] --&gt; QE[Create query embedding]
+    QE --&gt; Search[Similarity search]
+    DB[Stored chunk vectors and content] --&gt; Search
+    Search --&gt; Top[Retrieve top-k relevant chunks]
+    Top --&gt; Prompt[Build model input]
+    Q --&gt; Prompt
+    Instructions[HR role, scope and response instructions] --&gt; Prompt
+    Prompt --&gt; LLM[Language model]
+    LLM --&gt; Answer[Answer to the user]</code></pre>
+<h3 id="search-is-a-software-operation">Search is a software operation<a class="headerlink" href="#search-is-a-software-operation" title="Permanent link">&para;</a></h3>
+<p>Sagar asked who compares the question with the documents. The mentor explicitly clarified that the LLM is not performing that numerical comparison in the simple pipeline. Application code and the retrieval system perform the similarity search. Cosine similarity was the metric discussed in class; the application then selects a top-three, top-five or more generally <strong>top-k</strong> result set.</p>
+<p>The returned items are similar <strong>documents or chunks</strong>, not similar user queries. The mentor corrected that wording while explaining the flow. The aim is to narrow a large corpus to a small amount of relevant evidence, so the model can work with useful context within its input budget.</p>
+<h3 id="generation-uses-the-retrieved-material">Generation uses the retrieved material<a class="headerlink" href="#generation-uses-the-retrieved-material" title="Permanent link">&para;</a></h3>
+<p>The prompt combines the selected passages with the question and instructions describing the HR assistant's role and tone. The model then generates the response. This explains why the same general model can be used in different organizations: each application can supply different evidence and rules at runtime.</p>
+<p>The simple retrieve-then-generate sequence does not require the model to decide whether it should call a retriever. An agentic variant can give that decision to a model-driven tool loop. Current documentation distinguishes these two arrangements, so the word “agent” in a demo should not erase the distinction between fixed retrieval and model-controlled retrieval. <a href="https://docs.langchain.com/oss/python/deepagents/retrieval">LangChain retrieval documentation</a>.</p>
+<h3 id="freshness-requires-an-update-process">Freshness requires an update process<a class="headerlink" href="#freshness-requires-an-update-process" title="Permanent link">&para;</a></h3>
+<p>When source data changes, the searchable representation must change too. Divesh suggested scheduled ingestion or a connection to an updating data source. That avoids retraining model weights for each edit, but it does not automatically make every search result current.</p>
+<p>The final questions made this operational point sharper. If an old document is replaced, the application must know which version is authoritative and stop returning obsolete material. For a small paragraph change in a 2,000-page PDF, the mentor proposed detecting a new version, invalidating the previous material and updating the affected chunk. This was a high-level answer: no change-detection, identity-mapping or partial-reindexing algorithm was implemented. A new paragraph boundary may affect more than one chunk, depending on the splitting scheme.</p>
+<p>Likewise, grounding improves access to evidence but does not guarantee correctness. Poor parsing can lose a table, retrieval can select irrelevant passages, and generation can misread the material. The class raised accuracy measurement and advanced RAG, but did not run an evaluation or report a measured quality score.</p>
+<hr />
+<h2 id="architecture-and-career-discussion">Architecture and Career Discussion<a class="headerlink" href="#architecture-and-career-discussion" title="Permanent link">&para;</a></h2>
+<p>Nilesh's extended questions moved from particular libraries to the kind of engineering work a learner might pursue. He separated application orchestration, inference infrastructure and lower-level model optimization, then asked how those relate to future leadership work and physical AI.</p>
+<p>Divesh's recommendation was to develop <strong>AI system-design</strong> skills. When pressed for a concrete definition, he described planning an end-to-end solution from a problem statement: which model is served, how inference is exposed, how the workflow is orchestrated, and what infrastructure supports it. The important point was understanding how the pieces fit, rather than recognizing only one tool name.</p>
+<p>Nilesh distinguished leadership responsibilities from personally coding every component. The discussion therefore included product direction, coordinating teams and understanding tradeoffs. Divesh also suggested that specialized domains, such as robotics or biological applications, require domain knowledge in addition to general AI and architecture knowledge. These were professional opinions, not guarantees about hiring demand or a claim that product management, architecture and model research are the same role.</p>
+<p>The conversation considered physical simulation, robotics and sandboxed execution. These examples motivated questions about boundaries and infrastructure; their named companies' private implementations were not inspected. Nilesh explicitly requested sandboxing in the syllabus. Divesh said it was <strong>not currently included</strong> and that he would ask Pal about adding it. The class did not teach a sandbox architecture or confirm a syllabus change.</p>
+<p>Sampath's question about keeping up with releases produced two suggestions: the <strong>MTEB leaderboard</strong> and announcements on X. MTEB is specifically a benchmark and leaderboard ecosystem for <strong>embeddings and retrieval</strong>, rather than a universal ranking of every generative model. Its maintainer repository describes that scope. <a href="https://github.com/embeddings-benchmark/mteb">MTEB project</a>, <a href="https://huggingface.co/spaces/mteb/leaderboard">MTEB leaderboard</a>.</p>
+<p>Divesh also acknowledged the effort involved in tracking every announcement. For the backend engineer returning to AI after a gap, the response was encouragement to build on prior ML knowledge. The class did not define a guaranteed career sequence or establish that each new technical trend replaces the previous area of work.</p>
+<hr />
+<h2 id="whats-next">What's Next<a class="headerlink" href="#whats-next" title="Permanent link">&para;</a></h2>
+<p>The following session was planned to start with a fine-tuning-versus-RAG refresher, explain when they can be combined and build the HR-policy workflow in a notebook. Divesh promised to inspect the intermediate outputs rather than show only a finished chatbot. <strong>No LangChain implementation was completed in Class 25.</strong></p>
+<p>He also listed later coverage: prompt engineering, LCEL, structured inputs and outputs, tool calling, document loaders, splitters, embeddings, RAG and text-to-SQL. LangGraph was planned for the next teaching weekend, subject to how far the preceding material progressed. Deep agents and additional agentic topics were associated with Pal's continuation.</p>
+<p>Advanced RAG, evaluation, versioning, security, guardrails and semantic caching were raised for further treatment. GraphRAG was promised as an overview, with uncertainty about a practical. Multimodal RAG was expected later, potentially in a project; audio processing was not resolved into a concrete implementation today. Scaling the assistant to 100 users was identified as an infrastructure question and left unexplained. Sandboxing was only a request to discuss with Pal.</p>
+<p>The <a href="https://github.com/d-hackmt/adv-batch-langchain">companion repository</a> currently contains an HR-policy RAG notebook using LangChain, Jina embeddings, FAISS and Groq. Its full saved source and outputs were reviewed to distinguish companion material from this session. They are <strong>not reproduced as Class 25's live code or results</strong>. In particular, a later notebook's sample policy can contain a resignation process even though the corpus demonstrated today did not answer that question.</p>
+<hr />
+<h2 id="live-qa-highlights">Live Q&amp;A Highlights<a class="headerlink" href="#live-qa-highlights" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Rahul: What did AG2UI mean in the demonstration?</strong></td>
+<td>Divesh used it for an agent producing an interactive UI, such as cards and buttons. No formal protocol or implementation was examined.</td>
+</tr>
+<tr>
+<td><strong>When is LangGraph useful rather than a simple chain?</strong></td>
+<td>The research/report example needed selectable paths and coordination. The current libraries overlap; a graph is a way to control state and execution, not a requirement for every chatbot.</td>
+</tr>
+<tr>
+<td><strong>Can agents fill forms or register users?</strong></td>
+<td>Such workflows are possible, but the class did not implement one or establish unrestricted authority to act on a user's behalf.</td>
+</tr>
+<tr>
+<td><strong>Why use a tailored learning application instead of a general chat assistant?</strong></td>
+<td>The demonstration combined a particular learning interface, documentation, videos and an AI mentor. It illustrated product design rather than proving a general assistant cannot explain the material.</td>
+</tr>
+<tr>
+<td><strong>Does the learning demo support Ollama, and is a bring-your-own key private?</strong></td>
+<td>Its demonstrated integration used Gemini. Other integrations are a separate product choice; key storage and privacy were not verified by the classroom demonstration.</td>
+</tr>
+<tr>
+<td><strong>Bhaskar: Can transfer learning be repeated?</strong></td>
+<td>Reuse an already learned representation for the new task. A frozen-backbone approach trains a new head, while fine-tuning updates pretrained parameters.</td>
+</tr>
+<tr>
+<td><strong>MP: Is transfer learning simply making a lighter model?</strong></td>
+<td>No. Weight reuse and deciding what to train are different from reducing an architecture's deployment size.</td>
+</tr>
+<tr>
+<td><strong>Bikash, Manish and Siddhartha: Will distillation and its fine-tuning distinction be explained in depth?</strong></td>
+<td>Today supplied a preview and a longer Q&amp;A explanation. A full method, training recipe and implementation remained outside this session.</td>
+</tr>
+<tr>
+<td><strong>Vivek: What about LoRA?</strong></td>
+<td>It was acknowledged, but not developed into a technical explanation or practical.</td>
+</tr>
+<tr>
+<td><strong>Rushi: Is the teacher like a validation set?</strong></td>
+<td>The useful distinction is that teacher predictions provide training supervision. A validation set is held out to assess or select the trained model.</td>
+</tr>
+<tr>
+<td><strong>Rajishvari: Is fine-tuning always more expensive than RAG?</strong></td>
+<td>Divesh emphasized retraining cost, but the general comparison depends on data preparation, retrieval, serving, maintenance and workload. No cost experiment was shown.</td>
+</tr>
+<tr>
+<td><strong>Balaji: Does RAG make PEFT or fine-tuning obsolete?</strong></td>
+<td>The mentor said no. Adaptation and retrieval address different needs and can be combined.</td>
+</tr>
+<tr>
+<td><strong>Akshay: Can a RAG application use Gemini?</strong></td>
+<td>Yes in principle; the pipeline is not restricted to the provider selected for this demo.</td>
+</tr>
+<tr>
+<td><strong>Nikhil: What determines the chunks?</strong></td>
+<td>The developer selects a strategy according to the data. Recursive and semantic approaches were mentioned; their implementation was deferred.</td>
+</tr>
+<tr>
+<td><strong>How are tables, images or other non-text formats loaded?</strong></td>
+<td>Use an appropriate parsing and processing path. No universal parser or multimodal implementation was supplied in this class.</td>
+</tr>
+<tr>
+<td><strong>Can embeddings be stored in a table or CSV?</strong></td>
+<td>They can be stored there; a search program is still needed. A vector store packages storage and retrieval capabilities.</td>
+</tr>
+<tr>
+<td><strong>Sagar: Who compares a query with the documents?</strong></td>
+<td>Application/retrieval code performs similarity search. The simple RAG pipeline does not ask the generation model to compute every cosine comparison.</td>
+</tr>
+<tr>
+<td><strong>Sagar's follow-up: Does retrieval reduce the material sent to the LLM?</strong></td>
+<td>Yes, selecting relevant chunks narrows the context and token load. Relevance still needs to be evaluated.</td>
+</tr>
+<tr>
+<td><strong>Sumit: Will each pipeline stage be covered in detail?</strong></td>
+<td>The mentor deferred line-by-line construction and intermediate outputs to the practical.</td>
+</tr>
+<tr>
+<td><strong>How do we measure and improve RAG accuracy?</strong></td>
+<td>Better prompting and advanced retrieval methods were raised for later coverage. No evaluation method or measured accuracy was demonstrated today.</td>
+</tr>
+<tr>
+<td><strong>Nitish: Should company data be fine-tuned once, or should fine-tuning focus on task knowledge?</strong></td>
+<td>The mentor said a hybrid may be appropriate and explicitly postponed the decision criteria to the following class.</td>
+</tr>
+<tr>
+<td><strong>How are updated or deleted documents kept from producing stale results?</strong></td>
+<td>Divesh proposed versioning and replacing or invalidating old material. A full update algorithm was not implemented.</td>
+</tr>
+<tr>
+<td><strong>A 2,000-page PDF has one changed paragraph: must everything be replaced?</strong></td>
+<td>The answer suggested detecting the new version and updating affected material. Exact change detection and chunk identity were left at a conceptual level.</td>
+</tr>
+<tr>
+<td><strong>Can RAG be used where organizational data must stay local?</strong></td>
+<td>A local system was suggested. Local model serving, embeddings, storage and other data paths must be considered together; this was not a compliance assessment.</td>
+</tr>
+<tr>
+<td><strong>Ashwin: Can the fine-tuning/distillation mechanisms be revisited?</strong></td>
+<td>They were revisited conceptually, with the more detailed distinction appearing in sridhar's later exchange. No training notebook was run.</td>
+</tr>
+<tr>
+<td><strong>Raja and other students: Will guardrails, security and semantic caching be included?</strong></td>
+<td>They were requested and acknowledged as later topics. Today's demo did not establish security guarantees.</td>
+</tr>
+<tr>
+<td><strong>Where do decision-oriented models fit in the stack?</strong></td>
+<td>Divesh linked them to choosing between agents in a workflow. The captioned model name is unclear, and no specific architecture or implementation was established.</td>
+</tr>
+<tr>
+<td><strong>Ayesha: What about parsing PDF tables and other formats?</strong></td>
+<td>LlamaIndex was suggested as a tool to investigate. No parser configuration or extraction result was shown.</td>
+</tr>
+<tr>
+<td><strong>Will GraphRAG and multimodal RAG receive practical coverage?</strong></td>
+<td>A GraphRAG overview was promised with uncertainty about a practical; multimodal RAG was expected later, possibly in a project.</td>
+</tr>
+<tr>
+<td><strong>How would this RAG system handle 100 users?</strong></td>
+<td>Divesh categorized it as an infrastructure and scalability question. No concurrency, capacity or serving solution was explained.</td>
+</tr>
+<tr>
+<td><strong>Will all LangChain, LangGraph and agentic material fit into the substitute sessions?</strong></td>
+<td>Divesh expected to finish LangChain and would try to cover LangGraph. Pal was to continue from where he left off; full completion in a few classes was not promised.</td>
+</tr>
+<tr>
+<td><strong>Harsh: Which advanced project should a learner choose?</strong></td>
+<td>Divesh said suggestions depend on the learner's current skill level. No specific advanced project was selected.</td>
+</tr>
+<tr>
+<td><strong>Vijay: Which of the suggested books is best?</strong></td>
+<td>The mentor said he had not read the books and could not make an informed comparison.</td>
+</tr>
+<tr>
+<td><strong>sridhar k: How do fine-tuning and distillation differ, and when is each useful?</strong></td>
+<td>Fine-tuning adapts a pretrained model to a task; distillation transfers supervision from a teacher to a student, illustrated by deploying a smaller can-inspection model on an edge device. The methods need not be mutually exclusive.</td>
+</tr>
+<tr>
+<td><strong>sridhar k: Are fine-tuning examples documents, questions and answers, or instructions?</strong></td>
+<td>Instruction-style and question-answer fine-tuning were mentioned. The data format must follow the intended task; no single format was prescribed for every use case.</td>
+</tr>
+<tr>
+<td><strong>sridhar k: How does the student learn when its answer differs from the teacher's?</strong></td>
+<td>Compare their distributions with a suitable loss; Divesh named KL divergence/relative entropy. Backpropagation then updates student weights.</td>
+</tr>
+<tr>
+<td><strong>sridhar k's final clarification: Does the difference between teacher and student drive the backward update?</strong></td>
+<td>Yes, that was the intended conceptual loop. It is a training objective, rather than simply accepting the teacher as a validation score.</td>
+</tr>
+<tr>
+<td><strong>sampath kumar: What happens when the source is a voice note or audio?</strong></td>
+<td>Divesh first discussed images and multimodal processing. Sampath explicitly returned to audio; the answer remained that a modality-specific processing technique is needed, without choosing an audio pipeline.</td>
+</tr>
+<tr>
+<td><strong>sampath kumar: How can I stay current with new models?</strong></td>
+<td>MTEB and X were suggested. MTEB concerns embeddings/retrieval, while release announcements should be checked against the originating model or project sources.</td>
+</tr>
+<tr>
+<td><strong>sampath kumar: How can a backend engineer return to AI after a three-to-four-year gap?</strong></td>
+<td>Build on prior ML knowledge and learn the current application components. The response was encouragement, not a detailed or guaranteed career plan.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: Which direction connects orchestration, inference infrastructure and model optimization?</strong></td>
+<td>Divesh recommended end-to-end AI system design. Future demand remains uncertain, and the named areas are useful distinctions rather than a fixed job taxonomy.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: What if the goal is leadership rather than coding every component?</strong></td>
+<td>The discussion emphasized product direction, architecture and coordinating the complete solution. Knowing how the components work still supports those decisions.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: Is building models a different specialization from using them?</strong></td>
+<td>The mentor agreed with the distinction. A team may specialize, while an architect still needs to understand dependencies across the system.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: What changes for physical AI, simulations or biological applications?</strong></td>
+<td>Domain expertise becomes relevant alongside AI and architecture skills. No specific employer implementation or future hiring outcome was established.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: What exactly is AI system design?</strong></td>
+<td>Starting from a problem, plan the end-to-end solution: serving, inference, workflow orchestration and infrastructure.</td>
+</tr>
+<tr>
+<td><strong>Nilesh: Where do orchestration and sandboxes fit, and can sandboxing be added?</strong></td>
+<td>He raised sandboxed execution as an infrastructure concern. Divesh said sandboxing was not currently in the syllabus and would ask Pal about adding it. It was not taught or confirmed as added.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="key-pointers-to-remember">Key Pointers to Remember<a class="headerlink" href="#key-pointers-to-remember" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Model adaptation and application composition are different responsibilities that can coexist in one product.</li>
+<li>A conversational UI still needs clarification, data access and a reliable workflow.</li>
+<li>LangChain provides application and agent building blocks; LangGraph emphasizes orchestration; LangSmith helps inspect and evaluate execution.</li>
+<li>A fixed retrieval workflow can use an LLM without becoming an autonomous agent.</li>
+<li>Fine-tuning is a form of transfer learning. A frozen backbone can still feed a trainable task head.</li>
+<li>Changing classifier classes concerns the output head, not the number of input image channels.</li>
+<li>Distillation uses teacher supervision to train a student; the teacher is not a validation dataset.</li>
+<li>Both teacher and student can produce probability distributions. KL divergence was named, but no distillation loss was derived or implemented.</li>
+<li>RAG separates preparing a corpus from retrieving evidence for a question.</li>
+<li>Query similarity search is an application operation; generation uses retrieved context, instructions and the user question.</li>
+<li>Policy count, chunk count and vector count are different quantities.</li>
+<li>Updated documents need an ingestion and invalidation process; RAG does not make stale indexes current by itself.</li>
+<li>Retrieval and prompt instructions support grounded responses but do not guarantee correctness or prevent every data leak.</li>
+<li>The practical, hybrid comparison and advanced RAG/security details were deferred.</li>
+</ul>
+<hr />
+<h2 id="action-items-after-class-25">Action Items After Class 25<a class="headerlink" href="#action-items-after-class-25" title="Permanent link">&para;</a></h2>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> Explain which parts of an HR-policy assistant change model weights and which supply information at runtime.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Recreate the ingestion and retrieval diagrams, including the three inputs passed to generation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Trace the classroom performance-policy question from source material to the final answer.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Distinguish policy documents from chunks and embeddings before choosing a splitting strategy.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Review frozen feature extraction, fine-tuning and teacher-student supervision; keep their objectives separate.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Read the relevant LangChain documentation and identify which component performs loading, splitting, retrieval and generation.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Keep a list of unresolved practical questions: parsing, versioning, retrieval quality, scope control and concurrency.</li>
+<li class="task-list-item"><input type="checkbox" disabled/> Use the next class's actual notebook for implementation rather than reconstructing code from this overview.</li>
+</ul>
+<hr />
+<p><em>Notes compiled from the complete Class 25 recording transcript, “GMT20261024-142343_Recording.cutfile.20261024211321937.transcript.vtt,” and all 16 pages of the supplied “adv batch day 1 (1).pdf,” Production AI / LLM Engineering, Krish Naik Academy. <a href="https://learn.krishnaikacademy.com/web/courses/6a16f8935e281281cd6b1128?chapter=6add1f4e1a163b792b47a02b">Class recording</a>. The companion repository's README, requirements and full 71-cell RAG notebook were inspected to establish scope; later code and saved outputs were not attributed to this class. Product observations are distinguished from unverified implementation claims. No supplied code, model API call, training or deployment was executed during note preparation.</em></p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="Class_24_LLM_Scaling_Laws_Notes.html" class="btn btn-neutral float-left" title="24 · Scaling laws"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="Class_26_LangChain_RAG_HR_Assistant_Notes.html" class="btn btn-neutral float-right" title="26 · LangChain HR assistant">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+        <span>
+          <a href="https://github.com/builtbyankit/production-ai-engineering-notes" class="fa fa-github" style="color: #fcfcfc"> GitHub</a>
+        </span>
+    
+    
+      <span><a href="Class_24_LLM_Scaling_Laws_Notes.html" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="Class_26_LangChain_RAG_HR_Assistant_Notes.html" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="assets/vendor/katex/katex.min.js"></script>
+      <script src="assets/vendor/mermaid/mermaid.min.js"></script>
+      <script src="javascripts/render.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
